@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5D4037">
+<link rel="apple-touch-icon" href="icon-192x192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>📚 Perpustakaan Aslan — Keluarga Sejati</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK (hanya 1x di sini) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --green:#4CAF50;--green-dark:#2E7D32;--green-light:#A5D6A7;
+  --amber:#F57F17;--amber-light:#FFF8E1;
+  --brown:#5D4037;--brown-light:#8D6E63;--brown-dark:#3E2723;
+  --cream:#FFF8E1;--cream2:#FFECB3;
+  --red:#C62828;--bg:#E8F5E9;--card:#FFFFFF;--text:#1A1A2E;
+  --indigo:#283593;--indigo-light:#C5CAE9;
+  --purple:#6A1B9A;--purple-light:#F3E5F5;
+  --orange:#E65100;--teal:#00695C;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  font-family:'Nunito',sans-serif;
+  background:#6b9e6b;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ═══ WRAPPER RESPONSIVE ═══ */
+#app-wrapper {
+  width: 100%;
+  max-width: 600px;
+  min-height: 100vh;
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(circle,rgba(141,110,99,0.12) 2px,transparent 2px),
+    linear-gradient(rgba(141,110,99,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(141,110,99,0.05) 1px,transparent 1px);
+  background-size:32px 32px,32px 32px,32px 32px;
+  background-position:16px 16px,0 0,0 0;
+  box-shadow:0 0 80px rgba(0,0,0,0.3);
+  padding-bottom:60px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Tablet portrait: 600–900px */
+@media (min-width: 600px) and (max-width: 900px) {
+  body {
+    background: #FFF8E1;
+  }
+  #app-wrapper {
+    max-width: 100%;
+    box-shadow: none;
+  }
+  .books-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .header-title {
+    font-size: 16px !important;
+  }
+}
+
+/* Tablet landscape & desktop: 900px+ */
+@media (min-width: 900px) {
+  body {
+    background: #5a8a5a;
+    align-items: flex-start;
+    padding: 24px 0;
+  }
+  #app-wrapper {
+    max-width: 860px;
+    border-radius: 20px;
+    margin: 0 auto;
+    min-height: auto;
+  }
+  .books-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .header-title {
+    font-size: 16px !important;
+  }
+  .main {
+    padding: 20px 28px !important;
+  }
+  .today-book-wrap {
+    max-width: 560px;
+  }
+}
+
+/* Tablet landscape specific (e.g. iPad landscape) */
+@media (min-width: 768px) and (max-width: 1100px) and (orientation: landscape) {
+  body {
+    background: #5a8a5a;
+    padding: 16px 0;
+  }
+  #app-wrapper {
+    max-width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .books-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .header {
+    padding: 16px 24px 36px !important;
+  }
+  .main {
+    padding: 16px 24px !important;
+  }
+  .header-title {
+    font-size: 13px !important;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .books-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .header-title {
+    font-size: 11px !important;
+  }
+}
+
+/* ═══ HEADER ═══ */
+.header{
+  background:linear-gradient(135deg,#3E2723 0%,#5D4037 50%,#6D4C41 100%);
+  padding:18px 20px 36px;
+  position:relative;overflow:hidden;
+}
+.header::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:20px;
+  background:repeating-linear-gradient(90deg,#5D4037 0,#5D4037 29px,#4E342E 29px,#4E342E 30px);
+  border-top:3px solid #3E2723;
+}
+.header::before{
+  content:'';position:absolute;bottom:20px;left:0;right:0;height:3px;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,0.15) 0,rgba(255,255,255,0.15) 14px,transparent 14px,transparent 30px);
+}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.back-btn{
+  background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);
+  border-radius:20px;padding:5px 14px;color:#FFCC80;font-size:11px;
+  font-weight:800;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;
+  transition:all 0.2s;
+}
+.back-btn:hover{background:rgba(255,255,255,0.25);}
+.date-badge{
+  background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);
+  border-radius:20px;padding:5px 14px;color:#FFCC80;font-size:11px;font-weight:700;
+}
+.header-hero{display:flex;align-items:center;gap:16px;}
+.library-icon-wrap{
+  width:72px;height:72px;background:linear-gradient(135deg,#FF8F00,#FFB300);
+  border:4px solid #FFCC80;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:36px;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,0.2),0 4px 12px rgba(0,0,0,0.3);
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.library-icon-wrap::before{
+  content:'';position:absolute;top:4px;left:6px;right:6px;height:6px;
+  background:rgba(255,255,255,0.3);border-radius:3px;
+}
+.header-title{font-family:'Press Start 2P',monospace;font-size:14px;color:#FFCC80;text-shadow:3px 3px 0 rgba(0,0,0,0.4);line-height:1.5;}
+.header-sub{color:#FFCC80;opacity:0.8;font-size:12px;font-weight:700;margin-top:5px;}
+.progress-wrap{margin-top:14px;}
+.progress-label{display:flex;justify-content:space-between;color:#FFCC80;font-size:11px;font-weight:700;margin-bottom:5px;opacity:0.9;}
+.progress-track{height:14px;background:rgba(0,0,0,0.3);border-radius:3px;border:2px solid rgba(255,255,255,0.2);overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#FFB300,#FFD54F);border-radius:3px;transition:width 0.8s ease;position:relative;}
+.progress-fill::after{content:'';position:absolute;top:2px;left:4px;right:4px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;}
+
+.float-deco{position:absolute;pointer-events:none;font-size:20px;opacity:0.2;}
+@keyframes floatDeco{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(8deg)}}
+
+/* ═══ MAIN ═══ */
+.main{padding:16px 14px;}
+
+/* ═══ STATS ROW ═══ */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.stat-card{
+  background:white;border-radius:14px;padding:14px 10px;
+  border:3px solid #D7CCC8;border-bottom:5px solid #BCAAA4;
+  text-align:center;position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0;}
+.stat-card.read-card::before{background:var(--green);}
+.stat-card.locked-card::before{background:#EF9A9A;}
+.stat-card.today-card::before{background:var(--amber);}
+.stat-num{font-family:'Press Start 2P',monospace;font-size:20px;color:#5D4037;}
+.stat-label{font-size:9px;font-weight:800;color:#90A4AE;margin-top:5px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* ═══ TODAY BOOK HIGHLIGHT ═══ */
+.today-book-wrap{margin-bottom:20px;}
+.today-book-card{
+  border-radius:18px;padding:20px;border:3px solid #E65100;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 24px rgba(230,81,0,0.3);
+}
+.today-book-card::before{content:'📖';position:absolute;right:12px;bottom:10px;font-size:56px;opacity:0.12;}
+.today-book-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.4);
+  border-radius:20px;padding:3px 12px;font-size:10px;font-weight:800;color:white;
+  margin-bottom:10px;
+}
+.today-book-title{font-family:'Press Start 2P',monospace;font-size:9px;color:white;text-shadow:1px 1px 0 rgba(0,0,0,0.2);line-height:1.6;margin-bottom:8px;}
+.today-book-num{font-size:12px;font-weight:800;color:rgba(255,255,255,0.85);margin-bottom:14px;}
+.today-book-btn{
+  display:inline-block;background:white;color:#E65100;
+  border:none;border-radius:12px;padding:12px 24px;
+  font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;
+  box-shadow:0 4px 0 rgba(0,0,0,0.15);transition:all 0.1s;text-decoration:none;
+  border-bottom:4px solid rgba(0,0,0,0.1);
+}
+.today-book-btn:hover{transform:translateY(-2px);}
+.today-book-btn:active{transform:translateY(2px);}
+
+/* ═══ WEEK TITLE ═══ */
+.week-title{
+  font-family:'Press Start 2P',monospace;font-size:8px;color:#5D4037;
+  letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,#EFEBE9,#D7CCC8);
+  border-radius:12px;padding:10px 14px;border:2px solid #BCAAA4;
+  border-left:5px solid #8D6E63;
+}
+.week-title-emoji{font-size:18px;flex-shrink:0;}
+.week-title-text{flex:1;}
+
+/* ═══ BOOK GRID ═══ */
+.books-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+
+/* ═══ BOOK CARD ═══ */
+.book-card{
+  background:white;border-radius:16px;
+  border:3px solid #D7CCC8;border-bottom:5px solid #BCAAA4;
+  cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;
+  position:relative;overflow:hidden;text-decoration:none;display:block;
+}
+.book-card:hover:not(.locked){transform:translateY(-4px);box-shadow:0 10px 0 rgba(0,0,0,0.1);}
+.book-card:active:not(.locked){transform:translateY(2px);border-bottom-width:2px;}
+.book-card.locked{cursor:not-allowed;opacity:0.75;filter:grayscale(0.3);}
+.book-card.read{border-color:var(--green);border-bottom-color:#2E7D32;}
+.book-card.today-book-card-item{border-color:#FF9800;border-bottom-color:#E65100;animation:todayPulse 2s ease-in-out infinite;}
+@keyframes todayPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,152,0,0.3)}50%{box-shadow:0 0 0 6px rgba(255,152,0,0)}}
+
+.book-spine{width:8px;position:absolute;left:0;top:0;bottom:0;border-radius:16px 0 0 16px;}
+.book-cover{padding:14px 12px 12px 18px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;position:relative;}
+.book-cover-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.book-emoji{font-size:28px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15));}
+.book-num-badge{font-family:'Press Start 2P',monospace;font-size:9px;padding:3px 8px;border-radius:8px;color:white;flex-shrink:0;}
+.book-title{font-size:12px;font-weight:900;color:#3E2723;line-height:1.35;margin-bottom:6px;}
+.book-card.locked .book-title{color:#90A4AE;}
+.book-footer{display:flex;align-items:center;justify-content:space-between;}
+.book-status{font-size:9px;font-weight:800;padding:3px 9px;border-radius:10px;}
+.book-day{font-size:9px;font-weight:700;color:#BDBDBD;}
+
+.status-today{background:#FFF3E0;color:#E65100;border:1.5px solid #FFB74D;}
+.status-read{background:#E8F5E9;color:#2E7D32;border:1.5px solid #81C784;}
+.status-locked{background:#F5F5F5;color:#BDBDBD;border:1.5px solid #E0E0E0;}
+
+.book-lock-overlay{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;background:rgba(255,255,255,0.4);border-radius:14px;
+}
+.lock-icon{font-size:28px;margin-bottom:4px;}
+.lock-text{font-size:9px;font-weight:800;color:#90A4AE;}
+
+.read-check{
+  position:absolute;top:-2px;right:-2px;width:28px;height:28px;
+  background:var(--green);border-radius:50%;border:3px solid white;
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-size:13px;font-weight:900;
+  box-shadow:0 2px 8px rgba(76,175,80,0.4);z-index:2;
+}
+
+/* ═══ SHELF DECORATION ═══ */
+.shelf-deco{
+  background:linear-gradient(135deg,#5D4037,#6D4C41);
+  height:16px;border-radius:0;margin:0 -14px 20px;
+  border-top:3px solid #3E2723;border-bottom:3px solid #4E342E;
+  position:relative;
+}
+.shelf-deco::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:5px;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,0.1) 0,rgba(255,255,255,0.1) 19px,transparent 19px,transparent 20px);
+}
+
+/* ═══ MOTIVATION ═══ */
+.motivation-card{
+  background:linear-gradient(135deg,#1B5E20,#2E7D32);
+  border-radius:16px;padding:16px 18px;margin-bottom:16px;
+  border:3px solid #1B5E20;position:relative;overflow:hidden;
+}
+.motivation-card::before{content:'💡';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:36px;opacity:0.12;}
+.motivation-text{font-size:12px;font-weight:700;color:#C8E6C9;line-height:1.7;font-style:italic;}
+
+/* ═══ TOAST ═══ */
+.toast{
+  position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-120px);
+  background:#3E2723;color:white;padding:12px 28px;border-radius:50px;
+  font-size:13px;font-weight:800;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  z-index:600;box-shadow:0 6px 24px rgba(0,0,0,0.25);white-space:nowrap;
+  border:2px solid #8D6E63;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ═══ BACK TO TOP ═══ */
+.back-top{
+  position:fixed;bottom:20px;right:20px;
+  width:48px;height:48px;border-radius:50%;
+  background:#5D4037;border:3px solid #8D6E63;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;z-index:100;
+  box-shadow:0 4px 16px rgba(0,0,0,0.35);
+  border-bottom:4px solid #3E2723;transition:all 0.2s;
+  text-decoration:none;
+}
+.back-top:hover{background:#3E2723;}
+
+/* ═══ WEEK COLOR THEMES ═══ */
+.book-card.w1{border-color:#90CAF9;border-bottom-color:#1565C0;}
+.book-card.w2{border-color:#A5D6A7;border-bottom-color:#2E7D32;}
+.book-card.w3{border-color:#FFAB91;border-bottom-color:#E65100;}
+.book-card.w4{border-color:#CE93D8;border-bottom-color:#6A1B9A;}
+.book-card.w5{border-color:#80CBC4;border-bottom-color:#00695C;}
+.book-card.w1.read,.book-card.w2.read,.book-card.w3.read,.book-card.w4.read,.book-card.w5.read{border-color:#81C784;border-bottom-color:#2E7D32;}
+
+.spine-w1{background:linear-gradient(180deg,#1565C0,#0D47A1);}
+.spine-w2{background:linear-gradient(180deg,#2E7D32,#1B5E20);}
+.spine-w3{background:linear-gradient(180deg,#E65100,#BF360C);}
+.spine-w4{background:linear-gradient(180deg,#6A1B9A,#4A148C);}
+.spine-w5{background:linear-gradient(180deg,#00695C,#004D40);}
+
+.num-w1{background:#1565C0;}
+.num-w2{background:#2E7D32;}
+.num-w3{background:#E65100;}
+.num-w4{background:#6A1B9A;}
+.num-w5{background:#00695C;}
+</style>
+</head>
+<body>
+<div id="app-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="float-deco" style="top:10px;left:28%;animation:floatDeco 3s ease-in-out infinite;">📚</span>
+    <span class="float-deco" style="top:14px;left:60%;animation:floatDeco 4.5s ease-in-out infinite 1s;">⭐</span>
+    <span class="float-deco" style="top:8px;right:6%;animation:floatDeco 3.5s ease-in-out infinite 2s;">🔖</span>
+    <div class="header-top">
+      <a href="index.html" class="back-btn">← Kembali</a>
+      <span class="date-badge" id="dateDisplay">—</span>
+    </div>
+    <div class="header-hero">
+      <div class="library-icon-wrap">📚</div>
+      <div>
+        <div class="header-title">PERPUSTAKAAN<br>ASLAN</div>
+        <div class="header-sub">30 Buku Coding Petualangan Seru!</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>📖 Buku Terbaca</span>
+        <span id="progressText">0 / 30</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="stats-row">
+      <div class="stat-card read-card">
+        <div class="stat-num" id="statRead">0</div>
+        <div class="stat-label">✅ Dibaca</div>
+      </div>
+      <div class="stat-card today-card">
+        <div class="stat-num" id="statToday">📖</div>
+        <div class="stat-label">🌟 Hari Ini</div>
+      </div>
+      <div class="stat-card locked-card">
+        <div class="stat-num" id="statLocked">30</div>
+        <div class="stat-label">🔒 Terkunci</div>
+      </div>
+    </div>
+    <div class="today-book-wrap" id="todayHighlight"></div>
+    <div class="motivation-card">
+      <div class="motivation-text" id="motivationText"></div>
+    </div>
+    <div id="booksContainer"></div>
+  </div>
+
+</div><!-- end #app-wrapper -->
+
+<a href="#" class="back-top" title="Ke Atas">☝️</a>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ FIREBASE CONFIG (hanya 1x) ═══
+const firebaseConfig = {
+  apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
+  authDomain: "aslan-sae.firebaseapp.com",
+  databaseURL: "https://aslan-sae-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "aslan-sae",
+  storageBucket: "aslan-sae.appspot.com",
+  messagingSenderId: "938084212857",
+  appId: "1:938084212857:web:54257ad8a0b2714510b4a8"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const LIB_REF = db.ref('aslan_library_v2');
+
+// ═══ DATA BUKU ═══
+const BOOKS = [
+  {day:1,  emoji:'💻', title:'Komputer Ajaib: Dari Kotak Besar Jadi Kecil'},
+  {day:2,  emoji:'🔐', title:'Apa Itu Coding? Bahasa Rahasia Komputer'},
+  {day:3,  emoji:'👨‍🔬', title:'Siapa yang Pertama Kali Membuat Komputer?'},
+  {day:4,  emoji:'📧', title:'Dari Surat Pohon ke Email Kilat'},
+  {day:5,  emoji:'🌐', title:'Internet: Jalan Raya Ajaib yang Menghubungkan Dunia'},
+  {day:6,  emoji:'🕊️', title:'Pesan Cepat: Dari Burung Merpati ke WhatsApp'},
+  {day:7,  emoji:'🎮', title:'Game Favoritmu, Siapa yang Membuatnya?'},
+  {day:8,  emoji:'📋', title:'Urut-urutan Itu Penting! Petualangan Perintah'},
+  {day:9,  emoji:'🤔', title:'Keputusan Komputer: Kalau Begini, Maka Begitu'},
+  {day:10, emoji:'🔄', title:'Ulang Terus-terusan! Rahasia Loop'},
+  {day:11, emoji:'📦', title:'Kotak Ajaib Bernama Variabel'},
+  {day:12, emoji:'🐛', title:'Bug Lucu: Saat Coding Salah'},
+  {day:13, emoji:'👨‍🍳', title:'Algoritma: Resep Masak Paling Keren'},
+  {day:14, emoji:'🧩', title:'Scratch: Coding dengan Balok Mainan'},
+  {day:15, emoji:'🤖', title:'Robot Rumah yang Bisa Bantu Bunda'},
+  {day:16, emoji:'🎯', title:'Bagaimana Game Bisa Bergerak?'},
+  {day:17, emoji:'📱', title:'YouTube dan TikTok: Rahasia di Balik Layar'},
+  {day:18, emoji:'🚗', title:'Mobil Pintar yang Bisa Nyetir Sendiri'},
+  {day:19, emoji:'⛅', title:'Aplikasi Cuaca: Bagaimana Dia Tahu Hari Ini Hujan?'},
+  {day:20, emoji:'🛒', title:'Belanja Online: Siapa yang Mengatur Toko di HP?'},
+  {day:21, emoji:'📲', title:'HP Kamu Itu Komputer Kecil yang Super Pintar'},
+  {day:22, emoji:'👩‍💻', title:'Ada Lovelace: Gadis Pintar Penemu Coding'},
+  {day:23, emoji:'🪟', title:'Bill Gates: Anak yang Suka Main Komputer'},
+  {day:24, emoji:'👥', title:'Mark Zuckerberg: Membuat Facebook dari Kamar'},
+  {day:25, emoji:'🍎', title:'Steve Jobs: Pria yang Membuat HP Impian'},
+  {day:26, emoji:'🇮🇩', title:'Programmer Indonesia yang Keren'},
+  {day:27, emoji:'🧒', title:'Anak Seumuranku yang Sudah Bisa Coding'},
+  {day:28, emoji:'⭐', title:'Coder Kecil: Cerita Anak yang Membuat Aplikasi'},
+  {day:29, emoji:'🚀', title:'Coding di Tahun 2035: Robot dan Dunia Futuristik'},
+  {day:30, emoji:'🏆', title:'Aku Mau Jadi Programmer! Langkah Pertamaku'},
+];
+
+const WEEK_LABELS = [
+  {week:1, label:'Minggu 1', sub:'Petualangan Teknologi Awal',    emoji:'🖥️', wclass:'w1'},
+  {week:2, label:'Minggu 2', sub:'Belajar Coding dengan Cara Seru', emoji:'🧑‍💻', wclass:'w2'},
+  {week:3, label:'Minggu 3', sub:'Coding di Sekitar Kita',         emoji:'🌍', wclass:'w3'},
+  {week:4, label:'Minggu 4', sub:'Cerita Pahlawan Coding',          emoji:'🦸', wclass:'w4'},
+  {week:5, label:'Minggu 5', sub:'Menuju Masa Depan',               emoji:'🚀', wclass:'w5'},
+];
+
+const DAYS_ID   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const DAYS_LONG = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const MOTIVATIONS = [
+  '"Membaca satu buku sehari sama seperti naik level setiap hari! Kamu bisa, Aslan! 📚⚡"',
+  '"Setiap halaman yang kamu baca menambah kekuatan otakmu! Terus semangat! 🧠💪"',
+  '"Pembaca hari ini adalah pemimpin masa depan! Baca terus ya Aslan! 👑📖"',
+  '"Buku adalah pintu ajaib menuju dunia yang belum pernah kamu bayangkan! 🚪✨"',
+  '"Seorang programmer hebat berawal dari seorang pembaca yang rajin! 💻❤️"',
+  '"Setiap buku yang kamu baca = 1 level naik! Kumpulkan semua! ⭐🎯"',
+  '"Aslan yang rajin membaca hari ini akan jadi coder terhebat besok! 🚀🏆"',
+];
+
+// ═══ STATE ═══
+let readBooks = {};
+let startDate  = null;
+
+// ═══ FIREBASE: LOAD DATA ═══
+function initFromFirebase(callback) {
+  LIB_REF.once('value').then(snap => {
+    const data = snap.val() || {};
+    if (data.startDate) {
+      startDate = new Date(data.startDate);
+    } else {
+      startDate = new Date();
+      startDate.setHours(0,0,0,0);
+      LIB_REF.child('startDate').set(startDate.toISOString());
+    }
+    readBooks = data.readBooks || {};
+    callback();
+  }).catch(() => {
+    readBooks = getReadBooksLocal();
+    startDate  = getStartDateLocal();
+    callback();
+  });
+}
+
+// ═══ FIREBASE: SIMPAN BUKU DIBACA ═══
+function markAsRead(day) {
+  readBooks[day] = { readAt: Date.now() };
+  LIB_REF.child('readBooks/' + day).set({ readAt: Date.now() })
+    .catch(() => saveReadBooksLocal(readBooks));
+  setTimeout(() => { renderAll(); showToast('📚 Buku ke-'+day+' selesai dibaca! +XP! 🌟'); }, 300);
+}
+
+// ═══ FALLBACK LOCALSTORAGE ═══
+const STORAGE_KEY = 'aslan_library_v1';
+function getReadBooksLocal() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveReadBooksLocal(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e){}
+}
+function getStartDateLocal() {
+  try {
+    const sd = localStorage.getItem('aslan_library_start');
+    if (sd) return new Date(sd);
+  } catch(e){}
+  const today = new Date(); today.setHours(0,0,0,0);
+  try { localStorage.setItem('aslan_library_start', today.toISOString()); } catch(e){}
+  return today;
+}
+
+// ═══ HELPER TANGGAL ═══
+function getTodayBookDay() {
+  if (!startDate) return 1;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.floor((today - startDate) / (1000*60*60*24));
+  return Math.min(diff + 1, 30);
+}
+function isBookUnlocked(bookDay) { return bookDay <= getTodayBookDay(); }
+function isBookToday(bookDay)    { return bookDay === getTodayBookDay(); }
+function getWeekClass(day) {
+  if(day<=7)  return 'w1'; if(day<=14) return 'w2';
+  if(day<=21) return 'w3'; if(day<=28) return 'w4'; return 'w5';
+}
+function formatDateShort(d) {
+  return DAYS_ID[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()];
+}
+function getUnlockDate(bookDay) {
+  const d = new Date(startDate);
+  d.setDate(startDate.getDate() + (bookDay - 1));
+  return d;
+}
+
+// ═══ RENDER ═══
+function renderDate() {
+  const d = new Date();
+  document.getElementById('dateDisplay').textContent = DAYS_LONG[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()];
+}
+function renderMotivation() {
+  const idx = getTodayBookDay() % MOTIVATIONS.length;
+  document.getElementById('motivationText').textContent = MOTIVATIONS[idx];
+}
+function renderStats() {
+  const readCount = Object.keys(readBooks).length;
+  const todayDay  = getTodayBookDay();
+  document.getElementById('statRead').textContent   = readCount;
+  document.getElementById('statToday').textContent  = todayDay > 30 ? '🏆' : todayDay;
+  document.getElementById('statLocked').textContent = Math.max(0, 30 - todayDay);
+  document.getElementById('progressText').textContent = readCount + ' / 30';
+  document.getElementById('progressFill').style.width = (readCount/30*100)+'%';
+}
+function renderTodayHighlight() {
+  const todayDay  = getTodayBookDay();
+  const container = document.getElementById('todayHighlight');
+  if(todayDay < 1 || todayDay > 30) { container.innerHTML=''; return; }
+  const book   = BOOKS[todayDay - 1];
+  const isRead = !!readBooks[todayDay];
+  const wclass = getWeekClass(todayDay);
+  const colors = {
+    w1:['#1565C0','#0D47A1'], w2:['#2E7D32','#1B5E20'],
+    w3:['#E65100','#BF360C'], w4:['#6A1B9A','#4A148C'], w5:['#00695C','#004D40']
+  };
+  const [c1,c2] = colors[wclass];
+  container.innerHTML = `
+    <div class="today-book-card" style="background:linear-gradient(135deg,${c1},${c2});border-color:${c2};">
+      <div class="today-book-badge">📖 BUKU HARI INI — HARI KE-${todayDay}</div>
+      <div style="font-size:36px;margin-bottom:8px;">${book.emoji}</div>
+      <div class="today-book-title">${book.title}</div>
+      ${isRead
+        ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:800;color:white;">✅ Sudah dibaca! Keren Aslan! 🎉</div>`
+        : `<a href="flip/${todayDay}.html" class="today-book-btn" onclick="markAsRead(${todayDay})">📖 BACA SEKARANG!</a>`
+      }
+    </div>`;
+}
+function renderBooks() {
+  const container = document.getElementById('booksContainer');
+  container.innerHTML = '';
+  WEEK_LABELS.forEach(wk => {
+    const startDay = (wk.week-1)*7 + 1;
+    const endDay   = Math.min(wk.week*7, 30);
+    const booksInWeek = BOOKS.filter(b => b.day >= startDay && b.day <= endDay);
+
+    const weekTitle = document.createElement('div');
+    weekTitle.className = 'week-title';
+    weekTitle.innerHTML = `<span class="week-title-emoji">${wk.emoji}</span><span class="week-title-text">${wk.label}: ${wk.sub}</span>`;
+    container.appendChild(weekTitle);
+
+    const grid = document.createElement('div');
+    grid.className = 'books-grid';
+
+    booksInWeek.forEach(book => {
+      const unlocked  = isBookUnlocked(book.day);
+      const isToday   = isBookToday(book.day);
+      const isRead    = !!readBooks[book.day];
+      const wclass    = getWeekClass(book.day);
+      const unlockDate = getUnlockDate(book.day);
+
+      const card = document.createElement('div');
+      let cardClass = 'book-card '+wclass;
+      if(isToday) cardClass += ' today-book-card-item';
+      if(isRead)  cardClass += ' read';
+      if(!unlocked) cardClass += ' locked';
+      card.className = cardClass;
+
+      if(unlocked && !isRead) {
+        card.addEventListener('click', () => { markAsRead(book.day); window.location.href = 'flip/'+book.day+'.html'; });
+      } else if(isRead) {
+        card.addEventListener('click', () => { window.location.href = 'flip/'+book.day+'.html'; });
+      } else {
+        card.addEventListener('click', () => { showToast('🔒 Buku ini terbuka '+formatDateShort(unlockDate)+'! Sabar ya! 😊'); });
+      }
+
+      let statusHtml = '';
+      if(isToday)          statusHtml = '<span class="book-status status-today">📖 Hari Ini!</span>';
+      else if(isRead)      statusHtml = '<span class="book-status status-read">✅ Selesai!</span>';
+      else if(unlocked)    statusHtml = '<span class="book-status status-today">📚 Baca!</span>';
+      else                 statusHtml = '<span class="book-status status-locked">🔒 '+formatDateShort(unlockDate)+'</span>';
+
+      card.innerHTML = `
+        <div class="book-spine spine-${wclass}"></div>
+        ${isRead ? '<div class="read-check">✓</div>' : ''}
+        <div class="book-cover">
+          <div class="book-cover-top">
+            <div class="book-emoji">${unlocked ? book.emoji : '📕'}</div>
+            <div class="book-num-badge num-${wclass}">#${book.day}</div>
+          </div>
+          <div class="book-title">${unlocked ? book.title : 'Buku Tersembunyi...'}</div>
+          <div class="book-footer">${statusHtml}<span class="book-day">Hari ${book.day}</span></div>
+        </div>
+        ${!unlocked ? `<div class="book-lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">${formatDateShort(unlockDate)}</div></div>` : ''}`;
+      grid.appendChild(card);
+    });
+
+    container.appendChild(grid);
+    if(wk.week < 5) {
+      const shelf = document.createElement('div');
+      shelf.className = 'shelf-deco';
+      container.appendChild(shelf);
+    }
+  });
+}
+function renderAll() {
+  renderDate(); renderMotivation(); renderStats(); renderTodayHighlight(); renderBooks();
+}
+
+// ═══ TOAST ═══
+let toastTimeout;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══ INIT ═══
+document.getElementById('booksContainer').innerHTML = '<div style="text-align:center;padding:40px;color:#8D6E63;font-weight:700;">⏳ Memuat perpustakaan...</div>';
+initFromFirebase(() => { renderAll(); });
+</script>
+</body>
+</html>

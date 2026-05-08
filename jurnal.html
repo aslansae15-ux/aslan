@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2E7D32">
+<link rel="apple-touch-icon" href="icon-192x192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>📔 Jurnal Aslan — Keluarga Sejati</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
+    authDomain: "aslan-sae.firebaseapp.com",
+    databaseURL: "https://aslan-sae-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "aslan-sae",
+    storageBucket: "aslan-sae.appspot.com",
+    messagingSenderId: "938084212857",
+    appId: "1:938084212857:web:54257ad8a0b2714510b4a8"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const JDB = db.ref('aslan_jurnal_v2');
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --green:#4CAF50;--green-dark:#2E7D32;--green-light:#A5D6A7;
+  --blue:#1565C0;--amber:#F57F17;--purple:#6A1B9A;
+  --red:#C62828;--bg:#E8F5E9;--card:#FFFFFF;--text:#1A1A2E;
+  --teal:#00695C;--orange:#E65100;--pink:#AD1457;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  font-family:'Nunito',sans-serif;
+  background:#6b9e6b;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+
+/* ═══ WRAPPER RESPONSIVE ═══ */
+#app-wrapper {
+  width:100%;
+  max-width:600px;
+  min-height:100vh;
+  background-color:var(--bg);
+  background-image:radial-gradient(circle,rgba(76,175,80,0.18) 2px,transparent 2px),linear-gradient(rgba(76,175,80,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(76,175,80,0.06) 1px,transparent 1px);
+  background-size:32px 32px,32px 32px,32px 32px;
+  background-position:16px 16px,0 0,0 0;
+  box-shadow:0 0 80px rgba(0,0,0,0.3);
+  padding-bottom:100px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Tablet portrait: 600–900px */
+@media (min-width:600px) and (max-width:900px) {
+  body { background:#E8F5E9; }
+  #app-wrapper { max-width:100%; box-shadow:none; }
+  .bday-cat-row { grid-template-columns:repeat(4,1fr); }
+}
+
+/* Tablet landscape & desktop: 900px+ */
+@media (min-width:900px) {
+  body { background:#5a8a5a; padding:24px 0; }
+  #app-wrapper {
+    max-width:860px;
+    border-radius:20px;
+    margin:0 auto;
+    min-height:auto;
+  }
+  .main { padding:20px 28px !important; }
+  .tabs { padding:14px 28px 0 !important; }
+}
+
+/* Tablet landscape specific */
+@media (min-width:768px) and (max-width:1100px) and (orientation:landscape) {
+  body { background:#5a8a5a; padding:16px 0; }
+  #app-wrapper { max-width:100%; border-radius:0; box-shadow:none; }
+  .header { padding:14px 24px 28px !important; }
+  .main { padding:16px 24px !important; }
+  .tabs { padding:12px 24px 0 !important; }
+}
+
+/* SYNC DOT */
+.sync-dot{position:fixed;top:14px;right:20px;width:10px;height:10px;border-radius:50%;background:#4CAF50;z-index:700;box-shadow:0 0 6px rgba(76,175,80,0.9);}
+.sync-dot.syncing{background:#FF9800;animation:pulse 0.8s infinite;}
+.sync-dot.error{background:#F44336;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+/* TOAST */
+.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-120px);background:#1B5E20;color:white;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:800;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:600;box-shadow:0 6px 24px rgba(0,0,0,0.25);white-space:nowrap;border:2px solid #4CAF50;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.red{background:#B71C1C;border-color:#E53935;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#1B5E20 0%,#2E7D32 55%,#388E3C 100%);padding:18px 20px 32px;position:relative;overflow:hidden;}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:repeating-linear-gradient(90deg,#8B4513 0,#8B4513 23px,#6B3410 23px,#6B3410 24px,#8B4513 24px,#8B4513 47px,#6B3410 47px,#6B3410 48px);border-top:3px solid #5D2E0C;}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.back-btn{background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);border-radius:12px;padding:7px 14px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all 0.15s;}
+.back-btn:hover{background:rgba(255,255,255,0.3);}
+.header-title-wrap{text-align:center;flex:1;}
+.header-title{font-family:'Press Start 2P',monospace;font-size:11px;color:#fff;text-shadow:3px 3px 0 rgba(0,0,0,0.25);line-height:1.5;}
+.header-sub{color:#A5D6A7;font-size:11px;font-weight:700;margin-top:3px;}
+.date-badge{background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);border-radius:20px;padding:5px 12px;color:#C8E6C9;font-size:10px;font-weight:700;}
+
+/* BIRTHDAY ALERT */
+.bday-alert{background:linear-gradient(135deg,#B71C1C,#E53935);padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:3px solid #7F0000;animation:bdayPulse 2s ease-in-out infinite;}
+@keyframes bdayPulse{0%,100%{background:linear-gradient(135deg,#B71C1C,#E53935);}50%{background:linear-gradient(135deg,#E53935,#EF5350);}}
+.bday-alert-emoji{font-size:22px;animation:spin 3s linear infinite;}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.bday-alert-text{color:#fff;font-size:12px;font-weight:800;flex:1;line-height:1.5;}
+.bday-alert-close{background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);border-radius:8px;color:#fff;font-size:12px;cursor:pointer;padding:4px 8px;font-weight:800;}
+
+/* TABS */
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:14px 14px 0;margin-bottom:0;}
+.tab{padding:10px 4px;background:white;border:3px solid #C8E6C9;border-radius:10px;font-size:9px;font-weight:800;color:#78909C;cursor:pointer;text-align:center;transition:all 0.15s;border-bottom:3px solid #B0BEC5;}
+.tab.active{background:var(--green);border-color:var(--green-dark);color:white;border-bottom-color:#1B5E20;}
+
+/* MAIN */
+.main{padding:14px;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* SECTION TITLE */
+.section-title{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--green-dark);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--green) 0,var(--green) 6px,transparent 6px,transparent 10px);}
+
+/* JURNAL COMPOSER */
+.jurnal-composer{background:white;border-radius:18px;border:3px solid #FFE082;border-bottom:5px solid #F9A825;margin-bottom:16px;overflow:hidden;}
+.composer-header{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);padding:14px 16px;border-bottom:2px solid #FFE082;display:flex;align-items:center;gap:10px;}
+.composer-icon{width:44px;height:44px;background:#FFF8E1;border-radius:12px;border:3px solid #FFE082;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.composer-title-wrap{flex:1;}
+.composer-title{font-family:'Press Start 2P',monospace;font-size:8px;color:#E65100;line-height:1.5;}
+.composer-date{font-size:11px;color:#90A4AE;font-weight:700;margin-top:2px;}
+
+/* TOOLBAR */
+.toolbar{background:#F9F9F9;border-bottom:2px solid #FFE082;padding:8px 10px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.tb-group{display:flex;gap:3px;padding-right:8px;border-right:2px solid #E0E0E0;}
+.tb-group:last-child{border-right:none;}
+.tb-btn{width:30px;height:30px;border-radius:7px;border:2px solid #E0E0E0;background:white;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800;color:#546E7A;transition:all 0.1s;flex-shrink:0;}
+.tb-btn:hover{background:#FFF3E0;border-color:#FFB74D;}
+.tb-select{padding:4px 6px;border-radius:7px;border:2px solid #E0E0E0;background:white;font-size:11px;font-weight:700;color:#546E7A;outline:none;font-family:'Nunito',sans-serif;cursor:pointer;}
+.emoji-picker-wrap{position:relative;}
+.emoji-dropdown{display:none;position:absolute;top:36px;left:0;background:white;border:2px solid #FFE082;border-radius:12px;padding:8px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.15);width:220px;flex-wrap:wrap;gap:4px;}
+.emoji-dropdown.open{display:flex;}
+.emoji-opt{width:32px;height:32px;border-radius:8px;border:1.5px solid #E0E0E0;background:#F9F9F9;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.1s;}
+.emoji-opt:hover{background:#FFF3E0;border-color:#FFB74D;transform:scale(1.1);}
+
+/* MOOD */
+.mood-section{padding:12px 14px;border-bottom:2px solid #FFE082;background:#FFFDE7;}
+.mood-label{font-size:11px;font-weight:800;color:#E65100;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.mood-row{display:flex;gap:6px;}
+.mood-btn{flex:1;padding:8px 4px;border-radius:10px;border:2.5px solid #FFE082;background:#FFFDE7;text-align:center;cursor:pointer;transition:all 0.15s;border-bottom:3px solid #F9A825;}
+.mood-btn.sel{border-color:#FF9800;background:#FFF3E0;transform:scale(1.05);border-bottom-color:#E65100;}
+.mood-emoji{font-size:20px;}
+.mood-name{font-size:8px;font-weight:800;color:#FF9800;margin-top:2px;}
+
+/* WRITING AREA */
+.jurnal-entry-input{width:100%;min-height:180px;padding:14px;border:none;outline:none;font-family:'Patrick Hand',cursive;font-size:15px;color:#333;line-height:1.9;background:white;resize:none;background-image:repeating-linear-gradient(transparent,transparent 30px,#FFF9E0 30px,#FFF9E0 31px);background-attachment:local;}
+
+/* JURNAL SECTIONS */
+.jurnal-sections{padding:14px;background:white;}
+.jsect{margin-bottom:14px;}
+.jsect-label{font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.jsect-input{width:100%;padding:10px 12px;border-radius:10px;border:2.5px solid #FFE082;font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;outline:none;color:var(--text);background:#FFFDE7;resize:none;line-height:1.5;}
+.jsect-input:focus{border-color:#FF9800;}
+
+/* STICKER ROW */
+.sticker-row{padding:10px 14px;border-top:2px dashed #FFE082;display:flex;gap:6px;flex-wrap:wrap;background:#FFFDE7;}
+.sticker{font-size:24px;cursor:pointer;transition:transform 0.1s;padding:4px;border-radius:8px;}
+.sticker:hover{transform:scale(1.3);}
+.sticker.selected{background:#FFE082;border-radius:8px;transform:scale(1.15);}
+
+/* SAVE AREA */
+.save-area{padding:14px;background:white;border-top:2px solid #FFE082;}
+.save-btn{width:100%;padding:13px;background:linear-gradient(135deg,#F57F17,#FF9800);color:white;border:none;border-radius:12px;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;border-bottom:4px solid #E65100;transition:all 0.1s;letter-spacing:0.5px;}
+.save-btn:active{border-bottom-width:2px;transform:translateY(2px);}
+.saved-badge{display:none;background:#E8F5E9;border:2px solid #81C784;border-radius:10px;padding:10px 14px;text-align:center;font-size:12px;font-weight:800;color:#2E7D32;margin-top:10px;}
+.saved-badge.show{display:block;}
+
+/* HISTORY */
+.history-empty{background:white;border-radius:14px;padding:28px;border:3px solid #FFE082;text-align:center;margin-bottom:12px;}
+.history-empty-emoji{font-size:48px;margin-bottom:12px;}
+.history-empty-text{font-size:13px;font-weight:700;color:#90A4AE;line-height:1.6;}
+.history-entry{background:white;border-radius:16px;border:3px solid #FFE082;margin-bottom:12px;overflow:hidden;}
+.history-header{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #FFE082;}
+.history-date{font-size:11px;font-weight:800;color:#E65100;display:flex;align-items:center;gap:6px;}
+.history-mood{font-size:18px;}
+.history-actions{display:flex;gap:6px;}
+.hist-edit-btn,.hist-del-btn{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border-style:solid;}
+.hist-edit-btn{background:#FFF3E0;border-color:#FFB74D;color:#E65100;}
+.hist-del-btn{background:#FFEBEE;border-color:#EF9A9A;color:#C62828;}
+.history-stickers{padding:8px 12px 0;display:flex;gap:4px;flex-wrap:wrap;}
+.history-sticker{font-size:20px;}
+.history-body{padding:12px 14px;}
+.history-text{font-family:'Patrick Hand',cursive;font-size:14px;color:#333;line-height:1.8;white-space:pre-wrap;margin-bottom:10px;}
+.history-sub-item{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;}
+.history-sub-item:last-child{margin-bottom:0;}
+.history-sub-bullet{font-size:16px;flex-shrink:0;margin-top:1px;}
+.history-sub-label{font-size:10px;font-weight:800;color:#90A4AE;margin-bottom:2px;}
+.history-sub-text{font-size:12px;font-weight:700;color:var(--text);line-height:1.4;}
+
+/* ULANG TAHUN */
+.bday-hero{background:linear-gradient(135deg,#880E4F,#AD1457,#C2185B);border-radius:18px;padding:22px 20px;margin-bottom:16px;border:3px solid #880E4F;position:relative;overflow:hidden;text-align:center;}
+.bday-hero::before{content:'🎂';position:absolute;right:14px;bottom:8px;font-size:52px;opacity:0.12;}
+.bday-hero::after{content:'🎈';position:absolute;left:14px;top:8px;font-size:28px;opacity:0.15;}
+.bday-hero-label{font-size:11px;font-weight:800;color:#F8BBD9;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.bday-hero-count{font-family:'Press Start 2P',monospace;font-size:26px;color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,0.2);}
+.bday-hero-sub{font-size:11px;color:#F48FB1;font-weight:700;margin-top:4px;}
+
+/* UPCOMING BIRTHDAYS */
+.upcoming-card{background:white;border-radius:14px;border:3px solid #F48FB1;border-bottom:5px solid #AD1457;margin-bottom:16px;overflow:hidden;}
+.upcoming-header{background:linear-gradient(135deg,#FCE4EC,#F8BBD9);padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:2px solid #F48FB1;}
+.upcoming-icon{width:36px;height:36px;border-radius:10px;background:#F48FB1;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.upcoming-title{font-family:'Press Start 2P',monospace;font-size:7px;color:#880E4F;line-height:1.5;}
+.bday-list{padding:8px 0;}
+.bday-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1.5px solid #FEE8EF;transition:background 0.1s;}
+.bday-item:last-child{border-bottom:none;}
+.bday-item:hover{background:#FFF8FC;}
+.bday-item-countdown{width:50px;height:50px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:2px solid;}
+.bday-item-countdown.today{background:#FCE4EC;border-color:#E91E63;}
+.bday-item-countdown.soon{background:#FFF8E1;border-color:#FF9800;}
+.bday-item-countdown.normal{background:#F3E5F5;border-color:#CE93D8;}
+.bday-item-countdown-num{font-family:'Press Start 2P',monospace;font-size:12px;}
+.bday-item-countdown.today .bday-item-countdown-num{color:#C2185B;}
+.bday-item-countdown.soon .bday-item-countdown-num{color:#E65100;}
+.bday-item-countdown.normal .bday-item-countdown-num{color:#6A1B9A;}
+.bday-item-countdown-label{font-size:8px;font-weight:800;color:#90A4AE;margin-top:1px;}
+.bday-item-info{flex:1;min-width:0;}
+.bday-item-name{font-size:14px;font-weight:800;color:var(--text);}
+.bday-item-detail{font-size:11px;color:#90A4AE;font-weight:700;margin-top:2px;}
+.bday-item-cat{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:800;margin-top:3px;}
+.cat-teman{background:#E3F2FD;color:#1565C0;}
+.cat-saudara{background:#FCE4EC;color:#C2185B;}
+.cat-guru{background:#E8F5E9;color:#2E7D32;}
+.cat-keluarga{background:#FFF3E0;color:#E65100;}
+.bday-item-actions{display:flex;gap:5px;flex-shrink:0;}
+.bday-edit-btn,.bday-del-btn{width:36px;height:36px;border-radius:9px;border:2px solid #E0E0E0;background:#F5F5F5;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.bday-edit-btn:hover,.bday-edit-btn:active{background:#FFF3E0;border-color:#FFB74D;}
+.bday-del-btn:hover,.bday-del-btn:active{background:#FFEBEE;border-color:#EF9A9A;}
+
+/* ADD BIRTHDAY FORM */
+.add-bday-card{background:white;border-radius:14px;border:3px solid #F48FB1;padding:16px;margin-bottom:16px;}
+.add-bday-title{font-family:'Press Start 2P',monospace;font-size:7px;color:#AD1457;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.add-bday-title::after{content:'';flex:1;height:2px;background:repeating-linear-gradient(90deg,#F48FB1 0,#F48FB1 6px,transparent 6px,transparent 10px);}
+.bday-form-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+.bday-form-input{flex:1;padding:10px 12px;border-radius:10px;border:2.5px solid #F8BBD9;font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;outline:none;color:var(--text);}
+.bday-form-input:focus{border-color:#E91E63;}
+.bday-cat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.bday-cat-opt{padding:8px 4px;border-radius:10px;border:2.5px solid #F8BBD9;background:#FFF0F5;font-size:11px;font-weight:800;cursor:pointer;text-align:center;transition:all 0.15s;color:#90A4AE;}
+.bday-cat-opt.sel-teman{background:#E3F2FD;border-color:#64B5F6;color:#1565C0;}
+.bday-cat-opt.sel-saudara{background:#FCE4EC;border-color:#F48FB1;color:#C2185B;}
+.bday-cat-opt.sel-guru{background:#E8F5E9;border-color:#81C784;color:#2E7D32;}
+.bday-cat-opt.sel-keluarga{background:#FFF3E0;border-color:#FFB74D;color:#E65100;}
+.add-bday-btn{width:100%;padding:12px;background:#AD1457;color:white;border:none;border-radius:12px;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;border-bottom:4px solid #880E4F;transition:all 0.1s;}
+.add-bday-btn:active{border-bottom-width:2px;transform:translateY(2px);}
+.bday-empty{padding:24px;text-align:center;font-size:12px;font-weight:700;color:#90A4AE;line-height:1.6;}
+
+/* CATATAN */
+.notes-hero{background:linear-gradient(135deg,#0D47A1,#1565C0,#1976D2);border-radius:18px;padding:22px 20px;margin-bottom:16px;border:3px solid #0D47A1;position:relative;overflow:hidden;text-align:center;}
+.notes-hero::before{content:'📌';position:absolute;right:14px;bottom:8px;font-size:52px;opacity:0.12;}
+.notes-hero::after{content:'💭';position:absolute;left:14px;top:8px;font-size:28px;opacity:0.15;}
+.notes-hero-label{font-size:11px;font-weight:800;color:#BBDEFB;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.notes-hero-count{font-family:'Press Start 2P',monospace;font-size:26px;color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,0.2);}
+.notes-hero-sub{font-size:11px;color:#90CAF9;font-weight:700;margin-top:4px;}
+.notes-add-btn{width:100%;padding:13px;background:linear-gradient(135deg,#1565C0,#1976D2);color:white;border:none;border-radius:14px;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;border-bottom:4px solid #0D47A1;transition:all 0.15s;margin-bottom:14px;}
+.notes-add-btn:active{border-bottom-width:2px;transform:translateY(2px);}
+.notes-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.notes-filter-btn{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:800;cursor:pointer;border:2px solid #BBDEFB;background:#F9F9F9;color:#90A4AE;transition:all 0.15s;font-family:'Nunito',sans-serif;}
+.notes-filter-btn.active{background:#1565C0;border-color:#0D47A1;color:white;}
+.note-card{background:white;border-radius:16px;border:3px solid #BBDEFB;margin-bottom:12px;overflow:hidden;position:relative;transition:all 0.15s;}
+.note-card:hover{box-shadow:0 4px 16px rgba(21,101,192,0.15);transform:translateY(-1px);}
+.note-card-header{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #BBDEFB;}
+.note-card-title{font-size:13px;font-weight:900;color:#0D47A1;display:flex;align-items:center;gap:8px;}
+.note-card-date{font-size:10px;color:#90A4AE;font-weight:700;}
+.note-card-body{padding:12px 14px;}
+.note-card-text{font-family:'Patrick Hand',cursive;font-size:14px;color:#333;line-height:1.7;white-space:pre-wrap;}
+.note-cat-chip{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:800;margin-top:6px;}
+.cat-penting{background:#FFEBEE;color:#C62828;}
+.cat-sekolah{background:#E8F5E9;color:#2E7D32;}
+.cat-bebas{background:#E3F2FD;color:#1565C0;}
+.cat-reminder{background:#FFF3E0;color:#E65100;}
+.note-card-actions{padding:8px 14px;border-top:1.5px solid #E3F2FD;display:flex;justify-content:flex-end;gap:6px;}
+.note-edit-btn,.note-del-btn{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;border-style:solid;}
+.note-edit-btn{background:#E3F2FD;border-color:#90CAF9;color:#1565C0;}
+.note-del-btn{background:#FFEBEE;border-color:#EF9A9A;color:#C62828;}
+.notes-empty{background:#F9F9F9;border-radius:14px;padding:28px;border:2px dashed #BBDEFB;text-align:center;margin-bottom:12px;}
+.notes-empty-emoji{font-size:40px;margin-bottom:8px;}
+.notes-empty-text{font-size:12px;font-weight:700;color:#90A4AE;line-height:1.6;}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
+.overlay.open{display:flex;}
+.modal{background:white;border-radius:20px;padding:24px 20px;width:100%;max-width:440px;border:4px solid;box-shadow:0 20px 60px rgba(0,0,0,0.3);margin:auto;}
+.modal-title{font-family:'Press Start 2P',monospace;font-size:9px;margin-bottom:18px;line-height:1.6;text-align:center;}
+.modal-label{font-size:11px;font-weight:800;color:#546E7A;margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:0.5px;}
+.modal-input{width:100%;padding:10px 12px;border-radius:10px;border:2.5px solid #E0E0E0;font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;outline:none;margin-bottom:12px;color:var(--text);}
+.modal-textarea{width:100%;padding:10px 12px;border-radius:10px;border:2.5px solid #E0E0E0;font-size:13px;font-weight:600;font-family:'Patrick Hand',cursive;outline:none;margin-bottom:12px;resize:vertical;min-height:100px;line-height:1.7;color:var(--text);}
+.modal-row{display:flex;gap:10px;margin-top:6px;}
+.modal-cancel{flex:1;padding:12px;background:#F5F5F5;color:#546E7A;border:2px solid #E0E0E0;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
+.modal-confirm{flex:1;padding:12px;color:white;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
+
+/* REMINDER BANNER */
+.reminder-banner{background:linear-gradient(135deg,#E65100,#FF9800);border-radius:14px;padding:14px;margin-bottom:14px;border:3px solid #E65100;display:flex;align-items:center;gap:10px;}
+.reminder-banner-text{color:#fff;font-size:12px;font-weight:800;flex:1;line-height:1.5;}
+.reminder-dismiss{background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);border-radius:8px;color:#fff;font-size:12px;cursor:pointer;padding:5px 10px;font-weight:800;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="sync-dot" id="syncDot"></div>
+<div id="app-wrapper">
+
+  <div class="header">
+    <div class="header-top">
+      <a class="back-btn" href="index.html">← Kembali</a>
+      <div class="header-title-wrap">
+        <div class="header-title">📔 JURNAL ASLAN</div>
+        <div class="header-sub">Catatan Harian & Kenangan</div>
+      </div>
+      <div class="date-badge" id="headerDate">—</div>
+    </div>
+  </div>
+
+  <div id="bdayAlertContainer"></div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('harian')">📔 Harian</div>
+    <div class="tab" onclick="switchTab('catatan')">📌 Catatan</div>
+    <div class="tab" onclick="switchTab('ultah')">🎂 Ultah</div>
+  </div>
+
+  <div class="main">
+
+    <!-- TAB HARIAN -->
+    <div class="tab-content active" id="tab-harian">
+      <div id="reminderBanner"></div>
+      <div class="section-title">✏️ Tulis Jurnal Hari Ini</div>
+      <div class="jurnal-composer">
+        <div class="composer-header">
+          <div class="composer-icon">📔</div>
+          <div class="composer-title-wrap">
+            <div class="composer-title">JURNAL HARI INI</div>
+            <div class="composer-date" id="composerDate">—</div>
+          </div>
+        </div>
+        <div class="mood-section">
+          <div class="mood-label">😊 Bagaimana perasaanmu hari ini?</div>
+          <div class="mood-row" id="moodRow">
+            <div class="mood-btn" onclick="selectMood('😄')" id="mood-😄"><div class="mood-emoji">😄</div><div class="mood-name">Senang</div></div>
+            <div class="mood-btn" onclick="selectMood('😊')" id="mood-😊"><div class="mood-emoji">😊</div><div class="mood-name">Baik</div></div>
+            <div class="mood-btn" onclick="selectMood('😐')" id="mood-😐"><div class="mood-emoji">😐</div><div class="mood-name">Biasa</div></div>
+            <div class="mood-btn" onclick="selectMood('😔')" id="mood-😔"><div class="mood-emoji">😔</div><div class="mood-name">Sedih</div></div>
+            <div class="mood-btn" onclick="selectMood('😤')" id="mood-😤"><div class="mood-emoji">😤</div><div class="mood-name">Kesal</div></div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <div class="tb-group">
+            <button class="tb-btn" onclick="fmt('bold')"><b>B</b></button>
+            <button class="tb-btn" onclick="fmt('italic')"><i>I</i></button>
+            <button class="tb-btn" onclick="fmt('underline')"><u>U</u></button>
+          </div>
+          <div class="tb-group">
+            <button class="tb-btn" onclick="fmt('justifyLeft')">⬅️</button>
+            <button class="tb-btn" onclick="fmt('justifyCenter')">↔️</button>
+            <button class="tb-btn" onclick="fmt('justifyRight')">➡️</button>
+          </div>
+          <div class="tb-group">
+            <button class="tb-btn" onclick="fmt('insertUnorderedList')">•—</button>
+            <button class="tb-btn" onclick="fmt('insertOrderedList')">1—</button>
+          </div>
+          <div class="tb-group emoji-picker-wrap">
+            <button class="tb-btn" onclick="toggleEmojiPicker()">😊</button>
+            <div class="emoji-dropdown" id="emojiDropdown"></div>
+          </div>
+          <div class="tb-group">
+            <select class="tb-select" onchange="changeFontSize(this.value)">
+              <option value="3">Normal</option>
+              <option value="4">Besar</option>
+              <option value="5">Lebih Besar</option>
+              <option value="2">Kecil</option>
+            </select>
+          </div>
+          <div class="tb-group">
+            <button class="tb-btn" onclick="changeTextColor('#E53935')" style="color:#E53935;">A</button>
+            <button class="tb-btn" onclick="changeTextColor('#1565C0')" style="color:#1565C0;">A</button>
+            <button class="tb-btn" onclick="changeTextColor('#2E7D32')" style="color:#2E7D32;">A</button>
+            <button class="tb-btn" onclick="changeTextColor('#333')" style="color:#333;">A</button>
+          </div>
+        </div>
+        <div id="jurnalEditor" contenteditable="true" class="jurnal-entry-input" placeholder="Tulis cerita harimu di sini... 😊✨" spellcheck="false" oninput="onEditorInput()"></div>
+        <div class="jurnal-sections">
+          <div class="jsect">
+            <div class="jsect-label" style="color:#2E7D32;">🌟 Hal baik yang aku lakukan hari ini</div>
+            <textarea class="jsect-input" id="jBaik" rows="2" placeholder="Contoh: Aku membantu Bunda beberes..."></textarea>
+          </div>
+          <div class="jsect">
+            <div class="jsect-label" style="color:#1565C0;">🙏 Yang aku syukuri hari ini</div>
+            <textarea class="jsect-input" id="jSyukur" rows="2" placeholder="Contoh: Bisa main sama teman-teman..."></textarea>
+          </div>
+          <div class="jsect">
+            <div class="jsect-label" style="color:#E65100;">🎯 Target ku besok</div>
+            <textarea class="jsect-input" id="jTarget" rows="2" placeholder="Contoh: Besok mau lebih rajin belajar..."></textarea>
+          </div>
+        </div>
+        <div class="sticker-row" id="stickerRow"></div>
+        <div class="save-area">
+          <button class="save-btn" onclick="saveJurnalHarian()">💾 SIMPAN JURNAL HARI INI</button>
+          <div class="saved-badge" id="savedBadge">✅ Jurnal hari ini sudah tersimpan! Keren Aslan! 🎉</div>
+        </div>
+      </div>
+      <div class="section-title">📚 Jurnal Sebelumnya</div>
+      <div id="jurnalHistory"></div>
+    </div>
+
+    <!-- TAB CATATAN -->
+    <div class="tab-content" id="tab-catatan">
+      <div class="notes-hero">
+        <div class="notes-hero-label">📌 Catatan Penting</div>
+        <div class="notes-hero-count" id="notesCount">0</div>
+        <div class="notes-hero-sub">catatan tersimpan</div>
+      </div>
+      <button class="notes-add-btn" onclick="openNoteModal()">📝 TULIS CATATAN BARU</button>
+      <div class="notes-filter">
+        <button class="notes-filter-btn active" onclick="filterNotes('all')" id="nfilt-all">🌈 Semua</button>
+        <button class="notes-filter-btn" onclick="filterNotes('penting')" id="nfilt-penting">🚨 Penting</button>
+        <button class="notes-filter-btn" onclick="filterNotes('sekolah')" id="nfilt-sekolah">🏫 Sekolah</button>
+        <button class="notes-filter-btn" onclick="filterNotes('reminder')" id="nfilt-reminder">⏰ Reminder</button>
+        <button class="notes-filter-btn" onclick="filterNotes('bebas')" id="nfilt-bebas">🎈 Bebas</button>
+      </div>
+      <div id="notesList"></div>
+    </div>
+
+    <!-- TAB ULTAH -->
+    <div class="tab-content" id="tab-ultah">
+      <div class="bday-hero">
+        <div class="bday-hero-label">🎂 Kalender Ulang Tahun</div>
+        <div class="bday-hero-count" id="bdayTotalCount">0</div>
+        <div class="bday-hero-sub">orang tersimpan</div>
+      </div>
+      <div class="section-title">⏰ Upcoming Ulang Tahun</div>
+      <div class="upcoming-card">
+        <div class="upcoming-header">
+          <div class="upcoming-icon">📅</div>
+          <div class="upcoming-title">ULANG TAHUN YANG AKAN DATANG</div>
+        </div>
+        <div id="upcomingList"></div>
+      </div>
+      <div class="section-title">➕ Tambah Data Ulang Tahun</div>
+      <div class="add-bday-card">
+        <div class="add-bday-title">🎈 Isi Data Orang</div>
+        <div class="bday-form-row">
+          <input type="text" id="bdayName" class="bday-form-input" placeholder="Nama orang" maxlength="40">
+        </div>
+        <div class="bday-form-row">
+          <input type="date" id="bdayDate" class="bday-form-input">
+        </div>
+        <div class="bday-form-row" style="margin-bottom:10px;">
+          <input type="text" id="bdayNote" class="bday-form-input" placeholder="Catatan (opsional)" maxlength="50">
+        </div>
+        <div class="bday-cat-row">
+          <div class="bday-cat-opt" id="bdaycat-teman" onclick="selectBdayCat('teman')">👫<br>Teman</div>
+          <div class="bday-cat-opt" id="bdaycat-saudara" onclick="selectBdayCat('saudara')">👨‍👧<br>Saudara</div>
+          <div class="bday-cat-opt" id="bdaycat-guru" onclick="selectBdayCat('guru')">👩‍🏫<br>Guru</div>
+          <div class="bday-cat-opt" id="bdaycat-keluarga" onclick="selectBdayCat('keluarga')">🏠<br>Keluarga</div>
+        </div>
+        <button class="add-bday-btn" onclick="addBirthday()">🎂 SIMPAN ULANG TAHUN</button>
+      </div>
+      <div class="section-title">📋 Semua Data Ulang Tahun</div>
+      <div id="allBdayList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="overlay" id="noteOverlay">
+  <div class="modal" style="border-color:#90CAF9;">
+    <div class="modal-title" id="noteModalTitle" style="color:#0D47A1;">📝 TULIS CATATAN BARU</div>
+    <label class="modal-label">🏷️ Judul Catatan</label>
+    <input type="text" id="noteTitleInput" class="modal-input" placeholder="Judul catatan..." maxlength="50" style="border-color:#BBDEFB;">
+    <label class="modal-label">📋 Isi Catatan</label>
+    <textarea id="noteBodyInput" class="modal-textarea" rows="5" placeholder="Tulis catatanmu di sini..." style="border-color:#BBDEFB;"></textarea>
+    <label class="modal-label">🏷️ Kategori</label>
+    <div class="bday-cat-row" style="margin-bottom:12px;">
+      <div class="bday-cat-opt" id="ncat-penting" onclick="selectNoteCat('penting')">🚨<br>Penting</div>
+      <div class="bday-cat-opt" id="ncat-sekolah" onclick="selectNoteCat('sekolah')">🏫<br>Sekolah</div>
+      <div class="bday-cat-opt" id="ncat-reminder" onclick="selectNoteCat('reminder')">⏰<br>Reminder</div>
+      <div class="bday-cat-opt" id="ncat-bebas" onclick="selectNoteCat('bebas')">🎈<br>Bebas</div>
+    </div>
+    <div class="modal-row">
+      <button class="modal-cancel" onclick="closeNoteModal()">Batal</button>
+      <button class="modal-confirm" style="background:#1565C0;" onclick="saveNote()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- BDAY EDIT MODAL -->
+<div class="overlay" id="bdayEditOverlay">
+  <div class="modal" style="border-color:#F48FB1;">
+    <div class="modal-title" style="color:#AD1457;">✏️ EDIT ULANG TAHUN</div>
+    <label class="modal-label">👤 Nama</label>
+    <input type="text" id="editBdayName" class="modal-input" maxlength="40" style="border-color:#F8BBD9;">
+    <label class="modal-label">🎂 Tanggal Lahir</label>
+    <input type="date" id="editBdayDate" class="modal-input" style="border-color:#F8BBD9;">
+    <label class="modal-label">📝 Catatan</label>
+    <input type="text" id="editBdayNote" class="modal-input" maxlength="50" style="border-color:#F8BBD9;">
+    <label class="modal-label">🏷️ Kategori</label>
+    <div class="bday-cat-row" style="margin-bottom:12px;">
+      <div class="bday-cat-opt" id="ecat-teman" onclick="selectEditBdayCat('teman')">👫<br>Teman</div>
+      <div class="bday-cat-opt" id="ecat-saudara" onclick="selectEditBdayCat('saudara')">👨‍👧<br>Saudara</div>
+      <div class="bday-cat-opt" id="ecat-guru" onclick="selectEditBdayCat('guru')">👩‍🏫<br>Guru</div>
+      <div class="bday-cat-opt" id="ecat-keluarga" onclick="selectEditBdayCat('keluarga')">🏠<br>Keluarga</div>
+    </div>
+    <div class="modal-row">
+      <button class="modal-cancel" onclick="closeBdayEdit()">Batal</button>
+      <button class="modal-confirm" style="background:#AD1457;" onclick="confirmEditBday()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- JURNAL EDIT MODAL -->
+<div class="overlay" id="jurnalEditOverlay">
+  <div class="modal" style="border-color:#FFE082;">
+    <div class="modal-title" style="color:#E65100;">✏️ EDIT JURNAL</div>
+    <label class="modal-label">📝 Isi Jurnal</label>
+    <textarea id="editJurnalText" class="modal-textarea" rows="5" style="border-color:#FFE082;"></textarea>
+    <label class="modal-label">🌟 Hal Baik</label>
+    <textarea id="editJurnalBaik" class="modal-textarea" rows="2" style="border-color:#FFE082;min-height:60px;"></textarea>
+    <label class="modal-label">🙏 Syukur</label>
+    <textarea id="editJurnalSyukur" class="modal-textarea" rows="2" style="border-color:#FFE082;min-height:60px;"></textarea>
+    <label class="modal-label">🎯 Target</label>
+    <textarea id="editJurnalTarget" class="modal-textarea" rows="2" style="border-color:#FFE082;min-height:60px;"></textarea>
+    <div class="modal-row">
+      <button class="modal-cancel" onclick="closeJurnalEdit()">Batal</button>
+      <button class="modal-confirm" style="background:#FF9800;" onclick="confirmEditJurnal()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE EDIT MODAL -->
+<div class="overlay" id="noteEditOverlay">
+  <div class="modal" style="border-color:#90CAF9;">
+    <div class="modal-title" style="color:#0D47A1;">✏️ EDIT CATATAN</div>
+    <label class="modal-label">🏷️ Judul</label>
+    <input type="text" id="editNoteTitleInput" class="modal-input" maxlength="50" style="border-color:#BBDEFB;">
+    <label class="modal-label">📋 Isi</label>
+    <textarea id="editNoteBodyInput" class="modal-textarea" rows="5" style="border-color:#BBDEFB;"></textarea>
+    <label class="modal-label">🏷️ Kategori</label>
+    <div class="bday-cat-row" style="margin-bottom:12px;">
+      <div class="bday-cat-opt" id="encat-penting" onclick="selectEditNoteCat('penting')">🚨<br>Penting</div>
+      <div class="bday-cat-opt" id="encat-sekolah" onclick="selectEditNoteCat('sekolah')">🏫<br>Sekolah</div>
+      <div class="bday-cat-opt" id="encat-reminder" onclick="selectEditNoteCat('reminder')">⏰<br>Reminder</div>
+      <div class="bday-cat-opt" id="encat-bebas" onclick="selectEditNoteCat('bebas')">🎈<br>Bebas</div>
+    </div>
+    <div class="modal-row">
+      <button class="modal-cancel" onclick="closeNoteEdit()">Batal</button>
+      <button class="modal-confirm" style="background:#1565C0;" onclick="confirmEditNote()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal" style="border-color:#EF9A9A;">
+    <div style="text-align:center;font-size:40px;margin-bottom:12px;" id="confirmEmoji">🗑️</div>
+    <div class="modal-title" id="confirmMsg" style="color:#C62828;">Yakin mau hapus?</div>
+    <div class="modal-row">
+      <button class="modal-cancel" onclick="closeConfirm()">❌ Batal</button>
+      <button class="modal-confirm" id="confirmOkBtn" style="background:#C62828;">🗑️ Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MONTHS_ID=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const MONTHS_LONG=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const DAYS_LONG=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const STICKERS=['⭐','🌟','💪','🎉','🏆','❤️','🔥','😍','🎮','🚀','🌈','🦁','🎯','🌸','💎','🍕','⚽','🎸','📚','🎨','✈️','🏖️','🌺','🦋','🎪','🍦','🧩','🎭','🌙','☀️','⚡','🌊'];
+const EMOJIS=['😄','😊','😎','😍','🥳','😴','🤔','😅','🤩','😁','🎉','⭐','🔥','💪','❤️','🌟','🏆','🎮','📚','🌈','🦁','🚀','🎯','✨','🌸','🍕','⚽','🎸','🌙','☀️'];
+const CAT_NOTE_INFO={penting:{label:'🚨 Penting'},sekolah:{label:'🏫 Sekolah'},reminder:{label:'⏰ Reminder'},bebas:{label:'🎈 Bebas'}};
+const CAT_BDAY_INFO={teman:{label:'👫 Teman'},saudara:{label:'👨‍👧 Saudara'},guru:{label:'👩‍🏫 Guru'},keluarga:{label:'🏠 Keluarga'}};
+
+let data={jurnals:{},notes:{},birthdays:{}};
+let selectedMood='',selectedStickers=[],selectedBdayCat='teman';
+let editingBdayId=null,editingBdayCat='teman';
+let editingJurnalKey=null;
+let editingNoteId=null,editingNoteCat='bebas';
+let selectedNoteCat='bebas';
+let currentNotesFilter='all';
+let reminderDismissed=false;
+let confirmCallback=null;
+
+// ═══ CONFIRM MODAL — diperbaiki agar tidak ada konflik onclick ═══
+function showConfirm(msg, emoji, onOk) {
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmEmoji').textContent = emoji || '🗑️';
+  confirmCallback = onOk;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  confirmCallback = null;
+}
+// Satu event listener permanen untuk tombol OK — tidak diganti tiap klik
+document.getElementById('confirmOkBtn').addEventListener('click', function() {
+  closeConfirm();
+  if (typeof confirmCallback === 'function') confirmCallback();
+});
+
+function setSyncStatus(st){
+  const dot=document.getElementById('syncDot');
+  dot.className='sync-dot'+(st==='syncing'?' syncing':st==='error'?' error':'');
+}
+function save(){
+  setSyncStatus('syncing');
+  JDB.set(data).then(()=>setSyncStatus('ok')).catch(()=>{setSyncStatus('error');showToast('⚠️ Gagal simpan ke cloud',true);});
+  try{localStorage.setItem('aslan_jurnal_v2',JSON.stringify(data));}catch(e){}
+}
+function load(){
+  try{const raw=localStorage.getItem('aslan_jurnal_v2');if(raw)mergeData(JSON.parse(raw));}catch(e){}
+  renderAll();
+  setSyncStatus('syncing');
+  JDB.once('value').then(snap=>{
+    const d=snap.val();
+    if(d){mergeData(d);try{localStorage.setItem('aslan_jurnal_v2',JSON.stringify(data));}catch(e){}}
+    else JDB.set(data);
+    setSyncStatus('ok');renderAll();
+  }).catch(()=>{setSyncStatus('error');showToast('⚠️ Mode offline',true);});
+}
+function mergeData(p){
+  if(p.jurnals)data.jurnals=p.jurnals;
+  if(p.notes){if(Array.isArray(p.notes)){const obj={};p.notes.forEach(n=>{if(n&&n.id)obj[n.id]=n;});data.notes=obj;}else data.notes=p.notes;}
+  if(p.birthdays){if(Array.isArray(p.birthdays)){const obj={};p.birthdays.forEach(b=>{if(b&&b.id)obj[b.id]=b;});data.birthdays=obj;}else data.birthdays=p.birthdays;}
+}
+function notesList(){return Object.values(data.notes||{});}
+function bdayList(){return Object.values(data.birthdays||{});}
+
+function dateKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function todayKey(){return dateKey(new Date());}
+function fmtDate(d){return d.getDate()+' '+MONTHS_ID[d.getMonth()]+' '+d.getFullYear();}
+function fmtDateLong(d){return DAYS_LONG[d.getDay()]+', '+d.getDate()+' '+MONTHS_LONG[d.getMonth()]+' '+d.getFullYear();}
+function daysUntilBirthday(str){
+  if(!str)return 999;
+  const bd=new Date(str);const now=new Date();now.setHours(0,0,0,0);
+  let next=new Date(now.getFullYear(),bd.getMonth(),bd.getDate());
+  if(next<now)next=new Date(now.getFullYear()+1,bd.getMonth(),bd.getDate());
+  return Math.round((next-now)/(1000*60*60*24));
+}
+function calcAge(str){
+  if(!str)return null;
+  const bd=new Date(str);const now=new Date();
+  let age=now.getFullYear()-bd.getFullYear();
+  if(now.getMonth()<bd.getMonth()||(now.getMonth()===bd.getMonth()&&now.getDate()<bd.getDate()))age--;
+  return age;
+}
+
+function renderDate(){
+  const d=new Date();
+  document.getElementById('headerDate').textContent=DAYS_LONG[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()];
+  document.getElementById('composerDate').textContent=fmtDateLong(d);
+}
+function renderBdayAlerts(){
+  const alerts=[];
+  bdayList().forEach(b=>{
+    const days=daysUntilBirthday(b.date);
+    if(days===0)alerts.push({...b,msg:'🎂 HARI INI ulang tahun <b>'+b.name+'</b>! Selamat! 🎉🎈'});
+    else if(days===1)alerts.push({...b,msg:'🎈 Besok ulang tahun <b>'+b.name+'</b>! Siapkan ucapan! 🥳'});
+    else if(days<=7)alerts.push({...b,msg:'⏰ '+days+' hari lagi ulang tahun <b>'+b.name+'</b>!'});
+  });
+  const c=document.getElementById('bdayAlertContainer');
+  if(!alerts.length){c.innerHTML='';return;}
+  c.innerHTML=alerts.map((a,i)=>`<div class="bday-alert" id="alert-${i}"><span class="bday-alert-emoji">🎂</span><span class="bday-alert-text">${a.msg}</span><button class="bday-alert-close" onclick="dismissAlert('alert-${i}')">✕</button></div>`).join('');
+}
+function dismissAlert(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+function renderReminderBanner(){
+  if(reminderDismissed)return;
+  const k=todayKey();const j=data.jurnals[k];
+  const b=document.getElementById('reminderBanner');
+  if(!j||(!j.text&&!j.baik&&!j.syukur&&!j.target)){
+    b.innerHTML=`<div class="reminder-banner"><span style="font-size:22px;">📔</span><span class="reminder-banner-text">Belum ada jurnal hari ini! Yuk ceritakan harimu Aslan 😊</span><button class="reminder-dismiss" onclick="reminderDismissed=true;document.getElementById('reminderBanner').innerHTML=''">Nanti</button></div>`;
+  }else b.innerHTML='';
+}
+function selectMood(emoji){
+  selectedMood=emoji;
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
+  const btn=document.getElementById('mood-'+emoji);if(btn)btn.classList.add('sel');
+}
+function renderStickerRow(){
+  const row=document.getElementById('stickerRow');row.innerHTML='';
+  STICKERS.forEach(s=>{
+    const span=document.createElement('span');
+    span.className='sticker'+(selectedStickers.includes(s)?' selected':'');
+    span.textContent=s;
+    span.onclick=()=>toggleSticker(s,span);
+    row.appendChild(span);
+  });
+}
+function toggleSticker(s,el){
+  if(selectedStickers.includes(s)){selectedStickers=selectedStickers.filter(x=>x!==s);el.classList.remove('selected');}
+  else if(selectedStickers.length<8){selectedStickers.push(s);el.classList.add('selected');}
+  else showToast('Maksimal 8 stiker!',true);
+}
+function renderEmojiPicker(){
+  const dd=document.getElementById('emojiDropdown');dd.innerHTML='';
+  EMOJIS.forEach(e=>{
+    const btn=document.createElement('div');btn.className='emoji-opt';btn.textContent=e;
+    btn.onclick=()=>{insertEmoji(e);toggleEmojiPicker();};
+    dd.appendChild(btn);
+  });
+}
+function toggleEmojiPicker(){document.getElementById('emojiDropdown').classList.toggle('open');}
+function insertEmoji(e){document.getElementById('jurnalEditor').focus();document.execCommand('insertText',false,e);}
+document.addEventListener('click',e=>{
+  const picker=document.getElementById('emojiDropdown');
+  if(picker&&picker.classList.contains('open')&&!picker.closest('.emoji-picker-wrap').contains(e.target))picker.classList.remove('open');
+});
+function fmt(cmd){document.getElementById('jurnalEditor').focus();document.execCommand(cmd,false,null);}
+function changeFontSize(size){document.getElementById('jurnalEditor').focus();document.execCommand('fontSize',false,size);}
+function changeTextColor(color){document.getElementById('jurnalEditor').focus();document.execCommand('foreColor',false,color);}
+function loadTodayJurnal(){
+  const k=todayKey();const j=data.jurnals[k]||{};
+  document.getElementById('jurnalEditor').innerHTML=j.text||'';
+  document.getElementById('jBaik').value=j.baik||'';
+  document.getElementById('jSyukur').value=j.syukur||'';
+  document.getElementById('jTarget').value=j.target||'';
+  selectedMood=j.mood||'';selectedStickers=j.stickers||[];
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
+  if(selectedMood){const btn=document.getElementById('mood-'+selectedMood);if(btn)btn.classList.add('sel');}
+  renderStickerRow();
+  const sb=document.getElementById('savedBadge');
+  if(j.text!==undefined||j.baik!==undefined)sb.classList.add('show');else sb.classList.remove('show');
+}
+function onEditorInput(){document.getElementById('savedBadge').classList.remove('show');}
+function saveJurnalHarian(){
+  const k=todayKey();
+  const text=document.getElementById('jurnalEditor').innerHTML;
+  const baik=document.getElementById('jBaik').value.trim();
+  const syukur=document.getElementById('jSyukur').value.trim();
+  const target=document.getElementById('jTarget').value.trim();
+  if(!text&&!baik&&!syukur&&!target&&!selectedMood){showToast('Isi dulu jurnalnya ya! 📔',true);return;}
+  if(!data.jurnals)data.jurnals={};
+  data.jurnals[k]={text,baik,syukur,target,mood:selectedMood,stickers:[...selectedStickers],timestamp:Date.now()};
+  save();renderJurnalHistory();renderReminderBanner();
+  document.getElementById('savedBadge').classList.add('show');
+  showToast('📔 Jurnal tersimpan! Keren Aslan! 🌟');
+}
+function renderJurnalHistory(){
+  const hist=document.getElementById('jurnalHistory');
+  const today=todayKey();
+  const entries=Object.entries(data.jurnals||{}).filter(([k])=>k!==today).sort((a,b)=>{
+    const p=s=>{const ps=s.split('-');return new Date(+ps[0],+ps[1]-1,+ps[2]);};
+    return p(b[0])-p(a[0]);
+  }).slice(0,15);
+  if(!entries.length){hist.innerHTML=`<div class="history-empty"><div class="history-empty-emoji">📝</div><div class="history-empty-text">Belum ada jurnal kemarin.<br>Mulai hari ini yuk! 😊</div></div>`;return;}
+  hist.innerHTML='';
+  entries.forEach(([key,j])=>{
+    const ps=key.split('-');const d=new Date(+ps[0],+ps[1]-1,+ps[2]);
+    const card=document.createElement('div');card.className='history-entry';
+    const stickersHtml=(j.stickers&&j.stickers.length)?`<div class="history-stickers">${j.stickers.map(s=>`<span class="history-sticker">${s}</span>`).join('')}</div>`:'';
+    const cleanText=j.text?j.text.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,120)+(j.text.replace(/<[^>]*>/g,'').trim().length>120?'...':''):'';
+    card.innerHTML=`<div class="history-header"><div class="history-date">📅 ${fmtDateLong(d)} ${j.mood?`<span class="history-mood">${j.mood}</span>`:''}</div><div class="history-actions"><button class="hist-edit-btn" onclick="openJurnalEdit('${key}')">✏️ Edit</button><button class="hist-del-btn" onclick="deleteJurnal('${key}')">🗑️</button></div></div>${stickersHtml}<div class="history-body">${cleanText?`<div class="history-text">${cleanText}</div>`:''}${j.baik?`<div class="history-sub-item"><div class="history-sub-bullet">🌟</div><div><div class="history-sub-label">Hal Baik</div><div class="history-sub-text">${j.baik}</div></div></div>`:''}${j.syukur?`<div class="history-sub-item"><div class="history-sub-bullet">🙏</div><div><div class="history-sub-label">Syukur</div><div class="history-sub-text">${j.syukur}</div></div></div>`:''}${j.target?`<div class="history-sub-item"><div class="history-sub-bullet">🎯</div><div><div class="history-sub-label">Target</div><div class="history-sub-text">${j.target}</div></div></div>`:''}</div>`;
+    hist.appendChild(card);
+  });
+}
+function deleteJurnal(key){showConfirm('Hapus jurnal ini?','🗑️',()=>{delete data.jurnals[key];save();renderJurnalHistory();showToast('🗑️ Jurnal dihapus',true);});}
+function openJurnalEdit(key){
+  editingJurnalKey=key;const j=data.jurnals[key]||{};
+  document.getElementById('editJurnalText').value=j.text?j.text.replace(/<[^>]*>/g,''):'';
+  document.getElementById('editJurnalBaik').value=j.baik||'';
+  document.getElementById('editJurnalSyukur').value=j.syukur||'';
+  document.getElementById('editJurnalTarget').value=j.target||'';
+  document.getElementById('jurnalEditOverlay').classList.add('open');
+}
+function closeJurnalEdit(){document.getElementById('jurnalEditOverlay').classList.remove('open');editingJurnalKey=null;}
+function confirmEditJurnal(){
+  if(!editingJurnalKey)return;
+  const j=data.jurnals[editingJurnalKey]||{};
+  j.text=document.getElementById('editJurnalText').value;
+  j.baik=document.getElementById('editJurnalBaik').value.trim();
+  j.syukur=document.getElementById('editJurnalSyukur').value.trim();
+  j.target=document.getElementById('editJurnalTarget').value.trim();
+  data.jurnals[editingJurnalKey]=j;
+  save();renderJurnalHistory();closeJurnalEdit();showToast('✏️ Jurnal berhasil diedit!');
+}
+function openNoteModal(){
+  selectedNoteCat='bebas';
+  document.getElementById('noteTitleInput').value='';
+  document.getElementById('noteBodyInput').value='';
+  ['penting','sekolah','reminder','bebas'].forEach(c=>document.getElementById('ncat-'+c).className='bday-cat-opt');
+  document.getElementById('noteOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('noteTitleInput').focus(),100);
+}
+function closeNoteModal(){document.getElementById('noteOverlay').classList.remove('open');}
+function selectNoteCat(cat){
+  selectedNoteCat=cat;
+  ['penting','sekolah','reminder','bebas'].forEach(c=>document.getElementById('ncat-'+c).className='bday-cat-opt'+(c===cat?' sel-'+c:''));
+}
+function saveNote(){
+  const title=document.getElementById('noteTitleInput').value.trim();
+  const body=document.getElementById('noteBodyInput').value.trim();
+  if(!title){showToast('Isi judul catatan!',true);return;}
+  const id='note_'+Date.now();
+  if(!data.notes)data.notes={};
+  data.notes[id]={id,title,body,cat:selectedNoteCat,timestamp:Date.now()};
+  save();renderNotes();closeNoteModal();showToast('📝 Catatan tersimpan!');
+}
+function filterNotes(cat){
+  currentNotesFilter=cat;
+  document.querySelectorAll('.notes-filter-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('nfilt-'+cat);if(btn)btn.classList.add('active');
+  renderNotes();
+}
+function renderNotes(){
+  const notes=notesList();
+  document.getElementById('notesCount').textContent=notes.length;
+  const filtered=currentNotesFilter==='all'?notes:notes.filter(n=>n.cat===currentNotesFilter);
+  const list=document.getElementById('notesList');
+  if(!filtered.length){list.innerHTML=`<div class="notes-empty"><div class="notes-empty-emoji">💭</div><div class="notes-empty-text">Belum ada catatan.<br>Tekan tombol di atas untuk mulai!</div></div>`;return;}
+  list.innerHTML='';
+  [...filtered].sort((a,b)=>b.timestamp-a.timestamp).forEach(n=>{
+    const ci=CAT_NOTE_INFO[n.cat]||CAT_NOTE_INFO.bebas;
+    const d=new Date(n.timestamp);
+    const card=document.createElement('div');card.className='note-card';
+    card.innerHTML=`<div class="note-card-header"><div class="note-card-title">${n.title}</div><div class="note-card-date">📅 ${fmtDate(d)}</div></div><div class="note-card-body">${n.body?`<div class="note-card-text">${n.body}</div>`:''}<span class="note-cat-chip cat-${n.cat}">${ci.label}</span></div><div class="note-card-actions"><button class="note-edit-btn" onclick="openNoteEdit('${n.id}')">✏️ Edit</button><button class="note-del-btn" onclick="deleteNote('${n.id}')">🗑️ Hapus</button></div>`;
+    list.appendChild(card);
+  });
+}
+function deleteNote(id){showConfirm('Hapus catatan ini?','🗑️',()=>{delete data.notes[id];save();renderNotes();showToast('🗑️ Catatan dihapus',true);});}
+function openNoteEdit(id){
+  editingNoteId=id;const n=(data.notes||{})[id];if(!n)return;
+  editingNoteCat=n.cat||'bebas';
+  document.getElementById('editNoteTitleInput').value=n.title||'';
+  document.getElementById('editNoteBodyInput').value=n.body||'';
+  ['penting','sekolah','reminder','bebas'].forEach(c=>document.getElementById('encat-'+c).className='bday-cat-opt'+(c===editingNoteCat?' sel-'+c:''));
+  document.getElementById('noteEditOverlay').classList.add('open');
+}
+function closeNoteEdit(){document.getElementById('noteEditOverlay').classList.remove('open');editingNoteId=null;}
+function selectEditNoteCat(cat){
+  editingNoteCat=cat;
+  ['penting','sekolah','reminder','bebas'].forEach(c=>document.getElementById('encat-'+c).className='bday-cat-opt'+(c===cat?' sel-'+c:''));
+}
+function confirmEditNote(){
+  const title=document.getElementById('editNoteTitleInput').value.trim();
+  const body=document.getElementById('editNoteBodyInput').value.trim();
+  if(!title){showToast('Judul tidak boleh kosong!',true);return;}
+  if(!data.notes||!data.notes[editingNoteId])return;
+  data.notes[editingNoteId]={...data.notes[editingNoteId],title,body,cat:editingNoteCat};
+  save();renderNotes();closeNoteEdit();showToast('✏️ Catatan diedit!');
+}
+function selectBdayCat(cat){
+  selectedBdayCat=cat;
+  ['teman','saudara','guru','keluarga'].forEach(c=>document.getElementById('bdaycat-'+c).className='bday-cat-opt'+(c===cat?' sel-'+c:''));
+}
+function addBirthday(){
+  const name=document.getElementById('bdayName').value.trim();
+  const date=document.getElementById('bdayDate').value;
+  const note=document.getElementById('bdayNote').value.trim();
+  if(!name||!date){showToast('Nama dan tanggal harus diisi!',true);return;}
+  const id='bday_'+Date.now();
+  if(!data.birthdays)data.birthdays={};
+  data.birthdays[id]={id,name,date,note,cat:selectedBdayCat};
+  document.getElementById('bdayName').value='';
+  document.getElementById('bdayDate').value='';
+  document.getElementById('bdayNote').value='';
+  save();renderBirthdays();renderBdayAlerts();showToast('🎂 Ulang tahun '+name+' ditambahkan!');
+}
+
+// ═══ DELETE BIRTHDAY — pakai event delegation supaya tidak ada masalah onclick di dinamis HTML ═══
+function deleteBirthday(id) {
+  showConfirm('Hapus data ulang tahun ini?', '🎂', function() {
+    if (data.birthdays && data.birthdays[id]) {
+      delete data.birthdays[id];
+      save();
+      renderBirthdays();
+      renderBdayAlerts();
+      showToast('🗑️ Data dihapus', true);
+    }
+  });
+}
+
+function openBdayEdit(id){
+  editingBdayId=id;const b=(data.birthdays||{})[id];if(!b)return;
+  editingBdayCat=b.cat||'teman';
+  document.getElementById('editBdayName').value=b.name||'';
+  document.getElementById('editBdayDate').value=b.date||'';
+  document.getElementById('editBdayNote').value=b.note||'';
+  ['teman','saudara','guru','keluarga'].forEach(c=>document.getElementById('ecat-'+c).className='bday-cat-opt'+(c===editingBdayCat?' sel-'+c:''));
+  document.getElementById('bdayEditOverlay').classList.add('open');
+}
+function closeBdayEdit(){document.getElementById('bdayEditOverlay').classList.remove('open');editingBdayId=null;}
+function selectEditBdayCat(cat){
+  editingBdayCat=cat;
+  ['teman','saudara','guru','keluarga'].forEach(c=>document.getElementById('ecat-'+c).className='bday-cat-opt'+(c===cat?' sel-'+c:''));
+}
+function confirmEditBday(){
+  const name=document.getElementById('editBdayName').value.trim();
+  const date=document.getElementById('editBdayDate').value;
+  const note=document.getElementById('editBdayNote').value.trim();
+  if(!name||!date){showToast('Nama dan tanggal harus diisi!',true);return;}
+  if(!data.birthdays||!data.birthdays[editingBdayId])return;
+  data.birthdays[editingBdayId]={...data.birthdays[editingBdayId],name,date,note,cat:editingBdayCat};
+  save();renderBirthdays();renderBdayAlerts();closeBdayEdit();showToast('✏️ Data ulang tahun diedit!');
+}
+function renderBirthdays(){
+  const bdays=bdayList();
+  document.getElementById('bdayTotalCount').textContent=bdays.length;
+  const sorted=[...bdays].map(b=>({...b,days:daysUntilBirthday(b.date)})).sort((a,b)=>a.days-b.days);
+  const upcoming=document.getElementById('upcomingList');
+  if(!sorted.length){upcoming.innerHTML='<div class="bday-empty">📅 Belum ada data ulang tahun.<br>Tambahkan di bawah! 🎂</div>';return;}
+  upcoming.innerHTML='';
+  sorted.slice(0,10).forEach(b=>{
+    const ci=CAT_BDAY_INFO[b.cat]||CAT_BDAY_INFO.teman;
+    const ageNext=(calcAge(b.date)!==null)?calcAge(b.date)+1:null;
+    let cdClass='normal',cdLabel='hari lagi';
+    if(b.days===0){cdClass='today';cdLabel='HARI INI!';}
+    else if(b.days<=7)cdClass='soon';
+    const row=document.createElement('div');row.className='bday-item';
+    const bd=new Date(b.date);
+
+    // Buat elemen tombol secara langsung supaya event listener bisa dipasang langsung
+    row.innerHTML=`
+      <div class="bday-item-countdown ${cdClass}">
+        <div class="bday-item-countdown-num">${b.days===0?'🎂':b.days}</div>
+        <div class="bday-item-countdown-label">${cdLabel}</div>
+      </div>
+      <div class="bday-item-info">
+        <div class="bday-item-name">${b.name}</div>
+        <div class="bday-item-detail">📅 ${bd.getDate()} ${MONTHS_ID[bd.getMonth()]}${ageNext!==null?' · Umur '+ageNext+' tahun':''}</div>
+        ${b.note?`<div class="bday-item-detail">💬 ${b.note}</div>`:''}
+        <span class="bday-item-cat cat-${b.cat}">${ci.label}</span>
+      </div>
+      <div class="bday-item-actions">
+        <button class="bday-edit-btn" data-id="${b.id}" data-action="edit">✏️</button>
+        <button class="bday-del-btn" data-id="${b.id}" data-action="delete">🗑️</button>
+      </div>`;
+    upcoming.appendChild(row);
+  });
+
+  // Event delegation untuk tombol aksi di upcoming list
+  upcoming.onclick = function(e) {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    if (action === 'edit') openBdayEdit(id);
+    else if (action === 'delete') deleteBirthday(id);
+  };
+
+  const allList=document.getElementById('allBdayList');
+  if(!bdays.length){allList.innerHTML='<div class="bday-empty" style="text-align:center;padding:20px;">Belum ada data. Tambahkan di atas! 🎈</div>';return;}
+  const allSorted=[...bdays].sort((a,b)=>{const da=new Date(a.date),db=new Date(b.date);if(da.getMonth()!==db.getMonth())return da.getMonth()-db.getMonth();return da.getDate()-db.getDate();});
+  allList.innerHTML='';let lastMonth='';
+  allSorted.forEach(b=>{
+    const bd=new Date(b.date);const monthLabel=MONTHS_LONG[bd.getMonth()];
+    if(monthLabel!==lastMonth){lastMonth=monthLabel;const mh=document.createElement('div');mh.style.cssText='font-size:10px;font-weight:800;color:#AD1457;padding:8px 4px 4px;letter-spacing:1px;text-transform:uppercase;';mh.textContent='🗓️ '+monthLabel;allList.appendChild(mh);}
+    const ci=CAT_BDAY_INFO[b.cat]||CAT_BDAY_INFO.teman;
+    const ageNow=calcAge(b.date);
+    const row=document.createElement('div');
+    row.style.cssText='background:white;border-radius:12px;border:2px solid #F8BBD9;margin-bottom:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;';
+    row.innerHTML=`
+      <div style="font-size:26px;flex-shrink:0;">${b.cat==='teman'?'👫':b.cat==='saudara'?'👨‍👧':b.cat==='guru'?'👩‍🏫':'🏠'}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:800;color:#1A1A2E;">${b.name}</div>
+        <div style="font-size:11px;color:#90A4AE;font-weight:700;margin-top:2px;">🎂 ${bd.getDate()} ${MONTHS_ID[bd.getMonth()]}${ageNow!==null?' · '+ageNow+' tahun':''}</div>
+        ${b.note?`<div style="font-size:11px;color:#90A4AE;font-weight:700;">💬 ${b.note}</div>`:''}
+        <span class="bday-item-cat cat-${b.cat}">${ci.label}</span>
+      </div>
+      <div class="bday-item-actions">
+        <button class="bday-edit-btn" data-id="${b.id}" data-action="edit">✏️</button>
+        <button class="bday-del-btn" data-id="${b.id}" data-action="delete">🗑️</button>
+      </div>`;
+    allList.appendChild(row);
+  });
+
+  // Event delegation untuk tombol aksi di all list
+  allList.onclick = function(e) {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    if (action === 'edit') openBdayEdit(id);
+    else if (action === 'delete') deleteBirthday(id);
+  };
+}
+function switchTab(tab){
+  ['harian','catatan','ultah'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('active',t===tab));
+  const tabs=document.querySelectorAll('.tab');
+  ['harian','catatan','ultah'].forEach((t,i)=>tabs[i].classList.toggle('active',t===tab));
+  if(tab==='catatan')renderNotes();
+  if(tab==='ultah')renderBirthdays();
+}
+let toastT;
+function showToast(msg,red=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(red?' red':'');
+  t.classList.add('show');clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+function renderAll(){
+  renderDate();renderBdayAlerts();renderReminderBanner();
+  loadTodayJurnal();renderJurnalHistory();renderNotes();renderBirthdays();
+}
+
+renderEmojiPicker();
+renderStickerRow();
+load();
+</script>
+</body>
+</html>
