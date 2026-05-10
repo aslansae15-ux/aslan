@@ -279,13 +279,23 @@ function saveGoal(){
 }
 
 function computeStreak(){
-  const today=new Date();let checkDate=new Date(today);let streak=0;
-  const todayK=dateKey(today);const todaySubmitted=state.history[todayK]&&state.history[todayK].submitted;
-  if(!todaySubmitted){checkDate.setDate(checkDate.getDate()-1);}
+  const today=new Date();
+  let streak=0;
+
+  // Cek mulai dari hari ini mundur ke belakang
+  // Kalau hari ini belum submit, tidak dihitung tapi tetap cek kemarin
   for(let i=0;i<400;i++){
-    const k=dateKey(checkDate);
-    if(state.history[k]&&state.history[k].submitted){streak++;checkDate.setDate(checkDate.getDate()-1);}
-    else{break;}
+    const d=new Date(today);
+    d.setDate(today.getDate()-i);
+    const k=dateKey(d);
+    const submitted=state.history[k]&&state.history[k].submitted;
+
+    if(i===0&&!submitted)continue; // hari ini belum selesai, skip tapi lanjut
+    if(submitted){
+      streak++;
+    }else{
+      break; // ada hari kosong, stop
+    }
   }
   return streak;
 }
@@ -334,8 +344,14 @@ function submitDay(){
   document.getElementById('confirmOverlay').classList.remove('open');
   const d=todayData();const total=state.quests.length;const count=state.quests.filter(q=>d[q.id]).length;
   if(count<total)return;
-  d.submitted=true;const xp=count*XP_PER+XP_BONUS;
-  state.totalXP+=xp;checkBadges();save();renderAll();
+  
+  // Set submitted DULU sebelum checkBadges
+  d.submitted=true;
+  const xp=count*XP_PER+XP_BONUS;
+  state.totalXP+=xp;
+  
+  checkBadges(); // baru cek badge, setelah d.submitted = true
+  save();renderAll();
   showConfetti();showToast('🎉 LUAR BIASA! +'+xp+' XP! Kamu HERO!');
 }
 
