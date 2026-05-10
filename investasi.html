@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2E7D32">
+<title>Investasi Aslan 💰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --green:#27ae60;--green2:#2ecc71;--gold:#f39c12;--gold2:#f1c40f;
+    --blue:#2980b9;--purple:#8e44ad;--red:#e74c3c;--orange:#e67e22;
+    --teal:#16a085;--pink:#e84393;
+    --card:#fff;--bg:#f0f9f0;--text:#1a2e1a;--muted:#6b8f6b;
+    --radius:18px;--radius-sm:12px;
+  }
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+  /* HEADER */
+  .header{background:linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c);padding:0 0 0;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 2px,transparent 2px,transparent 20px)}
+  .hdr-top{display:flex;align-items:center;gap:12px;padding:16px 16px 0}
+  .back-btn{background:rgba(255,255,255,.2);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:background .2s}
+  .back-btn:hover{background:rgba(255,255,255,.35)}
+  .page-badge{background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px;color:#fff;font-size:12px;font-weight:800;letter-spacing:.5px}
+  .hdr-hero{display:flex;align-items:center;gap:14px;padding:14px 16px 0}
+  .hdr-avatar{width:54px;height:54px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:3px solid rgba(255,255,255,.4)}
+  .hdr-name{color:#fff;font-size:18px;font-weight:900;line-height:1.1}
+  .hdr-sub{color:rgba(255,255,255,.75);font-size:12px;font-weight:700}
+  .wealth-banner{margin:14px 16px 0;background:rgba(0,0,0,.25);border-radius:14px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+  .wb-label{color:rgba(255,255,255,.8);font-size:11px;font-weight:800;margin-bottom:4px}
+  .wb-value{color:#f1c40f;font-size:26px;font-weight:900}
+  .wb-sub{color:rgba(255,255,255,.65);font-size:11px;font-weight:700}
+  .wb-icon{font-size:42px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+  .hdr-xp-row{padding:12px 16px 16px;display:flex;gap:8px}
+  .hdr-stat{background:rgba(255,255,255,.15);border-radius:10px;padding:8px 14px;flex:1;text-align:center}
+  .hdr-stat-val{color:#f1c40f;font-size:16px;font-weight:900}
+  .hdr-stat-lbl{color:rgba(255,255,255,.75);font-size:10px;font-weight:800}
+
+  /* MAIN */
+  .main{padding:0 12px 100px}
+  .section-title{font-size:16px;font-weight:900;color:var(--text);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+
+  /* CARDS */
+  .card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:2.5px solid #c8e6c9}
+
+  /* ======================== TABUNGAN ======================== */
+  .tabung-card{background:linear-gradient(135deg,#e3f2fd,#e8f5e9);border:2.5px solid #64b5f6;border-radius:var(--radius);padding:0;margin-bottom:12px;overflow:hidden;box-shadow:0 4px 18px rgba(41,128,185,.12)}
+  .tabung-header{background:linear-gradient(135deg,#1565c0,#1976d2,#0288d1);padding:16px 18px;position:relative;overflow:hidden}
+  .tabung-header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0,rgba(255,255,255,.04) 2px,transparent 2px,transparent 18px)}
+  .tabung-title{color:rgba(255,255,255,.85);font-size:11px;font-weight:800;margin-bottom:6px;letter-spacing:.5px}
+  .tabung-balance{color:#fff;font-size:32px;font-weight:900;line-height:1}
+  .tabung-sub{color:rgba(255,255,255,.7);font-size:11px;font-weight:700;margin-top:4px}
+  .tabung-stats{display:flex;gap:0;background:rgba(255,255,255,.12);border-radius:12px;margin-top:12px;overflow:hidden}
+  .tabung-stat{flex:1;padding:9px 10px;text-align:center}
+  .tabung-stat+.tabung-stat{border-left:1.5px solid rgba(255,255,255,.2)}
+  .ts-val{color:#f1c40f;font-size:14px;font-weight:900}
+  .ts-lbl{color:rgba(255,255,255,.7);font-size:9px;font-weight:800;margin-top:2px}
+
+  /* QUICK ADD */
+  .tabung-quick{padding:14px 16px 0}
+  .tq-label{font-size:11px;font-weight:800;color:#1565c0;margin-bottom:8px}
+  .tq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+  .tq-btn{background:#fff;border:2px solid #bbdefb;border-radius:10px;padding:8px 4px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;color:#1565c0;cursor:pointer;transition:.2s;text-align:center}
+  .tq-btn:hover{background:#e3f2fd;border-color:#42a5f5;transform:translateY(-1px)}
+  .tq-btn:active{transform:scale(.95)}
+  .tq-custom{display:flex;gap:7px;margin-bottom:14px}
+  .tq-input{flex:1;border:2px solid #bbdefb;border-radius:10px;padding:10px 12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:#1565c0;outline:none;background:#fff;transition:.2s}
+  .tq-input:focus{border-color:#1976d2;box-shadow:0 0 0 3px rgba(25,118,210,.15)}
+  .tq-input::placeholder{color:#90caf9;font-weight:700}
+  .tq-add-btn{background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;transition:.2s;white-space:nowrap}
+  .tq-add-btn:hover{background:linear-gradient(135deg,#0d47a1,#1565c0);transform:translateY(-1px)}
+
+  /* TRANSAKSI */
+  .tabung-trx-section{padding:0 16px 16px}
+  .trx-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .trx-title{font-size:12px;font-weight:900;color:#1565c0}
+  .trx-clear{background:none;border:none;font-family:'Nunito',sans-serif;font-size:10px;font-weight:800;color:#e74c3c;cursor:pointer;padding:3px 8px;border-radius:6px;background:#fce4ec}
+  .trx-list{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+  .trx-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:9px 11px;border:1.5px solid #e3f2fd;animation:slideIn .3s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+  .trx-icon{font-size:20px;flex-shrink:0}
+  .trx-info{flex:1;min-width:0}
+  .trx-desc{font-size:12px;font-weight:800;color:#1a2e1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .trx-date{font-size:10px;font-weight:700;color:#90a4ae}
+  .trx-amount{font-size:13px;font-weight:900;flex-shrink:0}
+  .trx-amount.in{color:#2e7d32}
+  .trx-amount.out{color:#c62828}
+  .trx-empty{text-align:center;padding:20px;font-size:12px;font-weight:700;color:#90caf9}
+
+  /* ======================== ADMIN PANEL ======================== */
+  .admin-toggle-btn{width:100%;background:#fff;border:2px solid #e0e0e0;border-radius:12px;padding:11px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:#555;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:.2s;margin-bottom:12px}
+  .admin-toggle-btn:hover{border-color:#1976d2;color:#1565c0;background:#e3f2fd}
+  .admin-panel{background:#fff;border:2.5px solid #1976d2;border-radius:var(--radius);padding:16px;margin-bottom:12px;display:none;animation:fadeDown .3s ease}
+  .admin-panel.open{display:block}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+  .admin-title{font-size:14px;font-weight:900;color:#1565c0;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .admin-lock{background:#e3f2fd;border:2px solid #90caf9;border-radius:10px;padding:12px 14px;margin-bottom:12px}
+  .admin-lock-label{font-size:11px;font-weight:800;color:#1565c0;margin-bottom:6px}
+  .admin-pin-row{display:flex;gap:8px}
+  .admin-pin-input{flex:1;border:2px solid #bbdefb;border-radius:8px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;color:#1565c0;letter-spacing:8px;text-align:center;outline:none;background:#fff}
+  .admin-pin-input:focus{border-color:#1976d2}
+  .admin-pin-btn{background:#1976d2;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
+  .admin-body{display:none}
+  .admin-body.unlocked{display:block}
+  .admin-section{background:#f8fbff;border:1.5px solid #bbdefb;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .admin-section-title{font-size:11px;font-weight:900;color:#1565c0;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .admin-form-row{display:flex;flex-direction:column;gap:7px;margin-bottom:8px}
+  .admin-label{font-size:10px;font-weight:800;color:#1976d2}
+  .admin-input{border:2px solid #bbdefb;border-radius:8px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:#1a2e1a;outline:none;background:#fff;width:100%}
+  .admin-input:focus{border-color:#1976d2}
+  .admin-select{border:2px solid #bbdefb;border-radius:8px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:#1a2e1a;outline:none;background:#fff;width:100%;cursor:pointer}
+  .admin-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .admin-btn{background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;border:none;border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;width:100%;transition:.2s;margin-top:4px}
+  .admin-btn:hover{background:linear-gradient(135deg,#0d47a1,#1565c0)}
+  .admin-btn.danger{background:linear-gradient(135deg,#c62828,#e53935)}
+  .admin-btn.danger:hover{background:linear-gradient(135deg,#b71c1c,#c62828)}
+  .admin-btn.success{background:linear-gradient(135deg,#2e7d32,#388e3c)}
+  .admin-goals-list{display:flex;flex-direction:column;gap:6px}
+  .admin-goal-item{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:8px;padding:8px 10px;border:1.5px solid #c8e6c9}
+  .admin-goal-info{font-size:11px;font-weight:800;color:#1a2e1a}
+  .admin-goal-del{background:#fce4ec;border:none;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:900;color:#e74c3c;cursor:pointer}
+
+  /* GOLD CARD */
+  .gold-card{background:linear-gradient(135deg,#fff8e1,#fff3c4);border:2.5px solid #f39c12;border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:0 4px 18px rgba(243,156,18,.15)}
+  .gold-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .gold-title{font-size:15px;font-weight:900;color:#7d5a00}
+  .live-pill{display:flex;align-items:center;gap:5px;background:#1b5e20;color:#fff;font-size:9px;font-weight:900;border-radius:8px;padding:4px 10px}
+  .live-dot{width:7px;height:7px;background:#4caf50;border-radius:50%;animation:pulse 1.5s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+  .gold-price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+  .gold-price{font-size:28px;font-weight:900;color:#c0810c;transition:color .3s}
+  .gold-price.flash-up{color:#2e7d32}
+  .gold-price.flash-down{color:#c62828}
+  .gold-unit{font-size:13px;font-weight:800;color:#9a6a00}
+  .gold-change{font-size:12px;font-weight:800;padding:3px 10px;border-radius:8px;transition:all .3s}
+  .up{background:#e8f5e9;color:#2e7d32}
+  .down{background:#fce4ec;color:#c62828}
+  .gold-meta{font-size:10px;font-weight:700;color:#9a6a00;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .gold-meta-time{background:rgba(255,255,255,.6);border-radius:6px;padding:2px 8px}
+  .gold-meta-src{color:#c0810c;font-weight:800}
+  .gold-saldo-row{display:flex;gap:10px;margin-top:12px}
+  .gold-saldo-box{flex:1;background:rgba(255,255,255,.8);border-radius:12px;padding:10px 12px;border:1.5px solid #f0c040}
+  .gsb-label{font-size:10px;font-weight:800;color:#9a6a00;margin-bottom:3px}
+  .gsb-value{font-size:16px;font-weight:900;color:#7d5a00}
+  .gold-chart-wrap{margin-top:14px;background:rgba(255,255,255,.6);border-radius:12px;padding:12px;border:1.5px solid #f0c040}
+  .chart-label{font-size:10px;font-weight:800;color:#9a6a00;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+  .chart-updating{font-size:9px;font-weight:700;color:#c0810c;background:rgba(255,255,255,.7);border-radius:5px;padding:2px 6px}
+
+  /* SAHAM */
+  .saham-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .saham-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:2.5px solid #c8e6c9;transition:transform .2s,box-shadow .2s;cursor:pointer;position:relative;overflow:hidden}
+  .saham-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+  .saham-card.ultra::before{background:linear-gradient(90deg,#e74c3c,#c0392b)}
+  .saham-card.indomie::before{background:linear-gradient(90deg,#f39c12,#e67e22)}
+  .saham-card.youtube::before{background:linear-gradient(90deg,#e74c3c,#c0392b)}
+  .saham-card.gojek::before{background:linear-gradient(90deg,#00b14f,#00a040)}
+  .saham-card.lego::before{background:linear-gradient(90deg,#e74c3c,#f39c12)}
+  .saham-card.nintendo::before{background:linear-gradient(90deg,#e74c3c,#c0392b)}
+  .saham-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+  .saham-icon{font-size:28px;margin-bottom:8px;display:block}
+  .saham-name{font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px}
+  .saham-ticker{font-size:10px;font-weight:700;color:var(--muted)}
+  .saham-price-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+  .saham-price{font-size:14px;font-weight:900;color:var(--text)}
+  .saham-change{font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px}
+  .saham-owned{margin-top:6px;font-size:10px;font-weight:800;color:var(--muted)}
+  .saham-mini-bar{height:3px;background:#e8f5e9;border-radius:2px;margin-top:8px;overflow:hidden}
+  .saham-mini-fill{height:100%;background:var(--green);border-radius:2px;transition:width .5s}
+
+  /* GOAL */
+  .goal-card{background:linear-gradient(135deg,#e8f5e9,#f3ffe3);border:2.5px solid #81c784;border-radius:var(--radius);padding:18px;margin-bottom:12px}
+  .goal-item{margin-bottom:16px}
+  .goal-item:last-child{margin-bottom:0}
+  .goal-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .goal-icon{font-size:30px}
+  .goal-info{flex:1}
+  .goal-name{font-size:14px;font-weight:900;color:#1b5e20}
+  .goal-target{font-size:11px;font-weight:700;color:#4caf50}
+  .goal-bar-track{height:12px;background:#c8e6c9;border-radius:8px;overflow:hidden;margin-bottom:5px}
+  .goal-bar-fill{height:100%;border-radius:8px;transition:width 1s cubic-bezier(.34,1.56,.64,1)}
+  .goal-bar-fill.sepeda{background:linear-gradient(90deg,#27ae60,#2ecc71)}
+  .goal-bar-fill.ps5{background:linear-gradient(90deg,#2980b9,#3498db)}
+  .goal-bar-fill.lego{background:linear-gradient(90deg,#e74c3c,#e67e22)}
+  .goal-pct-row{display:flex;justify-content:space-between;font-size:11px;font-weight:800}
+  .goal-pct{color:#2e7d32}
+  .goal-remaining{color:#888}
+  .goal-divider{height:1.5px;background:#c8e6c9;margin:14px 0}
+  .goal-empty{text-align:center;padding:16px;font-size:12px;font-weight:700;color:#81c784}
+
+  /* BOTTOM NAV */
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid #c8e6c9;display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 12px rgba(0,0,0,.08)}
+  .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:800;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:8px;transition:.2s;text-decoration:none}
+  .bnav-item:hover{background:#e8f5e9;color:var(--green)}
+  .bnav-item.active{color:var(--green)}
+  .bnav-icon{font-size:20px}
+
+  /* CHART SVG */
+  .trend-svg{width:100%;overflow:visible}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+  .modal-overlay.open{opacity:1;pointer-events:all}
+  .modal-box{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:20px;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.2,.64,1)}
+  .modal-overlay.open .modal-box{transform:translateY(0)}
+  .modal-title{font-size:16px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .modal-close{background:#f0f0f0;border:none;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:800;cursor:pointer;margin-top:14px;width:100%;font-family:'Nunito',sans-serif}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1b5e20;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:10px 20px;border-radius:20px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+  .toast.show{opacity:1}
+
+  /* TIPBOX */
+  .tip-box{background:#e3f2fd;border:2px solid #90caf9;border-radius:12px;padding:12px 14px;margin-top:10px;font-size:11px;font-weight:800;color:#1565c0;line-height:1.6}
+
+  /* SCROLL */
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:4px}
+  ::-webkit-scrollbar-thumb:hover{background:#81c784}
+
+  /* CONFIRM DIALOG */
+  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
+  .confirm-overlay.open{opacity:1;pointer-events:all}
+  .confirm-box{background:#fff;border-radius:20px;padding:22px;max-width:300px;width:100%;text-align:center;transform:scale(.9);transition:transform .25s cubic-bezier(.34,1.4,.64,1)}
+  .confirm-overlay.open .confirm-box{transform:scale(1)}
+  .confirm-icon{font-size:36px;margin-bottom:8px}
+  .confirm-title{font-size:15px;font-weight:900;color:#1a2e1a;margin-bottom:6px}
+  .confirm-sub{font-size:12px;font-weight:700;color:#6b8f6b;margin-bottom:16px}
+  .confirm-btns{display:flex;gap:8px}
+  .confirm-yes{flex:1;background:#e74c3c;color:#fff;border:none;border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
+  .confirm-no{flex:1;background:#f0f0f0;color:#555;border:none;border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hdr-top">
+    <button class="back-btn" onclick="window.history.back()">← Balik</button>
+    <span class="page-badge">💹 INVESTOR MUDA</span>
+  </div>
+  <div class="hdr-hero">
+    <div class="hdr-avatar">⚔️</div>
+    <div>
+      <div class="hdr-name">ASLAN ADIKA PRADA</div>
+      <div class="hdr-sub">Investor Muda · Kelas 3 SD 🌟</div>
+    </div>
+  </div>
+  <div class="wealth-banner">
+    <div>
+      <div class="wb-label">💰 TOTAL KEKAYAAN ASLAN</div>
+      <div class="wb-value" id="totalWealth">Rp 0</div>
+      <div class="wb-sub">Asetmu sedang bekerja untukmu! 🚀</div>
+    </div>
+    <div class="wb-icon">🏦</div>
+  </div>
+  <div class="hdr-xp-row">
+    <div class="hdr-stat"><div class="hdr-stat-val" id="statTabung">Rp 0</div><div class="hdr-stat-lbl">🐷 Tabungan</div></div>
+    <div class="hdr-stat"><div class="hdr-stat-val" id="statEmas">0 g</div><div class="hdr-stat-lbl">🥇 Emas</div></div>
+    <div class="hdr-stat"><div class="hdr-stat-val" id="statReturn">+0%</div><div class="hdr-stat-lbl">📊 Return</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ======================== TABUNGAN ======================== -->
+  <div class="section-title">🐷 Tabungan Aslan</div>
+  <div class="tabung-card">
+    <div class="tabung-header">
+      <div class="tabung-title">💰 SALDO TABUNGAN</div>
+      <div class="tabung-balance" id="tabungBalance">Rp 0</div>
+      <div class="tabung-sub" id="tabungSub">Yuk terus nabung! 💪</div>
+      <div class="tabung-stats">
+        <div class="tabung-stat">
+          <div class="ts-val" id="tabungIn">Rp 0</div>
+          <div class="ts-lbl">📥 Total Masuk</div>
+        </div>
+        <div class="tabung-stat">
+          <div class="ts-val" id="tabungOut">Rp 0</div>
+          <div class="ts-lbl">📤 Total Keluar</div>
+        </div>
+        <div class="tabung-stat">
+          <div class="ts-val" id="tabungTrxCount">0x</div>
+          <div class="ts-lbl">🔄 Transaksi</div>
+        </div>
+      </div>
+    </div>
+    <div class="tabung-quick">
+      <div class="tq-label">➕ Tambah Tabungan Cepat</div>
+      <div class="tq-grid">
+        <button class="tq-btn" onclick="quickAdd(5000)">+Rp5K</button>
+        <button class="tq-btn" onclick="quickAdd(10000)">+Rp10K</button>
+        <button class="tq-btn" onclick="quickAdd(20000)">+Rp20K</button>
+        <button class="tq-btn" onclick="quickAdd(50000)">+Rp50K</button>
+      </div>
+      <div class="tq-custom">
+        <input class="tq-input" type="number" id="customAmount" placeholder="Jumlah lain..." min="0">
+        <button class="tq-add-btn" onclick="addCustom()">💰 Tambah</button>
+      </div>
+    </div>
+    <div class="tabung-trx-section">
+      <div class="trx-header">
+        <div class="trx-title">📋 Riwayat Transaksi</div>
+        <button class="trx-clear" onclick="confirmClearTrx()">🗑 Hapus Semua</button>
+      </div>
+      <div class="trx-list" id="trxList">
+        <div class="trx-empty">Belum ada transaksi 🌱<br>Yuk mulai nabung!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN TOGGLE -->
+  <button class="admin-toggle-btn" onclick="toggleAdmin()">
+    <span>⚙️ Panel Admin (Ayah &amp; Bunda)</span>
+    <span id="adminArrow">▼</span>
+  </button>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-title">🔐 Panel Admin Orang Tua</div>
+
+    <!-- PIN LOCK -->
+    <div class="admin-lock" id="adminLock">
+      <div class="admin-lock-label">🔑 Masukkan PIN Orang Tua (default: 1234)</div>
+      <div class="admin-pin-row">
+        <input class="admin-pin-input" type="password" id="adminPin" maxlength="4" placeholder="••••" inputmode="numeric" onkeydown="if(event.key==='Enter')checkPin()">
+        <button class="admin-pin-btn" onclick="checkPin()">Masuk</button>
+      </div>
+    </div>
+
+    <div class="admin-body" id="adminBody">
+
+      <!-- TAMBAH TRANSAKSI -->
+      <div class="admin-section">
+        <div class="admin-section-title">📝 Tambah Transaksi Manual</div>
+        <div class="admin-form-row">
+          <div class="admin-label">Jenis</div>
+          <select class="admin-select" id="trxType">
+            <option value="in">📥 Pemasukan (Masuk)</option>
+            <option value="out">📤 Pengeluaran (Keluar)</option>
+          </select>
+        </div>
+        <div class="admin-row-2">
+          <div class="admin-form-row">
+            <div class="admin-label">Jumlah (Rp)</div>
+            <input class="admin-input" type="number" id="adminAmount" placeholder="cth: 25000" min="0">
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-label">Emoji</div>
+            <input class="admin-input" type="text" id="adminEmoji" placeholder="cth: 🎂" maxlength="2" value="💵">
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="admin-label">Keterangan</div>
+          <input class="admin-input" type="text" id="adminDesc" placeholder="cth: Uang jajan hari Senin">
+        </div>
+        <div class="admin-form-row">
+          <div class="admin-label">Tanggal</div>
+          <input class="admin-input" type="date" id="adminDate">
+        </div>
+        <button class="admin-btn" onclick="adminAddTrx()">➕ Tambah Transaksi</button>
+      </div>
+
+      <!-- KELOLA TARGET IMPIAN -->
+      <div class="admin-section">
+        <div class="admin-section-title">🎯 Kelola Target Impian</div>
+        <div class="admin-goals-list" id="adminGoalsList"></div>
+        <div style="margin-top:10px;border-top:1.5px solid #bbdefb;padding-top:10px">
+          <div class="admin-section-title" style="margin-bottom:8px">➕ Tambah Target Baru</div>
+          <div class="admin-row-2">
+            <div class="admin-form-row">
+              <div class="admin-label">Emoji</div>
+              <input class="admin-input" type="text" id="goalEmoji" placeholder="🎁" maxlength="2" value="🎁">
+            </div>
+            <div class="admin-form-row">
+              <div class="admin-label">Target (Rp)</div>
+              <input class="admin-input" type="number" id="goalTarget" placeholder="cth: 500000" min="0">
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-label">Nama Target</div>
+            <input class="admin-input" type="text" id="goalName" placeholder="cth: Buku Komik Doraemon">
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-label">Sudah Terkumpul (Rp)</div>
+            <input class="admin-input" type="number" id="goalCurrent" placeholder="cth: 0" min="0" value="0">
+          </div>
+          <button class="admin-btn success" onclick="adminAddGoal()">🎯 Tambah Target</button>
+        </div>
+      </div>
+
+      <!-- UPDATE SALDO EMAS -->
+      <div class="admin-section">
+        <div class="admin-section-title">🥇 Update Kepemilikan Emas</div>
+        <div class="admin-row-2">
+          <div class="admin-form-row">
+            <div class="admin-label">Gram Emas</div>
+            <input class="admin-input" type="number" id="adminGoldGram" placeholder="cth: 2.5" step="0.1" min="0">
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-label">Harga Beli/gram</div>
+            <input class="admin-input" type="number" id="adminGoldBuy" placeholder="cth: 1800000" min="0">
+          </div>
+        </div>
+        <button class="admin-btn" onclick="adminUpdateGold()">💛 Simpan Data Emas</button>
+      </div>
+
+      <!-- GANTI PIN -->
+      <div class="admin-section">
+        <div class="admin-section-title">🔑 Ganti PIN Admin</div>
+        <div class="admin-row-2">
+          <div class="admin-form-row">
+            <div class="admin-label">PIN Baru (4 digit)</div>
+            <input class="admin-input" type="password" id="newPin1" placeholder="••••" maxlength="4" inputmode="numeric">
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-label">Konfirmasi PIN</div>
+            <input class="admin-input" type="password" id="newPin2" placeholder="••••" maxlength="4" inputmode="numeric">
+          </div>
+        </div>
+        <button class="admin-btn" onclick="changePin()">🔐 Ganti PIN</button>
+      </div>
+
+      <!-- RESET DATA -->
+      <div class="admin-section">
+        <div class="admin-section-title">⚠️ Reset Data</div>
+        <button class="admin-btn danger" onclick="confirmReset()">🗑 Reset Semua Data Tabungan</button>
+      </div>
+
+    </div><!-- end admin-body -->
+  </div><!-- end admin-panel -->
+
+  <!-- EMAS REALTIME -->
+  <div class="section-title">🥇 Emas Antam Aslan</div>
+  <div class="gold-card">
+    <div class="gold-header">
+      <div class="gold-title">Harga Emas Hari Ini</div>
+      <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+    </div>
+    <div class="gold-price-row">
+      <div class="gold-price" id="goldPrice">—</div>
+      <div class="gold-unit">/gram</div>
+      <div class="gold-change up" id="goldChange">...</div>
+    </div>
+    <div class="gold-meta">
+      <span class="gold-meta-time" id="goldTime">Memuat...</span>
+      <span class="gold-meta-src">XAU/USD → IDR</span>
+    </div>
+    <div class="gold-saldo-row">
+      <div class="gold-saldo-box">
+        <div class="gsb-label">🪙 Saldo Emas</div>
+        <div class="gsb-value" id="goldGram">—</div>
+      </div>
+      <div class="gold-saldo-box">
+        <div class="gsb-label">💵 Nilai Sekarang</div>
+        <div class="gsb-value" id="goldRupiah">—</div>
+      </div>
+      <div class="gold-saldo-box">
+        <div class="gsb-label">📈 Untung</div>
+        <div class="gsb-value" style="color:#2e7d32" id="goldProfit">—</div>
+      </div>
+    </div>
+    <div class="gold-chart-wrap">
+      <div class="chart-label">
+        <span>📊 Grafik Harga Emas 7 Hari</span>
+        <span class="chart-updating" id="chartUpdating">⟳ Memuat...</span>
+      </div>
+      <svg class="trend-svg" viewBox="0 0 320 80" id="goldChart"></svg>
+    </div>
+    <div class="tip-box">💡 <b>Tahukah Aslan?</b> Emas itu seperti magic shield — nilainya naik terus dari tahun ke tahun. Semakin banyak nabung emas, semakin kaya Aslan nanti! 🛡️✨</div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:4px">
+    <button onclick="simulateGoldBuy()" style="flex:1;background:var(--green);color:#fff;border:none;border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:.2s" onmouseover="this.style.background='#1e8449'" onmouseout="this.style.background='var(--green)'">➕ Beli Emas</button>
+    <button onclick="showInfo('emas')" style="flex:1;background:#fff8e1;color:#c0810c;border:2px solid #f39c12;border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:.2s" onmouseover="this.style.background='#fff3c4'" onmouseout="this.style.background='#fff8e1'">📖 Belajar Emas</button>
+  </div>
+
+  <!-- SAHAM SIMULASI -->
+  <div class="section-title">📈 Saham Perusahaan Favorit</div>
+  <div class="card" style="padding:10px">
+    <div style="font-size:11px;font-weight:800;color:#888;margin-bottom:10px;padding:0 4px">🎮 Ini simulasi ya Aslan — belajar investasi dulu sebelum yang beneran!</div>
+    <div class="saham-grid" id="sahamGrid"></div>
+  </div>
+
+  <!-- PORTFOLIO PIE -->
+  <div class="section-title">📊 Komposisi Investasiku</div>
+  <div class="card">
+    <div style="display:flex;gap:14px;align-items:center">
+      <svg viewBox="0 0 100 100" width="90" height="90" style="flex-shrink:0" id="pieSvg">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#27ae60" stroke-width="18" stroke-dasharray="150 102" stroke-dashoffset="25" transform="rotate(-90 50 50)"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#2980b9" stroke-width="18" stroke-dasharray="80 172" stroke-dashoffset="-125" transform="rotate(-90 50 50)"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#f39c12" stroke-width="18" stroke-dasharray="22 230" stroke-dashoffset="-205" transform="rotate(-90 50 50)"/>
+        <circle cx="50" cy="50" r="32" fill="white"/>
+        <text x="50" y="54" text-anchor="middle" font-size="9" font-weight="900" font-family="Nunito,sans-serif" fill="#1a2e1a">Portfolio</text>
+      </svg>
+      <div style="flex:1" id="pieLabels">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:12px;height:12px;background:#27ae60;border-radius:3px;flex-shrink:0"></div><div style="font-size:12px;font-weight:800;color:var(--text)" id="pctEmas">Emas — —%</div></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:12px;height:12px;background:#2980b9;border-radius:3px;flex-shrink:0"></div><div style="font-size:12px;font-weight:800;color:var(--text)" id="pctSaham">Saham — —%</div></div>
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:12px;height:12px;background:#f39c12;border-radius:3px;flex-shrink:0"></div><div style="font-size:12px;font-weight:800;color:var(--text)" id="pctTabung">Tabungan — —%</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TARGET IMPIAN -->
+  <div class="section-title">🎯 Target Impian Aslan</div>
+  <div class="goal-card" id="goalSection"></div>
+
+  <!-- TIP BELAJAR -->
+  <div class="section-title">🧠 Pelajaran Investasi</div>
+  <div class="card" style="padding:14px">
+    <div id="tipCards"></div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a class="bnav-item" href="index.html"><div class="bnav-icon">⚔️</div>Misi</a>
+  <a class="bnav-item" href="index.html#streak"><div class="bnav-icon">🔥</div>Streak</a>
+  <a class="bnav-item" href="index.html#savings"><div class="bnav-icon">🐷</div>Nabung</a>
+  <a class="bnav-item active"><div class="bnav-icon">💹</div>Investasi</a>
+  <a class="bnav-item" href="jurnal.html"><div class="bnav-icon">📔</div>Jurnal</a>
+</nav>
+
+<!-- MODAL INFO -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">💡 Info</div>
+    <div id="modalBody" style="font-size:13px;font-weight:700;color:var(--text);line-height:1.7"></div>
+    <button class="modal-close" onclick="closeModal()">✕ Tutup</button>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirmIcon">⚠️</div>
+    <div class="confirm-title" id="confirmTitle">Yakin?</div>
+    <div class="confirm-sub" id="confirmSub">Tindakan ini tidak bisa dibatalkan.</div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" id="confirmYes">Ya, Hapus</button>
+      <button class="confirm-no" onclick="closeConfirm()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== STATE ====================
+const STORAGE_KEY = 'aslan_investasi_v2';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {
+    transactions: [],
+    goals: [
+      {id:1, icon:'🚲', name:'Sepeda MTB Keren', target:2500000, current:1800000, color:'sepeda'},
+      {id:2, icon:'🎮', name:'PlayStation 5', target:8500000, current:2100000, color:'ps5'},
+      {id:3, icon:'🧱', name:'LEGO Technic Jumbo', target:1500000, current:1100000, color:'lego'},
+    ],
+    goldGram: 2.5,
+    goldBuyPrice: 1800000,
+    adminPin: '1234',
+    adminUnlocked: false,
+  };
+}
+
+function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+
+let state = loadState();
+
+// ==================== GOLD PRICE ====================
+let currentGoldPrice = 0;
+let goldPriceHistory = [];
+const USD_IDR_RATE = 16200; // fallback rate
+const TROY_OZ_TO_GRAM = 31.1035;
+
+async function fetchGoldPrice() {
+  // Try metals.live free API (XAU in USD per troy oz)
+  const endpoints = [
+    'https://api.metals.live/v1/spot/gold',
+    'https://openexchangerates.org/api/latest.json?app_id=free&symbols=XAU' // fallback
+  ];
+
+  let xauUsd = null;
+  let usdIdr = USD_IDR_RATE;
+
+  try {
+    // Fetch XAU/USD
+    const r = await fetch('https://api.metals.live/v1/spot/gold', { signal: AbortSignal.timeout(5000) });
+    if (r.ok) {
+      const d = await r.json();
+      // metals.live returns price per troy oz in USD
+      xauUsd = d.price || (Array.isArray(d) ? d[0]?.price : null);
+    }
+  } catch(e) {}
+
+  // If primary fails, try backup
+  if (!xauUsd) {
+    try {
+      const r2 = await fetch('https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD', { signal: AbortSignal.timeout(5000) });
+      if (r2.ok) {
+        const d2 = await r2.json();
+        xauUsd = d2?.[0]?.spreadProfilePrices?.[0]?.ask || null;
+      }
+    } catch(e) {}
+  }
+
+  // Try to get USD/IDR rate
+  try {
+    const rr = await fetch('https://open.er-api.com/v6/latest/USD', { signal: AbortSignal.timeout(5000) });
+    if (rr.ok) {
+      const dd = await rr.json();
+      usdIdr = dd?.rates?.IDR || USD_IDR_RATE;
+    }
+  } catch(e) {}
+
+  if (xauUsd) {
+    // XAU per troy oz → per gram → to IDR
+    const pricePerGramIdr = Math.round((xauUsd / TROY_OZ_TO_GRAM) * usdIdr);
+    return { price: pricePerGramIdr, usdIdr, xauUsd, live: true };
+  }
+
+  // Fallback: realistic simulated price
+  const base = 1890000;
+  const fluctuation = (Math.random() - 0.5) * 30000;
+  return { price: Math.round(base + fluctuation), usdIdr, xauUsd: null, live: false };
+}
+
+let prevGoldPrice = 0;
+let goldUpdateInterval = null;
+
+async function updateGoldPrice() {
+  document.getElementById('chartUpdating').textContent = '⟳ Memuat...';
+  const result = await fetchGoldPrice();
+  const price = result.price;
+  const priceEl = document.getElementById('goldPrice');
+  const changeEl = document.getElementById('goldChange');
+  const timeEl = document.getElementById('goldTime');
+
+  // Flash animation
+  if (prevGoldPrice > 0) {
+    const diff = price - prevGoldPrice;
+    const pct = ((diff / prevGoldPrice) * 100).toFixed(2);
+    priceEl.className = 'gold-price ' + (diff >= 0 ? 'flash-up' : 'flash-down');
+    changeEl.className = 'gold-change ' + (diff >= 0 ? 'up' : 'down');
+    changeEl.textContent = (diff >= 0 ? '▲ +' : '▼ ') + pct + '%';
+    setTimeout(() => priceEl.className = 'gold-price', 1200);
+  } else {
+    changeEl.className = 'gold-change up';
+    changeEl.textContent = '▲ +1.2%';
+  }
+
+  prevGoldPrice = currentGoldPrice || price;
+  currentGoldPrice = price;
+
+  priceEl.textContent = fmtRp(price);
+
+  // Update time
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const dateStr = now.toLocaleDateString('id-ID', {weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  timeEl.textContent = dateStr + ' · ' + timeStr + (result.live ? ' · 🟢 Live' : ' · 🟡 Estimasi');
+  document.getElementById('chartUpdating').textContent = result.live ? '🟢 Live' : '🟡 Estimasi';
+
+  // Build 7-day simulated history ending at current price
+  if (goldPriceHistory.length === 0) {
+    goldPriceHistory = Array.from({length:7}, (_,i) => {
+      const drift = (i - 6) * 3000;
+      const noise = (Math.random() - 0.5) * 15000;
+      return Math.round(price + drift + noise);
+    });
+    goldPriceHistory[6] = price;
+  } else {
+    goldPriceHistory.push(price);
+    if (goldPriceHistory.length > 7) goldPriceHistory.shift();
+    goldPriceHistory[goldPriceHistory.length - 1] = price;
+  }
+
+  renderGoldChart();
+  updateGoldSaldo();
+  renderHeader();
+}
+
+function updateGoldSaldo() {
+  if (!currentGoldPrice) return;
+  const gram = state.goldGram;
+  const profit = gram * (currentGoldPrice - state.goldBuyPrice);
+  document.getElementById('goldGram').textContent = gram + ' gram';
+  document.getElementById('goldRupiah').textContent = fmtRp(gram * currentGoldPrice);
+  const profEl = document.getElementById('goldProfit');
+  profEl.textContent = (profit >= 0 ? '+' : '') + fmtRp(Math.abs(Math.round(profit)));
+  profEl.style.color = profit >= 0 ? '#2e7d32' : '#c62828';
+}
+
+function renderGoldChart() {
+  const svg = document.getElementById('goldChart');
+  const W=320, H=80, pad=24;
+  const hist = goldPriceHistory;
+  if (hist.length < 2) { svg.innerHTML = ''; return; }
+  const mn = Math.min(...hist) - 20000;
+  const mx = Math.max(...hist) + 20000;
+  const days = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+  const todayIdx = new Date().getDay();
+  const dayLabels = Array.from({length:7}, (_,i) => days[(todayIdx - 6 + i + 7) % 7]);
+
+  const pts = hist.map((v,i) => ({
+    x: pad + (i/(hist.length-1)) * (W - pad*2),
+    y: H - pad - ((v-mn)/(mx-mn)) * (H - pad*2),
+    v
+  }));
+
+  const polyline = pts.map(p => p.x+','+p.y).join(' ');
+  const areaPath = 'M'+pts[0].x+','+(H-8)+' '+pts.map(p=>p.x+','+p.y).join(' ')+' '+pts[pts.length-1].x+','+(H-8)+' Z';
+
+  let html = `<defs>
+    <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f39c12" stop-opacity=".35"/>
+      <stop offset="100%" stop-color="#f39c12" stop-opacity="0"/>
+    </linearGradient>
+  </defs>`;
+  html += `<path d="${areaPath}" fill="url(#gg)"/>`;
+  html += `<polyline points="${polyline}" fill="none" stroke="#c0810c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  pts.forEach((p, i) => {
+    const isLast = i === pts.length - 1;
+    const isFirst = i === 0;
+    html += `<circle cx="${p.x}" cy="${p.y}" r="${isLast?5:3}" fill="${isLast?'#c0810c':'rgba(192,129,12,.5)'}" stroke="#fff" stroke-width="1.5"/>`;
+    if (isFirst || isLast) {
+      const anchor = isFirst ? 'start' : 'end';
+      const xOff = isFirst ? 0 : 0;
+      html += `<text x="${p.x+xOff}" y="${p.y-9}" text-anchor="${anchor}" font-size="8" font-weight="800" font-family="Nunito,sans-serif" fill="#7d5a00">${(p.v/1000000).toFixed(2)}M</text>`;
+    }
+    html += `<text x="${p.x}" y="${H-1}" text-anchor="middle" font-size="8" font-weight="700" font-family="Nunito,sans-serif" fill="#9a6a00">${dayLabels[i]}</text>`;
+  });
+
+  // Trend arrow on last point
+  const last = pts[pts.length-1];
+  const second = pts[pts.length-2];
+  const trendUp = last.v >= second.v;
+  html += `<text x="${last.x+7}" y="${last.y+4}" font-size="10" fill="${trendUp?'#2e7d32':'#c62828'}">${trendUp?'↗':'↘'}</text>`;
+
+  svg.innerHTML = html;
+}
+
+// ==================== TABUNGAN ====================
+function calcTabung() {
+  let totalIn = 0, totalOut = 0;
+  state.transactions.forEach(t => {
+    if (t.type === 'in') totalIn += t.amount;
+    else totalOut += t.amount;
+  });
+  return { balance: totalIn - totalOut, totalIn, totalOut };
+}
+
+function renderTabung() {
+  const { balance, totalIn, totalOut } = calcTabung();
+  document.getElementById('tabungBalance').textContent = fmtRp(balance);
+  document.getElementById('tabungIn').textContent = fmtRp(totalIn);
+  document.getElementById('tabungOut').textContent = fmtRp(totalOut);
+  document.getElementById('tabungTrxCount').textContent = state.transactions.length + 'x';
+
+  // Sub message
+  const subs = ['Keren, terus semangat nabung! 💪', 'Aslan Hebat! Terus nabung ya! 🌟', 'Sedikit demi sedikit jadi bukit! 🏔️', 'Uangnya makin banyak! 🚀'];
+  document.getElementById('tabungSub').textContent = balance > 0 ? subs[Math.floor(Math.random()*subs.length)] : 'Yuk mulai nabung sekarang! 🌱';
+
+  // Transactions
+  const trxList = document.getElementById('trxList');
+  if (state.transactions.length === 0) {
+    trxList.innerHTML = '<div class="trx-empty">Belum ada transaksi 🌱<br>Yuk mulai nabung!</div>';
+  } else {
+    const sorted = [...state.transactions].reverse();
+    trxList.innerHTML = sorted.map(t => `
+      <div class="trx-item">
+        <div class="trx-icon">${t.icon || (t.type==='in'?'💵':'🛒')}</div>
+        <div class="trx-info">
+          <div class="trx-desc">${t.desc}</div>
+          <div class="trx-date">${t.date}</div>
+        </div>
+        <div class="trx-amount ${t.type}">${t.type==='in'?'+':'-'}${fmtRp(t.amount)}</div>
+      </div>`).join('');
+  }
+}
+
+function addTransaction(amount, desc, type='in', icon='💵', date=null) {
+  if (!amount || amount <= 0) return;
+  const d = date || new Date().toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
+  state.transactions.push({ id: Date.now(), amount, desc, type, icon, date: d });
+  saveState();
+  renderTabung();
+  renderHeader();
+}
+
+function quickAdd(amount) {
+  const descs = { 5000:'Uang jajan', 10000:'Uang jajan', 20000:'Uang jajan', 50000:'Tabungan' };
+  addTransaction(amount, descs[amount] || 'Tabungan', 'in', '💰');
+  showToast('✅ +' + fmtRp(amount) + ' berhasil ditabung! 🎉');
+}
+
+function addCustom() {
+  const input = document.getElementById('customAmount');
+  const amount = parseInt(input.value);
+  if (!amount || amount <= 0) { showToast('⚠️ Masukkan jumlah yang valid!'); return; }
+  addTransaction(amount, 'Nabung manual', 'in', '💵');
+  input.value = '';
+  showToast('✅ +' + fmtRp(amount) + ' berhasil ditabung! 🌟');
+}
+
+function confirmClearTrx() {
+  showConfirm('🗑️', 'Hapus Semua Transaksi?', 'Riwayat transaksi akan dihapus. Saldo kembali nol.', 'Hapus Semua', () => {
+    state.transactions = [];
+    saveState();
+    renderTabung();
+    renderHeader();
+    showToast('🗑 Riwayat transaksi dihapus');
+  });
+}
+
+// ==================== ADMIN ====================
+let adminOpen = false;
+let adminUnlocked = false;
+
+function toggleAdmin() {
+  adminOpen = !adminOpen;
+  const panel = document.getElementById('adminPanel');
+  const arrow = document.getElementById('adminArrow');
+  panel.className = 'admin-panel' + (adminOpen ? ' open' : '');
+  arrow.textContent = adminOpen ? '▲' : '▼';
+  if (!adminOpen) {
+    adminUnlocked = false;
+    document.getElementById('adminBody').className = 'admin-body';
+    document.getElementById('adminLock').style.display = '';
+    document.getElementById('adminPin').value = '';
+  }
+}
+
+function checkPin() {
+  const pin = document.getElementById('adminPin').value;
+  if (pin === state.adminPin) {
+    adminUnlocked = true;
+    document.getElementById('adminBody').className = 'admin-body unlocked';
+    document.getElementById('adminLock').style.display = 'none';
+    renderAdminGoals();
+    // Prefill gold fields
+    document.getElementById('adminGoldGram').value = state.goldGram;
+    document.getElementById('adminGoldBuy').value = state.goldBuyPrice;
+    // Set today's date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('adminDate').value = today;
+    showToast('🔓 Admin panel terbuka!');
+  } else {
+    document.getElementById('adminPin').value = '';
+    document.getElementById('adminPin').placeholder = '❌ PIN salah!';
+    setTimeout(() => document.getElementById('adminPin').placeholder = '••••', 1500);
+    showToast('❌ PIN salah!');
+  }
+}
+
+function adminAddTrx() {
+  const amount = parseInt(document.getElementById('adminAmount').value);
+  const desc = document.getElementById('adminDesc').value.trim();
+  const type = document.getElementById('trxType').value;
+  const emoji = document.getElementById('adminEmoji').value || (type==='in'?'💵':'🛒');
+  const dateRaw = document.getElementById('adminDate').value;
+
+  if (!amount || amount <= 0) { showToast('⚠️ Masukkan jumlah!'); return; }
+  if (!desc) { showToast('⚠️ Masukkan keterangan!'); return; }
+
+  let dateFormatted = dateRaw;
+  if (dateRaw) {
+    const d = new Date(dateRaw);
+    dateFormatted = d.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
+  }
+
+  addTransaction(amount, desc, type, emoji, dateFormatted);
+  document.getElementById('adminAmount').value = '';
+  document.getElementById('adminDesc').value = '';
+  showToast((type==='in'?'📥 Pemasukan':'📤 Pengeluaran') + ' ' + fmtRp(amount) + ' ditambahkan!');
+}
+
+function renderAdminGoals() {
+  const el = document.getElementById('adminGoalsList');
+  if (state.goals.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;font-weight:700;color:#90a4ae;padding:6px">Belum ada target</div>';
+    return;
+  }
+  el.innerHTML = state.goals.map(g => `
+    <div class="admin-goal-item">
+      <div class="admin-goal-info">${g.icon} ${g.name}<br><span style="color:#90a4ae">${fmtRp(g.current)} / ${fmtRp(g.target)}</span></div>
+      <button class="admin-goal-del" onclick="adminDeleteGoal(${g.id})">Hapus</button>
+    </div>`).join('');
+}
+
+function adminDeleteGoal(id) {
+  state.goals = state.goals.filter(g => g.id !== id);
+  saveState();
+  renderAdminGoals();
+  renderGoals();
+  showToast('🗑 Target dihapus');
+}
+
+function adminAddGoal() {
+  const icon = document.getElementById('goalEmoji').value || '🎁';
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseInt(document.getElementById('goalTarget').value);
+  const current = parseInt(document.getElementById('goalCurrent').value) || 0;
+  const colors = ['sepeda','ps5','lego'];
+
+  if (!name) { showToast('⚠️ Masukkan nama target!'); return; }
+  if (!target || target <= 0) { showToast('⚠️ Masukkan jumlah target!'); return; }
+
+  state.goals.push({
+    id: Date.now(),
+    icon, name, target, current,
+    color: colors[state.goals.length % colors.length]
+  });
+  saveState();
+  renderAdminGoals();
+  renderGoals();
+  document.getElementById('goalName').value = '';
+  document.getElementById('goalTarget').value = '';
+  document.getElementById('goalCurrent').value = '0';
+  showToast('🎯 Target "' + name + '" ditambahkan!');
+}
+
+function adminUpdateGold() {
+  const gram = parseFloat(document.getElementById('adminGoldGram').value);
+  const buyPrice = parseInt(document.getElementById('adminGoldBuy').value);
+  if (!gram || gram < 0) { showToast('⚠️ Masukkan gram emas!'); return; }
+  if (!buyPrice || buyPrice <= 0) { showToast('⚠️ Masukkan harga beli!'); return; }
+  state.goldGram = gram;
+  state.goldBuyPrice = buyPrice;
+  saveState();
+  updateGoldSaldo();
+  renderHeader();
+  showToast('💛 Data emas diperbarui: ' + gram + ' gram');
+}
+
+function changePin() {
+  const p1 = document.getElementById('newPin1').value;
+  const p2 = document.getElementById('newPin2').value;
+  if (p1.length < 4) { showToast('⚠️ PIN minimal 4 digit!'); return; }
+  if (p1 !== p2) { showToast('⚠️ PIN tidak sama!'); return; }
+  state.adminPin = p1;
+  saveState();
+  document.getElementById('newPin1').value = '';
+  document.getElementById('newPin2').value = '';
+  showToast('🔐 PIN berhasil diganti!');
+}
+
+function confirmReset() {
+  showConfirm('⚠️', 'Reset Semua Data?', 'Semua transaksi dan target akan dihapus permanen!', 'Ya, Reset', () => {
+    state.transactions = [];
+    state.goals = [];
+    saveState();
+    renderTabung();
+    renderGoals();
+    renderHeader();
+    if (adminUnlocked) renderAdminGoals();
+    showToast('🗑 Semua data tabungan direset');
+  });
+}
+
+// ==================== SAHAM ====================
+const sahamData = [
+  {id:'ultra',icon:'🥛',name:'Ultra Milk',ticker:'ULTJ',price:1850,change:2.3,owned:50,beli:1680,color:'#e74c3c'},
+  {id:'indomie',icon:'🍜',name:'Indofood',ticker:'INDF',price:6750,change:1.1,owned:10,beli:6200,color:'#f39c12'},
+  {id:'youtube',icon:'▶️',name:'Alphabet (YT)',ticker:'GOOGL',price:18400000,change:-0.8,owned:0,beli:0,color:'#e74c3c'},
+  {id:'gojek',icon:'🛵',name:'GoTo Group',ticker:'GOTO',price:84,change:3.5,owned:200,beli:70,color:'#00b14f'},
+  {id:'lego',icon:'🧱',name:'LEGO Group',ticker:'LEGO',price:245000,change:0.5,owned:2,beli:238000,color:'#e74c3c'},
+  {id:'nintendo',icon:'🎮',name:'Nintendo',ticker:'NTDOY',price:142000,change:1.8,owned:3,beli:130000,color:'#e74c3c'},
+];
+
+function renderSaham() {
+  const grid = document.getElementById('sahamGrid');
+  grid.innerHTML = sahamData.map(s => {
+    const isUp = s.change >= 0;
+    const profit = s.owned > 0 ? (s.price - s.beli) * s.owned : 0;
+    const fillPct = 55 + (Math.random() * 30);
+    return `<div class="saham-card ${s.id}" onclick="showSahamInfo('${s.id}')">
+      <span class="saham-icon">${s.icon}</span>
+      <div class="saham-name">${s.name}</div>
+      <div class="saham-ticker">${s.ticker}</div>
+      <div class="saham-price-row">
+        <div class="saham-price">${s.price>=1000000?fmtRp(s.price):'Rp '+s.price.toLocaleString('id-ID')}</div>
+        <div class="saham-change ${isUp?'up':'down'}">${isUp?'▲':'▼'} ${Math.abs(s.change)}%</div>
+      </div>
+      <div class="saham-owned">${s.owned>0?'✅ '+s.owned+' lot | '+(profit>=0?'+':'')+fmtRp(profit):'❌ Belum punya'}</div>
+      <div class="saham-mini-bar"><div class="saham-mini-fill" style="width:${fillPct}%;background:${isUp?'#27ae60':'#e74c3c'}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== GOALS ====================
+function renderGoals() {
+  const el = document.getElementById('goalSection');
+  if (state.goals.length === 0) {
+    el.innerHTML = '<div class="goal-empty">🎯 Belum ada target impian.<br>Tambah lewat Panel Admin!</div>';
+    return;
+  }
+  el.innerHTML = state.goals.map((g, i) => {
+    const pct = Math.min(100, Math.round((g.current / g.target) * 100));
+    const rem = Math.max(0, g.target - g.current);
+    return `${i>0?'<div class="goal-divider"></div>':''}
+    <div class="goal-item">
+      <div class="goal-header">
+        <div class="goal-icon">${g.icon}</div>
+        <div class="goal-info">
+          <div class="goal-name">${g.name}</div>
+          <div class="goal-target">Target: ${fmtRp(g.target)}</div>
+        </div>
+        <div style="background:#e8f5e9;border-radius:8px;padding:4px 10px;font-size:14px;font-weight:900;color:#2e7d32">${pct}%</div>
+      </div>
+      <div class="goal-bar-track"><div class="goal-bar-fill ${g.color}" style="width:${pct}%"></div></div>
+      <div class="goal-pct-row">
+        <span class="goal-pct">${fmtRp(g.current)} terkumpul</span>
+        <span class="goal-remaining">${rem>0?'Kurang '+fmtRp(rem):'🎉 Tercapai!'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== HEADER ====================
+function renderHeader() {
+  const { balance } = calcTabung();
+  const goldVal = state.goldGram * (currentGoldPrice || state.goldBuyPrice);
+  let sahamVal = 0;
+  sahamData.forEach(s => { if(s.owned>0) sahamVal += s.owned * s.price; });
+  const total = balance + goldVal + sahamVal;
+
+  document.getElementById('totalWealth').textContent = fmtRp(total);
+  document.getElementById('statTabung').textContent = fmtRp(balance);
+  document.getElementById('statEmas').textContent = state.goldGram + 'g';
+
+  const invest = goldVal + sahamVal;
+  const costBasis = state.goldGram * state.goldBuyPrice + sahamData.reduce((a,s)=>a+(s.owned?s.owned*s.beli:0),0);
+  const ret = costBasis > 0 ? (((invest - costBasis) / costBasis) * 100).toFixed(1) : '0.0';
+  document.getElementById('statReturn').textContent = (parseFloat(ret) >= 0 ? '+' : '') + ret + '%';
+
+  // Pie
+  if (total > 0) {
+    const pEmas = Math.round((goldVal/total)*100);
+    const pSaham = Math.round((sahamVal/total)*100);
+    const pTabung = Math.round((balance/total)*100);
+    document.getElementById('pctEmas').textContent = `Emas — ${pEmas}%`;
+    document.getElementById('pctSaham').textContent = `Saham — ${pSaham}%`;
+    document.getElementById('pctTabung').textContent = `Tabungan — ${pTabung}%`;
+  }
+}
+
+// ==================== TIPS ====================
+const tips = [
+  {icon:'💡',title:'Apa itu Investasi?',body:'Investasi adalah menaruh uang di tempat yang bisa membuatnya berkembang — kayak menanam pohon, nanti berbuah banyak! 🌱',color:'#e8f5e9',border:'#81c784',text:'#1b5e20'},
+  {icon:'📈',title:'Kenapa Harga Bisa Naik-Turun?',body:'Harga saham bergerak karena banyak orang jual-beli. Kalau banyak yang mau beli → harga naik! Kalau banyak yang mau jual → harga turun. Seperti barang langka yang makin mahal! 🎯',color:'#e3f2fd',border:'#90caf9',text:'#1565c0'},
+  {icon:'⏳',title:'Sabar = Kunci Kaya!',body:'Orang kaya bukan yang nabung sehari langsung kaya. Tapi yang nabung rutin setiap hari, bertahun-tahun. Warren Buffett mulai investasi umur 11 tahun! Aslan bisa start lebih awal! 🚀',color:'#fff8e1',border:'#ffd54f',text:'#e65100'},
+];
+
+function renderTips() {
+  document.getElementById('tipCards').innerHTML = tips.map((t,i) => `
+    <div style="background:${t.color};border:2px solid ${t.border};border-radius:12px;padding:12px 14px;margin-bottom:${i<tips.length-1?'10':'0'}px">
+      <div style="font-size:13px;font-weight:900;color:${t.text};margin-bottom:5px">${t.icon} ${t.title}</div>
+      <div style="font-size:11px;font-weight:700;color:${t.text};line-height:1.6">${t.body}</div>
+    </div>`).join('');
+}
+
+// ==================== MODALS ====================
+const infoContent = {
+  emas:{title:'🥇 Seri Belajar: Investasi Emas',body:`<p><b>Kenapa emas bagus?</b></p><p>Emas sudah jadi alat tukar ribuan tahun! Nilainya stabil dan cenderung naik setiap tahun. Berbeda dengan uang kertas yang bisa melemah.</p><br><p><b>Cara beli emas:</b></p><ul style="padding-left:16px;margin-top:6px"><li>Pegadaian (mulai 0,1 gram)</li><li>Tokopedia Emas</li><li>BSI Tabungan Emas</li></ul><br><p><b>Tips Aslan:</b> Cicil sedikit-sedikit tiap bulan dari uang jajan. Lama-lama jadi banyak! 🌟</p>`},
+};
+
+function showInfo(type) {
+  const c = infoContent[type];
+  document.getElementById('modalTitle').textContent = c.title;
+  document.getElementById('modalBody').innerHTML = c.body;
+  document.getElementById('infoModal').classList.add('open');
+}
+
+function showSahamInfo(id) {
+  const s = sahamData.find(x => x.id === id);
+  const profit = s.owned > 0 ? (s.price - s.beli) * s.owned : 0;
+  document.getElementById('modalTitle').textContent = s.icon + ' ' + s.name;
+  document.getElementById('modalBody').innerHTML = `
+    <p><b>Ticker:</b> ${s.ticker}</p>
+    <p><b>Harga sekarang:</b> ${fmtRp(s.price)}/lot</p>
+    <p><b>Perubahan hari ini:</b> <span style="color:${s.change>=0?'#2e7d32':'#c62828'}">${s.change>=0?'▲':'▼'} ${Math.abs(s.change)}%</span></p>
+    ${s.owned>0?`<p><b>Milik Aslan:</b> ${s.owned} lot</p><p><b>Untung/Rugi:</b> <span style="color:${profit>=0?'#2e7d32':'#c62828'}">${profit>=0?'+':''}${fmtRp(profit)}</span></p>`:'<p style="color:#888">Aslan belum punya saham ini</p>'}
+    <br><p style="background:#e8f5e9;border-radius:8px;padding:10px;font-size:12px"><b>💡 Seri Belajar:</b> Kalau Aslan beli 1 lot saham ${s.name}, artinya Aslan ikut jadi pemilik perusahaan ini! Semakin untung perusahaannya, semakin untung Aslan! 🚀</p>`;
+  document.getElementById('infoModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('infoModal').classList.remove('open'); }
+
+function simulateGoldBuy() { showToast('💰 Fitur beli emas ada di Pegadaian / Tokopedia Emas!'); }
+
+// ==================== CONFIRM DIALOG ====================
+let confirmCallback = null;
+function showConfirm(icon, title, sub, yesLabel, cb) {
+  document.getElementById('confirmIcon').textContent = icon;
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmSub').textContent = sub;
+  document.getElementById('confirmYes').textContent = yesLabel;
+  confirmCallback = cb;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+document.getElementById('confirmYes').onclick = () => {
+  closeConfirm();
+  if (confirmCallback) confirmCallback();
+};
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); confirmCallback = null; }
+
+// ==================== TOAST ====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function fmtRp(n) { return 'Rp ' + Math.abs(Math.round(n)).toLocaleString('id-ID'); }
+
+// ==================== INIT ====================
+renderTabung();
+renderSaham();
+renderGoals();
+renderTips();
+renderHeader();
+
+// Fetch real-time gold on load
+updateGoldPrice();
+
+// Refresh gold price every 60 seconds
+goldUpdateInterval = setInterval(updateGoldPrice, 60000);
+
+// Close modals on overlay click
+document.getElementById('infoModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirm(); });
+</script>
+</body>
+</html>
