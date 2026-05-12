@@ -25,7 +25,6 @@ const FB_MAIN = db.ref('aslan_data');
 const FB_INV  = db.ref('aslan_investasi');
 </script>
 <style>
-/* ===== RESET ===== */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --green:#27ae60;--green2:#2ecc71;--gold:#f39c12;--gold2:#f1c40f;
@@ -34,8 +33,6 @@ const FB_INV  = db.ref('aslan_investasi');
   --radius:18px;--radius-sm:12px;
 }
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-/* ===== HEADER ===== */
 .header{background:linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c);position:relative;overflow:hidden}
 .header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 2px,transparent 2px,transparent 20px)}
 .hdr-top{display:flex;align-items:center;gap:10px;padding:16px 16px 0}
@@ -55,20 +52,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .hdr-stat{background:rgba(255,255,255,.15);border-radius:10px;padding:8px 12px;flex:1;text-align:center}
 .hdr-stat-val{color:#f1c40f;font-size:15px;font-weight:900}
 .hdr-stat-lbl{color:rgba(255,255,255,.75);font-size:10px;font-weight:800;margin-top:1px}
-
-/* ===== MAIN ===== */
 .main{padding:0 12px 100px}
 .section-title{font-size:16px;font-weight:900;color:var(--text);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
-
-/* ===== TABUNGAN READ-ONLY ===== */
 .tabung-ro{background:linear-gradient(135deg,#1565c0,#1976d2,#0288d1);border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:0 4px 18px rgba(21,101,192,.25);position:relative;overflow:hidden}
 .tabung-ro::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 2px,transparent 2px,transparent 18px)}
 .tabung-ro-label{color:rgba(255,255,255,.8);font-size:11px;font-weight:800;margin-bottom:6px}
 .tabung-ro-amount{color:#fff;font-size:34px;font-weight:900;line-height:1}
 .tabung-ro-note{display:flex;align-items:center;gap:6px;margin-top:10px;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 12px}
 .tabung-ro-note-text{color:rgba(255,255,255,.9);font-size:11px;font-weight:700}
-
-/* ===== GOLD CARD ===== */
 .gold-card{background:linear-gradient(135deg,#fff8e1,#fffde7);border:2.5px solid #f39c12;border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:0 4px 18px rgba(243,156,18,.15)}
 .gold-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .gold-title{font-size:15px;font-weight:900;color:#7d5a00}
@@ -82,13 +73,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .chg-up{background:#e8f5e9;color:#2e7d32}
 .chg-down{background:#fce4ec;color:#c62828}
 .gold-meta{font-size:10px;font-weight:700;color:#9a6a00;margin-bottom:14px;background:rgba(255,255,255,.5);border-radius:6px;padding:3px 8px;display:inline-block}
-
-/* Gold chart */
 .gold-chart-wrap{background:rgba(255,255,255,.6);border-radius:12px;padding:12px;border:1.5px solid #f0c040;margin-bottom:14px}
 .chart-lbl{font-size:10px;font-weight:800;color:#9a6a00;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .chart-upd{font-size:9px;font-weight:700;color:#c0810c;background:rgba(255,255,255,.7);border-radius:5px;padding:2px 6px}
-
-/* Gold holdings */
 .gold-holdings-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .gold-holdings-title{font-size:13px;font-weight:900;color:#7d5a00}
 .gold-total-badge{background:#f39c12;color:#fff;font-size:11px;font-weight:900;border-radius:8px;padding:3px 10px}
@@ -117,8 +104,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .buy-gold-btn:hover{background:linear-gradient(135deg,#e67e22,#d35400);transform:translateY(-1px)}
 .buy-gold-btn:active{transform:scale(.97)}
 .tip-box{background:#e3f2fd;border:2px solid #90caf9;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:11px;font-weight:800;color:#1565c0;line-height:1.6}
-
-/* ===== SAHAM ===== */
 .saham-note{font-size:11px;font-weight:800;color:#888;margin-bottom:10px;padding:8px 12px;background:#f5f5f5;border-radius:10px}
 .saham-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .saham-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:2.5px solid #c8e6c9;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
@@ -136,8 +121,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .saham-price-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;margin-bottom:4px}
 .saham-price{font-size:13px;font-weight:900;color:var(--text)}
 .saham-chg{font-size:9px;font-weight:800;padding:2px 6px;border-radius:5px}
-
-/* ===== KEPEMILIKAN SAHAM ===== */
 .saham-owned-summary{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1.5px solid #a5d6a7;border-radius:8px;padding:7px 10px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;gap:4px}
 .saham-owned-total{font-size:10px;font-weight:900;color:#1b5e20}
 .saham-owned-avg{font-size:9px;font-weight:800;color:#4a4a4a;flex:1;text-align:center}
@@ -163,20 +146,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .saham-total-box{background:#e8f5e9;border:2px solid #81c784;border-radius:12px;padding:12px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
 .stb-label{font-size:12px;font-weight:800;color:#1b5e20}
 .stb-value{font-size:18px;font-weight:900;color:#27ae60}
-
-/* ===== CARD ===== */
 .card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:2.5px solid #c8e6c9}
-
-/* ===== GOALS ===== */
-.goal-card{background:linear-gradient(135deg,#e8f5e9,#f3ffe3);border:2.5px solid #81c784;border-radius:var(--radius);padding:18px;margin-bottom:12px}
-
-/* ===== BOTTOM NAV ===== */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid #c8e6c9;display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 12px rgba(0,0,0,.08)}
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:800;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:8px;transition:.2s;text-decoration:none}
 .bnav-item.active,.bnav-item:hover{color:var(--green)}
 .bnav-icon{font-size:20px}
-
-/* ===== MODALS ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-box{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:22px 20px 28px;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.2,.64,1);max-height:90vh;overflow-y:auto}
@@ -186,6 +160,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .modal-label{font-size:11px;font-weight:800;color:#546e7a;margin-bottom:5px;margin-top:12px;display:block}
 .modal-input{width:100%;border:2px solid #e0e0e0;border-radius:10px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);outline:none;transition:.2s}
 .modal-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(39,174,96,.12)}
+/* READ-ONLY style untuk harga per lembar */
+.modal-input[readonly]{background:#f5f5f5;color:#888;border-color:#e0e0e0;cursor:not-allowed}
 .modal-hint{font-size:10px;font-weight:700;color:#90a4ae;margin-top:4px}
 .modal-total{background:#f1f8e9;border:2px solid #c8e6c9;border-radius:10px;padding:10px 14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
 .modal-total-label{font-size:12px;font-weight:800;color:#2e7d32}
@@ -198,8 +174,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .modal-btn.secondary{background:#f0f0f0;color:#555}
 .modal-btn.danger{background:var(--red);color:#fff}
 .modal-btn:active{transform:scale(.97)}
-
-/* ===== CONFIRM ===== */
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
 .confirm-overlay.open{opacity:1;pointer-events:all}
 .confirm-box{background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center;transform:scale(.9);transition:transform .25s cubic-bezier(.34,1.4,.64,1)}
@@ -210,42 +184,33 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .confirm-btns{display:flex;gap:8px}
 .confirm-yes{flex:1;background:var(--red);color:#fff;border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
 .confirm-no{flex:1;background:#f0f0f0;color:#555;border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
-
-/* ===== TOAST ===== */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1b5e20;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:10px 22px;border-radius:20px;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
-
-/* ===== SYNC DOT ===== */
 .sync-dot{position:fixed;top:14px;right:14px;width:8px;height:8px;border-radius:50%;z-index:600;opacity:0;transition:opacity .3s}
 .sync-dot.show-green{opacity:1;background:#4caf50;box-shadow:0 0 6px #4caf50}
 .sync-dot.show-orange{opacity:1;background:#ff9800;box-shadow:0 0 6px #ff9800}
-
-/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:4px}
-
-/* ===== PIE ===== */
 .pie-wrap{display:flex;gap:14px;align-items:center}
 .pie-labels{flex:1}
 .pie-label-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .pie-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
 .pie-label-text{font-size:12px;font-weight:800;color:var(--text)}
-
-/* ===== CHART EMPTY STATE ===== */
 .chart-empty{text-align:center;padding:20px 10px;font-size:11px;font-weight:700;color:#d4a017}
-
-/* ===== LOT/LEMBAR TOGGLE ===== */
 .unit-toggle{display:flex;gap:6px;margin-bottom:6px}
 .unit-toggle-btn{flex:1;border:2px solid #c8e6c9;border-radius:9px;padding:8px 4px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;cursor:pointer;background:#f9fbe7;color:#558b2f;transition:.15s;text-align:center}
 .unit-toggle-btn.active{background:#27ae60;color:#fff;border-color:#27ae60}
 .unit-info-box{background:#e8f5e9;border:1.5px solid #a5d6a7;border-radius:9px;padding:7px 12px;margin-top:4px;font-size:10px;font-weight:800;color:#1b5e20;line-height:1.6}
+/* Lembar price display box */
+.lembar-price-box{background:#fff8e1;border:2px solid #ffe082;border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+.lembar-price-label{font-size:11px;font-weight:800;color:#e65100}
+.lembar-price-value{font-size:16px;font-weight:900;color:#bf360c}
 </style>
 </head>
 <body>
 
 <div class="sync-dot" id="syncDot"></div>
 
-<!-- ===== HEADER ===== -->
 <div class="header">
   <div class="hdr-top">
     <a class="back-btn" href="index.html" target="_self" onclick="window.location.href='index.html'">← Balik</a>
@@ -274,10 +239,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- ===== MAIN ===== -->
 <div class="main">
 
-  <!-- TABUNGAN READ-ONLY -->
   <div class="section-title">🐷 Tabungan Aslan</div>
   <div class="tabung-ro">
     <div class="tabung-ro-label">💰 SALDO TABUNGAN (dari sistem utama)</div>
@@ -288,7 +251,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     </div>
   </div>
 
-  <!-- EMAS -->
   <div class="section-title">🥇 Emas Antam Aslan</div>
   <div class="gold-card">
     <div class="gold-header">
@@ -301,7 +263,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       <div class="gold-chg chg-up" id="goldChg">▲ +0.0%</div>
     </div>
     <div class="gold-meta" id="goldMeta">Menunggu data...</div>
-
     <div class="gold-chart-wrap">
       <div class="chart-lbl">
         <span>📊 Riwayat Harga Emas</span>
@@ -311,8 +272,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="chart-empty">📊 Grafik akan muncul setelah Ayah update harga emas beberapa kali</div>
       </div>
     </div>
-
-    <!-- Holdings list -->
     <div class="gold-holdings-hdr">
       <div class="gold-holdings-title">🪙 Emas Yang Aku Punya</div>
       <div class="gold-total-badge" id="goldTotalGram">0 gram</div>
@@ -329,12 +288,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="gtb-value" id="goldTotalValue">Rp 0</div>
       </div>
     </div>
-
     <button class="buy-gold-btn" onclick="openGoldBuyModal()">✨ Beli Emas Baru</button>
     <div class="tip-box">💡 <b>Tahukah Aslan?</b> Emas itu seperti magic shield — nilainya naik terus dari tahun ke tahun. Semakin banyak nabung emas, semakin kaya Aslan nanti! 🛡️✨</div>
   </div>
 
-  <!-- SAHAM -->
   <div class="section-title">📈 Saham Perusahaan Favorit</div>
   <div class="card" style="padding:12px">
     <div class="saham-note">🎮 Ini simulasi ya Aslan — belajar investasi dulu sebelum yang beneran! Tap "Beli" untuk catat kepemilikan sahammu.</div>
@@ -347,7 +304,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     </div>
   </div>
 
-  <!-- PORTFOLIO PIE -->
   <div class="section-title">📊 Komposisi Portofolio</div>
   <div class="card">
     <div class="pie-wrap">
@@ -366,7 +322,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     </div>
   </div>
 
-  <!-- TIPS -->
   <div class="section-title">🧠 Pelajaran Investasi</div>
   <div class="card" style="padding:14px">
     <div id="tipCards"></div>
@@ -374,7 +329,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a class="bnav-item" href="index.html"><div class="bnav-icon">⚔️</div>Misi</a>
   <a class="bnav-item" href="index.html#streak"><div class="bnav-icon">🔥</div>Streak</a>
@@ -383,7 +337,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   <a class="bnav-item" href="jurnal.html"><div class="bnav-icon">📔</div>Jurnal</a>
 </nav>
 
-<!-- ======== MODAL: BELI EMAS ======== -->
+<!-- MODAL: BELI EMAS -->
 <div class="modal-overlay" id="goldBuyModal">
   <div class="modal-box">
     <div class="modal-title">🥇 Beli Emas Baru</div>
@@ -407,7 +361,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- ======== MODAL: EDIT EMAS ======== -->
+<!-- MODAL: EDIT EMAS -->
 <div class="modal-overlay" id="goldEditModal">
   <div class="modal-box">
     <div class="modal-title">✏️ Edit Data Emas</div>
@@ -433,7 +387,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- ======== MODAL: BELI SAHAM ======== -->
+<!-- MODAL: BELI SAHAM -->
 <div class="modal-overlay" id="stockBuyModal">
   <div class="modal-box">
     <div class="modal-title" id="sbTitle">📈 Beli Saham</div>
@@ -441,17 +395,31 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <input type="hidden" id="sbId">
     <label class="modal-label">📅 Tanggal Beli</label>
     <input class="modal-input" type="date" id="sbDate">
+
     <label class="modal-label">📦 Satuan Pembelian</label>
     <div class="unit-toggle">
       <button class="unit-toggle-btn active" id="sbUnitLot" onclick="setSbUnit('lot')">📦 Per Lot<br><span style="font-size:9px;font-weight:700;opacity:.8">(1 lot = 100 lbr)</span></button>
       <button class="unit-toggle-btn" id="sbUnitLembar" onclick="setSbUnit('lembar')">📄 Per Lembar<br><span style="font-size:9px;font-weight:700;opacity:.8">(satuan terkecil)</span></button>
     </div>
-    <div class="unit-info-box" id="sbUnitInfo">📦 Mode Lot: masukkan jumlah lot &amp; harga per lot. Sistem simpan dalam lot.</div>
-    <label class="modal-label" id="sbLotsLabel">📦 Jumlah Lot</label>
-    <input class="modal-input" type="number" id="sbLots" placeholder="Contoh: 1" min="1">
-    <label class="modal-label" id="sbPriceLabel">💵 Harga Beli per Lot (Rp)</label>
-    <input class="modal-input" type="number" id="sbBuyPrice" placeholder="Harga beli" min="0">
-    <div class="modal-hint" id="sbPriceHint"></div>
+    <div class="unit-info-box" id="sbUnitInfo">📦 <b>Mode Lot:</b> masukkan jumlah lot. Harga otomatis dari harga pasar.</div>
+
+    <label class="modal-label" id="sbQtyLabel">📦 Jumlah Lot</label>
+    <input class="modal-input" type="number" id="sbQty" placeholder="Contoh: 1" min="1" step="1">
+
+    <!-- Harga per LOT (mode lot) -->
+    <div id="sbPricePerLotWrap">
+      <label class="modal-label">💵 Harga Beli per Lot (Rp)</label>
+      <input class="modal-input" type="number" id="sbBuyPriceLot" placeholder="Harga beli per lot" min="0">
+      <div class="modal-hint" id="sbHintLot"></div>
+    </div>
+
+    <!-- Harga per LEMBAR (mode lembar) — otomatis, readonly -->
+    <div id="sbPricePerLembarWrap" style="display:none">
+      <label class="modal-label">💵 Harga Beli per Lembar (Rp)</label>
+      <input class="modal-input" type="number" id="sbBuyPriceLembar" readonly placeholder="Otomatis dari harga pasar">
+      <div class="modal-hint" id="sbHintLembar"></div>
+    </div>
+
     <div class="modal-total">
       <span class="modal-total-label">💰 Total Investasi</span>
       <span class="modal-total-value" id="sbTotal">Rp 0</span>
@@ -463,7 +431,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- ======== MODAL: EDIT SAHAM ======== -->
+<!-- MODAL: EDIT SAHAM -->
 <div class="modal-overlay" id="stockEditModal">
   <div class="modal-box">
     <div class="modal-title" id="seTitle">✏️ Edit Transaksi Saham</div>
@@ -477,11 +445,21 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       <button class="unit-toggle-btn active" id="seUnitLot" onclick="setSeUnit('lot')">📦 Per Lot<br><span style="font-size:9px;font-weight:700;opacity:.8">(1 lot = 100 lbr)</span></button>
       <button class="unit-toggle-btn" id="seUnitLembar" onclick="setSeUnit('lembar')">📄 Per Lembar<br><span style="font-size:9px;font-weight:700;opacity:.8">(satuan terkecil)</span></button>
     </div>
-    <div class="unit-info-box" id="seUnitInfo">📦 Mode Lot: masukkan jumlah lot &amp; harga per lot. Sistem simpan dalam lot.</div>
-    <label class="modal-label" id="seLotsLabel">📦 Jumlah Lot</label>
-    <input class="modal-input" type="number" id="seLots" placeholder="10" min="1">
-    <label class="modal-label" id="sePriceLabel">💵 Harga Beli per Lot (Rp)</label>
-    <input class="modal-input" type="number" id="seBuyPrice" placeholder="Harga beli" min="0">
+    <div class="unit-info-box" id="seUnitInfo">📦 <b>Mode Lot:</b> masukkan jumlah lot &amp; harga per lot. Sistem simpan dalam lot.</div>
+
+    <label class="modal-label" id="seQtyLabel">📦 Jumlah Lot</label>
+    <input class="modal-input" type="number" id="seQty" placeholder="10" min="1">
+
+    <div id="sePricePerLotWrap">
+      <label class="modal-label">💵 Harga Beli per Lot (Rp)</label>
+      <input class="modal-input" type="number" id="seBuyPriceLot" placeholder="Harga beli per lot" min="0">
+    </div>
+    <div id="sePricePerLembarWrap" style="display:none">
+      <label class="modal-label">💵 Harga Beli per Lembar (Rp)</label>
+      <input class="modal-input" type="number" id="seBuyPriceLembar" readonly placeholder="Otomatis dari harga pasar">
+      <div class="modal-hint" id="seHintLembar"></div>
+    </div>
+
     <div class="modal-total">
       <span class="modal-total-label">💰 Total Investasi Transaksi Ini</span>
       <span class="modal-total-value" id="seTotal">Rp 0</span>
@@ -494,7 +472,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- ======== CONFIRM DELETE ======== -->
+<!-- CONFIRM DELETE -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
     <div class="confirm-icon" id="confirmIcon">⚠️</div>
@@ -509,28 +487,25 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 <div class="toast" id="toast"></div>
 
-<!-- ============================= SCRIPT ============================= -->
 <script>
 // ============================================================
 // STATE
 // ============================================================
-let goldHoldings   = {};
-let stockHoldings  = {};
+let goldHoldings    = {};
+let stockHoldings   = {};
 let tabunganBalance = 0;
 let currentGoldPrice = 1890000;
 let prevGoldPrice    = 1890000;
 let goldPriceHistory = [];
+const expandedCards  = {};
 
-const expandedCards = {};
-
-// Stock catalogue
 const STOCKS = [
-  {id:'ultra',    icon:'🥛', name:'Ultra Milk',   ticker:'ULTJ',  basePrice:1850,      cls:'s-ultra'},
-  {id:'indomie',  icon:'🍜', name:'Indofood',     ticker:'INDF',  basePrice:6750,      cls:'s-indomie'},
-  {id:'goto',     icon:'🛵', name:'GoTo Group',   ticker:'GOTO',  basePrice:84,        cls:'s-goto'},
-  {id:'mayora',   icon:'🍪', name:'Mayora Indah', ticker:'MYOR',  basePrice:2890,      cls:'s-mayora'},
-  {id:'nintendo', icon:'🎮', name:'Nintendo',     ticker:'NTDOY', basePrice:142000,    cls:'s-nintendo'},
-  {id:'bca',      icon:'🏦', name:'Bank BCA',     ticker:'BBCA',  basePrice:9400,      cls:'s-bca'},
+  {id:'ultra',    icon:'🥛', name:'Ultra Milk',   ticker:'ULTJ',  basePrice:1850,   cls:'s-ultra'},
+  {id:'indomie',  icon:'🍜', name:'Indofood',     ticker:'INDF',  basePrice:6750,   cls:'s-indomie'},
+  {id:'goto',     icon:'🛵', name:'GoTo Group',   ticker:'GOTO',  basePrice:84,     cls:'s-goto'},
+  {id:'mayora',   icon:'🍪', name:'Mayora Indah', ticker:'MYOR',  basePrice:2890,   cls:'s-mayora'},
+  {id:'nintendo', icon:'🎮', name:'Nintendo',     ticker:'NTDOY', basePrice:142000, cls:'s-nintendo'},
+  {id:'bca',      icon:'🏦', name:'Bank BCA',     ticker:'BBCA',  basePrice:9400,   cls:'s-bca'},
 ];
 
 const stockPrices  = {};
@@ -541,7 +516,7 @@ STOCKS.forEach(s => {
 });
 
 // ============================================================
-// FIREBASE HELPERS
+// FIREBASE
 // ============================================================
 function showSync(ok) {
   const dot = document.getElementById('syncDot');
@@ -557,15 +532,12 @@ FB_INV.on('value', snap => {
   const d = snap.val() || {};
   goldHoldings  = d.goldHoldings  || {};
   stockHoldings = d.stockHoldings || {};
-
-  // Migrate old stockHoldings without history
   Object.keys(stockHoldings).forEach(id => {
     const h = stockHoldings[id];
     if (h && !h.history) {
       h.history = [{ lots: h.lots, buyPrice: h.buyPrice, date: '—' }];
     }
   });
-
   renderGoldHoldings();
   renderSaham();
   renderHeader();
@@ -608,57 +580,28 @@ function updateTabunganDisplay() {
 }
 
 // ============================================================
-// LIVE INPUT LISTENERS — attach after DOM ready
-// ============================================================
-function attachInputListeners() {
-  // Gold Buy
-  document.getElementById('gbGram').addEventListener('input', updateGoldBuyTotal);
-  document.getElementById('gbBuyPrice').addEventListener('input', updateGoldBuyTotal);
-
-  // Gold Edit
-  document.getElementById('geGram').addEventListener('input', updateGoldEditTotal);
-  document.getElementById('geBuyPrice').addEventListener('input', updateGoldEditTotal);
-
-  // Stock Buy
-  document.getElementById('sbLots').addEventListener('input', updateStockBuyTotal);
-  document.getElementById('sbBuyPrice').addEventListener('input', updateStockBuyTotal);
-
-  // Stock Edit
-  document.getElementById('seLots').addEventListener('input', updateStockEditTotal);
-  document.getElementById('seBuyPrice').addEventListener('input', updateStockEditTotal);
-}
-
-// ============================================================
-// LOAD MANUAL PRICES
+// MANUAL PRICES
 // ============================================================
 function loadManualPrices() {
   firebase.database().ref('aslan_investasi/manualPrices').on('value', snap => {
     const d = snap.val();
     if (!d) return;
-
     if (d.goldPrice && d.goldPrice > 0) {
       prevGoldPrice    = currentGoldPrice;
       currentGoldPrice = d.goldPrice;
-
       const diff = currentGoldPrice - prevGoldPrice;
       const pct  = prevGoldPrice > 0 ? ((diff / prevGoldPrice) * 100).toFixed(2) : '0.00';
       const isUp = diff >= 0;
-
       document.getElementById('goldPrice').textContent = fmtRp(currentGoldPrice);
       document.getElementById('goldChg').textContent   = (isUp ? '▲ +' : '▼ ') + Math.abs(pct) + '%';
       document.getElementById('goldChg').className     = 'gold-chg ' + (isUp ? 'chg-up' : 'chg-down');
-
       const updAt = d.updatedAt ? new Date(d.updatedAt) : new Date();
       document.getElementById('goldMeta').textContent =
         updAt.toLocaleDateString('id-ID', { weekday:'short', day:'numeric', month:'short', year:'numeric' }) +
         ' · Diupdate Ayah';
-
-      // Save today's price to history
-      const todayKey = todayISO().replace(/-/g, '');
+      const todayKey = todayISO().replace(/-/g,'');
       firebase.database().ref('aslan_investasi/goldPriceHistory/' + todayKey)
         .set({ price: d.goldPrice, date: todayISO() });
-
-      // Load last 30 entries for chart
       firebase.database().ref('aslan_investasi/goldPriceHistory')
         .orderByKey().limitToLast(30)
         .once('value', histSnap => {
@@ -666,29 +609,24 @@ function loadManualPrices() {
           const keys = Object.keys(hd).sort();
           goldPriceHistory = keys.map(k => {
             const entry = hd[k];
-            if (typeof entry === 'number') {
-              return { price: entry, label: k.slice(4,6) + '/' + k.slice(6,8) };
-            }
-            const dt = entry.date ? new Date(entry.date + 'T12:00:00') : null;
-            const label = dt ? (dt.getDate() + '/' + (dt.getMonth()+1)) : k.slice(4,8);
+            if (typeof entry === 'number') return { price: entry, label: k.slice(4,6)+'/'+k.slice(6,8) };
+            const dt = entry.date ? new Date(entry.date+'T12:00:00') : null;
+            const label = dt ? (dt.getDate()+'/'+(dt.getMonth()+1)) : k.slice(4,8);
             return { price: entry.price, label };
           });
           renderGoldChart();
           document.getElementById('chartUpdating').textContent = '✅ ' + goldPriceHistory.length + ' data';
         });
     }
-
     if (d.stockPrices) {
       Object.entries(d.stockPrices).forEach(([id, price]) => {
         if (price > 0) {
           const prev = stockPrices[id] || STOCKS.find(s=>s.id===id)?.basePrice || price;
           stockPrices[id]  = price;
-          const chg = ((price - prev) / prev * 100);
-          stockChanges[id] = +chg.toFixed(2);
+          stockChanges[id] = +((price - prev) / prev * 100).toFixed(2);
         }
       });
     }
-
     renderGoldHoldings();
     renderSaham();
     renderHeader();
@@ -696,123 +634,80 @@ function loadManualPrices() {
 }
 
 // ============================================================
-// RENDER GOLD CHART
+// GOLD CHART
 // ============================================================
 function renderGoldChart() {
   const container = document.getElementById('goldChartContainer');
-
   if (!goldPriceHistory || goldPriceHistory.length < 2) {
     container.innerHTML = '<div class="chart-empty">📊 Grafik muncul setelah Ayah update harga emas minimal 2x di hari berbeda</div>';
     return;
   }
-
   const prices = goldPriceHistory.map(h => h.price);
   const labels = goldPriceHistory.map(h => h.label);
-  const W = 320, H = 90, padL = 8, padR = 8, padT = 18, padB = 18;
-  const drawW = W - padL - padR;
-  const drawH = H - padT - padB;
-
-  const mn = Math.min(...prices);
-  const mx = Math.max(...prices);
-  const range = mx - mn || 1;
-  const step = Math.max(1, Math.floor(goldPriceHistory.length / 7));
-
-  const pts = prices.map((v, i) => ({
-    x: padL + (i / (prices.length - 1)) * drawW,
-    y: padT + drawH - ((v - mn) / range) * drawH,
-    v,
-    label: labels[i],
-    showLabel: (i % step === 0) || (i === prices.length - 1)
+  const W=320,H=90,padL=8,padR=8,padT=18,padB=18;
+  const drawW=W-padL-padR, drawH=H-padT-padB;
+  const mn=Math.min(...prices), mx=Math.max(...prices), range=mx-mn||1;
+  const step=Math.max(1,Math.floor(goldPriceHistory.length/7));
+  const pts=prices.map((v,i)=>({
+    x:padL+(i/(prices.length-1))*drawW,
+    y:padT+drawH-((v-mn)/range)*drawH,
+    v, label:labels[i],
+    showLabel:(i%step===0)||(i===prices.length-1)
   }));
-
-  const polyline = pts.map(p => p.x + ',' + p.y).join(' ');
-  const areaPath = `M${pts[0].x},${H - padB} ` +
-    pts.map(p => p.x + ',' + p.y).join(' ') +
-    ` ${pts[pts.length-1].x},${H - padB} Z`;
-
-  const isUp = prices[prices.length-1] >= prices[0];
-  const lineColor = isUp ? '#27ae60' : '#e74c3c';
-  const fillId = 'goldGrad_' + Date.now();
-
-  let svgHtml = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;display:block">
-  <defs>
-    <linearGradient id="${fillId}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.3"/>
-      <stop offset="100%" stop-color="${lineColor}" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
+  const polyline=pts.map(p=>p.x+','+p.y).join(' ');
+  const areaPath=`M${pts[0].x},${H-padB} `+pts.map(p=>p.x+','+p.y).join(' ')+` ${pts[pts.length-1].x},${H-padB} Z`;
+  const isUp=prices[prices.length-1]>=prices[0];
+  const lineColor=isUp?'#27ae60':'#e74c3c';
+  const fillId='goldGrad_'+Date.now();
+  let svgHtml=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;display:block">
+  <defs><linearGradient id="${fillId}" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.3"/>
+    <stop offset="100%" stop-color="${lineColor}" stop-opacity="0"/>
+  </linearGradient></defs>
   <path d="${areaPath}" fill="url(#${fillId})"/>
   <polyline points="${polyline}" fill="none" stroke="${lineColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-  pts.forEach((p, i) => {
-    const isLast = i === pts.length - 1;
-    svgHtml += `<circle cx="${p.x}" cy="${p.y}" r="${isLast ? 5 : 2.5}"
-      fill="${isLast ? lineColor : lineColor + '88'}" stroke="#fff" stroke-width="1.5"/>`;
+  pts.forEach((p,i)=>{
+    const isLast=i===pts.length-1;
+    svgHtml+=`<circle cx="${p.x}" cy="${p.y}" r="${isLast?5:2.5}" fill="${isLast?lineColor:lineColor+'88'}" stroke="#fff" stroke-width="1.5"/>`;
   });
-
-  const first = pts[0], last = pts[pts.length - 1];
-  svgHtml += `<text x="${first.x}" y="${first.y - 7}" text-anchor="start"
-    font-size="8" font-weight="800" font-family="Nunito,sans-serif" fill="#7d5a00">
-    ${(first.v/1000000).toFixed(2)}M</text>`;
-  svgHtml += `<text x="${last.x}" y="${last.y - 7}" text-anchor="end"
-    font-size="9" font-weight="900" font-family="Nunito,sans-serif" fill="${lineColor}">
-    ${(last.v/1000000).toFixed(2)}M</text>`;
-
-  pts.forEach(p => {
-    if (p.showLabel) {
-      svgHtml += `<text x="${p.x}" y="${H}" text-anchor="middle"
-        font-size="7.5" font-weight="700" font-family="Nunito,sans-serif" fill="#9a6a00">${p.label}</text>`;
-    }
-  });
-
-  svgHtml += `<text x="${last.x + 7}" y="${last.y + 4}" font-size="12"
-    fill="${lineColor}">${isUp ? '↗' : '↘'}</text>`;
-  svgHtml += `</svg>`;
-  container.innerHTML = svgHtml;
+  const first=pts[0],last=pts[pts.length-1];
+  svgHtml+=`<text x="${first.x}" y="${first.y-7}" text-anchor="start" font-size="8" font-weight="800" font-family="Nunito,sans-serif" fill="#7d5a00">${(first.v/1000000).toFixed(2)}M</text>`;
+  svgHtml+=`<text x="${last.x}" y="${last.y-7}" text-anchor="end" font-size="9" font-weight="900" font-family="Nunito,sans-serif" fill="${lineColor}">${(last.v/1000000).toFixed(2)}M</text>`;
+  pts.forEach(p=>{ if(p.showLabel) svgHtml+=`<text x="${p.x}" y="${H}" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Nunito,sans-serif" fill="#9a6a00">${p.label}</text>`; });
+  svgHtml+=`<text x="${last.x+7}" y="${last.y+4}" font-size="12" fill="${lineColor}">${isUp?'↗':'↘'}</text></svg>`;
+  container.innerHTML=svgHtml;
 }
 
 // ============================================================
-// RECALCULATE STOCK
+// STOCK RECALC
 // ============================================================
 function recalcStock(stockId) {
   const h = stockHoldings[stockId];
-  if (!h || !h.history || h.history.length === 0) {
-    delete stockHoldings[stockId];
-    return;
-  }
-  const allLots = h.history.reduce((s, t) => s + t.lots, 0);
-  const allCost = h.history.reduce((s, t) => s + t.lots * t.buyPrice, 0);
+  if (!h || !h.history || h.history.length === 0) { delete stockHoldings[stockId]; return; }
+  const allLots = h.history.reduce((s,t)=>s+t.lots, 0);
+  const allCost = h.history.reduce((s,t)=>s+t.lots*t.buyPrice, 0);
   h.lots     = allLots;
   h.buyPrice = Math.round(allCost / allLots);
 }
 
 // ============================================================
-// RENDER GOLD HOLDINGS
+// RENDER GOLD
 // ============================================================
 function renderGoldHoldings() {
-  const list      = document.getElementById('goldHoldingsList');
-  const ids       = Object.keys(goldHoldings);
-  const totalBox  = document.getElementById('goldTotalBox');
-  const gramBadge = document.getElementById('goldTotalGram');
-
-  if (ids.length === 0) {
-    list.innerHTML = '<div class="gold-empty">Belum ada emas tersimpan.<br>Klik "Beli Emas" untuk mulai! 🌟</div>';
-    totalBox.style.display = 'none';
-    gramBadge.textContent = '0 gram';
-    return;
+  const list=document.getElementById('goldHoldingsList');
+  const ids=Object.keys(goldHoldings);
+  const totalBox=document.getElementById('goldTotalBox');
+  const gramBadge=document.getElementById('goldTotalGram');
+  if (ids.length===0) {
+    list.innerHTML='<div class="gold-empty">Belum ada emas tersimpan.<br>Klik "Beli Emas" untuk mulai! 🌟</div>';
+    totalBox.style.display='none'; gramBadge.textContent='0 gram'; return;
   }
-
-  let totalGram=0, totalCost=0, totalValue=0;
-  list.innerHTML = ids.map(id => {
-    const h = goldHoldings[id];
-    const val    = h.gram * currentGoldPrice;
-    const cost   = h.gram * h.buyPrice;
-    const profit = val - cost;
-    totalGram  += h.gram;
-    totalCost  += cost;
-    totalValue += val;
-    const profitColor = profit >= 0 ? '#2e7d32' : '#c62828';
-    const profitSign  = profit >= 0 ? '+' : '';
+  let totalGram=0,totalCost=0,totalValue=0;
+  list.innerHTML=ids.map(id=>{
+    const h=goldHoldings[id];
+    const val=h.gram*currentGoldPrice, cost=h.gram*h.buyPrice, profit=val-cost;
+    totalGram+=h.gram; totalCost+=cost; totalValue+=val;
+    const pc=profit>=0?'#2e7d32':'#c62828', ps=profit>=0?'+':'';
     return `<div class="gold-item">
       <div class="gold-item-top">
         <div class="gold-item-icon">🪙</div>
@@ -823,7 +718,7 @@ function renderGoldHoldings() {
         </div>
         <div class="gold-item-right">
           <div class="gold-item-now">${fmtRp(Math.round(val))}</div>
-          <div class="gold-item-profit" style="color:${profitColor}">${profitSign}${fmtRp(Math.abs(Math.round(profit)))}</div>
+          <div class="gold-item-profit" style="color:${pc}">${ps}${fmtRp(Math.abs(Math.round(profit)))}</div>
         </div>
       </div>
       <div class="gold-item-actions">
@@ -832,83 +727,60 @@ function renderGoldHoldings() {
       </div>
     </div>`;
   }).join('');
-
-  gramBadge.textContent = totalGram.toFixed(totalGram % 1 === 0 ? 0 : 2) + ' gram';
-  totalBox.style.display = '';
-  const totalProfit = totalValue - totalCost;
-  document.getElementById('goldTotalValue').textContent = fmtRp(Math.round(totalValue));
-  const profEl = document.getElementById('goldTotalProfit');
-  profEl.textContent = 'Untung/Rugi: ' + (totalProfit>=0?'+':'') + fmtRp(Math.abs(Math.round(totalProfit)));
-  profEl.style.color = totalProfit >= 0 ? '#2e7d32' : '#c62828';
+  gramBadge.textContent=totalGram.toFixed(totalGram%1===0?0:2)+' gram';
+  totalBox.style.display='';
+  const tp=totalValue-totalCost;
+  document.getElementById('goldTotalValue').textContent=fmtRp(Math.round(totalValue));
+  const profEl=document.getElementById('goldTotalProfit');
+  profEl.textContent='Untung/Rugi: '+(tp>=0?'+':'')+fmtRp(Math.abs(Math.round(tp)));
+  profEl.style.color=tp>=0?'#2e7d32':'#c62828';
 }
 
 // ============================================================
 // RENDER SAHAM
 // ============================================================
 function renderSaham() {
-  const grid = document.getElementById('sahamGrid');
+  const grid=document.getElementById('sahamGrid');
   let totalSahamValue=0;
-  const hasAny = Object.keys(stockHoldings).some(k => stockHoldings[k]?.lots > 0);
-
-  grid.innerHTML = STOCKS.map(s => {
-    const price  = stockPrices[s.id];
-    const chg    = stockChanges[s.id];
-    const isUp   = chg >= 0;
-    const h      = stockHoldings[s.id];
-    const hasOwn = h && h.lots > 0 && h.history && h.history.length > 0;
-
-    let ownedHtml = '';
-    let actHtml   = `<div class="saham-actions"><button class="saham-btn beli" onclick="openStockBuyModal('${s.id}')">➕ Beli</button></div>`;
-
+  const hasAny=Object.keys(stockHoldings).some(k=>stockHoldings[k]?.lots>0);
+  grid.innerHTML=STOCKS.map(s=>{
+    const price=stockPrices[s.id], chg=stockChanges[s.id], isUp=chg>=0;
+    const h=stockHoldings[s.id], hasOwn=h&&h.lots>0&&h.history&&h.history.length>0;
+    let ownedHtml='';
+    let actHtml=`<div class="saham-actions"><button class="saham-btn beli" onclick="openStockBuyModal('${s.id}')">➕ Beli</button></div>`;
     if (hasOwn) {
-      const totalVal    = price * h.lots;
-      const totalCost   = h.history.reduce((sum, t) => sum + t.lots * t.buyPrice, 0);
-      const totalProfit = totalVal - totalCost;
-      totalSahamValue  += totalVal;
-
-      const profitColor = totalProfit >= 0 ? '#27ae60' : '#e74c3c';
-      const profitSign  = totalProfit >= 0 ? '+' : '';
-      const isExpanded  = expandedCards[s.id];
-
-      const histRows = h.history.map((t, idx) => {
-        const tVal    = price * t.lots;
-        const tCost   = t.buyPrice * t.lots;
-        const tProfit = tVal - tCost;
-        const tPColor = tProfit >= 0 ? '#27ae60' : '#e74c3c';
-        const tPSign  = tProfit >= 0 ? '+' : '';
-        // Tampilkan lot + ekuivalen lembar jika bukan bilangan bulat
-        const lotDisplay = Number.isInteger(t.lots) ? t.lots + ' lot' : t.lots + ' lot (' + Math.round(t.lots * 100) + ' lbr)';
+      const totalVal=price*h.lots, totalCost=h.history.reduce((sum,t)=>sum+t.lots*t.buyPrice,0), totalProfit=totalVal-totalCost;
+      totalSahamValue+=totalVal;
+      const pc=totalProfit>=0?'#27ae60':'#e74c3c', ps=totalProfit>=0?'+':'';
+      const isExpanded=expandedCards[s.id];
+      const histRows=h.history.map((t,idx)=>{
+        const tVal=price*t.lots, tCost=t.buyPrice*t.lots, tProfit=tVal-tCost;
+        const tpc=tProfit>=0?'#27ae60':'#e74c3c', tps=tProfit>=0?'+':'';
+        const lotDisplay=Number.isInteger(t.lots)?t.lots+' lot':t.lots+' lot ('+Math.round(t.lots*100)+' lbr)';
         return `<div class="saham-hist-row">
           <span class="saham-hist-num">#${idx+1}</span>
           <span class="saham-hist-lots">${lotDisplay}</span>
           <span class="saham-hist-price">Rp ${Math.round(t.buyPrice).toLocaleString('id-ID')}/lot</span>
           <span class="saham-hist-date">${t.date||'—'}</span>
-          <span class="saham-hist-profit" style="color:${tPColor}">${tPSign}${fmtRp(Math.abs(Math.round(tProfit)))}</span>
+          <span class="saham-hist-profit" style="color:${tpc}">${tps}${fmtRp(Math.abs(Math.round(tProfit)))}</span>
           <button class="saham-hist-del" onclick="openStockEditModal('${s.id}',${idx})" title="Edit/Hapus">✏️</button>
         </div>`;
       }).join('');
-
-      ownedHtml = `
+      ownedHtml=`
         <div class="saham-owned-summary">
           <span class="saham-owned-total">✅ ${h.lots} lot</span>
           <span class="saham-owned-avg">Avg Rp ${h.buyPrice.toLocaleString('id-ID')}</span>
-          <span class="saham-owned-pnl" style="color:${profitColor}">${profitSign}${fmtRp(Math.abs(Math.round(totalProfit)))}</span>
+          <span class="saham-owned-pnl" style="color:${pc}">${ps}${fmtRp(Math.abs(Math.round(totalProfit)))}</span>
         </div>
         <button class="saham-hist-toggle" onclick="toggleHistory('${s.id}')">
-          ${isExpanded ? '▲ Sembunyikan' : '▼ Lihat'} ${h.history.length} transaksi
+          ${isExpanded?'▲ Sembunyikan':'▼ Lihat'} ${h.history.length} transaksi
         </button>
-        ${isExpanded ? `<div class="saham-hist-wrap">
-          <div class="saham-hist-header">
-            <span>#</span><span>Lot</span><span>Harga Beli</span><span>Tgl</span><span>P/L</span><span></span>
-          </div>
+        ${isExpanded?`<div class="saham-hist-wrap">
+          <div class="saham-hist-header"><span>#</span><span>Lot</span><span>Harga Beli</span><span>Tgl</span><span>P/L</span><span></span></div>
           ${histRows}
-        </div>` : ''}`;
-
-      actHtml = `<div class="saham-actions">
-        <button class="saham-btn beli" onclick="openStockBuyModal('${s.id}')">➕ Beli Lagi</button>
-      </div>`;
+        </div>`:''}`;
+      actHtml=`<div class="saham-actions"><button class="saham-btn beli" onclick="openStockBuyModal('${s.id}')">➕ Beli Lagi</button></div>`;
     }
-
     return `<div class="saham-card ${s.cls}" id="scard-${s.id}">
       <span class="saham-icon">${s.icon}</span>
       <div class="saham-name">${s.name}</div>
@@ -921,84 +793,62 @@ function renderSaham() {
       ${actHtml}
     </div>`;
   }).join('');
-
-  const totalBox = document.getElementById('sahamTotalBox');
+  const totalBox=document.getElementById('sahamTotalBox');
   if (hasAny) {
-    totalBox.style.display = '';
-    document.getElementById('sahamTotalValue').textContent = fmtRp(Math.round(totalSahamValue));
-  } else {
-    totalBox.style.display = 'none';
-  }
+    totalBox.style.display='';
+    document.getElementById('sahamTotalValue').textContent=fmtRp(Math.round(totalSahamValue));
+  } else { totalBox.style.display='none'; }
 }
 
-function toggleHistory(stockId) {
-  expandedCards[stockId] = !expandedCards[stockId];
-  renderSaham();
-}
+function toggleHistory(stockId) { expandedCards[stockId]=!expandedCards[stockId]; renderSaham(); }
 
 // ============================================================
-// RENDER HEADER & PIE
+// HEADER & PIE
 // ============================================================
 function renderHeader() {
   let goldValue=0, goldCost=0;
-  Object.values(goldHoldings).forEach(h => {
-    goldValue += h.gram * currentGoldPrice;
-    goldCost  += h.gram * h.buyPrice;
-  });
-
+  Object.values(goldHoldings).forEach(h=>{ goldValue+=h.gram*currentGoldPrice; goldCost+=h.gram*h.buyPrice; });
   let sahamValue=0, sahamCost=0;
-  Object.entries(stockHoldings).forEach(([id, h]) => {
-    sahamValue += (stockPrices[id]||0) * h.lots;
-    if (h.history) sahamCost += h.history.reduce((s,t) => s + t.lots * t.buyPrice, 0);
-    else sahamCost += h.buyPrice * h.lots;
+  Object.entries(stockHoldings).forEach(([id,h])=>{
+    sahamValue+=(stockPrices[id]||0)*h.lots;
+    if (h.history) sahamCost+=h.history.reduce((s,t)=>s+t.lots*t.buyPrice,0);
+    else sahamCost+=h.buyPrice*h.lots;
   });
-
-  const total  = tabunganBalance + goldValue + sahamValue;
-  const invest = goldValue + sahamValue;
-  const cost   = goldCost + sahamCost;
-  const ret    = cost > 0 ? (((invest-cost)/cost)*100).toFixed(1) : '0.0';
-
-  document.getElementById('totalWealth').textContent = fmtRp(Math.round(total));
-  document.getElementById('statEmas').textContent = (()=>{
-    const g = Object.values(goldHoldings).reduce((s,h)=>s+h.gram,0);
-    return g > 0 ? g.toFixed(g%1===0?0:2)+'g' : '0g';
-  })();
-  document.getElementById('statSaham').textContent  = fmtRp(Math.round(sahamValue));
-  document.getElementById('statReturn').textContent = (parseFloat(ret)>=0?'+':'')+ret+'%';
-
-  if (total > 0) {
-    const pE = Math.round((goldValue/total)*100);
-    const pS = Math.round((sahamValue/total)*100);
-    const pT = 100 - pE - pS;
-    const CIRCUM = 251.3;
-    let offset = 0;
-    const setSlice = (id, pct, color) => {
-      const len = (pct/100)*CIRCUM;
-      const el  = document.getElementById(id);
-      el.setAttribute('stroke-dasharray', len+' '+(CIRCUM-len));
-      el.setAttribute('stroke-dashoffset', (-offset+63).toString());
-      el.setAttribute('stroke', color);
-      offset += len;
+  const total=tabunganBalance+goldValue+sahamValue;
+  const invest=goldValue+sahamValue, cost=goldCost+sahamCost;
+  const ret=cost>0?(((invest-cost)/cost)*100).toFixed(1):'0.0';
+  document.getElementById('totalWealth').textContent=fmtRp(Math.round(total));
+  const g=Object.values(goldHoldings).reduce((s,h)=>s+h.gram,0);
+  document.getElementById('statEmas').textContent=g>0?g.toFixed(g%1===0?0:2)+'g':'0g';
+  document.getElementById('statSaham').textContent=fmtRp(Math.round(sahamValue));
+  document.getElementById('statReturn').textContent=(parseFloat(ret)>=0?'+':'')+ret+'%';
+  if (total>0) {
+    const pE=Math.round((goldValue/total)*100), pS=Math.round((sahamValue/total)*100), pT=100-pE-pS;
+    const CIRCUM=251.3; let offset=0;
+    const setSlice=(id,pct,color)=>{
+      const len=(pct/100)*CIRCUM, el=document.getElementById(id);
+      el.setAttribute('stroke-dasharray',len+' '+(CIRCUM-len));
+      el.setAttribute('stroke-dashoffset',(-offset+63).toString());
+      el.setAttribute('stroke',color);
+      offset+=len;
     };
-    setSlice('pieEmas',  pE, '#f39c12');
-    setSlice('pieSaham', pS, '#2980b9');
-    setSlice('pieTabung',pT, '#27ae60');
-    document.getElementById('pctEmas').textContent   = `Emas — ${pE}%`;
-    document.getElementById('pctSaham').textContent  = `Saham — ${pS}%`;
-    document.getElementById('pctTabung').textContent = `Tabungan — ${pT}%`;
+    setSlice('pieEmas',pE,'#f39c12'); setSlice('pieSaham',pS,'#2980b9'); setSlice('pieTabung',pT,'#27ae60');
+    document.getElementById('pctEmas').textContent=`Emas — ${pE}%`;
+    document.getElementById('pctSaham').textContent=`Saham — ${pS}%`;
+    document.getElementById('pctTabung').textContent=`Tabungan — ${pT}%`;
   }
 }
 
 // ============================================================
 // TIPS
 // ============================================================
-const TIPS = [
+const TIPS=[
   {icon:'💡',title:'Apa itu Investasi?',body:'Investasi adalah menaruh uang di tempat yang bisa membuatnya berkembang — kayak menanam pohon, nanti berbuah banyak! 🌱',bg:'#e8f5e9',border:'#81c784',clr:'#1b5e20'},
   {icon:'📈',title:'Kenapa Harga Bisa Naik-Turun?',body:'Harga saham bergerak karena banyak orang jual-beli. Kalau banyak yang mau beli → harga naik! Kalau banyak yang mau jual → harga turun. Seperti barang langka yang makin mahal! 🎯',bg:'#e3f2fd',border:'#90caf9',clr:'#1565c0'},
   {icon:'⏳',title:'Sabar = Kunci Kaya!',body:'Warren Buffett mulai investasi umur 11 tahun. Aslan bisa start lebih awal dari dia! Sedikit demi sedikit, lama-lama jadi banyak. 🚀',bg:'#fff8e1',border:'#ffd54f',clr:'#e65100'},
 ];
 function renderTips() {
-  document.getElementById('tipCards').innerHTML = TIPS.map((t,i) => `
+  document.getElementById('tipCards').innerHTML=TIPS.map((t,i)=>`
     <div style="background:${t.bg};border:2px solid ${t.border};border-radius:12px;padding:12px 14px;${i<TIPS.length-1?'margin-bottom:10px':''}">
       <div style="font-size:13px;font-weight:900;color:${t.clr};margin-bottom:5px">${t.icon} ${t.title}</div>
       <div style="font-size:11px;font-weight:700;color:${t.clr};line-height:1.6">${t.body}</div>
@@ -1009,176 +859,179 @@ function renderTips() {
 // GOLD MODALS
 // ============================================================
 function openGoldBuyModal() {
-  document.getElementById('gbGram').value = '';
-  document.getElementById('gbBuyPrice').value = currentGoldPrice;
-  document.getElementById('gbDate').value = todayISO();
-  document.getElementById('gbNote').value = '';
-  document.getElementById('gbTotal').textContent = 'Rp 0';
+  document.getElementById('gbGram').value='';
+  document.getElementById('gbBuyPrice').value=currentGoldPrice;
+  document.getElementById('gbDate').value=todayISO();
+  document.getElementById('gbNote').value='';
+  document.getElementById('gbTotal').textContent='Rp 0';
   openModal('goldBuyModal');
 }
-
 function updateGoldBuyTotal() {
-  const g = parseFloat(document.getElementById('gbGram').value) || 0;
-  const p = parseFloat(document.getElementById('gbBuyPrice').value) || 0;
-  document.getElementById('gbTotal').textContent = fmtRp(Math.round(g * p));
+  const g=parseFloat(document.getElementById('gbGram').value)||0;
+  const p=parseFloat(document.getElementById('gbBuyPrice').value)||0;
+  document.getElementById('gbTotal').textContent=fmtRp(Math.round(g*p));
 }
-
 function saveGoldBuy() {
-  const gram     = parseFloat(document.getElementById('gbGram').value);
-  const buyPrice = parseFloat(document.getElementById('gbBuyPrice').value);
-  const date     = document.getElementById('gbDate').value;
-  const note     = document.getElementById('gbNote').value.trim();
-  if (!gram || gram <= 0)       { showToast('⚠️ Masukkan jumlah gram!'); return; }
-  if (!buyPrice || buyPrice <= 0) { showToast('⚠️ Masukkan harga beli!'); return; }
-  const id = 'g_' + Date.now();
-  goldHoldings[id] = { gram, buyPrice, date: fmtDate(date), note };
+  const gram=parseFloat(document.getElementById('gbGram').value);
+  const buyPrice=parseFloat(document.getElementById('gbBuyPrice').value);
+  const date=document.getElementById('gbDate').value;
+  const note=document.getElementById('gbNote').value.trim();
+  if (!gram||gram<=0) { showToast('⚠️ Masukkan jumlah gram!'); return; }
+  if (!buyPrice||buyPrice<=0) { showToast('⚠️ Masukkan harga beli!'); return; }
+  const id='g_'+Date.now();
+  goldHoldings[id]={ gram, buyPrice, date:fmtDate(date), note };
   saveInvestData();
   closeModal('goldBuyModal');
-  showToast('🥇 Pembelian ' + gram + ' gram berhasil dicatat!');
+  showToast('🥇 Pembelian '+gram+' gram berhasil dicatat!');
 }
-
 function openGoldEditModal(id) {
-  const h = goldHoldings[id];
-  if (!h) return;
-  document.getElementById('geId').value       = id;
-  document.getElementById('geGram').value     = h.gram;
-  document.getElementById('geBuyPrice').value = h.buyPrice;
-  document.getElementById('geDate').value     = isoFromDisplay(h.date);
-  document.getElementById('geNote').value     = h.note || '';
-  document.getElementById('geTotal').textContent = fmtRp(Math.round(h.gram * h.buyPrice));
-  document.getElementById('goldEditSubtitle').textContent = h.gram + ' gram · Beli ' + (h.date||'—');
-
-  // Wire up delete button with current id
-  const delBtn = document.getElementById('goldEditDeleteBtn');
-  delBtn.onclick = function() { confirmDeleteGoldById(id); };
-
+  const h=goldHoldings[id]; if (!h) return;
+  document.getElementById('geId').value=id;
+  document.getElementById('geGram').value=h.gram;
+  document.getElementById('geBuyPrice').value=h.buyPrice;
+  document.getElementById('geDate').value=isoFromDisplay(h.date);
+  document.getElementById('geNote').value=h.note||'';
+  document.getElementById('geTotal').textContent=fmtRp(Math.round(h.gram*h.buyPrice));
+  document.getElementById('goldEditSubtitle').textContent=h.gram+' gram · Beli '+(h.date||'—');
+  document.getElementById('goldEditDeleteBtn').onclick=function(){ confirmDeleteGoldById(id); };
   openModal('goldEditModal');
 }
-
 function updateGoldEditTotal() {
-  const g = parseFloat(document.getElementById('geGram').value) || 0;
-  const p = parseFloat(document.getElementById('geBuyPrice').value) || 0;
-  document.getElementById('geTotal').textContent = fmtRp(Math.round(g * p));
+  const g=parseFloat(document.getElementById('geGram').value)||0;
+  const p=parseFloat(document.getElementById('geBuyPrice').value)||0;
+  document.getElementById('geTotal').textContent=fmtRp(Math.round(g*p));
 }
-
 function saveGoldEdit() {
-  const id       = document.getElementById('geId').value;
-  const gram     = parseFloat(document.getElementById('geGram').value);
-  const buyPrice = parseFloat(document.getElementById('geBuyPrice').value);
-  const date     = document.getElementById('geDate').value;
-  const note     = document.getElementById('geNote').value.trim();
-  if (!gram || gram <= 0)         { showToast('⚠️ Masukkan jumlah gram!'); return; }
-  if (!buyPrice || buyPrice <= 0) { showToast('⚠️ Masukkan harga beli!'); return; }
-  goldHoldings[id] = { gram, buyPrice, date: fmtDate(date), note };
+  const id=document.getElementById('geId').value;
+  const gram=parseFloat(document.getElementById('geGram').value);
+  const buyPrice=parseFloat(document.getElementById('geBuyPrice').value);
+  const date=document.getElementById('geDate').value;
+  const note=document.getElementById('geNote').value.trim();
+  if (!gram||gram<=0) { showToast('⚠️ Masukkan jumlah gram!'); return; }
+  if (!buyPrice||buyPrice<=0) { showToast('⚠️ Masukkan harga beli!'); return; }
+  goldHoldings[id]={ gram, buyPrice, date:fmtDate(date), note };
   saveInvestData();
   closeModal('goldEditModal');
   showToast('✏️ Data emas berhasil diupdate!');
 }
-
-// FIX: Separate delete functions — not relying on inline expressions from modal HTML
 function confirmDeleteGoldById(id) {
-  const h = goldHoldings[id];
-  if (!h) return;
+  const h=goldHoldings[id]; if (!h) return;
   closeModal('goldEditModal');
-  showConfirm('🥇', 'Hapus Data Emas?', `${h.gram} gram · beli ${fmtRp(h.buyPrice)}/gram`, 'Ya, Hapus', () => {
-    delete goldHoldings[id];
-    saveInvestData();
-    showToast('🗑 Data emas dihapus');
+  showConfirm('🥇','Hapus Data Emas?',`${h.gram} gram · beli ${fmtRp(h.buyPrice)}/gram`,'Ya, Hapus',()=>{
+    delete goldHoldings[id]; saveInvestData(); showToast('🗑 Data emas dihapus');
   });
 }
 
 // ============================================================
-// STOCK MODALS — BELI
+// STOCK BUY MODAL — FIXED
 // ============================================================
-let sbUnit = 'lot'; // 'lot' atau 'lembar'
+let sbUnit = 'lot';
 let seUnit = 'lot';
+
+// Harga per lot aktif untuk stock yang sedang dibuka
+let _sbCurrentPriceLot = 0;
 
 function setSbUnit(unit) {
   sbUnit = unit;
   document.getElementById('sbUnitLot').classList.toggle('active', unit === 'lot');
   document.getElementById('sbUnitLembar').classList.toggle('active', unit === 'lembar');
-  const stockId = document.getElementById('sbId').value;
-  const hargaLot = stockPrices[stockId] || 0;
-  const hargaLembar = Math.round(hargaLot / 100);
+
+  const priceLembar = Math.round(_sbCurrentPriceLot / 100);
+
   if (unit === 'lot') {
-    document.getElementById('sbLotsLabel').textContent   = '📦 Jumlah Lot';
-    document.getElementById('sbPriceLabel').textContent  = '💵 Harga Beli per Lot (Rp)';
-    document.getElementById('sbBuyPrice').value          = hargaLot;
-    document.getElementById('sbBuyPrice').placeholder    = 'Harga per lot';
-    document.getElementById('sbUnitInfo').innerHTML      = '📦 <b>Mode Lot:</b> 1 lot = 100 lembar. Harga &amp; jumlah dihitung per lot.';
-    document.getElementById('sbPriceHint').textContent   = '💡 Harga/lot sekarang: ' + fmtRp(hargaLot) + ' · per lembar ≈ ' + fmtRp(hargaLembar);
+    // Mode lot: qty = lot, harga bisa diedit manual
+    document.getElementById('sbQtyLabel').textContent = '📦 Jumlah Lot';
+    document.getElementById('sbQty').placeholder      = 'Contoh: 1';
+    document.getElementById('sbQty').step             = '1';
+    document.getElementById('sbUnitInfo').innerHTML   = '📦 <b>Mode Lot:</b> 1 lot = 100 lembar. Harga otomatis dari harga pasar.';
+
+    document.getElementById('sbPricePerLotWrap').style.display    = '';
+    document.getElementById('sbPricePerLembarWrap').style.display = 'none';
+
+    document.getElementById('sbBuyPriceLot').value = _sbCurrentPriceLot;
+    document.getElementById('sbHintLot').textContent = '💡 Harga/lot sekarang: ' + fmtRp(_sbCurrentPriceLot) + ' · per lembar ≈ ' + fmtRp(priceLembar);
+
   } else {
-    document.getElementById('sbLotsLabel').textContent   = '📄 Jumlah Lembar';
-    document.getElementById('sbPriceLabel').textContent  = '💵 Harga Beli per Lembar (Rp)';
-    document.getElementById('sbBuyPrice').value          = hargaLembar;
-    document.getElementById('sbBuyPrice').placeholder    = 'Harga per lembar';
-    document.getElementById('sbUnitInfo').innerHTML      = '📄 <b>Mode Lembar:</b> masukkan jumlah lembar &amp; harga per lembar. Sistem simpan dalam lot (÷100).';
-    document.getElementById('sbPriceHint').textContent   = '💡 Harga/lembar sekarang: ' + fmtRp(hargaLembar) + ' · per lot = ' + fmtRp(hargaLot);
+    // Mode lembar: qty = lembar, harga per lembar OTOMATIS dari harga pasar / 100, READONLY
+    document.getElementById('sbQtyLabel').textContent = '📄 Jumlah Lembar';
+    document.getElementById('sbQty').placeholder      = 'Contoh: 5';
+    document.getElementById('sbQty').step             = '1';
+    document.getElementById('sbUnitInfo').innerHTML   = '📄 <b>Mode Lembar:</b> harga per lembar otomatis dari harga pasar. Total = jumlah lembar × harga per lembar.';
+
+    document.getElementById('sbPricePerLotWrap').style.display    = 'none';
+    document.getElementById('sbPricePerLembarWrap').style.display = '';
+
+    // Set harga per lembar otomatis & readonly
+    document.getElementById('sbBuyPriceLembar').value = priceLembar;
+    document.getElementById('sbHintLembar').textContent = '💡 Harga/lembar = ' + fmtRp(priceLembar) + ' (harga pasar ' + fmtRp(_sbCurrentPriceLot) + ' ÷ 100). Tidak bisa diubah manual.';
   }
-  updateStockBuyTotal();
+  document.getElementById('sbQty').value = '';
+  document.getElementById('sbTotal').textContent = 'Rp 0';
 }
 
-function setSeUnit(unit) {
-  seUnit = unit;
-  document.getElementById('seUnitLot').classList.toggle('active', unit === 'lot');
-  document.getElementById('seUnitLembar').classList.toggle('active', unit === 'lembar');
-  if (unit === 'lot') {
-    document.getElementById('seLotsLabel').textContent  = '📦 Jumlah Lot';
-    document.getElementById('sePriceLabel').textContent = '💵 Harga Beli per Lot (Rp)';
-    document.getElementById('seUnitInfo').innerHTML     = '📦 <b>Mode Lot:</b> 1 lot = 100 lembar. Harga &amp; jumlah dihitung per lot.';
+function updateStockBuyTotal() {
+  const qty   = parseFloat(document.getElementById('sbQty').value) || 0;
+  let total   = 0;
+
+  if (sbUnit === 'lot') {
+    const price = parseFloat(document.getElementById('sbBuyPriceLot').value) || 0;
+    total = qty * price;
   } else {
-    document.getElementById('seLotsLabel').textContent  = '📄 Jumlah Lembar';
-    document.getElementById('sePriceLabel').textContent = '💵 Harga Beli per Lembar (Rp)';
-    document.getElementById('seUnitInfo').innerHTML     = '📄 <b>Mode Lembar:</b> masukkan jumlah lembar &amp; harga per lembar. Sistem simpan dalam lot (÷100).';
+    // Mode lembar: harga per lembar sudah di field readonly
+    const priceLembar = parseFloat(document.getElementById('sbBuyPriceLembar').value) || 0;
+    total = qty * priceLembar;
   }
-  updateStockEditTotal();
+  document.getElementById('sbTotal').textContent = fmtRp(Math.round(total));
 }
 
 function openStockBuyModal(stockId) {
   const s = STOCKS.find(x => x.id === stockId);
   if (!s) return;
-  sbUnit = 'lot'; // reset ke lot tiap buka
-  document.getElementById('sbId').value = stockId;
-  document.getElementById('sbTitle').textContent = s.icon + ' Beli ' + s.name;
-  document.getElementById('sbSubtitle').textContent = s.ticker + ' · Harga sekarang: ' + fmtRpAuto(stockPrices[stockId]) + '/lot';
-  document.getElementById('sbDate').value = todayISO();
-  document.getElementById('sbLots').value = '';
+
+  _sbCurrentPriceLot = stockPrices[stockId] || s.basePrice;
+  sbUnit = 'lot'; // reset ke lot
+
+  document.getElementById('sbId').value           = stockId;
+  document.getElementById('sbTitle').textContent  = s.icon + ' Beli ' + s.name;
+  document.getElementById('sbSubtitle').textContent = s.ticker + ' · Harga sekarang: ' + fmtRpAuto(_sbCurrentPriceLot) + '/lot';
+  document.getElementById('sbDate').value         = todayISO();
+  document.getElementById('sbQty').value          = '';
+  document.getElementById('sbTotal').textContent  = 'Rp 0';
+
+  // Reset ke mode lot
   document.getElementById('sbUnitLot').classList.add('active');
   document.getElementById('sbUnitLembar').classList.remove('active');
-  // set labels default lot
-  document.getElementById('sbLotsLabel').textContent  = '📦 Jumlah Lot';
-  document.getElementById('sbPriceLabel').textContent = '💵 Harga Beli per Lot (Rp)';
-  document.getElementById('sbBuyPrice').value         = stockPrices[stockId];
-  document.getElementById('sbUnitInfo').innerHTML     = '📦 <b>Mode Lot:</b> 1 lot = 100 lembar. Harga &amp; jumlah dihitung per lot.';
-  const hargaLembar = Math.round(stockPrices[stockId] / 100);
-  document.getElementById('sbPriceHint').textContent  = '💡 Harga/lot: ' + fmtRpAuto(stockPrices[stockId]) + ' · per lembar ≈ ' + fmtRp(hargaLembar);
-  document.getElementById('sbTotal').textContent = 'Rp 0';
+  document.getElementById('sbQtyLabel').textContent = '📦 Jumlah Lot';
+  document.getElementById('sbQty').placeholder     = 'Contoh: 1';
+  document.getElementById('sbUnitInfo').innerHTML  = '📦 <b>Mode Lot:</b> 1 lot = 100 lembar. Harga otomatis dari harga pasar.';
+  document.getElementById('sbPricePerLotWrap').style.display    = '';
+  document.getElementById('sbPricePerLembarWrap').style.display = 'none';
+  document.getElementById('sbBuyPriceLot').value   = _sbCurrentPriceLot;
+  document.getElementById('sbHintLot').textContent = '💡 Harga/lot: ' + fmtRpAuto(_sbCurrentPriceLot) + ' · per lembar ≈ ' + fmtRp(Math.round(_sbCurrentPriceLot / 100));
+
   openModal('stockBuyModal');
 }
 
-function updateStockBuyTotal() {
-  const qty = parseFloat(document.getElementById('sbLots').value) || 0;
-  const price = parseFloat(document.getElementById('sbBuyPrice').value) || 0;
-  // Total selalu = qty × price (apapun satuannya, user input sesuai satuan dipilih)
-  document.getElementById('sbTotal').textContent = fmtRp(Math.round(qty * price));
-}
-
 function saveStockBuy() {
-  const id       = document.getElementById('sbId').value;
-  const qty      = parseFloat(document.getElementById('sbLots').value);
-  const price    = parseFloat(document.getElementById('sbBuyPrice').value);
-  const date     = document.getElementById('sbDate').value;
-  if (!qty || qty <= 0)     { showToast('⚠️ Masukkan jumlah ' + (sbUnit === 'lot' ? 'lot' : 'lembar') + '!'); return; }
-  if (!price || price <= 0) { showToast('⚠️ Masukkan harga beli!'); return; }
+  const id   = document.getElementById('sbId').value;
+  const qty  = parseFloat(document.getElementById('sbQty').value);
+  const date = document.getElementById('sbDate').value;
 
-  // Konversi: simpan selalu dalam LOT & harga per LOT
+  if (!qty || qty <= 0) { showToast('⚠️ Masukkan jumlah ' + (sbUnit === 'lot' ? 'lot' : 'lembar') + '!'); return; }
+
   let lotsToSave, pricePerLotToSave;
+
   if (sbUnit === 'lembar') {
-    lotsToSave        = qty / 100;          // lembar → lot
-    pricePerLotToSave = price * 100;        // harga/lembar → harga/lot
+    // Harga per lembar dari field readonly (otomatis)
+    const priceLembar = parseFloat(document.getElementById('sbBuyPriceLembar').value) || 0;
+    if (!priceLembar || priceLembar <= 0) { showToast('⚠️ Harga per lembar tidak valid!'); return; }
+    lotsToSave        = qty / 100;       // lembar → lot
+    pricePerLotToSave = priceLembar * 100; // harga/lembar → harga/lot
   } else {
+    const priceLot = parseFloat(document.getElementById('sbBuyPriceLot').value) || 0;
+    if (!priceLot || priceLot <= 0) { showToast('⚠️ Masukkan harga beli!'); return; }
     lotsToSave        = qty;
-    pricePerLotToSave = price;
+    pricePerLotToSave = priceLot;
   }
 
   if (!stockHoldings[id]) stockHoldings[id] = { lots: 0, buyPrice: 0, history: [] };
@@ -1188,76 +1041,116 @@ function saveStockBuy() {
   expandedCards[id] = true;
   saveInvestData();
   closeModal('stockBuyModal');
-  const label = sbUnit === 'lembar' ? qty + ' lembar (' + lotsToSave + ' lot)' : qty + ' lot';
+
+  const label = sbUnit === 'lembar'
+    ? qty + ' lembar (' + lotsToSave.toFixed(lotsToSave % 1 === 0 ? 0 : 2) + ' lot)'
+    : qty + ' lot';
   showToast('📈 ' + label + ' berhasil dicatat!');
 }
 
 // ============================================================
-// STOCK MODALS — EDIT
+// STOCK EDIT MODAL
 // ============================================================
+let _seCurrentPriceLot = 0;
+
+function setSeUnit(unit) {
+  seUnit = unit;
+  document.getElementById('seUnitLot').classList.toggle('active', unit === 'lot');
+  document.getElementById('seUnitLembar').classList.toggle('active', unit === 'lembar');
+
+  const priceLembar = Math.round(_seCurrentPriceLot / 100);
+
+  if (unit === 'lot') {
+    document.getElementById('seQtyLabel').textContent = '📦 Jumlah Lot';
+    document.getElementById('seQty').placeholder     = 'Contoh: 1';
+    document.getElementById('seUnitInfo').innerHTML  = '📦 <b>Mode Lot:</b> masukkan jumlah lot &amp; harga per lot.';
+    document.getElementById('sePricePerLotWrap').style.display    = '';
+    document.getElementById('sePricePerLembarWrap').style.display = 'none';
+  } else {
+    document.getElementById('seQtyLabel').textContent = '📄 Jumlah Lembar';
+    document.getElementById('seQty').placeholder     = 'Contoh: 5';
+    document.getElementById('seUnitInfo').innerHTML  = '📄 <b>Mode Lembar:</b> harga per lembar otomatis dari harga pasar. Total = jumlah lembar × harga per lembar.';
+    document.getElementById('sePricePerLotWrap').style.display    = 'none';
+    document.getElementById('sePricePerLembarWrap').style.display = '';
+    document.getElementById('seBuyPriceLembar').value = priceLembar;
+    document.getElementById('seHintLembar').textContent = '💡 Harga/lembar = ' + fmtRp(priceLembar) + ' (harga pasar ' + fmtRp(_seCurrentPriceLot) + ' ÷ 100).';
+  }
+  updateStockEditTotal();
+}
+
 function openStockEditModal(stockId, histIdx) {
   const s = STOCKS.find(x => x.id === stockId);
   const h = stockHoldings[stockId];
   if (!s || !h || !h.history || h.history[histIdx] === undefined) return;
   const t = h.history[histIdx];
 
-  seUnit = 'lot'; // selalu reset ke lot saat buka edit
-  document.getElementById('seStockId').value = stockId;
-  document.getElementById('seHistIdx').value = histIdx;
-  document.getElementById('seTitle').textContent    = s.icon + ' Edit ' + s.name + ' #' + (histIdx + 1);
-  document.getElementById('seSubtitle').textContent = 'Transaksi ke-' + (histIdx + 1) + ' · ' + (t.date || '—');
+  _seCurrentPriceLot = stockPrices[stockId] || s.basePrice;
+  seUnit = 'lot';
+
+  document.getElementById('seStockId').value  = stockId;
+  document.getElementById('seHistIdx').value  = histIdx;
+  document.getElementById('seTitle').textContent    = s.icon + ' Edit ' + s.name + ' #' + (histIdx+1);
+  document.getElementById('seSubtitle').textContent = 'Transaksi ke-' + (histIdx+1) + ' · ' + (t.date||'—');
+  document.getElementById('seDate').value     = isoFromDisplay(t.date);
+
+  // Reset ke mode lot
   document.getElementById('seUnitLot').classList.add('active');
   document.getElementById('seUnitLembar').classList.remove('active');
-  document.getElementById('seLotsLabel').textContent  = '📦 Jumlah Lot';
-  document.getElementById('sePriceLabel').textContent = '💵 Harga Beli per Lot (Rp)';
-  document.getElementById('seUnitInfo').innerHTML     = '📦 <b>Mode Lot:</b> 1 lot = 100 lembar. Data tersimpan dalam lot.';
-  document.getElementById('seDate').value     = isoFromDisplay(t.date);
-  document.getElementById('seLots').value     = t.lots;
-  document.getElementById('seBuyPrice').value = t.buyPrice;
+  document.getElementById('seQtyLabel').textContent = '📦 Jumlah Lot';
+  document.getElementById('seUnitInfo').innerHTML   = '📦 <b>Mode Lot:</b> masukkan jumlah lot &amp; harga per lot.';
+  document.getElementById('sePricePerLotWrap').style.display    = '';
+  document.getElementById('sePricePerLembarWrap').style.display = 'none';
+  document.getElementById('seQty').value        = t.lots;
+  document.getElementById('seBuyPriceLot').value = t.buyPrice;
   document.getElementById('seTotal').textContent = fmtRp(Math.round(t.lots * t.buyPrice));
 
-  // Wire up delete button
-  const delBtn = document.getElementById('stockEditDeleteBtn');
-  delBtn.onclick = function() {
-    const currentStockId = document.getElementById('seStockId').value;
-    const currentHistIdx = parseInt(document.getElementById('seHistIdx').value);
-    deleteStockHistoryItem(currentStockId, currentHistIdx);
+  document.getElementById('stockEditDeleteBtn').onclick = function() {
+    deleteStockHistoryItem(
+      document.getElementById('seStockId').value,
+      parseInt(document.getElementById('seHistIdx').value)
+    );
   };
-
   openModal('stockEditModal');
 }
 
 function updateStockEditTotal() {
-  const qty   = parseFloat(document.getElementById('seLots').value) || 0;
-  const price = parseFloat(document.getElementById('seBuyPrice').value) || 0;
-  document.getElementById('seTotal').textContent = fmtRp(Math.round(qty * price));
+  const qty = parseFloat(document.getElementById('seQty').value) || 0;
+  let total = 0;
+  if (seUnit === 'lot') {
+    const price = parseFloat(document.getElementById('seBuyPriceLot').value) || 0;
+    total = qty * price;
+  } else {
+    const priceLembar = parseFloat(document.getElementById('seBuyPriceLembar').value) || 0;
+    total = qty * priceLembar;
+  }
+  document.getElementById('seTotal').textContent = fmtRp(Math.round(total));
 }
 
 function saveStockEdit() {
   const stockId = document.getElementById('seStockId').value;
   const histIdx = parseInt(document.getElementById('seHistIdx').value);
-  const qty     = parseFloat(document.getElementById('seLots').value);
-  const price   = parseFloat(document.getElementById('seBuyPrice').value);
+  const qty     = parseFloat(document.getElementById('seQty').value);
   const date    = document.getElementById('seDate').value;
-  if (!qty || qty <= 0)     { showToast('⚠️ Masukkan jumlah!'); return; }
-  if (!price || price <= 0) { showToast('⚠️ Masukkan harga beli!'); return; }
+  if (!qty || qty <= 0) { showToast('⚠️ Masukkan jumlah!'); return; }
   if (!stockHoldings[stockId] || !stockHoldings[stockId].history) return;
 
-  // Konversi ke lot jika mode lembar
   let lotsToSave, pricePerLotToSave;
   if (seUnit === 'lembar') {
+    const priceLembar = parseFloat(document.getElementById('seBuyPriceLembar').value) || 0;
     lotsToSave        = qty / 100;
-    pricePerLotToSave = price * 100;
+    pricePerLotToSave = priceLembar * 100;
   } else {
+    const priceLot = parseFloat(document.getElementById('seBuyPriceLot').value) || 0;
+    if (!priceLot || priceLot <= 0) { showToast('⚠️ Masukkan harga beli!'); return; }
     lotsToSave        = qty;
-    pricePerLotToSave = price;
+    pricePerLotToSave = priceLot;
   }
 
   stockHoldings[stockId].history[histIdx] = { lots: lotsToSave, buyPrice: pricePerLotToSave, date: fmtDate(date) };
   recalcStock(stockId);
   saveInvestData();
   closeModal('stockEditModal');
-  showToast('✏️ Transaksi #' + (histIdx + 1) + ' diupdate!');
+  showToast('✏️ Transaksi #' + (histIdx+1) + ' diupdate!');
 }
 
 function deleteStockHistoryItem(stockId, histIdx) {
@@ -1265,16 +1158,12 @@ function deleteStockHistoryItem(stockId, histIdx) {
   const h = stockHoldings[stockId];
   if (!s || !h || !h.history) return;
   closeModal('stockEditModal');
-  showConfirm('📈', 'Hapus Transaksi #' + (histIdx + 1) + '?',
-    (h.history[histIdx]?.lots || 0) + ' lot · beli ' + fmtRp(h.history[histIdx]?.buyPrice || 0) + '/lot',
+  showConfirm('📈','Hapus Transaksi #'+(histIdx+1)+'?',
+    (h.history[histIdx]?.lots||0)+' lot · beli '+fmtRp(h.history[histIdx]?.buyPrice||0)+'/lot',
     'Ya, Hapus', () => {
       stockHoldings[stockId].history.splice(histIdx, 1);
-      if (stockHoldings[stockId].history.length === 0) {
-        delete stockHoldings[stockId];
-        delete expandedCards[stockId];
-      } else {
-        recalcStock(stockId);
-      }
+      if (stockHoldings[stockId].history.length === 0) { delete stockHoldings[stockId]; delete expandedCards[stockId]; }
+      else recalcStock(stockId);
       saveInvestData();
       showToast('🗑 Transaksi dihapus');
     });
@@ -1285,12 +1174,12 @@ function deleteStockHistoryItem(stockId, histIdx) {
 // ============================================================
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click', e=>{ if (e.target===el) el.classList.remove('open'); });
 });
 
 // ============================================================
-// CONFIRM DIALOG
+// CONFIRM
 // ============================================================
 let _confirmCb = null;
 function showConfirm(icon, title, sub, yesLabel, cb) {
@@ -1302,40 +1191,52 @@ function showConfirm(icon, title, sub, yesLabel, cb) {
   document.getElementById('confirmOverlay').classList.add('open');
 }
 document.getElementById('confirmYes').onclick = () => { closeConfirm(); if (_confirmCb) _confirmCb(); };
-function closeConfirm() {
-  document.getElementById('confirmOverlay').classList.remove('open');
-  _confirmCb = null;
-}
-document.getElementById('confirmOverlay').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeConfirm();
-});
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); _confirmCb=null; }
+document.getElementById('confirmOverlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeConfirm(); });
 
 // ============================================================
 // TOAST
 // ============================================================
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
 }
 
 // ============================================================
 // UTILS
 // ============================================================
-function fmtRp(n) { return 'Rp ' + Math.abs(Math.round(n)).toLocaleString('id-ID'); }
-function fmtRpAuto(n) { return n >= 1000000 ? fmtRp(n) : 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+function fmtRp(n) { return 'Rp '+Math.abs(Math.round(n)).toLocaleString('id-ID'); }
+function fmtRpAuto(n) { return n>=1000000?fmtRp(n):'Rp '+Math.round(n).toLocaleString('id-ID'); }
 function todayISO() { return new Date().toISOString().split('T')[0]; }
 function fmtDate(iso) {
   if (!iso) return '';
-  try { return new Date(iso + 'T12:00:00').toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }); }
+  try { return new Date(iso+'T12:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); }
   catch { return iso; }
 }
 function isoFromDisplay(disp) {
-  if (!disp || disp === '—') return todayISO();
-  try { const d = new Date(disp); if (!isNaN(d)) return d.toISOString().split('T')[0]; }
-  catch {}
+  if (!disp||disp==='—') return todayISO();
+  try { const d=new Date(disp); if (!isNaN(d)) return d.toISOString().split('T')[0]; } catch {}
   return todayISO();
+}
+
+// ============================================================
+// ATTACH LISTENERS
+// ============================================================
+function attachInputListeners() {
+  document.getElementById('gbGram').addEventListener('input', updateGoldBuyTotal);
+  document.getElementById('gbBuyPrice').addEventListener('input', updateGoldBuyTotal);
+  document.getElementById('geGram').addEventListener('input', updateGoldEditTotal);
+  document.getElementById('geBuyPrice').addEventListener('input', updateGoldEditTotal);
+
+  // Stock buy: qty dan harga lot bisa berubah
+  document.getElementById('sbQty').addEventListener('input', updateStockBuyTotal);
+  document.getElementById('sbBuyPriceLot').addEventListener('input', updateStockBuyTotal);
+  // sbBuyPriceLembar readonly, tidak perlu listener manual
+
+  // Stock edit
+  document.getElementById('seQty').addEventListener('input', updateStockEditTotal);
+  document.getElementById('seBuyPriceLot').addEventListener('input', updateStockEditTotal);
 }
 
 // ============================================================
