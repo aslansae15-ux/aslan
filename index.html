@@ -112,10 +112,10 @@
       <div class="tab-icon-wrap">📔</div>
       <span class="tab-label">Jurnal</span>
     </a>
-<div class="tab tab-daily" onclick="showComingSoon()">
-      <div class="tab-icon-wrap">📺</div>
-      <span class="tab-label">Daily Content</span>
-    </div>
+    <a class="tab tab-investasi" href="investasi.html">
+      <div class="tab-icon-wrap">💰</div>
+      <span class="tab-label">Investasi</span>
+    </a>
   </div>
 
   <!-- TODAY -->
@@ -506,30 +506,47 @@
       <div class="admin-header-title">PANEL ORANG TUA</div>
     </div>
     <div id="adminLogin" class="admin-login">
-      <p style="font-size:12px;color:#546E7A;font-weight:700;margin-bottom:14px;">Masukkan password orang tua</p>
-      <input type="password" id="adminPwInput" class="admin-pw-input" placeholder="••••" maxlength="10" onkeydown="if(event.key==='Enter') doAdminLogin()">
-      <button class="admin-login-btn" onclick="doAdminLogin()">🔓 Masuk</button>
-      <p class="admin-pw-hint" id="adminPwHint"></p>
+      <p style="font-size:12px;color:#546E7A;font-weight:700;margin-bottom:10px;">Masukkan password orang tua</p>
+      <div class="savings-lock-display" id="adminPinDisplay">—</div>
+      <div class="savings-lock-hint" id="adminPwHint"></div>
+      <div class="savings-np">
+        <button class="np-btn" onclick="admNpPress('1')">1</button>
+        <button class="np-btn" onclick="admNpPress('2')">2</button>
+        <button class="np-btn" onclick="admNpPress('3')">3</button>
+        <button class="np-btn" onclick="admNpPress('4')">4</button>
+        <button class="np-btn" onclick="admNpPress('5')">5</button>
+        <button class="np-btn" onclick="admNpPress('6')">6</button>
+        <button class="np-btn" onclick="admNpPress('7')">7</button>
+        <button class="np-btn" onclick="admNpPress('8')">8</button>
+        <button class="np-btn" onclick="admNpPress('9')">9</button>
+        <button class="np-btn del" onclick="admNpDel()">⌫</button>
+        <button class="np-btn" onclick="admNpPress('0')">0</button>
+        <button class="np-btn ok" onclick="doAdminLogin()">✓</button>
+      </div>
+      <button class="np-btn" style="width:100%;margin-top:8px;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;background:#F5F5F5;color:#546E7A;" onclick="closeAdmin()">✕ Batal</button>
     </div>
-    <div class="admin-panel" id="adminPanel">
+    <div id="adminPanel" class="admin-panel">
       <div class="admin-section">
         <div class="admin-section-title">👤 Edit Profil Aslan</div>
         <div class="profile-edit-form">
           <div class="profile-edit-row"><label class="profile-edit-label">📛 Nama</label><input type="text" id="editName" class="profile-edit-input" placeholder="Aslan Adika Prada" maxlength="40"></div>
           <div class="profile-edit-row"><label class="profile-edit-label">🎂 Tanggal Lahir</label><input type="date" id="editBirthdate" class="profile-edit-input"></div>
-          <div class="profile-edit-row"><label class="profile-edit-label">⚖️ Berat Badan (kg)</label><input type="number" id="editWeight" class="profile-edit-input" placeholder="28" min="5" max="100" step="0.1"></div>
-          <div class="profile-edit-row"><label class="profile-edit-label">📏 Tinggi Badan (cm)</label><input type="number" id="editHeight" class="profile-edit-input" placeholder="130" min="50" max="200"></div>
           <div class="profile-edit-row"><label class="profile-edit-label">🏫 Kelas / Info</label><input type="text" id="editClass" class="profile-edit-input" placeholder="Kelas 3 SD" maxlength="30"></div>
           <div class="profile-edit-row">
             <label class="profile-edit-label">📸 Foto Profil</label>
             <div class="profile-photo-upload">
               <div class="profile-photo-preview" id="adminPhotoPreview">⚔️</div>
-              <label class="upload-btn">📷 Pilih Foto<input type="file" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)"></label>
+              <div style="flex:1;">
+                <input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
+                <button class="upload-btn" onclick="document.getElementById('photoFileInput').click()">📁 Pilih Foto</button>
+                <div style="font-size:10px;color:#90A4AE;font-weight:700;margin-top:4px;">Auto-kompres 150×150px</div>
+              </div>
             </div>
           </div>
           <button class="profile-save-btn" onclick="saveProfile()">💾 Simpan Profil</button>
         </div>
       </div>
+      <!-- SEPARATED MESSAGES -->
       <div class="admin-section">
         <div class="admin-section-title">👨‍💻 Pesan dari Ayah</div>
         <textarea id="ayahEditor" class="ayah-editor" placeholder="Tulis pesan semangat dari Ayah..."></textarea>
@@ -634,6 +651,47 @@
           </div>
         </div>
       </div>
+      <div class="admin-section">
+        <div class="admin-section-title">💹 Update Harga Investasi</div>
+        
+        <!-- EMAS -->
+        <div style="font-size:11px;font-weight:800;color:#7d5a00;margin-bottom:6px;">🥇 Harga Emas Antam (Rp/gram)</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <input type="number" id="adminGoldPrice" class="profile-edit-input" placeholder="1890000" style="flex:1">
+          <button onclick="saveInvestPrices()" style="background:#f39c12;color:#fff;border:none;border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">💾 Simpan</button>
+        </div>
+
+        <!-- SAHAM -->
+        <div style="font-size:11px;font-weight:800;color:#1b5e20;margin-bottom:8px;">📈 Harga Saham (Rp/lot)</div>
+        <div id="adminStockPrices">
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:800;color:#546e7a;">🥛 Ultra Milk (ULTJ)</label>
+            <input type="number" id="sp-ultra" class="profile-edit-input" placeholder="1850">
+            
+            <label style="font-size:11px;font-weight:800;color:#546e7a;">🍜 Indofood (INDF)</label>
+            <input type="number" id="sp-indomie" class="profile-edit-input" placeholder="6750">
+            
+            <label style="font-size:11px;font-weight:800;color:#546e7a;">🛵 GoTo (GOTO)</label>
+            <input type="number" id="sp-goto" class="profile-edit-input" placeholder="84">
+            
+            <label style="font-size:11px;font-weight:800;color:#546e7a;">🍪 Mayora Indah (MYOR)</label>
+<input type="number" id="sp-mayora" class="profile-edit-input" placeholder="2890">
+            
+            <label style="font-size:11px;font-weight:800;color:#546e7a;">🎮 Nintendo (NTDOY)</label>
+            <input type="number" id="sp-nintendo" class="profile-edit-input" placeholder="142000">
+            
+            <label style="font-size:11px;font-weight:800;color:#546e7a;">🏦 Bank BCA (BBCA)</label>
+<input type="number" id="sp-bca" class="profile-edit-input" placeholder="9400">
+          </div>
+          <div style="font-size:10px;font-weight:700;color:#90a4ae;margin-bottom:8px;">
+            💡 Cek harga di Google: ketik "harga saham ULTJ" atau "gold price today IDR"
+          </div>
+          <button onclick="saveInvestPrices()" style="width:100%;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;">💾 Simpan Semua Harga</button>
+        </div>
+        
+        <!-- TERAKHIR DIUPDATE -->
+        <div style="margin-top:8px;font-size:10px;font-weight:700;color:#90a4ae;text-align:center;" id="adminPriceLastUpdate">Belum pernah diupdate</div>
+      </div>
       <button class="admin-close-btn" onclick="closeAdmin()">✕ Tutup Panel</button>
     </div>
   </div>
@@ -642,15 +700,6 @@
 <div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
-
-<div class="coming-soon-overlay" id="comingSoonOverlay" onclick="if(event.target===this)closeComingSoon()">
-  <div class="coming-soon-box">
-    <div class="coming-soon-emoji">🚀</div>
-    <div class="coming-soon-title">COMING SOON!</div>
-    <div class="coming-soon-desc">Daily Content sedang disiapkan.<br>Nantikan fitur keren ini! ✨</div>
-    <button class="coming-soon-close" onclick="closeComingSoon()">Oke, Siap!</button>
-  </div>
-</div>
 <div id="notif-update">🚀 Ada fitur baru! Klik di sini untuk Update</div>
 <script>
 if('serviceWorker' in navigator){

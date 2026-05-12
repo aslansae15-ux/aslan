@@ -914,15 +914,16 @@ function handlePhotoUpload(input){
   });
 }
 
+let admPinVal = '';
 function openAdmin(){
   document.getElementById('adminOverlay').classList.add('open');
   if(!adminUnlocked){
     document.getElementById('adminLogin').style.display='block';
     document.getElementById('adminPanel').classList.remove('visible');
-    document.getElementById('adminPwInput').value='';
+    admPinVal = '';
+    const pinDisplay = document.getElementById('adminPinDisplay');
+    if(pinDisplay) pinDisplay.textContent = '—';
     document.getElementById('adminPwHint').textContent='';
-    document.getElementById('adminPwInput').classList.remove('error');
-    setTimeout(()=>document.getElementById('adminPwInput').focus(),100);
   }
   const today=new Date();
   document.getElementById('adminDatePicker').value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
@@ -930,16 +931,35 @@ function openAdmin(){
 function closeAdmin(){
   document.getElementById('adminOverlay').classList.remove('open');adminUnlocked=false;
   document.getElementById('adminLogin').style.display='block';document.getElementById('adminPanel').classList.remove('visible');
+  admPinVal = '';
+  const d = document.getElementById('adminPinDisplay');
+  if (d) d.textContent = '—';
+}
+function admNpPress(d) {
+  if (admPinVal.length >= 10) return;
+  admPinVal += d;
+  const disp = document.getElementById('adminPinDisplay');
+  if (disp) disp.textContent = '●'.repeat(admPinVal.length);
+  const hint = document.getElementById('adminPwHint');
+  if (hint) hint.textContent = '';
+}
+function admNpDel() {
+  admPinVal = admPinVal.slice(0, -1);
+  const disp = document.getElementById('adminPinDisplay');
+  if (disp) disp.textContent = admPinVal.length ? '●'.repeat(admPinVal.length) : '—';
 }
 function doAdminLogin(){
-  const pw=document.getElementById('adminPwInput').value.trim();
+  const pw = admPinVal;
+  admPinVal = '';
+  const disp = document.getElementById('adminPinDisplay');
+  if (disp) disp.textContent = '—';
   if(pw===ADMIN_PW){
     adminUnlocked=true;document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminPanel').classList.add('visible');renderAdminPanel();
+    document.getElementById('adminPanel').classList.add('visible');renderAdminPanel();loadInvestPricesForAdmin();
   }else{
-    document.getElementById('adminPwInput').classList.add('error');document.getElementById('adminPwHint').textContent='❌ Password salah!';
-    document.getElementById('adminPwInput').value='';
-    setTimeout(()=>{document.getElementById('adminPwInput').classList.remove('error');document.getElementById('adminPwHint').textContent='';},2000);
+    const hint = document.getElementById('adminPwHint');
+    if(hint) hint.textContent='❌ Password salah!';
+    setTimeout(()=>{if(hint) hint.textContent='';},2000);
   }
 }
 function renderAdminPanel(){
@@ -963,6 +983,59 @@ function renderAdminPanel(){
   renderKarakterSelectGrid();renderKarakterAwardedList();
   renderWMAdminList();renderMMAdminList();
 }
+
+// ===== INVEST PRICE MANAGER =====
+function saveInvestPrices() {
+  const goldPrice = parseFloat(document.getElementById('adminGoldPrice').value);
+  const prices = {
+    ultra:    parseFloat(document.getElementById('sp-ultra').value)    || null,
+    indomie:  parseFloat(document.getElementById('sp-indomie').value)  || null,
+    goto:     parseFloat(document.getElementById('sp-goto').value)     || null,
+    lego:     parseFloat(document.getElementById('sp-lego').value)     || null,
+    nintendo: parseFloat(document.getElementById('sp-nintendo').value) || null,
+    alphabet: parseFloat(document.getElementById('sp-alphabet').value) || null,
+  };
+
+  Object.keys(prices).forEach(k => { if (!prices[k]) delete prices[k]; });
+
+  const payload = {
+    updatedAt: new Date().toISOString(),
+    updatedBy: 'Ayah'
+  };
+  if (goldPrice > 0) payload.goldPrice = goldPrice;
+  if (Object.keys(prices).length > 0) payload.stockPrices = prices;
+
+  firebase.database().ref('aslan_investasi/manualPrices').update(payload, err => {
+    if (!err) {
+      showToast('✅ Harga berhasil diupdate!');
+      loadInvestPricesForAdmin();
+    } else {
+      showToast('❌ Gagal simpan, cek koneksi');
+    }
+  });
+}
+
+function loadInvestPricesForAdmin() {
+  firebase.database().ref('aslan_investasi/manualPrices').once('value', snap => {
+    const d = snap.val();
+    if (!d) return;
+    if (d.goldPrice) document.getElementById('adminGoldPrice').value = d.goldPrice;
+    if (d.stockPrices) {
+      Object.entries(d.stockPrices).forEach(([id, price]) => {
+        const el = document.getElementById('sp-' + id);
+        if (el) el.value = price;
+      });
+    }
+    if (d.updatedAt) {
+      const dt = new Date(d.updatedAt);
+      document.getElementById('adminPriceLastUpdate').textContent =
+        '🕐 Terakhir update: ' + dt.toLocaleDateString('id-ID', {
+          day: 'numeric', month: 'short', year: 'numeric'
+        }) + ' ' + dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    }
+  });
+}
+
 function saveProfile(){
   if(!state.profile)state.profile={};
   state.profile.name=document.getElementById('editName').value.trim()||'Aslan Adika Prada';
@@ -1133,8 +1206,6 @@ function showToast(msg,red=false){
   t.classList.add('show');clearTimeout(toastTimeout);
   toastTimeout=setTimeout(()=>t.classList.remove('show'),2800);
 }
-function showComingSoon(){document.getElementById('comingSoonOverlay').classList.add('open');}
-function closeComingSoon(){document.getElementById('comingSoonOverlay').classList.remove('open');}
 // INIT
 setSyncStatus('syncing');
 load();
