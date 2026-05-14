@@ -64,6 +64,7 @@ let state={
   ideas:[],
   weeklyMissions:[],monthlyMissions:[],
   weeklyProgress:{},monthlyProgress:{},
+  manualStreak:0,
 };
 
 // SESSION MISSION UNLOCK
@@ -180,6 +181,9 @@ function mergeState(p){
   if(!p.monthlyMissions)state.monthlyMissions=[];
   if(!p.weeklyProgress)state.weeklyProgress={};
   if(!p.monthlyProgress)state.monthlyProgress={};
+  // ✅ PATCH: baca manualStreak dari Firebase
+  if(p.manualStreak===undefined||p.manualStreak===null)state.manualStreak=0;
+  else state.manualStreak=p.manualStreak;
 }
 function load(){
   try{
@@ -278,26 +282,30 @@ function saveGoal(){
   save();renderSavings();showToast('🎯 Target tabungan disimpan!');
 }
 
+// ✅ PATCH: computeStreak dengan manualStreak override
 function computeStreak(){
+  if(state.manualStreak && state.manualStreak > 0) return state.manualStreak;
   const today=new Date();
   let streak=0;
-
-  // Cek mulai dari hari ini mundur ke belakang
-  // Kalau hari ini belum submit, tidak dihitung tapi tetap cek kemarin
-  for(let i=0;i<400;i++){
+  const todayK=dateKey(today);
+  const todaySubmitted=state.history[todayK]&&state.history[todayK].submitted;
+  const startFrom=todaySubmitted?0:1;
+  for(let i=startFrom;i<400;i++){
     const d=new Date(today);
     d.setDate(today.getDate()-i);
     const k=dateKey(d);
     const submitted=state.history[k]&&state.history[k].submitted;
-
-    if(i===0&&!submitted)continue; // hari ini belum selesai, skip tapi lanjut
-    if(submitted){
-      streak++;
-    }else{
-      break; // ada hari kosong, stop
-    }
+    if(submitted){streak++;}else{break;}
   }
   return streak;
+}
+
+// ✅ PATCH: fungsi untuk set manualStreak dari admin panel
+function setManualStreak(val){
+  const n=parseInt(val)||0;
+  state.manualStreak=n;
+  save();renderAll();
+  showToast(n>0?'🔥 Streak diset ke '+n+' hari!':'✅ Streak kembali otomatis');
 }
 
 function getGridCols(n){if(n<=2)return 'repeat(2,1fr)';if(n<=3)return 'repeat(3,1fr)';if(n===4)return 'repeat(2,1fr)';return 'repeat(3,1fr)';}
@@ -344,13 +352,10 @@ function submitDay(){
   document.getElementById('confirmOverlay').classList.remove('open');
   const d=todayData();const total=state.quests.length;const count=state.quests.filter(q=>d[q.id]).length;
   if(count<total)return;
-  
-  // Set submitted DULU sebelum checkBadges
   d.submitted=true;
   const xp=count*XP_PER+XP_BONUS;
   state.totalXP+=xp;
-  
-  checkBadges(); // baru cek badge, setelah d.submitted = true
+  checkBadges();
   save();renderAll();
   showConfetti();showToast('🎉 LUAR BIASA! +'+xp+' XP! Kamu HERO!');
 }
@@ -930,7 +935,7 @@ function openAdmin(){
 }
 function closeAdmin(){
   document.getElementById('adminOverlay').classList.remove('open');adminUnlocked=false;
-  document.getElementById('adminLogin').style.display='block';document.getElementById('adminPanel').classList.remove('visible');
+  document.getElementById('adminLogin').style.display='block';document.getElementById('adminPanel').style.display='none';
   admPinVal = '';
   const d = document.getElementById('adminPinDisplay');
   if (d) d.textContent = '—';
@@ -955,7 +960,8 @@ function doAdminLogin(){
   if (disp) disp.textContent = '—';
   if(pw===ADMIN_PW){
     adminUnlocked=true;document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminPanel').classList.add('visible');renderAdminPanel();loadInvestPricesForAdmin();
+    document.getElementById('adminPanel').style.display='block';renderAdminPanel();loadInvestPricesForAdmin();
+    setTimeout(()=>{ if(typeof adm2Tab==='function') adm2Tab('profil'); },100);
   }else{
     const hint = document.getElementById('adminPwHint');
     if(hint) hint.textContent='❌ Password salah!';
@@ -964,24 +970,33 @@ function doAdminLogin(){
 }
 function renderAdminPanel(){
   const prof=state.profile||{};
-  document.getElementById('editName').value=prof.name||'Aslan Adika Prada';
-  document.getElementById('editBirthdate').value=prof.birthdate||'';
-  document.getElementById('editWeight').value=prof.weight!=null?prof.weight:'';
-  document.getElementById('editHeight').value=prof.height!=null?prof.height:'';
-  document.getElementById('editClass').value=prof.class||'Kelas 3 SD';
+  const setVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+  setVal('editName', prof.name||'Aslan Adika Prada');
+  setVal('editBirthdate', prof.birthdate||'');
+  setVal('editWeight', prof.weight!=null?prof.weight:'');
+  setVal('editHeight', prof.height!=null?prof.height:'');
+  setVal('editClass', prof.class||'Kelas 3 SD');
   const prev=document.getElementById('adminPhotoPreview');
   if(prev){
     if(prof.photo){prev.innerHTML='<img src="'+prof.photo+'" alt="foto" style="width:100%;height:100%;object-fit:cover;">';}
     else{prev.innerHTML='⚔️';}
   }
   tempPhotoData=null;
-  document.getElementById('ayahEditor').value=state.ayahMsg||DEFAULT_MSG;
-  document.getElementById('bundaEditor').value=state.bundaMsg||DEFAULT_BUNDA_MSG;
-  document.getElementById('karakterMotivationEditor').value=state.karakterMotivation||DEFAULT_KARAKTER_MOTIVATION;
-  renderQuestManager();renderAdminQuests();renderCustomBadgeList();
-  document.getElementById('adminXpDisplay').textContent=state.totalXP+' XP';
-  renderKarakterSelectGrid();renderKarakterAwardedList();
-  renderWMAdminList();renderMMAdminList();
+  setVal('ayahEditor', state.ayahMsg||DEFAULT_MSG);
+  setVal('bundaEditor', state.bundaMsg||DEFAULT_BUNDA_MSG);
+  setVal('karakterMotivationEditor', state.karakterMotivation||DEFAULT_KARAKTER_MOTIVATION);
+  // ✅ PATCH: tampilkan nilai manualStreak di admin
+  const msEl=document.getElementById('manualStreakInput');
+  if(msEl)msEl.value=state.manualStreak||0;
+  const qml=document.getElementById('questManagerList');if(qml)renderQuestManager();
+  const aql=document.getElementById('adminQuestList');if(aql)renderAdminQuests();
+  const cbl=document.getElementById('customBadgeList');if(cbl)renderCustomBadgeList();
+  const xpd=document.getElementById('adminXpDisplay');if(xpd)xpd.textContent=state.totalXP+' XP';
+  const xpd2=document.getElementById('adminXpDisplay2');if(xpd2)xpd2.textContent=state.totalXP+' XP';
+  const ksg=document.getElementById('karakterSelectGrid');if(ksg)renderKarakterSelectGrid();
+  const kal=document.getElementById('karakterAwardedList');if(kal)renderKarakterAwardedList();
+  const wml=document.getElementById('wmListAdmin');if(wml)renderWMAdminList();
+  const mml=document.getElementById('mmListAdmin');if(mml)renderMMAdminList();
 }
 
 // ===== INVEST PRICE MANAGER =====
@@ -991,20 +1006,17 @@ function saveInvestPrices() {
     ultra:    parseFloat(document.getElementById('sp-ultra').value)    || null,
     indomie:  parseFloat(document.getElementById('sp-indomie').value)  || null,
     goto:     parseFloat(document.getElementById('sp-goto').value)     || null,
-    lego:     parseFloat(document.getElementById('sp-lego').value)     || null,
+    mayora:   parseFloat(document.getElementById('sp-mayora').value)   || null,
     nintendo: parseFloat(document.getElementById('sp-nintendo').value) || null,
-    alphabet: parseFloat(document.getElementById('sp-alphabet').value) || null,
+    bca:      parseFloat(document.getElementById('sp-bca').value)      || null,
   };
-
   Object.keys(prices).forEach(k => { if (!prices[k]) delete prices[k]; });
-
   const payload = {
     updatedAt: new Date().toISOString(),
     updatedBy: 'Ayah'
   };
   if (goldPrice > 0) payload.goldPrice = goldPrice;
   if (Object.keys(prices).length > 0) payload.stockPrices = prices;
-
   firebase.database().ref('aslan_investasi/manualPrices').update(payload, err => {
     if (!err) {
       showToast('✅ Harga berhasil diupdate!');
@@ -1019,7 +1031,10 @@ function loadInvestPricesForAdmin() {
   firebase.database().ref('aslan_investasi/manualPrices').once('value', snap => {
     const d = snap.val();
     if (!d) return;
-    if (d.goldPrice) document.getElementById('adminGoldPrice').value = d.goldPrice;
+    if (d.goldPrice) {
+      const el = document.getElementById('adminGoldPrice');
+      if (el) el.value = d.goldPrice;
+    }
     if (d.stockPrices) {
       Object.entries(d.stockPrices).forEach(([id, price]) => {
         const el = document.getElementById('sp-' + id);
@@ -1028,10 +1043,13 @@ function loadInvestPricesForAdmin() {
     }
     if (d.updatedAt) {
       const dt = new Date(d.updatedAt);
-      document.getElementById('adminPriceLastUpdate').textContent =
-        '🕐 Terakhir update: ' + dt.toLocaleDateString('id-ID', {
-          day: 'numeric', month: 'short', year: 'numeric'
-        }) + ' ' + dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const str = '🕐 Terakhir update: ' + dt.toLocaleDateString('id-ID', {
+        day: 'numeric', month: 'short', year: 'numeric'
+      }) + ' ' + dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const el1 = document.getElementById('adminPriceLastUpdate');
+      const el2 = document.getElementById('adminPriceLastUpdate2');
+      if (el1) el1.textContent = str;
+      if (el2) el2.textContent = str;
     }
   });
 }

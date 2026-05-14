@@ -3,36 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2E7D32">
     <link rel="apple-touch-icon" href="icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-    <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
-
     <title>Aslan's Daily Quest — Keluarga Sejati</title>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
-    authDomain: "aslan-sae.firebaseapp.com",
-    databaseURL: "https://aslan-sae-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "aslan-sae",
-    storageBucket: "aslan-sae.appspot.com",
-    messagingSenderId: "938084212857",
-    appId: "1:938084212857:web:54257ad8a0b2714510b4a8"
-  };
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const FB_REF = db.ref('aslan_data');
-</script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
+        authDomain: "aslan-sae.firebaseapp.com",
+        databaseURL: "https://aslan-sae-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "aslan-sae",
+        storageBucket: "aslan-sae.appspot.com",
+        messagingSenderId: "938084212857",
+        appId: "1:938084212857:web:54257ad8a0b2714510b4a8"
+      };
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+      const FB_REF = db.ref('aslan_data');
+    </script>
 
 <link rel="stylesheet" href="styles.css">
+
+<!-- ═══════════════════════════════════════════════════════════
+     ADMIN PANEL — REDESIGNED STYLES (scoped, won't conflict)
+     ═══════════════════════════════════════════════════════════ -->
+<style>
+/* ── OVERLAY BASE ── */
+.adm2-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  overflow-y: auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.adm2-overlay.open { display: block; }
+
+/* ── MODAL SHELL ── */
+.adm2-modal {
+  background: #F8FBF8;
+  border-radius: 20px;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,.35);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── HEADER ── */
+.adm2-header {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32, #388E3C);
+  padding: 20px 20px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.adm2-header-left { display: flex; align-items: center; gap: 12px; }
+.adm2-header-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.adm2-header-title { color: #fff; font-size: 16px; font-weight: 900; letter-spacing: .5px; }
+.adm2-header-sub { color: rgba(255,255,255,.75); font-size: 11px; font-weight: 700; margin-top: 2px; }
+.adm2-header-close {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(255,255,255,.2);
+  border: none; color: #fff; font-size: 18px; font-weight: 900;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+.adm2-header-close:hover { background: rgba(255,255,255,.35); }
+
+/* ── LOGIN SCREEN ── */
+.adm2-login {
+  padding: 24px 20px;
+  text-align: center;
+}
+.adm2-login-title { font-size: 15px; font-weight: 900; color: #1B5E20; margin-bottom: 4px; }
+.adm2-login-sub { font-size: 11px; font-weight: 700; color: #78909C; margin-bottom: 20px; }
+.adm2-pin-display {
+  background: #E8F5E9; border: 2px solid #A5D6A7;
+  border-radius: 12px; padding: 14px;
+  font-size: 28px; letter-spacing: 10px;
+  font-weight: 900; color: #1B5E20;
+  min-height: 58px; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 8px;
+}
+.adm2-pin-hint { font-size: 11px; font-weight: 800; color: #E53935; min-height: 18px; margin-bottom: 14px; }
+.adm2-numpad {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  max-width: 260px; margin: 0 auto 14px;
+}
+.adm2-np-btn {
+  padding: 14px; border-radius: 12px; border: none;
+  background: #fff; font-size: 18px; font-weight: 900;
+  color: #1B5E20; cursor: pointer;
+  box-shadow: 0 2px 0 #A5D6A7; border: 2px solid #C8E6C9;
+  transition: transform .1s;
+  font-family: 'Nunito', sans-serif;
+}
+.adm2-np-btn:active { transform: scale(.94); }
+.adm2-np-del { background: #FFF3E0; border-color: #FFCC80; color: #E65100; }
+.adm2-np-ok { background: #1B5E20; color: #fff; border-color: #1B5E20; }
+.adm2-cancel-btn {
+  width: 100%; padding: 13px; border-radius: 12px;
+  background: #ECEFF1; border: none; color: #546E7A;
+  font-size: 13px; font-weight: 800; cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── PANEL BODY ── */
+.adm2-body { padding: 0; }
+
+/* ── SECTION TABS ── */
+.adm2-tabs {
+  display: flex; overflow-x: auto; gap: 6px;
+  padding: 14px 16px 0; background: #fff;
+  border-bottom: 2px solid #E8F5E9;
+  scrollbar-width: thin;
+  scrollbar-color: #A5D6A7 transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.adm2-tabs::-webkit-scrollbar { height: 4px; }
+.adm2-tabs::-webkit-scrollbar-thumb { background: #A5D6A7; border-radius: 4px; }
+.adm2-tabs::-webkit-scrollbar { display: none; }
+.adm2-tab {
+  flex-shrink: 0; padding: 8px 14px;
+  border-radius: 10px 10px 0 0;
+  border: 2px solid transparent;
+  border-bottom: none;
+  font-size: 11px; font-weight: 900; cursor: pointer;
+  color: #78909C; background: #F5F5F5;
+  transition: all .2s;
+  font-family: 'Nunito', sans-serif;
+}
+.adm2-tab.active {
+  background: #E8F5E9; color: #1B5E20;
+  border-color: #A5D6A7; border-bottom-color: #E8F5E9;
+}
+
+/* ── SECTION CONTENT ── */
+.adm2-section { display: none; padding: 16px; }
+.adm2-section.active { display: block; }
+
+/* ── SECTION CARD ── */
+.adm2-card {
+  background: #fff; border-radius: 14px;
+  padding: 14px; margin-bottom: 14px;
+  border: 2px solid #E8F5E9;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.adm2-card-title {
+  font-size: 12px; font-weight: 900; color: #1B5E20;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
+
+/* ── FORM ELEMENTS ── */
+.adm2-label { font-size: 11px; font-weight: 800; color: #546E7A; margin-bottom: 4px; display: block; }
+.adm2-input {
+  width: 100%; box-sizing: border-box;
+  padding: 10px 12px; border-radius: 10px;
+  border: 2px solid #E0E0E0; font-size: 13px; font-weight: 700;
+  background: #FAFAFA; color: #263238;
+  font-family: 'Nunito', sans-serif;
+  transition: border-color .2s;
+  margin-bottom: 10px;
+}
+.adm2-input:focus { outline: none; border-color: #66BB6A; background: #fff; }
+.adm2-textarea {
+  width: 100%; box-sizing: border-box;
+  padding: 10px 12px; border-radius: 10px;
+  border: 2px solid #E0E0E0; font-size: 12px; font-weight: 700;
+  background: #FAFAFA; color: #263238;
+  font-family: 'Nunito', sans-serif;
+  resize: vertical; min-height: 72px;
+  transition: border-color .2s;
+  margin-bottom: 10px;
+}
+.adm2-textarea:focus { outline: none; border-color: #66BB6A; background: #fff; }
+
+/* ── INLINE FORM ROW ── */
+.adm2-inline {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
+}
+.adm2-inline .adm2-input { margin-bottom: 0; }
+.adm2-emoji-input { width: 56px !important; text-align: center; flex-shrink: 0; }
+.adm2-num-input { width: 70px !important; flex-shrink: 0; }
+
+/* ── BUTTONS ── */
+.adm2-btn {
+  padding: 11px 16px; border-radius: 11px; border: none;
+  font-size: 12px; font-weight: 900; cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: opacity .2s, transform .1s;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.adm2-btn:active { transform: scale(.97); }
+.adm2-btn-primary { background: linear-gradient(135deg,#2E7D32,#43A047); color: #fff; width: 100%; justify-content: center; }
+.adm2-btn-add { background: linear-gradient(135deg,#1565C0,#1976D2); color: #fff; width: 100%; justify-content: center; }
+.adm2-btn-orange { background: linear-gradient(135deg,#E65100,#F57C00); color: #fff; width: 100%; justify-content: center; }
+.adm2-btn-red { background: linear-gradient(135deg,#B71C1C,#E53935); color: #fff; }
+.adm2-btn-sm { padding: 6px 10px; font-size: 11px; border-radius: 8px; }
+.adm2-btn-ghost { background: #ECEFF1; color: #546E7A; }
+
+/* ── LIST ITEMS (misi, badge, dll) ── */
+.adm2-list-item {
+  display: flex; align-items: center; gap: 10px;
+  background: #F8FBF8; border-radius: 11px;
+  padding: 10px 12px; margin-bottom: 8px;
+  border: 2px solid #E8F5E9;
+}
+.adm2-list-item-icon { font-size: 20px; flex-shrink: 0; }
+.adm2-list-item-info { flex: 1; min-width: 0; }
+.adm2-list-item-name { font-size: 12px; font-weight: 900; color: #1B5E20; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm2-list-item-meta { font-size: 10px; font-weight: 700; color: #78909C; margin-top: 1px; }
+.adm2-list-item-actions { display: flex; gap: 5px; flex-shrink: 0; }
+
+/* ── TOGGLE / STATUS ── */
+.adm2-toggle {
+  width: 40px; height: 22px; border-radius: 11px;
+  border: none; cursor: pointer;
+  position: relative; transition: background .2s;
+  background: #EF9A9A;
+}
+.adm2-toggle::after {
+  content: ''; position: absolute;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; top: 3px; left: 3px;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+.adm2-toggle.on { background: #66BB6A; }
+.adm2-toggle.on::after { transform: translateX(18px); }
+
+/* ── PROFILE PHOTO ── */
+.adm2-photo-wrap {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.adm2-photo-preview {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: #E8F5E9; border: 3px solid #A5D6A7;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; overflow: hidden; flex-shrink: 0;
+}
+.adm2-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+.adm2-upload-btn {
+  padding: 9px 14px; border-radius: 10px;
+  background: #E3F2FD; border: 2px solid #90CAF9;
+  color: #1565C0; font-size: 12px; font-weight: 800;
+  cursor: pointer; font-family: 'Nunito', sans-serif;
+}
+
+/* ── KARAKTER GRID ── */
+.adm2-kar-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 8px;
+  margin-bottom: 12px;
+}
+.adm2-kar-opt {
+  border-radius: 10px; padding: 10px 4px;
+  border: 2px solid #E0E0E0; background: #F5F5F5;
+  text-align: center; cursor: pointer; transition: all .2s;
+}
+.adm2-kar-opt.selected { border-color: #66BB6A; background: #E8F5E9; }
+.adm2-kar-opt .adm2-kar-emoji { font-size: 20px; }
+.adm2-kar-opt .adm2-kar-name { font-size: 9px; font-weight: 800; color: #546E7A; margin-top: 3px; }
+
+/* ── XP MANAGER ── */
+.adm2-xp-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #E8F5E9; border-radius: 11px; padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.adm2-xp-label { font-size: 12px; font-weight: 800; color: #546E7A; }
+.adm2-xp-val { font-size: 20px; font-weight: 900; color: #1B5E20; }
+.adm2-xp-btns { display: flex; gap: 8px; }
+
+/* ── INVESTASI GRID ── */
+.adm2-invest-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  margin-bottom: 10px;
+}
+.adm2-invest-row { display: flex; flex-direction: column; gap: 4px; }
+.adm2-invest-label { font-size: 10px; font-weight: 800; color: #546E7A; }
+
+/* ── AWARDED BADGES ── */
+.adm2-awarded-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: #F3E5F5; border-radius: 11px;
+  padding: 10px 12px; margin-bottom: 8px;
+  border: 2px solid #CE93D8;
+}
+.adm2-awarded-emoji { font-size: 22px; flex-shrink: 0; }
+.adm2-awarded-info { flex: 1; min-width: 0; }
+.adm2-awarded-name { font-size: 12px; font-weight: 900; color: #6A1B9A; }
+.adm2-awarded-note { font-size: 10px; font-weight: 700; color: #78909C; margin-top: 2px; }
+.adm2-awarded-date { font-size: 9px; color: #AB47BC; font-weight: 700; margin-top: 2px; }
+
+/* ── DATE PICKER ── */
+.adm2-datepicker {
+  width: 100%; box-sizing: border-box;
+  padding: 10px 12px; border-radius: 10px;
+  border: 2px solid #E0E0E0; font-size: 13px; font-weight: 700;
+  background: #FAFAFA; color: #263238;
+  font-family: 'Nunito', sans-serif; margin-bottom: 10px;
+}
+
+/* ── DIVIDER ── */
+.adm2-divider { border: none; border-top: 2px dashed #E0E0E0; margin: 14px 0; }
+
+/* ── PRICE LAST UPDATED ── */
+.adm2-last-update {
+  text-align: center; font-size: 10px; font-weight: 700;
+  color: #90A4AE; margin-top: 8px;
+}
+
+/* ── FAB BUTTONS ── */
+.fab-savings { 
+  position: fixed; bottom: 80px; right: 16px; z-index: 999;
+  width: 52px; height: 52px; border-radius: 16px;
+  background: linear-gradient(135deg,#00796B,#00BCD4);
+  font-size: 22px; border: none; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,121,107,.4);
+  display: flex; align-items: center; justify-content: center;
+}
+.fab-admin {
+  position: fixed; bottom: 20px; right: 16px; z-index: 999;
+  width: 52px; height: 52px; border-radius: 16px;
+  background: linear-gradient(135deg,#1B5E20,#388E3C);
+  font-size: 22px; border: none; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(27,94,32,.4);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Edit modal for missions */
+.adm2-edit-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 10001;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; box-sizing: border-box;
+}
+.adm2-edit-overlay:not(.open) { display: none !important; }
+.adm2-edit-modal {
+  background: #fff; border-radius: 18px;
+  padding: 20px; width: 100%; max-width: 340px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.3);
+  font-family: 'Nunito', sans-serif;
+}
+.adm2-edit-title { font-size: 14px; font-weight: 900; color: #1B5E20; margin-bottom: 16px; text-align: center; }
+.adm2-edit-row { display: flex; gap: 8px; margin-top: 12px; }
+.adm2-edit-row button { flex: 1; }
+</style>
 </head>
 <body>
 
@@ -66,7 +394,7 @@
 
 <!-- MAIN -->
 <div class="main">
- <!-- TABS - Mini App Icons -->
+  <!-- TABS -->
   <div class="tabs">
     <div class="tab tab-misi active" onclick="switchTab('today')">
       <div class="tab-icon-wrap">⚔️</div>
@@ -124,8 +452,6 @@
     <div class="daily-motivation" id="dailyMotivationBox">
       <div class="daily-motivation-text" id="dailyMotivationText"></div>
     </div>
-
-    <!-- MISSION LOCK BANNER -->
     <div class="mission-lock-banner locked" id="missionLockBanner">
       <div class="mission-lock-icon" id="missionLockIcon">🔒</div>
       <div class="mission-lock-info">
@@ -134,7 +460,6 @@
       </div>
       <button class="mission-unlock-btn" id="missionUnlockBtn" onclick="openMissionPin()">🔓 BUKA</button>
     </div>
-
     <div class="section-title">🗡️ Misi Harian</div>
     <div class="quest-grid" id="questGrid"></div>
     <p style="text-align:center;font-size:11px;color:#90A4AE;font-weight:700;margin-bottom:10px;">Tap kartu misi untuk ceklis ✅</p>
@@ -238,6 +563,7 @@
     </div>
     <div class="badges-hint" style="font-size:11px;">🧩 Semangat Berlatih Aslan!!!<br>Mainkan semua misi dan jadilah HERO terhebat! 🚀</div>
   </div>
+
   <!-- SAVINGS -->
   <div class="tab-content" id="tab-savings">
     <div class="savings-hero">
@@ -321,11 +647,15 @@
         <span class="game-icon">🐊</span><div class="game-name">GAME 6</div><div class="game-desc">Segera hadir...</div>
         <span class="game-badge soon" style="background:#eee;color:#9e9e9e;">⏳ Belum Ada</span>
       </a>
-    </div><!-- end .main -->
+    </div>
+  </div>
 
+</div><!-- end .main -->
 </div><!-- end #app-wrapper -->
 
-<!-- OVERLAYS -->
+<!-- ═══════════════════════════════════════════════════════════
+     OVERLAYS (ORIGINAL — untouched)
+     ═══════════════════════════════════════════════════════════ -->
 
 <!-- MISSION PIN OVERLAY -->
 <div class="mission-pin-overlay" id="missionPinOverlay">
@@ -491,213 +821,556 @@
     </div>
   </div>
 </div>
-<!-- FABs -->
-<div class="savings-lock-btn" onclick="openSavingsLock()" title="Kelola Tabungan">💰</div>
-<div class="admin-lock-btn" onclick="openAdmin()">🔒</div>
 
-<!-- ADMIN MODAL -->
-<div class="admin-overlay" id="adminOverlay">
-  <div class="admin-modal">
-    <div class="admin-header">
-      <div class="admin-header-icon">🔐</div>
-      <div class="admin-header-title">PANEL ORANG TUA</div>
-    </div>
-    <div id="adminLogin" class="admin-login">
-      <p style="font-size:12px;color:#546E7A;font-weight:700;margin-bottom:10px;">Masukkan password orang tua</p>
-      <div class="savings-lock-display" id="adminPinDisplay">—</div>
-      <div class="savings-lock-hint" id="adminPwHint"></div>
-      <div class="savings-np">
-        <button class="np-btn" onclick="admNpPress('1')">1</button>
-        <button class="np-btn" onclick="admNpPress('2')">2</button>
-        <button class="np-btn" onclick="admNpPress('3')">3</button>
-        <button class="np-btn" onclick="admNpPress('4')">4</button>
-        <button class="np-btn" onclick="admNpPress('5')">5</button>
-        <button class="np-btn" onclick="admNpPress('6')">6</button>
-        <button class="np-btn" onclick="admNpPress('7')">7</button>
-        <button class="np-btn" onclick="admNpPress('8')">8</button>
-        <button class="np-btn" onclick="admNpPress('9')">9</button>
-        <button class="np-btn del" onclick="admNpDel()">⌫</button>
-        <button class="np-btn" onclick="admNpPress('0')">0</button>
-        <button class="np-btn ok" onclick="doAdminLogin()">✓</button>
+<!-- ═══════════════════════════════════════════════════════════
+     ADMIN PANEL v2 — REDESIGNED
+     ═══════════════════════════════════════════════════════════ -->
+<div class="adm2-overlay" id="adminOverlay">
+  <div class="adm2-modal">
+
+    <!-- HEADER -->
+    <div class="adm2-header">
+      <div class="adm2-header-left">
+        <div class="adm2-header-icon">🔐</div>
+        <div>
+          <div class="adm2-header-title">PANEL ORANG TUA</div>
+          <div class="adm2-header-sub">Kelola semua pengaturan Aslan</div>
+        </div>
       </div>
-      <button class="np-btn" style="width:100%;margin-top:8px;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;background:#F5F5F5;color:#546E7A;" onclick="closeAdmin()">✕ Batal</button>
+      <button class="adm2-header-close" onclick="closeAdmin()">✕</button>
     </div>
-    <div id="adminPanel" class="admin-panel">
-      <div class="admin-section">
-        <div class="admin-section-title">👤 Edit Profil Aslan</div>
-        <div class="profile-edit-form">
-          <div class="profile-edit-row"><label class="profile-edit-label">📛 Nama</label><input type="text" id="editName" class="profile-edit-input" placeholder="Aslan Adika Prada" maxlength="40"></div>
-          <div class="profile-edit-row"><label class="profile-edit-label">🎂 Tanggal Lahir</label><input type="date" id="editBirthdate" class="profile-edit-input"></div>
-          <div class="profile-edit-row"><label class="profile-edit-label">🏫 Kelas / Info</label><input type="text" id="editClass" class="profile-edit-input" placeholder="Kelas 3 SD" maxlength="30"></div>
-          <div class="profile-edit-row">
-            <label class="profile-edit-label">📸 Foto Profil</label>
-            <div class="profile-photo-upload">
-              <div class="profile-photo-preview" id="adminPhotoPreview">⚔️</div>
-              <div style="flex:1;">
-                <input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
-                <button class="upload-btn" onclick="document.getElementById('photoFileInput').click()">📁 Pilih Foto</button>
-                <div style="font-size:10px;color:#90A4AE;font-weight:700;margin-top:4px;">Auto-kompres 150×150px</div>
-              </div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="adminLogin" class="adm2-login">
+      <div class="adm2-login-title">🔑 Masukkan Password</div>
+      <div class="adm2-login-sub">Password orang tua untuk akses panel</div>
+      <div class="adm2-pin-display" id="adminPinDisplay">—</div>
+      <div class="adm2-pin-hint" id="adminPwHint"></div>
+      <div class="adm2-numpad">
+        <button class="adm2-np-btn" onclick="admNpPress('1')">1</button>
+        <button class="adm2-np-btn" onclick="admNpPress('2')">2</button>
+        <button class="adm2-np-btn" onclick="admNpPress('3')">3</button>
+        <button class="adm2-np-btn" onclick="admNpPress('4')">4</button>
+        <button class="adm2-np-btn" onclick="admNpPress('5')">5</button>
+        <button class="adm2-np-btn" onclick="admNpPress('6')">6</button>
+        <button class="adm2-np-btn" onclick="admNpPress('7')">7</button>
+        <button class="adm2-np-btn" onclick="admNpPress('8')">8</button>
+        <button class="adm2-np-btn" onclick="admNpPress('9')">9</button>
+        <button class="adm2-np-btn adm2-np-del" onclick="admNpDel()">⌫</button>
+        <button class="adm2-np-btn" onclick="admNpPress('0')">0</button>
+        <button class="adm2-np-btn adm2-np-ok" onclick="doAdminLogin()">✓</button>
+      </div>
+      <button class="adm2-cancel-btn" onclick="closeAdmin()">✕ Batal</button>
+    </div>
+
+    <!-- PANEL CONTENT -->
+    <div id="adminPanel" class="adm2-body" style="display:none;">
+
+      <!-- SECTION TABS -->
+      <div class="adm2-tabs">
+        <button class="adm2-tab active" onclick="adm2Tab('profil')">👤 Profil</button>
+        <button class="adm2-tab" onclick="adm2Tab('pesan')">💬 Pesan</button>
+        <button class="adm2-tab" onclick="adm2Tab('misi-harian')">⚔️ Misi</button>
+        <button class="adm2-tab" onclick="adm2Tab('misi-mingguan')">📅 Mingguan</button>
+        <button class="adm2-tab" onclick="adm2Tab('misi-bulanan')">🗓️ Bulanan</button>
+        <button class="adm2-tab" onclick="adm2Tab('piala')">🏆 Piala</button>
+        <button class="adm2-tab" onclick="adm2Tab('karakter')">🌟 Karakter</button>
+        <button class="adm2-tab" onclick="adm2Tab('xp')">⚡ XP</button>
+        <button class="adm2-tab" onclick="adm2Tab('investasi')">💹 Investasi</button>
+      </div>
+
+      <!-- ── PROFIL ── -->
+      <div class="adm2-section active" id="adm2-profil">
+        <div class="adm2-card">
+          <div class="adm2-card-title">👤 Edit Profil Aslan</div>
+          <div class="adm2-photo-wrap">
+            <div class="adm2-photo-preview" id="adminPhotoPreview">⚔️</div>
+            <div>
+              <input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
+              <button class="adm2-upload-btn" onclick="document.getElementById('photoFileInput').click()">📁 Pilih Foto</button>
+              <div style="font-size:10px;color:#90A4AE;font-weight:700;margin-top:4px;">Auto-kompres 150×150px</div>
             </div>
           </div>
-          <button class="profile-save-btn" onclick="saveProfile()">💾 Simpan Profil</button>
+          <label class="adm2-label">📛 Nama</label>
+          <input type="text" id="editName" class="adm2-input" placeholder="Aslan Adika Prada" maxlength="40">
+          <label class="adm2-label">🎂 Tanggal Lahir</label>
+          <input type="date" id="editBirthdate" class="adm2-input">
+          <label class="adm2-label">🏫 Kelas / Info</label>
+          <input type="text" id="editClass" class="adm2-input" placeholder="Kelas 3 SD" maxlength="30">
+          <label class="adm2-label">⚖️ Berat Badan (kg)</label>
+          <input type="number" id="editWeight" class="adm2-input" placeholder="30">
+          <label class="adm2-label">📏 Tinggi Badan (cm)</label>
+          <input type="number" id="editHeight" class="adm2-input" placeholder="120">
+          <button class="adm2-btn adm2-btn-primary" onclick="saveProfile()">💾 Simpan Profil</button>
         </div>
       </div>
-      <!-- SEPARATED MESSAGES -->
-      <div class="admin-section">
-        <div class="admin-section-title">👨‍💻 Pesan dari Ayah</div>
-        <textarea id="ayahEditor" class="ayah-editor" placeholder="Tulis pesan semangat dari Ayah..."></textarea>
-        <button class="ayah-save-btn" onclick="saveAyahMsg()">💾 Simpan Pesan Ayah</button>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">👩 Pesan dari Bunda</div>
-        <textarea id="bundaEditor" class="bunda-editor" placeholder="Tulis pesan semangat dari Bunda..."></textarea>
-        <button class="bunda-save-btn" onclick="saveBundaMsg()">💾 Simpan Pesan Bunda</button>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">💜 Edit Motivasi Tab Karakter</div>
-        <textarea id="karakterMotivationEditor" class="admin-motivation-input" placeholder="Tulis motivasi untuk Aslan..."></textarea>
-        <button class="admin-motivation-save-btn" onclick="saveKarakterMotivation()">💾 Simpan Motivasi</button>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">🌟 Berikan Lencana Karakter</div>
-        <div class="karakter-admin-form">
-          <div class="karakter-admin-title">Pilih lencana:</div>
-          <div class="karakter-select-grid" id="karakterSelectGrid"></div>
-          <div style="font-size:11px;font-weight:800;color:#6A1B9A;margin-bottom:6px;">📝 Catatan untuk Aslan:</div>
-          <textarea id="karakterNoteInput" class="karakter-note-input" placeholder="Contoh: Kamu jujur mengakui kesalahan. Ayah bangga!"></textarea>
-          <button class="karakter-award-btn" onclick="awardKarakter()">🌟 Berikan Lencana!</button>
-        </div>
-        <div class="karakter-awarded-list" id="karakterAwardedList"></div>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">📅 Misi Mingguan (Orang Tua)</div>
-        <div class="wm-admin-form">
-          <div class="wm-admin-title">Misi Mingguan Aktif:</div>
-          <div class="wm-list-admin" id="wmListAdmin"></div>
-          <div class="aq-row">
-            <input type="text" id="wmEmojiInput" class="aq-input aq-emoji-input" placeholder="📚" maxlength="4">
-            <input type="text" id="wmNameInput" class="aq-input" placeholder="Nama misi mingguan" maxlength="40">
-            <input type="number" id="wmXpInput" class="aq-input aq-dur-input" placeholder="50" min="1" value="50">
-          </div>
-          <button class="aq-add-btn" style="background:#3F51B5;border-bottom-color:#283593;" onclick="addWeeklyMission()">➕ Tambah Misi Mingguan</button>
-        </div>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">🗓️ Misi Bulanan (Orang Tua)</div>
-        <div class="mm-admin-form">
-          <div class="mm-admin-title">Misi Bulanan Aktif:</div>
-          <div class="mm-list-admin" id="mmListAdmin"></div>
-          <div class="aq-row">
-            <input type="text" id="mmEmojiInput" class="aq-input aq-emoji-input" placeholder="🎯" maxlength="4">
-            <input type="text" id="mmNameInput" class="aq-input" placeholder="Nama misi bulanan" maxlength="40">
-            <input type="number" id="mmXpInput" class="aq-input aq-dur-input" placeholder="100" min="1" value="100">
-          </div>
-          <button class="aq-add-btn" style="background:#FF6F00;border-bottom-color:#E65100;" onclick="addMonthlyMission()">➕ Tambah Misi Bulanan</button>
-        </div>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">🗡️ Kelola Jadwal Latihan</div>
-        <div class="quest-manager-list" id="questManagerList"></div>
-        <div class="add-quest-form">
-          <div class="add-quest-form-title">➕ Tambah Latihan Baru</div>
-          <div class="aq-row">
-            <input type="text" id="aqEmoji" class="aq-input aq-emoji-input" placeholder="🎯" maxlength="4">
-            <input type="text" id="aqName" class="aq-input" placeholder="Nama latihan" maxlength="30">
-          </div>
-          <div class="aq-row">
-            <input type="number" id="aqDur" class="aq-input aq-dur-input" placeholder="30" min="1" max="180" value="30">
-            <span style="font-size:12px;font-weight:700;color:#546E7A;">menit</span>
-          </div>
-          <button class="aq-add-btn" onclick="addQuest()">➕ Tambah Latihan</button>
-        </div>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">📅 Kelola Misi per Tanggal</div>
-        <div style="margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:800;color:#546E7A;margin-bottom:6px;">Pilih Tanggal:</div>
-          <input type="date" id="adminDatePicker" class="date-picker-input" onchange="renderAdminQuests()">
-        </div>
-        <div class="admin-quest-list" id="adminQuestList"></div>
-        <button class="cancel-day-btn" onclick="cancelWholeDay()">🗑️ Batalkan Seluruh Hari Ini</button>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">🏆 Tambah Piala Spesial</div>
-        <div class="custom-badge-list" id="customBadgeList"></div>
-        <div class="add-badge-form">
-          <div class="add-badge-form-title">✨ Buat Piala Baru</div>
-          <div class="ab-row">
-            <input type="text" id="abEmoji" class="ab-input ab-emoji" placeholder="🌟" maxlength="4">
-            <input type="text" id="abName" class="ab-input" placeholder="Nama piala" maxlength="30">
-          </div>
-          <div class="ab-row">
-            <input type="number" id="abXP" class="ab-input ab-xp" placeholder="500" min="1" value="500">
-            <span style="font-size:12px;font-weight:700;color:#546E7A;">XP untuk unlock</span>
-          </div>
-          <button class="ab-add-btn" onclick="addCustomBadge()">✨ Tambah Piala</button>
-        </div>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">⚡ Kelola XP</div>
-        <div class="xp-manager">
-          <div class="xp-manager-row"><span class="xp-manager-label">Total XP Aslan:</span><span class="xp-manager-value" id="adminXpDisplay">0 XP</span></div>
-          <div class="xp-adjust-row">
-            <input type="number" id="xpAdjustInput" class="xp-input" placeholder="100" min="1" value="100">
-            <button class="xp-add-btn" onclick="adjustXP(1)">+ Tambah</button>
-            <button class="xp-sub-btn" onclick="adjustXP(-1)">− Kurangi</button>
-          </div>
-        </div>
-      </div>
-      <div class="admin-section">
-        <div class="admin-section-title">💹 Update Harga Investasi</div>
-        
-        <!-- EMAS -->
-        <div style="font-size:11px;font-weight:800;color:#7d5a00;margin-bottom:6px;">🥇 Harga Emas Antam (Rp/gram)</div>
-        <div style="display:flex;gap:8px;margin-bottom:14px;">
-          <input type="number" id="adminGoldPrice" class="profile-edit-input" placeholder="1890000" style="flex:1">
-          <button onclick="saveInvestPrices()" style="background:#f39c12;color:#fff;border:none;border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;cursor:pointer;">💾 Simpan</button>
-        </div>
 
-        <!-- SAHAM -->
-        <div style="font-size:11px;font-weight:800;color:#1b5e20;margin-bottom:8px;">📈 Harga Saham (Rp/lot)</div>
-        <div id="adminStockPrices">
-          <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;margin-bottom:10px;">
-            <label style="font-size:11px;font-weight:800;color:#546e7a;">🥛 Ultra Milk (ULTJ)</label>
-            <input type="number" id="sp-ultra" class="profile-edit-input" placeholder="1850">
-            
-            <label style="font-size:11px;font-weight:800;color:#546e7a;">🍜 Indofood (INDF)</label>
-            <input type="number" id="sp-indomie" class="profile-edit-input" placeholder="6750">
-            
-            <label style="font-size:11px;font-weight:800;color:#546e7a;">🛵 GoTo (GOTO)</label>
-            <input type="number" id="sp-goto" class="profile-edit-input" placeholder="84">
-            
-            <label style="font-size:11px;font-weight:800;color:#546e7a;">🍪 Mayora Indah (MYOR)</label>
-<input type="number" id="sp-mayora" class="profile-edit-input" placeholder="2890">
-            
-            <label style="font-size:11px;font-weight:800;color:#546e7a;">🎮 Nintendo (NTDOY)</label>
-            <input type="number" id="sp-nintendo" class="profile-edit-input" placeholder="142000">
-            
-            <label style="font-size:11px;font-weight:800;color:#546e7a;">🏦 Bank BCA (BBCA)</label>
-<input type="number" id="sp-bca" class="profile-edit-input" placeholder="9400">
-          </div>
-          <div style="font-size:10px;font-weight:700;color:#90a4ae;margin-bottom:8px;">
-            💡 Cek harga di Google: ketik "harga saham ULTJ" atau "gold price today IDR"
-          </div>
-          <button onclick="saveInvestPrices()" style="width:100%;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;">💾 Simpan Semua Harga</button>
+      <!-- ── PESAN ── -->
+      <div class="adm2-section" id="adm2-pesan">
+        <div class="adm2-card">
+          <div class="adm2-card-title">👨‍💻 Pesan dari Ayah</div>
+          <textarea id="ayahEditor" class="adm2-textarea" placeholder="Tulis pesan semangat dari Ayah..."></textarea>
+          <button class="adm2-btn adm2-btn-primary" onclick="saveAyahMsg()">💾 Simpan Pesan Ayah</button>
         </div>
-        
-        <!-- TERAKHIR DIUPDATE -->
-        <div style="margin-top:8px;font-size:10px;font-weight:700;color:#90a4ae;text-align:center;" id="adminPriceLastUpdate">Belum pernah diupdate</div>
+        <div class="adm2-card">
+          <div class="adm2-card-title">👩 Pesan dari Bunda</div>
+          <textarea id="bundaEditor" class="adm2-textarea" placeholder="Tulis pesan semangat dari Bunda..."></textarea>
+          <button class="adm2-btn adm2-btn-primary" onclick="saveBundaMsg()">💾 Simpan Pesan Bunda</button>
+        </div>
       </div>
-      <button class="admin-close-btn" onclick="closeAdmin()">✕ Tutup Panel</button>
+
+      <!-- ── MISI HARIAN ── -->
+      <div class="adm2-section" id="adm2-misi-harian">
+        <div class="adm2-card">
+          <div class="adm2-card-title">⚔️ Jadwal Latihan Harian</div>
+          <div id="questManagerList2"></div>
+          <hr class="adm2-divider">
+          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">➕ Tambah Latihan Baru</div>
+          <div class="adm2-inline">
+            <input type="text" id="aqEmoji" class="adm2-input adm2-emoji-input" placeholder="🎯" maxlength="4">
+            <input type="text" id="aqName" class="adm2-input" placeholder="Nama latihan" maxlength="30" style="margin-bottom:0;flex:1;">
+          </div>
+          <div class="adm2-inline">
+            <input type="number" id="aqDur" class="adm2-input adm2-num-input" placeholder="30" min="1" max="180" value="30">
+            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">menit</span>
+          </div>
+          <button class="adm2-btn adm2-btn-add" onclick="addQuest()">➕ Tambah Latihan</button>
+        </div>
+        <div class="adm2-card">
+          <div class="adm2-card-title">📅 Kelola Misi per Tanggal</div>
+          <label class="adm2-label">Pilih Tanggal:</label>
+          <input type="date" id="adminDatePicker" class="adm2-datepicker" onchange="renderAdminQuests()">
+          <div id="adminQuestList2"></div>
+          <button class="adm2-btn adm2-btn-red" style="width:100%;justify-content:center;margin-top:8px;" onclick="cancelWholeDay()">🗑️ Batalkan Seluruh Hari Ini</button>
+        </div>
+      </div>
+
+      <!-- ── MISI MINGGUAN ── -->
+      <div class="adm2-section" id="adm2-misi-mingguan">
+        <div class="adm2-card">
+          <div class="adm2-card-title">📅 Misi Mingguan Aktif</div>
+          <div id="wmListAdmin2"></div>
+          <hr class="adm2-divider">
+          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">➕ Tambah Misi Mingguan</div>
+          <div class="adm2-inline">
+            <input type="text" id="wmEmojiInput" class="adm2-input adm2-emoji-input" placeholder="📚" maxlength="4">
+            <input type="text" id="wmNameInput" class="adm2-input" placeholder="Nama misi mingguan" maxlength="40" style="margin-bottom:0;flex:1;">
+          </div>
+          <div class="adm2-inline">
+            <input type="number" id="wmXpInput" class="adm2-input adm2-num-input" placeholder="50" min="1" value="50">
+            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">XP</span>
+          </div>
+          <button class="adm2-btn" style="background:linear-gradient(135deg,#3F51B5,#5C6BC0);color:#fff;width:100%;justify-content:center;" onclick="addWeeklyMission()">➕ Tambah Misi Mingguan</button>
+        </div>
+      </div>
+
+      <!-- ── MISI BULANAN ── -->
+      <div class="adm2-section" id="adm2-misi-bulanan">
+        <div class="adm2-card">
+          <div class="adm2-card-title">🗓️ Misi Bulanan Aktif</div>
+          <div id="mmListAdmin2"></div>
+          <hr class="adm2-divider">
+          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">➕ Tambah Misi Bulanan</div>
+          <div class="adm2-inline">
+            <input type="text" id="mmEmojiInput" class="adm2-input adm2-emoji-input" placeholder="🎯" maxlength="4">
+            <input type="text" id="mmNameInput" class="adm2-input" placeholder="Nama misi bulanan" maxlength="40" style="margin-bottom:0;flex:1;">
+          </div>
+          <div class="adm2-inline">
+            <input type="number" id="mmXpInput" class="adm2-input adm2-num-input" placeholder="100" min="1" value="100">
+            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">XP</span>
+          </div>
+          <button class="adm2-btn adm2-btn-orange" onclick="addMonthlyMission()">➕ Tambah Misi Bulanan</button>
+        </div>
+      </div>
+
+      <!-- ── PIALA ── -->
+      <div class="adm2-section" id="adm2-piala">
+        <div class="adm2-card">
+          <div class="adm2-card-title">🏆 Piala Spesial</div>
+          <div id="customBadgeList2"></div>
+          <hr class="adm2-divider">
+          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">✨ Buat Piala Baru</div>
+          <div class="adm2-inline">
+            <input type="text" id="abEmoji" class="adm2-input adm2-emoji-input" placeholder="🌟" maxlength="4">
+            <input type="text" id="abName" class="adm2-input" placeholder="Nama piala" maxlength="30" style="margin-bottom:0;flex:1;">
+          </div>
+          <div class="adm2-inline">
+            <input type="number" id="abXP" class="adm2-input adm2-num-input" placeholder="500" min="1" value="500">
+            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">XP untuk unlock</span>
+          </div>
+          <button class="adm2-btn" style="background:linear-gradient(135deg,#F57F17,#FFC107);color:#fff;width:100%;justify-content:center;" onclick="addCustomBadge()">✨ Tambah Piala</button>
+        </div>
+      </div>
+
+      <!-- ── KARAKTER ── -->
+      <div class="adm2-section" id="adm2-karakter">
+        <div class="adm2-card">
+          <div class="adm2-card-title">💜 Motivasi Karakter</div>
+          <textarea id="karakterMotivationEditor" class="adm2-textarea" placeholder="Tulis motivasi untuk Aslan..."></textarea>
+          <button class="adm2-btn adm2-btn-primary" onclick="saveKarakterMotivation()">💾 Simpan Motivasi</button>
+        </div>
+        <div class="adm2-card">
+          <div class="adm2-card-title">🌟 Berikan Lencana Karakter</div>
+          <div style="font-size:11px;font-weight:800;color:#6A1B9A;margin-bottom:6px;">Pilih lencana:</div>
+          <div class="adm2-kar-grid" id="karakterSelectGrid2"></div>
+          <label class="adm2-label">📝 Catatan untuk Aslan:</label>
+          <textarea id="karakterNoteInput" class="adm2-textarea" placeholder="Contoh: Kamu jujur mengakui kesalahan. Ayah bangga!"></textarea>
+          <button class="adm2-btn" style="background:linear-gradient(135deg,#6A1B9A,#AB47BC);color:#fff;width:100%;justify-content:center;" onclick="awardKarakter()">🌟 Berikan Lencana!</button>
+          <hr class="adm2-divider">
+          <div style="font-size:11px;font-weight:900;color:#6A1B9A;margin-bottom:8px;">📜 Lencana Diberikan</div>
+          <div id="karakterAwardedList2"></div>
+        </div>
+      </div>
+
+      <!-- ── XP ── -->
+      <div class="adm2-section" id="adm2-xp">
+        <div class="adm2-card">
+          <div class="adm2-card-title">⚡ Kelola XP Aslan</div>
+          <div class="adm2-xp-row">
+            <div>
+              <div class="adm2-xp-label">Total XP Aslan</div>
+              <div class="adm2-xp-val" id="adminXpDisplay2">0 XP</div>
+            </div>
+          </div>
+          <label class="adm2-label">Jumlah XP</label>
+          <input type="number" id="xpAdjustInput" class="adm2-input" placeholder="100" min="1" value="100">
+          <div class="adm2-xp-btns">
+            <button class="adm2-btn adm2-btn-primary" style="flex:1;justify-content:center;" onclick="adjustXP(1)">+ Tambah XP</button>
+            <button class="adm2-btn adm2-btn-red" style="flex:1;justify-content:center;" onclick="adjustXP(-1)">− Kurangi XP</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── INVESTASI ── -->
+      <div class="adm2-section" id="adm2-investasi">
+        <div class="adm2-card">
+          <div class="adm2-card-title">🥇 Harga Emas Antam</div>
+          <label class="adm2-label">Harga per gram (Rp)</label>
+          <input type="number" id="adminGoldPrice" class="adm2-input" placeholder="1890000">
+        </div>
+        <div class="adm2-card">
+          <div class="adm2-card-title">📈 Harga Saham (Rp/lot)</div>
+          <div class="adm2-invest-grid">
+            <div class="adm2-invest-row">
+              <div class="adm2-invest-label">🥛 Ultra Milk (ULTJ)</div>
+              <input type="number" id="sp-ultra" class="adm2-input" placeholder="1850" style="margin-bottom:0;">
+            </div>
+            <div class="adm2-invest-row">
+              <div class="adm2-invest-label">🍜 Indofood (INDF)</div>
+              <input type="number" id="sp-indomie" class="adm2-input" placeholder="6750" style="margin-bottom:0;">
+            </div>
+            <div class="adm2-invest-row">
+              <div class="adm2-invest-label">🛵 GoTo (GOTO)</div>
+              <input type="number" id="sp-goto" class="adm2-input" placeholder="84" style="margin-bottom:0;">
+            </div>
+            <div class="adm2-invest-row">
+              <div class="adm2-invest-label">🍪 Mayora (MYOR)</div>
+              <input type="number" id="sp-mayora" class="adm2-input" placeholder="2890" style="margin-bottom:0;">
+            </div>
+            <div class="adm2-invest-row">
+              <div class="adm2-invest-label">🎮 Nintendo (NTDOY)</div>
+              <input type="number" id="sp-nintendo" class="adm2-input" placeholder="142000" style="margin-bottom:0;">
+            </div>
+            <div class="adm2-invest-row">
+              <div class="adm2-invest-label">🏦 Bank BCA (BBCA)</div>
+              <input type="number" id="sp-bca" class="adm2-input" placeholder="9400" style="margin-bottom:0;">
+            </div>
+          </div>
+          <div style="font-size:10px;font-weight:700;color:#90A4AE;margin-bottom:10px;">
+            💡 Cek harga: Google "harga saham ULTJ" atau "gold price IDR"
+          </div>
+          <button class="adm2-btn adm2-btn-primary" onclick="saveInvestPrices()">💾 Simpan Semua Harga</button>
+          <div class="adm2-last-update" id="adminPriceLastUpdate2">Belum pernah diupdate</div>
+        </div>
+      </div>
+
+      <!-- CLOSE BUTTON -->
+      <div style="padding:14px 16px 20px;">
+        <button class="adm2-btn adm2-btn-ghost" style="width:100%;justify-content:center;" onclick="closeAdmin()">✕ Tutup Panel</button>
+      </div>
+
+    </div><!-- end adminPanel -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     EDIT MODAL untuk Misi (Harian/Mingguan/Bulanan)
+     ═══════════════════════════════════════════════════════════ -->
+<div class="adm2-edit-overlay" id="misiEditOverlay">
+  <div class="adm2-edit-modal">
+    <div class="adm2-edit-title" id="misiEditTitle">✏️ Edit Misi</div>
+    <input type="hidden" id="misiEditKey">
+    <input type="hidden" id="misiEditType">
+    <label class="adm2-label">Emoji</label>
+    <div class="adm2-inline" style="margin-bottom:0;">
+      <input type="text" id="misiEditEmoji" class="adm2-input adm2-emoji-input" maxlength="4">
+      <input type="text" id="misiEditName" class="adm2-input" placeholder="Nama misi" style="margin-bottom:0;flex:1;">
+    </div>
+    <label class="adm2-label" style="margin-top:10px;" id="misiEditMetaLabel">Durasi (menit)</label>
+    <input type="number" id="misiEditMeta" class="adm2-input" placeholder="30" min="1">
+    <div class="adm2-edit-row">
+      <button class="adm2-btn adm2-btn-ghost" onclick="closeMisiEdit()">Batal</button>
+      <button class="adm2-btn adm2-btn-primary" onclick="saveMisiEdit()">💾 Simpan</button>
     </div>
   </div>
 </div>
 
+<!-- FABs -->
+<button class="fab-savings" onclick="openSavingsLock()" title="Kelola Tabungan">💰</button>
+<button class="fab-admin" onclick="openAdmin()" title="Panel Orang Tua">🔒</button>
+
 <div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
-<div id="notif-update">🚀 Ada fitur baru! Klik di sini untuk Update</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ADMIN PANEL v2 — BRIDGE SCRIPT
+     Menyambungkan UI baru dengan fungsi app.js yang sudah ada
+     ═══════════════════════════════════════════════════════════ -->
+
+<script>
+function adm2Tab(name) {
+  document.querySelectorAll('.adm2-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.adm2-section').forEach(s => s.classList.remove('active'));
+  const tab = document.querySelector('.adm2-tab[onclick="adm2Tab(\''+name+'\')"]');
+  const sec = document.getElementById('adm2-' + name);
+  if (tab) tab.classList.add('active');
+  if (sec) sec.classList.add('active');
+  if (name === 'misi-harian') { renderQuestManagerV2(); syncAdminQuestList2(); }
+  if (name === 'misi-mingguan') renderWeeklyV2();
+  if (name === 'misi-bulanan') renderMonthlyV2();
+  if (name === 'piala') syncCustomBadges2();
+  if (name === 'karakter') { syncKarakterGrid2(); syncKarakterAwarded2(); }
+  if (name === 'xp') { const d=document.getElementById('adminXpDisplay2'); if(d) d.textContent=(state.totalXP||0)+' XP'; }
+  if (name === 'investasi') syncInvestPrices2();
+}
+
+function renderQuestManagerV2() {
+  const dest = document.getElementById('questManagerList2');
+  if (!dest) return;
+  const quests = state.quests || [];
+  if (!quests.length) { dest.innerHTML = '<div style="text-align:center;color:#90A4AE;font-size:12px;padding:16px;">Belum ada latihan</div>'; return; }
+  dest.innerHTML = quests.map(q => `
+    <div class="adm2-list-item">
+      <div class="adm2-list-item-icon">${q.emoji||'📌'}</div>
+      <div class="adm2-list-item-info">
+        <div class="adm2-list-item-name">${q.name||'?'}</div>
+        <div class="adm2-list-item-meta">⏱ ${q.dur||30} menit</div>
+      </div>
+      <div class="adm2-list-item-actions">
+        <button class="adm2-btn adm2-btn-sm" style="background:#E3F2FD;color:#1565C0;" onclick="openMisiEdit('harian','${q.id}','${(q.emoji||'📌').replace(/'/g,"\\'")}','${(q.name||'').replace(/'/g,"\\'")}',${q.dur||30})">✏️</button>
+        <button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="deleteQuest('${q.id}');setTimeout(renderQuestManagerV2,300)">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function syncAdminQuestList2() {
+  const today = new Date();
+  const dp = document.getElementById('adminDatePicker');
+  if (dp && !dp.value) {
+    dp.value = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  }
+  renderAdminQuests();
+  const orig = document.getElementById('adminQuestList');
+  const dest = document.getElementById('adminQuestList2');
+  if (orig && dest) dest.innerHTML = orig.innerHTML;
+}
+
+function renderWeeklyV2() {
+  const dest = document.getElementById('wmListAdmin2');
+  if (!dest) return;
+  const missions = state.weeklyMissions || [];
+  if (!missions.length) { dest.innerHTML = '<div style="text-align:center;color:#90A4AE;font-size:12px;padding:16px;">Belum ada misi mingguan</div>'; return; }
+  dest.innerHTML = missions.map(m => `
+    <div class="adm2-list-item">
+      <div class="adm2-list-item-icon">${m.emoji||'📅'}</div>
+      <div class="adm2-list-item-info">
+        <div class="adm2-list-item-name">${m.name||'?'}</div>
+        <div class="adm2-list-item-meta">+${m.xp||50} XP</div>
+      </div>
+      <div class="adm2-list-item-actions">
+        <button class="adm2-btn adm2-btn-sm" style="background:#E3F2FD;color:#1565C0;" onclick="openMisiEdit('mingguan','${m.id}','${(m.emoji||'📅').replace(/'/g,"\\'")}','${(m.name||'').replace(/'/g,"\\'")}',${m.xp||50})">✏️</button>
+        <button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="deleteWeeklyMission('${m.id}');setTimeout(renderWeeklyV2,300)">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderMonthlyV2() {
+  const dest = document.getElementById('mmListAdmin2');
+  if (!dest) return;
+  const missions = state.monthlyMissions || [];
+  if (!missions.length) { dest.innerHTML = '<div style="text-align:center;color:#90A4AE;font-size:12px;padding:16px;">Belum ada misi bulanan</div>'; return; }
+  dest.innerHTML = missions.map(m => `
+    <div class="adm2-list-item">
+      <div class="adm2-list-item-icon">${m.emoji||'🗓️'}</div>
+      <div class="adm2-list-item-info">
+        <div class="adm2-list-item-name">${m.name||'?'}</div>
+        <div class="adm2-list-item-meta">+${m.xp||100} XP</div>
+      </div>
+      <div class="adm2-list-item-actions">
+        <button class="adm2-btn adm2-btn-sm" style="background:#E3F2FD;color:#1565C0;" onclick="openMisiEdit('bulanan','${m.id}','${(m.emoji||'🗓️').replace(/'/g,"\\'")}','${(m.name||'').replace(/'/g,"\\'")}',${m.xp||100})">✏️</button>
+        <button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="deleteMonthlyMission('${m.id}');setTimeout(renderMonthlyV2,300)">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function syncCustomBadges2() {
+  const dest = document.getElementById('customBadgeList2');
+  if (!dest) return;
+  const cbs = state.customBadges || [];
+  if (!cbs.length) { dest.innerHTML = '<div style="text-align:center;color:#90A4AE;font-size:12px;padding:16px;">Belum ada piala spesial</div>'; return; }
+  dest.innerHTML = cbs.map(cb => `
+    <div class="adm2-list-item">
+      <div class="adm2-list-item-icon">${cb.emoji}</div>
+      <div class="adm2-list-item-info">
+        <div class="adm2-list-item-name">${cb.name}</div>
+        <div class="adm2-list-item-meta">🔓 ${cb.xpRequired} XP</div>
+      </div>
+      <div class="adm2-list-item-actions">
+        <button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="deleteCustomBadge('${cb.id}');setTimeout(syncCustomBadges2,300)">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function syncKarakterGrid2() {
+  const dest = document.getElementById('karakterSelectGrid2');
+  if (!dest) return;
+  dest.innerHTML = KARAKTER_LIST.map(k => `
+    <div class="adm2-kar-opt${selectedKarakter===k.id?' selected':''}" onclick="selectKarakter2('${k.id}')">
+      <div class="adm2-kar-emoji">${k.emoji}</div>
+      <div class="adm2-kar-name">${k.name}</div>
+    </div>`).join('');
+}
+
+function selectKarakter2(id) {
+  selectedKarakter = id;
+  syncKarakterGrid2();
+}
+
+function syncKarakterAwarded2() {
+  const dest = document.getElementById('karakterAwardedList2');
+  if (!dest) return;
+  const awarded = (state.karakterAwarded||[]).slice().reverse().slice(0,8);
+  if (!awarded.length) { dest.innerHTML = '<p style="text-align:center;color:#90A4AE;font-size:12px;padding:8px;">Belum ada lencana.</p>'; return; }
+  dest.innerHTML = awarded.map(a => {
+    const dd = new Date(a.timestamp);
+    const dateStr = dd.getDate()+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][dd.getMonth()]+' '+dd.getFullYear();
+    return `<div class="adm2-list-item" style="background:#F3E5F5;border-color:#CE93D8;">
+      <div class="adm2-list-item-icon">${a.emoji}</div>
+      <div class="adm2-list-item-info">
+        <div class="adm2-list-item-name" style="color:#6A1B9A;">${a.name}</div>
+        <div class="adm2-list-item-meta">"${a.note||'—'}" · ${dateStr}</div>
+      </div>
+      <button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="deleteKarakter('${a.id}');setTimeout(syncKarakterAwarded2,300)">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function syncInvestPrices2() {
+  firebase.database().ref('aslan_investasi/manualPrices').once('value', snap => {
+    const d = snap.val();
+    if (!d) return;
+    if (d.goldPrice) { const el=document.getElementById('adminGoldPrice'); if(el) el.value=d.goldPrice; }
+    if (d.stockPrices) {
+      Object.entries(d.stockPrices).forEach(([id, price]) => {
+        const el = document.getElementById('sp-'+id); if(el) el.value=price;
+      });
+    }
+    if (d.updatedAt) {
+      const dt = new Date(d.updatedAt);
+      const str = '🕐 Terakhir: '+dt.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})+' '+dt.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+      const el = document.getElementById('adminPriceLastUpdate2'); if(el) el.textContent=str;
+    }
+  });
+}
+
+function saveInvestPrices() {
+  const gold     = parseFloat(document.getElementById('adminGoldPrice')?.value)||0;
+  const ultra    = parseFloat(document.getElementById('sp-ultra')?.value)||0;
+  const indomie  = parseFloat(document.getElementById('sp-indomie')?.value)||0;
+  const goto_    = parseFloat(document.getElementById('sp-goto')?.value)||0;
+  const mayora   = parseFloat(document.getElementById('sp-mayora')?.value)||0;
+  const nintendo = parseFloat(document.getElementById('sp-nintendo')?.value)||0;
+  const bca      = parseFloat(document.getElementById('sp-bca')?.value)||0;
+  if (!gold&&!ultra&&!indomie&&!goto_&&!mayora&&!nintendo&&!bca) { showToast('⚠️ Isi minimal satu harga!'); return; }
+  const now = new Date();
+  const ts = now.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  firebase.database().ref('aslan_investasi/manualPrices').set({
+    goldPrice: gold,
+    stockPrices: { ultra, indomie, goto: goto_, mayora, nintendo, bca },
+    updatedAt: now.toISOString(), updatedBy: 'Ayah'
+  }).then(() => {
+    showToast('✅ Harga investasi tersimpan!');
+    const el = document.getElementById('adminPriceLastUpdate2'); if(el) el.textContent='🕐 Terakhir: '+ts;
+  }).catch(err => showToast('❌ Gagal: '+err.message));
+}
+
+function openMisiEdit(type, key, emoji, name, meta) {
+  document.getElementById('misiEditKey').value = key;
+  document.getElementById('misiEditType').value = type;
+  document.getElementById('misiEditEmoji').value = emoji||'';
+  document.getElementById('misiEditName').value = name||'';
+  document.getElementById('misiEditMeta').value = meta||'';
+  const titles = {harian:'⚔️ Edit Misi Harian', mingguan:'📅 Edit Misi Mingguan', bulanan:'🗓️ Edit Misi Bulanan'};
+  const metaLabels = {harian:'Durasi (menit)', mingguan:'XP Reward', bulanan:'XP Reward'};
+  document.getElementById('misiEditTitle').textContent = titles[type]||'✏️ Edit Misi';
+  document.getElementById('misiEditMetaLabel').textContent = metaLabels[type]||'Nilai';
+  document.getElementById('misiEditOverlay').classList.add('open');
+}
+
+function closeMisiEdit() {
+  document.getElementById('misiEditOverlay').classList.remove('open');
+}
+
+function saveMisiEdit() {
+  const key   = document.getElementById('misiEditKey').value;
+  const type  = document.getElementById('misiEditType').value;
+  const emoji = document.getElementById('misiEditEmoji').value.trim()||'📌';
+  const name  = document.getElementById('misiEditName').value.trim();
+  const meta  = parseInt(document.getElementById('misiEditMeta').value)||0;
+  if (!name) { showToast('⚠️ Nama tidak boleh kosong!'); return; }
+
+  if (type === 'harian') {
+    const idx = (state.quests||[]).findIndex(q=>q.id===key);
+    if (idx>=0) { state.quests[idx] = {...state.quests[idx], emoji, name, dur: meta}; }
+    save(); renderAll(); renderQuestManagerV2();
+    showToast('✅ Latihan diupdate!'); closeMisiEdit();
+  } else if (type === 'mingguan') {
+    const idx = (state.weeklyMissions||[]).findIndex(m=>m.id===key);
+    if (idx>=0) { state.weeklyMissions[idx] = {...state.weeklyMissions[idx], emoji, name, xp: meta}; }
+    save(); renderWeeklyV2(); renderWeeklyMissionBox();
+    showToast('✅ Misi mingguan diupdate!'); closeMisiEdit();
+  } else if (type === 'bulanan') {
+    const idx = (state.monthlyMissions||[]).findIndex(m=>m.id===key);
+    if (idx>=0) { state.monthlyMissions[idx] = {...state.monthlyMissions[idx], emoji, name, xp: meta}; }
+    save(); renderMonthlyV2(); renderMonthlyMissionBox();
+    showToast('✅ Misi bulanan diupdate!'); closeMisiEdit();
+  }
+}
+
+// Patch admin panel show
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const panel = document.getElementById('adminPanel');
+    if (!panel) return;
+    new MutationObserver(() => {
+      if (panel.style.display !== 'none') {
+        setTimeout(() => adm2Tab('profil'), 100);
+      }
+    }).observe(panel, {attributes:true, attributeFilter:['style']});
+  }, 500);
+  setTimeout(() => {
+    const xp = document.getElementById('adminXpDisplay');
+    if (!xp) return;
+    new MutationObserver(() => {
+      const d = document.getElementById('adminXpDisplay2'); if(d) d.textContent=xp.textContent;
+    }).observe(xp, {childList:true, characterData:true, subtree:true});
+  }, 2000);
+});
+</script>
+
+<div id="notif-update" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#FFF3E0;color:#E65100;font-size:13px;font-weight:900;text-align:center;padding:14px;z-index:9998;cursor:pointer;border-top:3px solid #FFB300;">🚀 Ada fitur baru! Klik di sini untuk Update</div>
+
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
@@ -705,7 +1378,7 @@ if('serviceWorker' in navigator){
       .then(()=>console.log('SW siap')).catch(()=>console.log('SW tidak tersedia'));
   });
 }
-const VERSI_SAYA="2.0.0";
+const VERSI_SAYA="2.0.1";
 firebase.database().ref('aslan_data/app_version').on('value',(snapshot)=>{
   const versiTerbaru=snapshot.val();
   if(versiTerbaru&&versiTerbaru!==VERSI_SAYA){document.getElementById('notif-update').style.display='block';}
@@ -716,6 +1389,16 @@ document.getElementById('notif-update').onclick=function(){
   if('caches' in window){caches.keys().then(function(names){for(let n of names)caches.delete(n);});}
   setTimeout(function(){window.location.href=window.location.origin+window.location.pathname+'?v='+Date.now();},500);
 };
+</script>
+<script>
+// PATCH: Manual streak override
+(function(){
+  const _orig = window.computeStreak;
+  window.computeStreak = function(){
+    if(typeof state !== 'undefined' && state.manualStreak > 0) return state.manualStreak;
+    return _orig ? _orig() : 0;
+  };
+})();
 </script>
 </body>
 </html>
