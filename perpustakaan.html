@@ -10,159 +10,69 @@
 <title>📚 Perpustakaan Aslan — Keluarga Sejati</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-<!-- Firebase SDK (hanya 1x di sini) -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --green:#4CAF50;--green-dark:#2E7D32;--green-light:#A5D6A7;
-  --amber:#F57F17;--amber-light:#FFF8E1;
+  --green:#4CAF50;--green-dark:#2E7D32;
+  --amber:#F57F17;
   --brown:#5D4037;--brown-light:#8D6E63;--brown-dark:#3E2723;
-  --cream:#FFF8E1;--cream2:#FFECB3;
-  --red:#C62828;--bg:#E8F5E9;--card:#FFFFFF;--text:#1A1A2E;
-  --indigo:#283593;--indigo-light:#C5CAE9;
-  --purple:#6A1B9A;--purple-light:#F3E5F5;
+  --cream:#FFF8E1;
   --orange:#E65100;--teal:#00695C;
+  --indigo:#1A237E;--indigo-mid:#283593;
 }
+html,body{margin:0;padding:0;width:100%;min-height:100vh;}
+body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-content:center;align-items:flex-start;}
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
-}
-
-body {
-  font-family:'Nunito',sans-serif;
-  background:#6b9e6b;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-/* ═══ WRAPPER RESPONSIVE ═══ */
-#app-wrapper {
-  width: 100%;
-  max-width: 600px;
-  min-height: 100vh;
-  background-color: var(--cream);
-  background-image:
-    radial-gradient(circle,rgba(141,110,99,0.12) 2px,transparent 2px),
-    linear-gradient(rgba(141,110,99,0.05) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(141,110,99,0.05) 1px,transparent 1px);
+#app-wrapper{
+  width:100%;max-width:600px;min-height:100vh;
+  background-color:var(--cream);
+  background-image:radial-gradient(circle,rgba(141,110,99,0.12) 2px,transparent 2px),linear-gradient(rgba(141,110,99,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(141,110,99,0.05) 1px,transparent 1px);
   background-size:32px 32px,32px 32px,32px 32px;
   background-position:16px 16px,0 0,0 0;
   box-shadow:0 0 80px rgba(0,0,0,0.3);
-  padding-bottom:60px;
-  position:relative;
-  overflow-x:hidden;
+  padding-bottom:60px;position:relative;overflow-x:hidden;
 }
 
-/* Tablet portrait: 600–900px */
-@media (min-width: 600px) and (max-width: 900px) {
-  body {
-    background: #FFF8E1;
-  }
-  #app-wrapper {
-    max-width: 100%;
-    box-shadow: none;
-  }
-  .books-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  .stats-row {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .header-title {
-    font-size: 16px !important;
-  }
+@media(min-width:600px) and (max-width:900px){
+  body{background:#FFF8E1;}
+  #app-wrapper{max-width:100%;box-shadow:none;}
+  .books-grid{grid-template-columns:repeat(3,1fr)!important;}
+  .header-title{font-size:16px!important;}
 }
-
-/* Tablet landscape & desktop: 900px+ */
-@media (min-width: 900px) {
-  body {
-    background: #5a8a5a;
-    align-items: flex-start;
-    padding: 24px 0;
-  }
-  #app-wrapper {
-    max-width: 860px;
-    border-radius: 20px;
-    margin: 0 auto;
-    min-height: auto;
-  }
-  .books-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  .stats-row {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .header-title {
-    font-size: 16px !important;
-  }
-  .main {
-    padding: 20px 28px !important;
-  }
-  .today-book-wrap {
-    max-width: 100%;
-  }
+@media(min-width:900px){
+  body{background:#5a8a5a;align-items:flex-start;padding:24px 0;}
+  #app-wrapper{max-width:860px;border-radius:20px;margin:0 auto;min-height:auto;}
+  .books-grid{grid-template-columns:repeat(4,1fr)!important;}
+  .header-title{font-size:16px!important;}
+  .main{padding:20px 28px!important;}
 }
-
-/* Tablet landscape specific (e.g. iPad landscape) */
-@media (min-width: 768px) and (max-width: 1100px) and (orientation: landscape) {
-  body {
-    background: #5a8a5a;
-    padding: 16px 0;
-  }
-  #app-wrapper {
-    max-width: 100%;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  .books-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  .header {
-    padding: 16px 24px 36px !important;
-  }
-  .main {
-    padding: 16px 24px !important;
-  }
-  .header-title {
-    font-size: 13px !important;
-  }
-}
-
-/* Small phones */
-@media (max-width: 360px) {
-  .books-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  .stats-row {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .header-title {
-    font-size: 11px !important;
-  }
+@media(max-width:360px){
+  .books-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .header-title{font-size:11px!important;}
 }
 
 /* ═══ HEADER ═══ */
 .header{
-  background:linear-gradient(135deg,#3E2723 0%,#5D4037 50%,#6D4C41 100%);
-  padding:18px 20px 36px;
-  position:relative;overflow:hidden;
+  padding:18px 20px 36px;position:relative;overflow:hidden;
 }
+.header.coding-header{background:linear-gradient(135deg,#3E2723 0%,#5D4037 50%,#6D4C41 100%);}
+.header.english-header{background:linear-gradient(135deg,#0D2B6B 0%,#1A3F9E 50%,#2756C5 100%);}
+
 .header::after{
   content:'';position:absolute;bottom:0;left:0;right:0;height:20px;
-  background:repeating-linear-gradient(90deg,#5D4037 0,#5D4037 29px,#4E342E 29px,#4E342E 30px);
-  border-top:3px solid #3E2723;
+  border-top:3px solid rgba(0,0,0,0.3);
 }
+.coding-header::after{background:repeating-linear-gradient(90deg,#5D4037 0,#5D4037 29px,#4E342E 29px,#4E342E 30px);}
+.english-header::after{background:repeating-linear-gradient(90deg,#1A3F9E 0,#1A3F9E 29px,#0D2B6B 29px,#0D2B6B 30px);}
+
 .header::before{
   content:'';position:absolute;bottom:20px;left:0;right:0;height:3px;
   background:repeating-linear-gradient(90deg,rgba(255,255,255,0.15) 0,rgba(255,255,255,0.15) 14px,transparent 14px,transparent 30px);
 }
+
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .back-btn{
   background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);
@@ -177,12 +87,13 @@ body {
 }
 .header-hero{display:flex;align-items:center;gap:16px;}
 .library-icon-wrap{
-  width:72px;height:72px;background:linear-gradient(135deg,#FF8F00,#FFB300);
-  border:4px solid #FFCC80;border-radius:14px;
+  width:72px;height:72px;border:4px solid #FFCC80;border-radius:14px;
   display:flex;align-items:center;justify-content:center;font-size:36px;
   box-shadow:inset 0 -4px 0 rgba(0,0,0,0.2),0 4px 12px rgba(0,0,0,0.3);
   flex-shrink:0;position:relative;overflow:hidden;
 }
+.coding-icon{background:linear-gradient(135deg,#FF8F00,#FFB300);}
+.english-icon{background:linear-gradient(135deg,#1565C0,#42A5F5);}
 .library-icon-wrap::before{
   content:'';position:absolute;top:4px;left:6px;right:6px;height:6px;
   background:rgba(255,255,255,0.3);border-radius:3px;
@@ -192,11 +103,28 @@ body {
 .progress-wrap{margin-top:14px;}
 .progress-label{display:flex;justify-content:space-between;color:#FFCC80;font-size:11px;font-weight:700;margin-bottom:5px;opacity:0.9;}
 .progress-track{height:14px;background:rgba(0,0,0,0.3);border-radius:3px;border:2px solid rgba(255,255,255,0.2);overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,#FFB300,#FFD54F);border-radius:3px;transition:width 0.8s ease;position:relative;}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.8s ease;position:relative;}
+.coding-progress{background:linear-gradient(90deg,#FFB300,#FFD54F);}
+.english-progress{background:linear-gradient(90deg,#29B6F6,#80DEEA);}
 .progress-fill::after{content:'';position:absolute;top:2px;left:4px;right:4px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;}
 
 .float-deco{position:absolute;pointer-events:none;font-size:20px;opacity:0.2;}
 @keyframes floatDeco{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(8deg)}}
+
+/* ═══ COLLECTION TABS ═══ */
+.collection-tabs{
+  display:flex;gap:0;margin:0;border-bottom:3px solid #D7CCC8;
+  background:#EFEBE9;
+}
+.tab-btn{
+  flex:1;padding:12px 8px;border:none;background:transparent;
+  font-family:'Press Start 2P',monospace;font-size:7px;cursor:pointer;
+  color:#90A4AE;transition:all 0.2s;border-bottom:3px solid transparent;
+  margin-bottom:-3px;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.tab-btn.active.coding-tab{color:#5D4037;border-bottom-color:#5D4037;background:#FFF8E1;}
+.tab-btn.active.english-tab{color:#1A237E;border-bottom-color:#1A237E;background:#E8EAF6;}
+.tab-btn:hover:not(.active){background:rgba(0,0,0,0.04);}
 
 /* ═══ MAIN ═══ */
 .main{padding:16px 14px;}
@@ -211,91 +139,60 @@ body {
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0;}
 .stat-card.read-card::before{background:var(--green);}
 .stat-card.locked-card::before{background:#EF9A9A;}
-.stat-card.today-card::before{background:var(--amber);}
+.stat-card.today-card.coding::before{background:var(--amber);}
+.stat-card.today-card.english::before{background:#1565C0;}
 .stat-num{font-family:'Press Start 2P',monospace;font-size:20px;color:#5D4037;}
 .stat-label{font-size:9px;font-weight:800;color:#90A4AE;margin-top:5px;text-transform:uppercase;letter-spacing:0.5px;}
 
-/* ═══ TODAY BOOK HIGHLIGHT ═══ */
-.today-book-wrap{
-  width:100%;
-  margin-bottom:20px;
-  box-sizing:border-box;
-}
+/* ═══ TODAY HIGHLIGHT ═══ */
+.today-book-wrap{width:100%;margin-bottom:20px;box-sizing:border-box;}
 .today-book-card{
-  display:block;
-  width:100% !important;
-  box-sizing:border-box !important;
-  border-radius:18px;
-  padding:20px;
-  border:3px solid #E65100;
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 8px 24px rgba(230,81,0,0.3);
+  display:block;width:100%!important;box-sizing:border-box!important;
+  border-radius:18px;padding:20px;border:3px solid #E65100;
+  position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.25);
 }
 .today-book-card::before{content:'📖';position:absolute;right:12px;bottom:10px;font-size:56px;opacity:0.12;}
 .today-book-badge{
   display:inline-flex;align-items:center;gap:5px;
   background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.4);
-  border-radius:20px;padding:3px 12px;font-size:10px;font-weight:800;color:white;
-  margin-bottom:10px;
+  border-radius:20px;padding:3px 12px;font-size:10px;font-weight:800;color:white;margin-bottom:10px;
 }
-.today-book-title{font-family:'Press Start 2P',monospace;font-size:9px;color:white;text-shadow:1px 1px 0 rgba(0,0,0,0.2);line-height:1.6;margin-bottom:8px;}
-.today-book-num{font-size:12px;font-weight:800;color:rgba(255,255,255,0.85);margin-bottom:14px;}
+.today-book-title{font-family:'Press Start 2P',monospace;font-size:9px;color:white;text-shadow:1px 1px 0 rgba(0,0,0,0.2);line-height:1.6;margin-bottom:8px;word-break:break-word;}
 .today-book-btn{
-  display:inline-block;background:white;color:#E65100;
-  border:none;border-radius:12px;padding:12px 24px;
+  display:inline-block;background:white;border:none;border-radius:12px;padding:12px 24px;
   font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;
   box-shadow:0 4px 0 rgba(0,0,0,0.15);transition:all 0.1s;text-decoration:none;
   border-bottom:4px solid rgba(0,0,0,0.1);
 }
+.today-book-btn.coding-btn{color:#E65100;}
+.today-book-btn.english-btn{color:#1565C0;}
 .today-book-btn:hover{transform:translateY(-2px);}
 .today-book-btn:active{transform:translateY(2px);}
-
-.today-book-wrap{width:100%;margin-bottom:18px;}
-.today-book-card{display:block;width:100%;max-width:none;box-sizing:border-box;padding:20px;border-radius:18px;}
-.today-book-card::before{right:12px;bottom:10px;font-size:56px;}
-.today-book-title{word-break:break-word;}
-.today-book-badge{white-space:normal;}
-
-@media (max-width: 520px) {
-  .main{padding:16px 10px;}
-  .today-book-card{padding:16px;}
-  .today-book-card::before{right:10px;bottom:8px;font-size:48px;}
-  .today-book-title{font-size:11px;}
-  .today-book-btn{font-size:7px;padding:10px 18px;}
-}
 
 /* ═══ WEEK TITLE ═══ */
 .week-title{
   font-family:'Press Start 2P',monospace;font-size:8px;color:#5D4037;
   letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:8px;
   background:linear-gradient(135deg,#EFEBE9,#D7CCC8);
-  border-radius:12px;padding:10px 14px;border:2px solid #BCAAA4;
-  border-left:5px solid #8D6E63;
+  border-radius:12px;padding:10px 14px;border:2px solid #BCAAA4;border-left:5px solid #8D6E63;
 }
+.week-title.english{color:#1A237E;background:linear-gradient(135deg,#E8EAF6,#C5CAE9);border-color:#9FA8DA;border-left-color:#3949AB;}
 .week-title-emoji{font-size:18px;flex-shrink:0;}
-.week-title-text{flex:1;}
 
 /* ═══ BOOK GRID ═══ */
-.books-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin-bottom:20px;
-}
+.books-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
 
 /* ═══ BOOK CARD ═══ */
 .book-card{
-  background:white;border-radius:16px;
-  border:3px solid #D7CCC8;border-bottom:5px solid #BCAAA4;
+  background:white;border-radius:16px;border:3px solid #D7CCC8;border-bottom:5px solid #BCAAA4;
   cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;
   position:relative;overflow:hidden;text-decoration:none;display:block;
 }
 .book-card:hover:not(.locked){transform:translateY(-4px);box-shadow:0 10px 0 rgba(0,0,0,0.1);}
 .book-card:active:not(.locked){transform:translateY(2px);border-bottom-width:2px;}
 .book-card.locked{cursor:not-allowed;opacity:0.75;filter:grayscale(0.3);}
-.book-card.read{border-color:var(--green);border-bottom-color:#2E7D32;}
-.book-card.today-book-card-item{border-color:#FF9800;border-bottom-color:#E65100;animation:todayPulse 2s ease-in-out infinite;}
+.book-card.read{border-color:var(--green)!important;border-bottom-color:#2E7D32!important;}
+.book-card.today-book-card-item{animation:todayPulse 2s ease-in-out infinite;}
 @keyframes todayPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,152,0,0.3)}50%{box-shadow:0 0 0 6px rgba(255,152,0,0)}}
 
 .book-spine{width:8px;position:absolute;left:0;top:0;bottom:0;border-radius:16px 0 0 16px;}
@@ -310,6 +207,7 @@ body {
 .book-day{font-size:9px;font-weight:700;color:#BDBDBD;}
 
 .status-today{background:#FFF3E0;color:#E65100;border:1.5px solid #FFB74D;}
+.status-today-en{background:#E8EAF6;color:#283593;border:1.5px solid #7986CB;}
 .status-read{background:#E8F5E9;color:#2E7D32;border:1.5px solid #81C784;}
 .status-locked{background:#F5F5F5;color:#BDBDBD;border:1.5px solid #E0E0E0;}
 
@@ -319,7 +217,6 @@ body {
 }
 .lock-icon{font-size:28px;margin-bottom:4px;}
 .lock-text{font-size:9px;font-weight:800;color:#90A4AE;}
-
 .read-check{
   position:absolute;top:-2px;right:-2px;width:28px;height:28px;
   background:var(--green);border-radius:50%;border:3px solid white;
@@ -329,75 +226,75 @@ body {
 }
 
 /* ═══ SHELF DECORATION ═══ */
-.shelf-deco{
-  background:linear-gradient(135deg,#5D4037,#6D4C41);
-  height:16px;border-radius:0;margin:0 -14px 20px;
-  border-top:3px solid #3E2723;border-bottom:3px solid #4E342E;
-  position:relative;
-}
-.shelf-deco::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:5px;
-  background:repeating-linear-gradient(90deg,rgba(255,255,255,0.1) 0,rgba(255,255,255,0.1) 19px,transparent 19px,transparent 20px);
-}
+.shelf-deco{height:16px;margin:0 -14px 20px;border-top:3px solid rgba(0,0,0,0.25);border-bottom:3px solid rgba(0,0,0,0.15);position:relative;}
+.shelf-deco.coding{background:linear-gradient(135deg,#5D4037,#6D4C41);}
+.shelf-deco.english{background:linear-gradient(135deg,#283593,#3949AB);}
+.shelf-deco::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,rgba(255,255,255,0.1) 0,rgba(255,255,255,0.1) 19px,transparent 19px,transparent 20px);}
 
 /* ═══ MOTIVATION ═══ */
-.motivation-card{
-  background:linear-gradient(135deg,#1B5E20,#2E7D32);
-  border-radius:16px;padding:16px 18px;margin-bottom:16px;
-  border:3px solid #1B5E20;position:relative;overflow:hidden;
-}
-.motivation-card::before{content:'💡';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:36px;opacity:0.12;}
+.motivation-card{border-radius:16px;padding:16px 18px;margin-bottom:16px;border:3px solid;position:relative;overflow:hidden;}
+.motivation-card.coding{background:linear-gradient(135deg,#1B5E20,#2E7D32);border-color:#1B5E20;}
+.motivation-card.english{background:linear-gradient(135deg,#0D1F6B,#1A3F9E);border-color:#0D1F6B;}
+.motivation-card::before{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:36px;opacity:0.12;}
+.motivation-card.coding::before{content:'💡';}
+.motivation-card.english::before{content:'🌟';}
 .motivation-text{font-size:12px;font-weight:700;color:#C8E6C9;line-height:1.7;font-style:italic;}
+.motivation-card.english .motivation-text{color:#C5CAE9;}
+
+/* ═══ CODING WEEK COLORS ═══ */
+.book-card.cw1{border-color:#90CAF9;border-bottom-color:#1565C0;}
+.book-card.cw2{border-color:#A5D6A7;border-bottom-color:#2E7D32;}
+.book-card.cw3{border-color:#FFAB91;border-bottom-color:#E65100;}
+.book-card.cw4{border-color:#CE93D8;border-bottom-color:#6A1B9A;}
+.book-card.cw5{border-color:#80CBC4;border-bottom-color:#00695C;}
+.spine-cw1{background:linear-gradient(180deg,#1565C0,#0D47A1);}
+.spine-cw2{background:linear-gradient(180deg,#2E7D32,#1B5E20);}
+.spine-cw3{background:linear-gradient(180deg,#E65100,#BF360C);}
+.spine-cw4{background:linear-gradient(180deg,#6A1B9A,#4A148C);}
+.spine-cw5{background:linear-gradient(180deg,#00695C,#004D40);}
+.num-cw1{background:#1565C0;}.num-cw2{background:#2E7D32;}.num-cw3{background:#E65100;}.num-cw4{background:#6A1B9A;}.num-cw5{background:#00695C;}
+
+/* ═══ ENGLISH WEEK COLORS ═══ */
+.book-card.ew1{border-color:#90CAF9;border-bottom-color:#0D47A1;}
+.book-card.ew2{border-color:#80DEEA;border-bottom-color:#00695C;}
+.book-card.ew3{border-color:#B39DDB;border-bottom-color:#4527A0;}
+.book-card.ew4{border-color:#F48FB1;border-bottom-color:#880E4F;}
+.book-card.ew5{border-color:#FFCC80;border-bottom-color:#E65100;}
+.spine-ew1{background:linear-gradient(180deg,#0D47A1,#01579B);}
+.spine-ew2{background:linear-gradient(180deg,#00695C,#004D40);}
+.spine-ew3{background:linear-gradient(180deg,#4527A0,#311B92);}
+.spine-ew4{background:linear-gradient(180deg,#880E4F,#4A148C);}
+.spine-ew5{background:linear-gradient(180deg,#E65100,#BF360C);}
+.num-ew1{background:#0D47A1;}.num-ew2{background:#00695C;}.num-ew3{background:#4527A0;}.num-ew4{background:#880E4F;}.num-ew5{background:#E65100;}
 
 /* ═══ TOAST ═══ */
 .toast{
   position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-120px);
   background:#3E2723;color:white;padding:12px 28px;border-radius:50px;
   font-size:13px;font-weight:800;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  z-index:600;box-shadow:0 6px 24px rgba(0,0,0,0.25);white-space:nowrap;
-  border:2px solid #8D6E63;
+  z-index:600;box-shadow:0 6px 24px rgba(0,0,0,0.25);white-space:nowrap;border:2px solid #8D6E63;
 }
 .toast.show{transform:translateX(-50%) translateY(0);}
 
 /* ═══ BACK TO TOP ═══ */
 .back-top{
-  position:fixed;bottom:20px;right:20px;
-  width:48px;height:48px;border-radius:50%;
-  background:#5D4037;border:3px solid #8D6E63;
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;cursor:pointer;z-index:100;
-  box-shadow:0 4px 16px rgba(0,0,0,0.35);
-  border-bottom:4px solid #3E2723;transition:all 0.2s;
-  text-decoration:none;
+  position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;
+  background:#5D4037;border:3px solid #8D6E63;display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.35);
+  border-bottom:4px solid #3E2723;transition:all 0.2s;text-decoration:none;
 }
 .back-top:hover{background:#3E2723;}
 
-/* ═══ WEEK COLOR THEMES ═══ */
-.book-card.w1{border-color:#90CAF9;border-bottom-color:#1565C0;}
-.book-card.w2{border-color:#A5D6A7;border-bottom-color:#2E7D32;}
-.book-card.w3{border-color:#FFAB91;border-bottom-color:#E65100;}
-.book-card.w4{border-color:#CE93D8;border-bottom-color:#6A1B9A;}
-.book-card.w5{border-color:#80CBC4;border-bottom-color:#00695C;}
-.book-card.w1.read,.book-card.w2.read,.book-card.w3.read,.book-card.w4.read,.book-card.w5.read{border-color:#81C784;border-bottom-color:#2E7D32;}
-
-.spine-w1{background:linear-gradient(180deg,#1565C0,#0D47A1);}
-.spine-w2{background:linear-gradient(180deg,#2E7D32,#1B5E20);}
-.spine-w3{background:linear-gradient(180deg,#E65100,#BF360C);}
-.spine-w4{background:linear-gradient(180deg,#6A1B9A,#4A148C);}
-.spine-w5{background:linear-gradient(180deg,#00695C,#004D40);}
-
-.num-w1{background:#1565C0;}
-.num-w2{background:#2E7D32;}
-.num-w3{background:#E65100;}
-.num-w4{background:#6A1B9A;}
-.num-w5{background:#00695C;}
+/* ═══ COLLECTION SECTION ═══ */
+.collection-section{display:none;}
+.collection-section.active{display:block;}
 </style>
 </head>
 <body>
 <div id="app-wrapper">
 
-  <!-- HEADER -->
-  <div class="header">
+  <!-- CODING HEADER -->
+  <div class="header coding-header" id="codingHeader">
     <span class="float-deco" style="top:10px;left:28%;animation:floatDeco 3s ease-in-out infinite;">📚</span>
     <span class="float-deco" style="top:14px;left:60%;animation:floatDeco 4.5s ease-in-out infinite 1s;">⭐</span>
     <span class="float-deco" style="top:8px;right:6%;animation:floatDeco 3.5s ease-in-out infinite 2s;">🔖</span>
@@ -406,53 +303,94 @@ body {
       <span class="date-badge" id="dateDisplay">—</span>
     </div>
     <div class="header-hero">
-      <div class="library-icon-wrap">📚</div>
+      <div class="library-icon-wrap coding-icon">📚</div>
       <div>
         <div class="header-title">PERPUSTAKAAN<br>ASLAN</div>
-        <div class="header-sub">30 Buku Coding Petualangan Seru!</div>
+        <div class="header-sub">📚 30 Buku Coding + 🇬🇧 30 Buku Bahasa Inggris</div>
       </div>
     </div>
-    <div class="progress-wrap">
+    <div class="progress-wrap" id="codingProgressWrap">
       <div class="progress-label">
-        <span>📖 Buku Terbaca</span>
-        <span id="progressText">0 / 30</span>
+        <span>💻 Coding Terbaca</span>
+        <span id="codingProgressText">0 / 30</span>
       </div>
       <div class="progress-track">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        <div class="progress-fill coding-progress" id="codingProgressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="progress-wrap" id="englishProgressWrap" style="margin-top:8px;">
+      <div class="progress-label">
+        <span>🇬🇧 English Terbaca</span>
+        <span id="englishProgressText">0 / 30</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill english-progress" id="englishProgressFill" style="width:0%"></div>
       </div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <div class="stats-row">
-      <div class="stat-card read-card">
-        <div class="stat-num" id="statRead">0</div>
-        <div class="stat-label">✅ Dibaca</div>
-      </div>
-      <div class="stat-card today-card">
-        <div class="stat-num" id="statToday">📖</div>
-        <div class="stat-label">🌟 Hari Ini</div>
-      </div>
-      <div class="stat-card locked-card">
-        <div class="stat-num" id="statLocked">30</div>
-        <div class="stat-label">🔒 Terkunci</div>
-      </div>
-    </div>
-    <div class="today-book-wrap" id="todayHighlight"></div>
-    <div class="motivation-card">
-      <div class="motivation-text" id="motivationText"></div>
-    </div>
-    <div id="booksContainer"></div>
+  <!-- TABS -->
+  <div class="collection-tabs">
+    <button class="tab-btn coding-tab active" onclick="switchTab('coding')">💻 CODING</button>
+    <button class="tab-btn english-tab" onclick="switchTab('english')">🇬🇧 ENGLISH</button>
   </div>
 
-</div><!-- end #app-wrapper -->
+  <!-- CODING SECTION -->
+  <div class="collection-section active" id="codingSection">
+    <div class="main">
+      <div class="stats-row">
+        <div class="stat-card read-card">
+          <div class="stat-num" id="cStatRead">0</div>
+          <div class="stat-label">✅ Dibaca</div>
+        </div>
+        <div class="stat-card today-card coding">
+          <div class="stat-num" id="cStatToday">📖</div>
+          <div class="stat-label">🌟 Hari Ini</div>
+        </div>
+        <div class="stat-card locked-card">
+          <div class="stat-num" id="cStatLocked">30</div>
+          <div class="stat-label">🔒 Terkunci</div>
+        </div>
+      </div>
+      <div class="today-book-wrap" id="codingTodayHighlight"></div>
+      <div class="motivation-card coding">
+        <div class="motivation-text" id="codingMotivation"></div>
+      </div>
+      <div id="codingBooksContainer"></div>
+    </div>
+  </div>
+
+  <!-- ENGLISH SECTION -->
+  <div class="collection-section" id="englishSection">
+    <div class="main">
+      <div class="stats-row">
+        <div class="stat-card read-card">
+          <div class="stat-num" id="eStatRead">0</div>
+          <div class="stat-label">✅ Dibaca</div>
+        </div>
+        <div class="stat-card today-card english">
+          <div class="stat-num" id="eStatToday">📖</div>
+          <div class="stat-label">🌟 Hari Ini</div>
+        </div>
+        <div class="stat-card locked-card">
+          <div class="stat-num" id="eStatLocked">30</div>
+          <div class="stat-label">🔒 Terkunci</div>
+        </div>
+      </div>
+      <div class="today-book-wrap" id="englishTodayHighlight"></div>
+      <div class="motivation-card english">
+        <div class="motivation-text" id="englishMotivation"></div>
+      </div>
+      <div id="englishBooksContainer"></div>
+    </div>
+  </div>
+
+</div>
 
 <a href="#" class="back-top" title="Ke Atas">☝️</a>
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══ FIREBASE CONFIG (hanya 1x) ═══
 const firebaseConfig = {
   apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
   authDomain: "aslan-sae.firebaseapp.com",
@@ -464,10 +402,11 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const LIB_REF = db.ref('aslan_library_v2');
+const CODING_REF  = db.ref('aslan_library_v2');
+const ENGLISH_REF = db.ref('aslan_english_v1');
 
-// ═══ DATA BUKU ═══
-const BOOKS = [
+// ═══ DATA BUKU CODING ═══
+const CODING_BOOKS = [
   {day:1,  emoji:'💻', title:'Komputer Ajaib: Dari Kotak Besar Jadi Kecil'},
   {day:2,  emoji:'🔐', title:'Apa Itu Coding? Bahasa Rahasia Komputer'},
   {day:3,  emoji:'👨‍🔬', title:'Siapa yang Pertama Kali Membuat Komputer?'},
@@ -500,18 +439,62 @@ const BOOKS = [
   {day:30, emoji:'🏆', title:'Aku Mau Jadi Programmer! Langkah Pertamaku'},
 ];
 
-const WEEK_LABELS = [
-  {week:1, label:'Minggu 1', sub:'Petualangan Teknologi Awal',    emoji:'🖥️', wclass:'w1'},
-  {week:2, label:'Minggu 2', sub:'Belajar Coding dengan Cara Seru', emoji:'🧑‍💻', wclass:'w2'},
-  {week:3, label:'Minggu 3', sub:'Coding di Sekitar Kita',         emoji:'🌍', wclass:'w3'},
-  {week:4, label:'Minggu 4', sub:'Cerita Pahlawan Coding',          emoji:'🦸', wclass:'w4'},
-  {week:5, label:'Minggu 5', sub:'Menuju Masa Depan',               emoji:'🚀', wclass:'w5'},
+// ═══ DATA BUKU BAHASA INGGRIS ═══
+// Start date: 18 Mei 2026
+const ENGLISH_START_DATE = new Date('2026-05-18T00:00:00');
+const ENGLISH_BOOKS = [
+  {day:1,  emoji:'🔤', title:'Hello World! — Salam Pertama dalam Bahasa Inggris'},
+  {day:2,  emoji:'🔠', title:'The ABC Song — Mengenal 26 Huruf Ajaib'},
+  {day:3,  emoji:'🌈', title:'Colors Everywhere! — Semua Warna dalam Bahasa Inggris'},
+  {day:4,  emoji:'🔢', title:'Numbers 1–100 — Berhitung Seru Pakai Bahasa Inggris'},
+  {day:5,  emoji:'🐶', title:'Animals All Around — Nama Hewan dari A to Z'},
+  {day:6,  emoji:'🍎', title:'Yummy Fruits & Veggies — Buah dan Sayur Favorit'},
+  {day:7,  emoji:'👨‍👩‍👦', title:'My Family — Nama Anggota Keluarga'},
+  {day:8,  emoji:'📅', title:'Days and Months — Hari dan Bulan dalam Bahasa Inggris'},
+  {day:9,  emoji:'⏰', title:'What Time Is It? — Belajar Jam dalam Bahasa Inggris'},
+  {day:10, emoji:'🌤️', title:'How\'s the Weather? — Cerita Cuaca dalam Bahasa Inggris'},
+  {day:11, emoji:'🎭', title:'Feelings & Emotions — Ekspresi Perasaanmu'},
+  {day:12, emoji:'🏠', title:'Parts of My House — Ruangan di Rumahku'},
+  {day:13, emoji:'📚', title:'School Things — Perlengkapan Sekolah'},
+  {day:14, emoji:'🍔', title:'I\'m Hungry! — Makanan dan Minuman Favoritku'},
+  {day:15, emoji:'👕', title:'What Do You Wear? — Pakaian Sehari-hari'},
+  {day:16, emoji:'🧍', title:'My Body — Nama Bagian Tubuh'},
+  {day:17, emoji:'⚽', title:'Sports and Hobbies — Olahraga dan Hobiku'},
+  {day:18, emoji:'🗺️', title:'Around Town — Tempat-tempat di Kota'},
+  {day:19, emoji:'🚌', title:'Transport Adventure — Kendaraan dalam Bahasa Inggris'},
+  {day:20, emoji:'💬', title:'Nice to Meet You! — Percakapan Pertama'},
+  {day:21, emoji:'📖', title:'Simple Sentences — Membuat Kalimat Bahasa Inggris'},
+  {day:22, emoji:'❓', title:'Ask Me Anything! — Kalimat Tanya dalam Bahasa Inggris'},
+  {day:23, emoji:'✋', title:'Action Words — Kata Kerja Seru (Verbs)'},
+  {day:24, emoji:'📝', title:'Describing Things — Kata Sifat (Adjectives)'},
+  {day:25, emoji:'📖', title:'Story Time! — Membaca Cerita Pendek dalam Bahasa Inggris'},
+  {day:26, emoji:'🎵', title:'English Songs — Lagu Anak Bahasa Inggris'},
+  {day:27, emoji:'🎭', title:'English Riddles — Teka-teki Seru Bahasa Inggris'},
+  {day:28, emoji:'✉️', title:'Write a Letter — Menulis Surat Bahasa Inggris'},
+  {day:29, emoji:'🌍', title:'English Around the World — Bahasa Inggris di Seluruh Dunia'},
+  {day:30, emoji:'🏆', title:'I Can Speak English! — Aku Bisa Bahasa Inggris!'},
+];
+
+const CODING_WEEK_LABELS = [
+  {week:1, label:'Minggu 1', sub:'Petualangan Teknologi Awal',       emoji:'🖥️', wclass:'cw1'},
+  {week:2, label:'Minggu 2', sub:'Belajar Coding dengan Cara Seru',  emoji:'🧑‍💻', wclass:'cw2'},
+  {week:3, label:'Minggu 3', sub:'Coding di Sekitar Kita',           emoji:'🌍', wclass:'cw3'},
+  {week:4, label:'Minggu 4', sub:'Cerita Pahlawan Coding',           emoji:'🦸', wclass:'cw4'},
+  {week:5, label:'Minggu 5', sub:'Menuju Masa Depan',                emoji:'🚀', wclass:'cw5'},
+];
+const ENGLISH_WEEK_LABELS = [
+  {week:1, label:'Week 1', sub:'Hello English! — Perkenalan Pertama',   emoji:'👋', wclass:'ew1'},
+  {week:2, label:'Week 2', sub:'My World — Dunia di Sekelilingku',      emoji:'🌏', wclass:'ew2'},
+  {week:3, label:'Week 3', sub:'Everyday Life — Kehidupan Sehari-hari', emoji:'☀️', wclass:'ew3'},
+  {week:4, label:'Week 4', sub:'Let\'s Talk! — Ayo Berbicara',          emoji:'💬', wclass:'ew4'},
+  {week:5, label:'Week 5', sub:'English Champion! — Juara Bahasa',      emoji:'🏆', wclass:'ew5'},
 ];
 
 const DAYS_ID   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
 const DAYS_LONG = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-const MOTIVATIONS = [
+
+const CODING_MOTIVATIONS = [
   '"Membaca satu buku sehari sama seperti naik level setiap hari! Kamu bisa, Aslan! 📚⚡"',
   '"Setiap halaman yang kamu baca menambah kekuatan otakmu! Terus semangat! 🧠💪"',
   '"Pembaca hari ini adalah pemimpin masa depan! Baca terus ya Aslan! 👑📖"',
@@ -520,77 +503,96 @@ const MOTIVATIONS = [
   '"Setiap buku yang kamu baca = 1 level naik! Kumpulkan semua! ⭐🎯"',
   '"Aslan yang rajin membaca hari ini akan jadi coder terhebat besok! 🚀🏆"',
 ];
+const ENGLISH_MOTIVATIONS = [
+  '"Every book you read makes your English stronger! Keep going, Aslan! 📖✨"',
+  '"Learning English opens doors to the whole world! You\'re amazing! 🌍💪"',
+  '"One book a day keeps the language barrier away! 🇬🇧⭐"',
+  '"Words are your superpower! Read and grow stronger every day! 🦸📚"',
+  '"The more you read, the more you know! Read on, Aslan! 🧠🌟"',
+  '"English heroes are made one book at a time! 🏆📖"',
+  '"You\'re not just reading — you\'re building your future! 🚀💫"',
+];
 
 // ═══ STATE ═══
-let readBooks = {};
-let startDate  = null;
+let codingReadBooks  = {};
+let englishReadBooks = {};
+let codingStartDate  = null;
 
-// ═══ FIREBASE: LOAD DATA ═══
-function initFromFirebase(callback) {
-  LIB_REF.once('value').then(snap => {
-    const data = snap.val() || {};
-    if (data.startDate) {
-      startDate = new Date(data.startDate);
-    } else {
-      startDate = new Date();
-      startDate.setHours(0,0,0,0);
-      LIB_REF.child('startDate').set(startDate.toISOString());
-    }
-    readBooks = data.readBooks || {};
+// ═══ FIREBASE INIT ═══
+function initAll(callback) {
+  Promise.all([
+    CODING_REF.once('value'),
+    ENGLISH_REF.once('value')
+  ]).then(([cSnap, eSnap]) => {
+    const cData = cSnap.val() || {};
+    const eData = eSnap.val() || {};
+    if (cData.startDate) { codingStartDate = new Date(cData.startDate); }
+    else { codingStartDate = new Date(); codingStartDate.setHours(0,0,0,0); CODING_REF.child('startDate').set(codingStartDate.toISOString()); }
+    codingReadBooks  = cData.readBooks  || {};
+    englishReadBooks = eData.readBooks  || {};
     callback();
   }).catch(() => {
-    readBooks = getReadBooksLocal();
-    startDate  = getStartDateLocal();
+    codingStartDate  = getLocalDate('aslan_library_start');
+    codingReadBooks  = getLocalBooks('aslan_library_v1');
+    englishReadBooks = getLocalBooks('aslan_english_v1');
     callback();
   });
 }
 
-// ═══ FIREBASE: SIMPAN BUKU DIBACA ═══
-function markAsRead(day) {
-  readBooks[day] = { readAt: Date.now() };
-  LIB_REF.child('readBooks/' + day).set({ readAt: Date.now() })
-    .catch(() => saveReadBooksLocal(readBooks));
-  setTimeout(() => { renderAll(); showToast('📚 Buku ke-'+day+' selesai dibaca! +XP! 🌟'); }, 300);
+function markCodingRead(day) {
+  codingReadBooks[day] = { readAt: Date.now() };
+  CODING_REF.child('readBooks/'+day).set({ readAt: Date.now() }).catch(() => saveLocalBooks('aslan_library_v1', codingReadBooks));
+  setTimeout(() => { renderAll(); showToast('💻 Buku Coding ke-'+day+' selesai! +XP! 🌟'); }, 300);
+}
+function markEnglishRead(day) {
+  englishReadBooks[day] = { readAt: Date.now() };
+  ENGLISH_REF.child('readBooks/'+day).set({ readAt: Date.now() }).catch(() => saveLocalBooks('aslan_english_v1', englishReadBooks));
+  setTimeout(() => { renderAll(); showToast('🇬🇧 English Book #'+day+' done! Great job! ⭐'); }, 300);
 }
 
-// ═══ FALLBACK LOCALSTORAGE ═══
-const STORAGE_KEY = 'aslan_library_v1';
-function getReadBooksLocal() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
-}
-function saveReadBooksLocal(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e){}
-}
-function getStartDateLocal() {
-  try {
-    const sd = localStorage.getItem('aslan_library_start');
-    if (sd) return new Date(sd);
-  } catch(e){}
-  const today = new Date(); today.setHours(0,0,0,0);
-  try { localStorage.setItem('aslan_library_start', today.toISOString()); } catch(e){}
-  return today;
+// ═══ LOCALSTORAGE FALLBACK ═══
+function getLocalBooks(key) { try { return JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { return {}; } }
+function saveLocalBooks(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){} }
+function getLocalDate(key) {
+  try { const d = localStorage.getItem(key); if(d) return new Date(d); } catch(e){}
+  const t = new Date(); t.setHours(0,0,0,0);
+  try { localStorage.setItem(key, t.toISOString()); } catch(e){}
+  return t;
 }
 
-// ═══ HELPER TANGGAL ═══
-function getTodayBookDay() {
-  if (!startDate) return 1;
+// ═══ DATE HELPERS ═══
+function getTodayBookDay(startDate) {
+  if(!startDate) return 1;
   const today = new Date(); today.setHours(0,0,0,0);
   const diff = Math.floor((today - startDate) / (1000*60*60*24));
-  return Math.min(diff + 1, 30);
+  return Math.min(Math.max(diff + 1, 1), 30);
 }
-function isBookUnlocked(bookDay) { return bookDay <= getTodayBookDay(); }
-function isBookToday(bookDay)    { return bookDay === getTodayBookDay(); }
-function getWeekClass(day) {
-  if(day<=7)  return 'w1'; if(day<=14) return 'w2';
-  if(day<=21) return 'w3'; if(day<=28) return 'w4'; return 'w5';
-}
-function formatDateShort(d) {
-  return DAYS_ID[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()];
-}
-function getUnlockDate(bookDay) {
+function isUnlocked(bookDay, startDate) { return bookDay <= getTodayBookDay(startDate); }
+function isToday(bookDay, startDate)    { return bookDay === getTodayBookDay(startDate); }
+function formatDateShort(d) { return DAYS_ID[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()]; }
+function getUnlockDate(bookDay, startDate) {
   const d = new Date(startDate);
   d.setDate(startDate.getDate() + (bookDay - 1));
   return d;
+}
+function getCodingWeekClass(day) {
+  if(day<=7) return 'cw1'; if(day<=14) return 'cw2'; if(day<=21) return 'cw3'; if(day<=28) return 'cw4'; return 'cw5';
+}
+function getEnglishWeekClass(day) {
+  if(day<=7) return 'ew1'; if(day<=14) return 'ew2'; if(day<=21) return 'ew3'; if(day<=28) return 'ew4'; return 'ew5';
+}
+
+// ═══ TAB SWITCH ═══
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.collection-section').forEach(s => s.classList.remove('active'));
+  if(tab === 'coding') {
+    document.querySelector('.coding-tab').classList.add('active');
+    document.getElementById('codingSection').classList.add('active');
+  } else {
+    document.querySelector('.english-tab').classList.add('active');
+    document.getElementById('englishSection').classList.add('active');
+  }
 }
 
 // ═══ RENDER ═══
@@ -598,85 +600,114 @@ function renderDate() {
   const d = new Date();
   document.getElementById('dateDisplay').textContent = DAYS_LONG[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()];
 }
-function renderMotivation() {
-  const idx = getTodayBookDay() % MOTIVATIONS.length;
-  document.getElementById('motivationText').textContent = MOTIVATIONS[idx];
-}
+
 function renderStats() {
-  const readCount = Object.keys(readBooks).length;
-  const todayDay  = getTodayBookDay();
-  document.getElementById('statRead').textContent   = readCount;
-  document.getElementById('statToday').textContent  = todayDay > 30 ? '🏆' : todayDay;
-  document.getElementById('statLocked').textContent = Math.max(0, 30 - todayDay);
-  document.getElementById('progressText').textContent = readCount + ' / 30';
-  document.getElementById('progressFill').style.width = (readCount/30*100)+'%';
+  const cRead = Object.keys(codingReadBooks).length;
+  const eRead = Object.keys(englishReadBooks).length;
+  const cDay  = getTodayBookDay(codingStartDate);
+  const eDay  = getTodayBookDay(ENGLISH_START_DATE);
+
+  document.getElementById('cStatRead').textContent   = cRead;
+  document.getElementById('cStatToday').textContent  = cDay > 30 ? '🏆' : cDay;
+  document.getElementById('cStatLocked').textContent = Math.max(0, 30 - cDay);
+  document.getElementById('eStatRead').textContent   = eRead;
+  document.getElementById('eStatToday').textContent  = eDay > 30 ? '🏆' : eDay;
+  document.getElementById('eStatLocked').textContent = Math.max(0, 30 - eDay);
+
+  document.getElementById('codingProgressText').textContent  = cRead + ' / 30';
+  document.getElementById('englishProgressText').textContent = eRead + ' / 30';
+  document.getElementById('codingProgressFill').style.width  = (cRead/30*100)+'%';
+  document.getElementById('englishProgressFill').style.width = (eRead/30*100)+'%';
 }
-function renderTodayHighlight() {
-  const todayDay  = getTodayBookDay();
-  const container = document.getElementById('todayHighlight');
+
+function renderMotivations() {
+  const cIdx = getTodayBookDay(codingStartDate)  % CODING_MOTIVATIONS.length;
+  const eIdx = getTodayBookDay(ENGLISH_START_DATE) % ENGLISH_MOTIVATIONS.length;
+  document.getElementById('codingMotivation').textContent  = CODING_MOTIVATIONS[cIdx];
+  document.getElementById('englishMotivation').textContent = ENGLISH_MOTIVATIONS[eIdx];
+}
+
+function renderTodayHighlight(books, readBooks, startDate, containerId, isCoding) {
+  const todayDay = getTodayBookDay(startDate);
+  const container = document.getElementById(containerId);
   if(todayDay < 1 || todayDay > 30) { container.innerHTML=''; return; }
-  const book   = BOOKS[todayDay - 1];
+  const book   = books[todayDay - 1];
   const isRead = !!readBooks[todayDay];
-  const wclass = getWeekClass(todayDay);
-  const colors = {
-    w1:['#1565C0','#0D47A1'], w2:['#2E7D32','#1B5E20'],
-    w3:['#E65100','#BF360C'], w4:['#6A1B9A','#4A148C'], w5:['#00695C','#004D40']
-  };
+  const wclass = isCoding ? getCodingWeekClass(todayDay) : getEnglishWeekClass(todayDay);
+  const colors = isCoding
+    ? {cw1:['#1565C0','#0D47A1'], cw2:['#2E7D32','#1B5E20'], cw3:['#E65100','#BF360C'], cw4:['#6A1B9A','#4A148C'], cw5:['#00695C','#004D40']}
+    : {ew1:['#0D47A1','#01579B'], ew2:['#00695C','#004D40'], ew3:['#4527A0','#311B92'], ew4:['#880E4F','#4A148C'], ew5:['#E65100','#BF360C']};
   const [c1,c2] = colors[wclass];
+  const label = isCoding ? 'BUKU CODING HARI INI' : 'ENGLISH BOOK TODAY';
+  const btnClass = isCoding ? 'coding-btn' : 'english-btn';
+  const btnText = isCoding ? '📖 BACA SEKARANG!' : '📖 READ NOW!';
+  const flipNum = isCoding ? todayDay : (100 + todayDay);
   container.innerHTML = `
     <div class="today-book-card" style="background:linear-gradient(135deg,${c1},${c2});border-color:${c2};">
-      <div class="today-book-badge">📖 BUKU HARI INI — HARI KE-${todayDay}</div>
+      <div class="today-book-badge">📖 ${label} — HARI KE-${todayDay}</div>
       <div style="font-size:36px;margin-bottom:8px;">${book.emoji}</div>
       <div class="today-book-title">${book.title}</div>
       ${isRead
         ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:800;color:white;">✅ Sudah dibaca! Keren Aslan! 🎉</div>`
-        : `<a href="flip/${todayDay}.html" class="today-book-btn" onclick="markAsRead(${todayDay})">📖 BACA SEKARANG!</a>`
+        : `<a href="flip/${flipNum}.html" class="today-book-btn ${btnClass}" onclick="${isCoding ? 'markCodingRead' : 'markEnglishRead'}(${todayDay})">${btnText}</a>`
       }
     </div>`;
 }
-function renderBooks() {
-  const container = document.getElementById('booksContainer');
+
+function renderBooks(books, weekLabels, readBooks, startDate, containerId, isCoding) {
+  const container = document.getElementById(containerId);
   container.innerHTML = '';
-  WEEK_LABELS.forEach(wk => {
+  weekLabels.forEach(wk => {
     const startDay = (wk.week-1)*7 + 1;
     const endDay   = Math.min(wk.week*7, 30);
-    const booksInWeek = BOOKS.filter(b => b.day >= startDay && b.day <= endDay);
+    const booksInWeek = books.filter(b => b.day >= startDay && b.day <= endDay);
 
     const weekTitle = document.createElement('div');
-    weekTitle.className = 'week-title';
-    weekTitle.innerHTML = `<span class="week-title-emoji">${wk.emoji}</span><span class="week-title-text">${wk.label}: ${wk.sub}</span>`;
+    weekTitle.className = 'week-title' + (isCoding ? '' : ' english');
+    weekTitle.innerHTML = `<span class="week-title-emoji">${wk.emoji}</span><span>${wk.label}: ${wk.sub}</span>`;
     container.appendChild(weekTitle);
 
     const grid = document.createElement('div');
     grid.className = 'books-grid';
 
     booksInWeek.forEach(book => {
-      const unlocked  = isBookUnlocked(book.day);
-      const isToday   = isBookToday(book.day);
-      const isRead    = !!readBooks[book.day];
-      const wclass    = getWeekClass(book.day);
-      const unlockDate = getUnlockDate(book.day);
+      const unlocked   = isUnlocked(book.day, startDate);
+      const bookIsToday = isToday(book.day, startDate);
+      const isRead     = !!readBooks[book.day];
+      const wclass     = isCoding ? getCodingWeekClass(book.day) : getEnglishWeekClass(book.day);
+      const unlockDate = getUnlockDate(book.day, startDate);
 
       const card = document.createElement('div');
       let cardClass = 'book-card '+wclass;
-      if(isToday) cardClass += ' today-book-card-item';
-      if(isRead)  cardClass += ' read';
-      if(!unlocked) cardClass += ' locked';
+      if(bookIsToday) cardClass += ' today-book-card-item';
+      if(isRead)      cardClass += ' read';
+      if(!unlocked)   cardClass += ' locked';
       card.className = cardClass;
 
       if(unlocked && !isRead) {
-        card.addEventListener('click', () => { markAsRead(book.day); window.location.href = 'flip/'+book.day+'.html'; });
+        card.addEventListener('click', () => {
+          if(isCoding) markCodingRead(book.day); else markEnglishRead(book.day);
+          const flipNum = isCoding ? book.day : (100 + book.day);
+          window.location.href = 'flip/'+flipNum+'.html';
+        });
       } else if(isRead) {
-        card.addEventListener('click', () => { window.location.href = 'flip/'+book.day+'.html'; });
+        card.addEventListener('click', () => {
+          const flipNum = isCoding ? book.day : (100 + book.day);
+          window.location.href = 'flip/'+flipNum+'.html';
+        });
       } else {
-        card.addEventListener('click', () => { showToast('🔒 Buku ini terbuka '+formatDateShort(unlockDate)+'! Sabar ya! 😊'); });
+        card.addEventListener('click', () => { showToast('🔒 Terbuka '+formatDateShort(unlockDate)+'! Sabar ya! 😊'); });
       }
 
+      const todayStatus = isCoding ? 'status-today' : 'status-today-en';
+      const todayLabel  = isCoding ? '📖 Hari Ini!' : '📖 Today!';
+      const baca        = isCoding ? '📚 Baca!' : '📖 Read!';
+
       let statusHtml = '';
-      if(isToday)          statusHtml = '<span class="book-status status-today">📖 Hari Ini!</span>';
-      else if(isRead)      statusHtml = '<span class="book-status status-read">✅ Selesai!</span>';
-      else if(unlocked)    statusHtml = '<span class="book-status status-today">📚 Baca!</span>';
-      else                 statusHtml = '<span class="book-status status-locked">🔒 '+formatDateShort(unlockDate)+'</span>';
+      if(bookIsToday)    statusHtml = `<span class="book-status ${todayStatus}">${todayLabel}</span>`;
+      else if(isRead)    statusHtml = `<span class="book-status status-read">✅ Selesai!</span>`;
+      else if(unlocked)  statusHtml = `<span class="book-status ${todayStatus}">${baca}</span>`;
+      else               statusHtml = `<span class="book-status status-locked">🔒 ${formatDateShort(unlockDate)}</span>`;
 
       card.innerHTML = `
         <div class="book-spine spine-${wclass}"></div>
@@ -696,13 +727,20 @@ function renderBooks() {
     container.appendChild(grid);
     if(wk.week < 5) {
       const shelf = document.createElement('div');
-      shelf.className = 'shelf-deco';
+      shelf.className = 'shelf-deco ' + (isCoding ? 'coding' : 'english');
       container.appendChild(shelf);
     }
   });
 }
+
 function renderAll() {
-  renderDate(); renderMotivation(); renderStats(); renderTodayHighlight(); renderBooks();
+  renderDate();
+  renderStats();
+  renderMotivations();
+  renderTodayHighlight(CODING_BOOKS,  codingReadBooks,  codingStartDate,    'codingTodayHighlight',  true);
+  renderTodayHighlight(ENGLISH_BOOKS, englishReadBooks, ENGLISH_START_DATE, 'englishTodayHighlight', false);
+  renderBooks(CODING_BOOKS,  CODING_WEEK_LABELS,  codingReadBooks,  codingStartDate,    'codingBooksContainer',  true);
+  renderBooks(ENGLISH_BOOKS, ENGLISH_WEEK_LABELS, englishReadBooks, ENGLISH_START_DATE, 'englishBooksContainer', false);
 }
 
 // ═══ TOAST ═══
@@ -715,8 +753,9 @@ function showToast(msg) {
 }
 
 // ═══ INIT ═══
-document.getElementById('booksContainer').innerHTML = '<div style="text-align:center;padding:40px;color:#8D6E63;font-weight:700;">⏳ Memuat perpustakaan...</div>';
-initFromFirebase(() => { renderAll(); });
+document.getElementById('codingBooksContainer').innerHTML = '<div style="text-align:center;padding:40px;color:#8D6E63;font-weight:700;">⏳ Memuat perpustakaan...</div>';
+document.getElementById('englishBooksContainer').innerHTML = '<div style="text-align:center;padding:40px;color:#5C6BC0;font-weight:700;">⏳ Loading English books...</div>';
+initAll(() => { renderAll(); });
 </script>
 </body>
 </html>
