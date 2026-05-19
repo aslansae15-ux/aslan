@@ -439,40 +439,44 @@ const CODING_BOOKS = [
   {day:30, emoji:'🏆', title:'Aku Mau Jadi Programmer! Langkah Pertamaku'},
 ];
 
-// ═══ DATA BUKU BAHASA INGGRIS ═══
 // Start date: 18 Mei 2026
 const ENGLISH_START_DATE = new Date('2026-05-17T00:00:00');
+
 const ENGLISH_BOOKS = [
-  {day:1,  emoji:'🔤', title:'Hello World! — Salam Pertama dalam Bahasa Inggris'},
-  {day:2,  emoji:'🔠', title:'The ABC Song — Mengenal 26 Huruf Ajaib'},
-  {day:3,  emoji:'🌈', title:'Colors Everywhere! — Semua Warna dalam Bahasa Inggris'},
-  {day:4,  emoji:'🔢', title:'Numbers 1–100 — Berhitung Seru Pakai Bahasa Inggris'},
-  {day:5,  emoji:'🐶', title:'Animals All Around — Nama Hewan dari A to Z'},
-  {day:6,  emoji:'🍎', title:'Yummy Fruits & Veggies — Buah dan Sayur Favorit'},
-  {day:7,  emoji:'👨‍👩‍👦', title:'My Family — Nama Anggota Keluarga'},
-  {day:8,  emoji:'📅', title:'Days and Months — Hari dan Bulan dalam Bahasa Inggris'},
-  {day:9,  emoji:'⏰', title:'What Time Is It? — Belajar Jam dalam Bahasa Inggris'},
-  {day:10, emoji:'🌤️', title:'How\'s the Weather? — Cerita Cuaca dalam Bahasa Inggris'},
-  {day:11, emoji:'🎭', title:'Feelings & Emotions — Ekspresi Perasaanmu'},
-  {day:12, emoji:'🏠', title:'Parts of My House — Ruangan di Rumahku'},
-  {day:13, emoji:'📚', title:'School Things — Perlengkapan Sekolah'},
-  {day:14, emoji:'🍔', title:'I\'m Hungry! — Makanan dan Minuman Favoritku'},
-  {day:15, emoji:'👕', title:'What Do You Wear? — Pakaian Sehari-hari'},
-  {day:16, emoji:'🧍', title:'My Body — Nama Bagian Tubuh'},
-  {day:17, emoji:'⚽', title:'Sports and Hobbies — Olahraga dan Hobiku'},
-  {day:18, emoji:'🗺️', title:'Around Town — Tempat-tempat di Kota'},
-  {day:19, emoji:'🚌', title:'Transport Adventure — Kendaraan dalam Bahasa Inggris'},
-  {day:20, emoji:'💬', title:'Nice to Meet You! — Percakapan Pertama'},
-  {day:21, emoji:'📖', title:'Simple Sentences — Membuat Kalimat Bahasa Inggris'},
-  {day:22, emoji:'❓', title:'Ask Me Anything! — Kalimat Tanya dalam Bahasa Inggris'},
-  {day:23, emoji:'✋', title:'Action Words — Kata Kerja Seru (Verbs)'},
-  {day:24, emoji:'📝', title:'Describing Things — Kata Sifat (Adjectives)'},
-  {day:25, emoji:'📖', title:'Story Time! — Membaca Cerita Pendek dalam Bahasa Inggris'},
-  {day:26, emoji:'🎵', title:'English Songs — Lagu Anak Bahasa Inggris'},
-  {day:27, emoji:'🎭', title:'English Riddles — Teka-teki Seru Bahasa Inggris'},
-  {day:28, emoji:'✉️', title:'Write a Letter — Menulis Surat Bahasa Inggris'},
-  {day:29, emoji:'🌍', title:'English Around the World — Bahasa Inggris di Seluruh Dunia'},
-  {day:30, emoji:'🏆', title:'I Can Speak English! — Aku Bisa Bahasa Inggris!'},
+  {day:1,  emoji:'👨‍👩‍👦', title:'My Family and Me — Mendeskripsikan anggota keluarga dan peran mereka'},
+  {day:2,  emoji:'⏰', title:'A Day in My Life — Rutinitas harian dari pagi hingga malam'},
+  {day:3,  emoji:'🍎', title:'What Do You Like to Eat? — Makanan favorit dan cara mengungkapkan selera'},
+  {day:4,  emoji:'🏠', title:'Around My Neighborhood — Tempat-tempat di sekitar rumah dan cara memberi arah'},
+  {day:5,  emoji:'🎨', title:'My Hobbies and Free Time — Kegiatan waktu luang dan cara membicarakannya'},
+  {day:6,  emoji:'🛒', title:'At the Market — Dialog belanja, menanyakan harga dan jumlah barang'},
+  {day:7,  emoji:'👫', title:'My Best Friend — Mendeskripsikan penampilan dan kepribadian seseorang'},
+  {day:8,  emoji:'☀️', title:'How\'s the Weather Today? — Kosakata cuaca dan perkiraan cuaca sederhana'},
+  {day:9,  emoji:'✉️', title:'A Letter to My Pen Pal — Menulis surat pribadi dengan salam dan penutup'},
+  {day:10, emoji:'💼', title:'Jobs and Work — Pekerjaan umum, tempat kerja, dan tugas sehari-hari'},
+  {day:11, emoji:'🏫', title:'My School Day — Mata pelajaran, jadwal, dan bahasa di dalam kelas'},
+  {day:12, emoji:'🐶', title:'Animals Around Us — Mendeskripsikan hewan dengan kata sifat sederhana'},
+  {day:13, emoji:'📱', title:'On the Phone — Percakapan telepon sederhana dan frasa umum'},
+  {day:14, emoji:'🩹', title:'Going to the Doctor — Kosakata kesehatan, gejala sakit, dan dialog di klinik'},
+  {day:15, emoji:'🎉', title:'Special Days and Celebrations — Hari raya, ulang tahun, dan ucapan selamat'},
+  
+  // Transisi A2 → B1
+  {day:16, emoji:'🧠', title:'My Childhood Memories — Menceritakan kenangan masa kecil dengan kalimat lampau'},
+  {day:17, emoji:'🦒', title:'A Trip to the Zoo — Menceritakan kunjungan ke kebun binatang secara runtut'},
+  {day:18, emoji:'📅', title:'When I Was Young… — Membandingkan kehidupan dulu dan sekarang'},
+  {day:19, emoji:'📖', title:'My Favourite Book — Mendeskripsikan cerita sebuah buku dengan kalimat sendiri'},
+  {day:20, emoji:'🌧️', title:'A Rainy Saturday — Menceritakan pengalaman pribadi dengan detail yang lebih kaya'},
+  
+  // B1 — Intermediate
+  {day:21, emoji:'🚌', title:'My Journey to the City — Mendeskripsikan perjalanan mandiri menggunakan transportasi'},
+  {day:22, emoji:'🤔', title:'A Problem at School — Mengungkapkan pendapat dan mendiskusikan solusi'},
+  {day:23, emoji:'📱', title:'The World of Social Media — Membaca teks tentang kehidupan digital dan dampaknya'},
+  {day:24, emoji:'🧠', title:'Why Do We Dream? — Membaca teks faktual dan menyimpulkan artinya'},
+  {day:25, emoji:'🍜', title:'Street Food Around the World — Membandingkan budaya kuliner dari berbagai negara'},
+  {day:26, emoji:'📚', title:'An Unexpected Adventure — Membaca cerita pendek dan merangkum alur cerita'},
+  {day:27, emoji:'🌍', title:'Climate and Our Planet — Memahami artikel lingkungan hidup dengan fakta penting'},
+  {day:28, emoji:'💡', title:'Making Decisions — Mendiskusikan pilihan dan alasan menggunakan because/so/therefore'},
+  {day:29, emoji:'🌟', title:'A Person I Admire — Menulis dan membaca biografi tokoh inspiratif pendek'},
+  {day:30, emoji:'🏆', title:'My English Journey — Merefleksikan kemajuan belajar dan menetapkan tujuan'},
 ];
 
 const CODING_WEEK_LABELS = [
