@@ -960,10 +960,10 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, type)
         ${isRead ? '<div class="read-check">✓</div>' : ''}
         <div class="book-cover">
           <div class="book-cover-top">
-            <div class="book-emoji">${unlocked ? book.emoji : '📕'}</div>
+            <div class="book-emoji">${(unlocked || type==='english') ? book.emoji : '📕'}</div>
             <div class="book-num-badge num-${wclass}">#${displayNum}</div>
           </div>
-          <div class="book-title">${unlocked ? book.title : 'Buku Tersembunyi...'}</div>
+          <div class="book-title">${(unlocked || type==='english') ? book.title : 'Buku Tersembunyi...'}</div>
           <div class="book-footer">${statusHtml}<span class="book-day">Hari ${book.day}</span></div>
         </div>
         ${!unlocked ? `<div class="book-lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">${formatDateShort(unlockDate)}</div></div>` : ''}`;
