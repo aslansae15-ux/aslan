@@ -94,18 +94,20 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 }
 .coding-icon{background:linear-gradient(135deg,#FF8F00,#FFB300);}
 .english-icon{background:linear-gradient(135deg,#1565C0,#42A5F5);}
+.sains-icon{background:linear-gradient(135deg,#2E7D32,#66BB6A);}
 .library-icon-wrap::before{
   content:'';position:absolute;top:4px;left:6px;right:6px;height:6px;
   background:rgba(255,255,255,0.3);border-radius:3px;
 }
 .header-title{font-family:'Press Start 2P',monospace;font-size:14px;color:#FFCC80;text-shadow:3px 3px 0 rgba(0,0,0,0.4);line-height:1.5;}
-.header-sub{color:#FFCC80;opacity:0.8;font-size:12px;font-weight:700;margin-top:5px;}
-.progress-wrap{margin-top:14px;}
+.header-sub{color:#FFCC80;opacity:0.8;font-size:11px;font-weight:700;margin-top:5px;line-height:1.6;}
+.progress-wrap{margin-top:10px;}
 .progress-label{display:flex;justify-content:space-between;color:#FFCC80;font-size:11px;font-weight:700;margin-bottom:5px;opacity:0.9;}
 .progress-track{height:14px;background:rgba(0,0,0,0.3);border-radius:3px;border:2px solid rgba(255,255,255,0.2);overflow:hidden;}
 .progress-fill{height:100%;border-radius:3px;transition:width 0.8s ease;position:relative;}
 .coding-progress{background:linear-gradient(90deg,#FFB300,#FFD54F);}
 .english-progress{background:linear-gradient(90deg,#29B6F6,#80DEEA);}
+.sains-progress{background:linear-gradient(90deg,#66BB6A,#A5D6A7);}
 .progress-fill::after{content:'';position:absolute;top:2px;left:4px;right:4px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;}
 
 .float-deco{position:absolute;pointer-events:none;font-size:20px;opacity:0.2;}
@@ -117,13 +119,14 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
   background:#EFEBE9;
 }
 .tab-btn{
-  flex:1;padding:12px 8px;border:none;background:transparent;
-  font-family:'Press Start 2P',monospace;font-size:7px;cursor:pointer;
+  flex:1;padding:10px 6px;border:none;background:transparent;
+  font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;
   color:#90A4AE;transition:all 0.2s;border-bottom:3px solid transparent;
-  margin-bottom:-3px;display:flex;align-items:center;justify-content:center;gap:6px;
+  margin-bottom:-3px;display:flex;align-items:center;justify-content:center;gap:5px;
 }
 .tab-btn.active.coding-tab{color:#5D4037;border-bottom-color:#5D4037;background:#FFF8E1;}
 .tab-btn.active.english-tab{color:#1A237E;border-bottom-color:#1A237E;background:#E8EAF6;}
+.tab-btn.active.sains-tab{color:#1B5E20;border-bottom-color:#1B5E20;background:#F1F8E9;}
 .tab-btn:hover:not(.active){background:rgba(0,0,0,0.04);}
 
 /* ═══ MAIN ═══ */
@@ -141,6 +144,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 .stat-card.locked-card::before{background:#EF9A9A;}
 .stat-card.today-card.coding::before{background:var(--amber);}
 .stat-card.today-card.english::before{background:#1565C0;}
+.stat-card.today-card.sains::before{background:#2E7D32;}
 .stat-num{font-family:'Press Start 2P',monospace;font-size:20px;color:#5D4037;}
 .stat-label{font-size:9px;font-weight:800;color:#90A4AE;margin-top:5px;text-transform:uppercase;letter-spacing:0.5px;}
 
@@ -166,8 +170,26 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 }
 .today-book-btn.coding-btn{color:#E65100;}
 .today-book-btn.english-btn{color:#1565C0;}
+.today-book-btn.sains-btn{color:#1B5E20;}
 .today-book-btn:hover{transform:translateY(-2px);}
 .today-book-btn:active{transform:translateY(2px);}
+
+/* ═══ COMING SOON CARD ═══ */
+.coming-soon-card{
+  background:linear-gradient(135deg,#1B5E20,#2E7D32);
+  border-radius:18px;padding:24px 20px;
+  text-align:center;position:relative;overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,0.2);border:3px solid #1B5E20;
+  margin-bottom:20px;
+}
+.coming-soon-card::before{content:'🔬';position:absolute;right:12px;bottom:10px;font-size:60px;opacity:0.12;}
+.coming-soon-emoji{font-size:48px;margin-bottom:12px;}
+.coming-soon-title{font-family:'Press Start 2P',monospace;font-size:10px;color:#FFCC80;text-shadow:2px 2px 0 rgba(0,0,0,0.3);line-height:1.6;margin-bottom:10px;}
+.coming-soon-date{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);
+  border-radius:20px;padding:8px 20px;font-size:12px;font-weight:800;color:white;
+}
 
 /* ═══ WEEK TITLE ═══ */
 .week-title{
@@ -177,6 +199,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
   border-radius:12px;padding:10px 14px;border:2px solid #BCAAA4;border-left:5px solid #8D6E63;
 }
 .week-title.english{color:#1A237E;background:linear-gradient(135deg,#E8EAF6,#C5CAE9);border-color:#9FA8DA;border-left-color:#3949AB;}
+.week-title.sains{color:#1B5E20;background:linear-gradient(135deg,#F1F8E9,#DCEDC8);border-color:#AED581;border-left-color:#558B2F;}
 .week-title-emoji{font-size:18px;flex-shrink:0;}
 
 /* ═══ BOOK GRID ═══ */
@@ -208,6 +231,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 
 .status-today{background:#FFF3E0;color:#E65100;border:1.5px solid #FFB74D;}
 .status-today-en{background:#E8EAF6;color:#283593;border:1.5px solid #7986CB;}
+.status-today-sains{background:#F1F8E9;color:#2E7D32;border:1.5px solid #81C784;}
 .status-read{background:#E8F5E9;color:#2E7D32;border:1.5px solid #81C784;}
 .status-locked{background:#F5F5F5;color:#BDBDBD;border:1.5px solid #E0E0E0;}
 
@@ -229,17 +253,21 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 .shelf-deco{height:16px;margin:0 -14px 20px;border-top:3px solid rgba(0,0,0,0.25);border-bottom:3px solid rgba(0,0,0,0.15);position:relative;}
 .shelf-deco.coding{background:linear-gradient(135deg,#5D4037,#6D4C41);}
 .shelf-deco.english{background:linear-gradient(135deg,#283593,#3949AB);}
+.shelf-deco.sains{background:linear-gradient(135deg,#2E7D32,#388E3C);}
 .shelf-deco::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,rgba(255,255,255,0.1) 0,rgba(255,255,255,0.1) 19px,transparent 19px,transparent 20px);}
 
 /* ═══ MOTIVATION ═══ */
 .motivation-card{border-radius:16px;padding:16px 18px;margin-bottom:16px;border:3px solid;position:relative;overflow:hidden;}
 .motivation-card.coding{background:linear-gradient(135deg,#1B5E20,#2E7D32);border-color:#1B5E20;}
 .motivation-card.english{background:linear-gradient(135deg,#0D1F6B,#1A3F9E);border-color:#0D1F6B;}
+.motivation-card.sains{background:linear-gradient(135deg,#004D40,#00695C);border-color:#004D40;}
 .motivation-card::before{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:36px;opacity:0.12;}
 .motivation-card.coding::before{content:'💡';}
 .motivation-card.english::before{content:'🌟';}
+.motivation-card.sains::before{content:'🔬';}
 .motivation-text{font-size:12px;font-weight:700;color:#C8E6C9;line-height:1.7;font-style:italic;}
 .motivation-card.english .motivation-text{color:#C5CAE9;}
+.motivation-card.sains .motivation-text{color:#B2DFDB;}
 
 /* ═══ CODING WEEK COLORS ═══ */
 .book-card.cw1{border-color:#90CAF9;border-bottom-color:#1565C0;}
@@ -267,6 +295,19 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 .spine-ew5{background:linear-gradient(180deg,#E65100,#BF360C);}
 .num-ew1{background:#0D47A1;}.num-ew2{background:#00695C;}.num-ew3{background:#4527A0;}.num-ew4{background:#880E4F;}.num-ew5{background:#E65100;}
 
+/* ═══ SAINS WEEK COLORS ═══ */
+.book-card.sw1{border-color:#80CBC4;border-bottom-color:#00695C;}
+.book-card.sw2{border-color:#FFCC80;border-bottom-color:#E65100;}
+.book-card.sw3{border-color:#EF9A9A;border-bottom-color:#C62828;}
+.book-card.sw4{border-color:#B39DDB;border-bottom-color:#283593;}
+.book-card.sw5{border-color:#A5D6A7;border-bottom-color:#1B5E20;}
+.spine-sw1{background:linear-gradient(180deg,#00695C,#004D40);}
+.spine-sw2{background:linear-gradient(180deg,#E65100,#BF360C);}
+.spine-sw3{background:linear-gradient(180deg,#C62828,#B71C1C);}
+.spine-sw4{background:linear-gradient(180deg,#283593,#1A237E);}
+.spine-sw5{background:linear-gradient(180deg,#1B5E20,#33691E);}
+.num-sw1{background:#00695C;}.num-sw2{background:#E65100;}.num-sw3{background:#C62828;}.num-sw4{background:#283593;}.num-sw5{background:#1B5E20;}
+
 /* ═══ TOAST ═══ */
 .toast{
   position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-120px);
@@ -293,7 +334,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 <body>
 <div id="app-wrapper">
 
-  <!-- CODING HEADER -->
+  <!-- HEADER -->
   <div class="header coding-header" id="codingHeader">
     <span class="float-deco" style="top:10px;left:28%;animation:floatDeco 3s ease-in-out infinite;">📚</span>
     <span class="float-deco" style="top:14px;left:60%;animation:floatDeco 4.5s ease-in-out infinite 1s;">⭐</span>
@@ -306,7 +347,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
       <div class="library-icon-wrap coding-icon">📚</div>
       <div>
         <div class="header-title">PERPUSTAKAAN<br>ASLAN</div>
-        <div class="header-sub">📚 30 Buku Coding + 🇬🇧 30 Buku Bahasa Inggris</div>
+        <div class="header-sub">💻 30 Coding · 🇬🇧 30 English · 🔬 30 Sains</div>
       </div>
     </div>
     <div class="progress-wrap" id="codingProgressWrap">
@@ -318,7 +359,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
         <div class="progress-fill coding-progress" id="codingProgressFill" style="width:0%"></div>
       </div>
     </div>
-    <div class="progress-wrap" id="englishProgressWrap" style="margin-top:8px;">
+    <div class="progress-wrap" style="margin-top:8px;">
       <div class="progress-label">
         <span>🇬🇧 English Terbaca</span>
         <span id="englishProgressText">0 / 30</span>
@@ -327,15 +368,25 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
         <div class="progress-fill english-progress" id="englishProgressFill" style="width:0%"></div>
       </div>
     </div>
+    <div class="progress-wrap" style="margin-top:8px;">
+      <div class="progress-label">
+        <span>🔬 Sains Terbaca</span>
+        <span id="sainsProgressText">0 / 30</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill sains-progress" id="sainsProgressFill" style="width:0%"></div>
+      </div>
+    </div>
   </div>
 
   <!-- TABS -->
   <div class="collection-tabs">
     <button class="tab-btn coding-tab active" onclick="switchTab('coding')">💻 CODING</button>
     <button class="tab-btn english-tab" onclick="switchTab('english')">🇬🇧 ENGLISH</button>
+    <button class="tab-btn sains-tab" onclick="switchTab('sains')">🔬 SAINS</button>
   </div>
 
-  <!-- CODING SECTION -->
+  <!-- ═══ CODING SECTION ═══ -->
   <div class="collection-section active" id="codingSection">
     <div class="main">
       <div class="stats-row">
@@ -360,7 +411,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
     </div>
   </div>
 
-  <!-- ENGLISH SECTION -->
+  <!-- ═══ ENGLISH SECTION ═══ -->
   <div class="collection-section" id="englishSection">
     <div class="main">
       <div class="stats-row">
@@ -385,6 +436,31 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
     </div>
   </div>
 
+  <!-- ═══ SAINS SECTION ═══ -->
+  <div class="collection-section" id="sainsSection">
+    <div class="main">
+      <div class="stats-row">
+        <div class="stat-card read-card">
+          <div class="stat-num" id="sStatRead">0</div>
+          <div class="stat-label">✅ Dibaca</div>
+        </div>
+        <div class="stat-card today-card sains">
+          <div class="stat-num" id="sStatToday">📖</div>
+          <div class="stat-label">🌟 Hari Ini</div>
+        </div>
+        <div class="stat-card locked-card">
+          <div class="stat-num" id="sStatLocked">30</div>
+          <div class="stat-label">🔒 Terkunci</div>
+        </div>
+      </div>
+      <div class="today-book-wrap" id="sainsTodayHighlight"></div>
+      <div class="motivation-card sains">
+        <div class="motivation-text" id="sainsMotivation"></div>
+      </div>
+      <div id="sainsBooksContainer"></div>
+    </div>
+  </div>
+
 </div>
 
 <a href="#" class="back-top" title="Ke Atas">☝️</a>
@@ -404,6 +480,7 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const CODING_REF  = db.ref('aslan_library_v2');
 const ENGLISH_REF = db.ref('aslan_english_v1');
+const SAINS_REF   = db.ref('aslan_sains_v1');
 
 // ═══ DATA BUKU CODING ═══
 const CODING_BOOKS = [
@@ -439,9 +516,7 @@ const CODING_BOOKS = [
   {day:30, emoji:'🏆', title:'Aku Mau Jadi Programmer! Langkah Pertamaku'},
 ];
 
-// Start date: 18 Mei 2026
-const ENGLISH_START_DATE = new Date('2026-05-17T00:00:00');
-
+// ═══ DATA BUKU ENGLISH ═══
 const ENGLISH_BOOKS = [
   {day:1,  emoji:'👨‍👩‍👦', title:'My Family and Me — Mendeskripsikan anggota keluarga dan peran mereka'},
   {day:2,  emoji:'⏰', title:'A Day in My Life — Rutinitas harian dari pagi hingga malam'},
@@ -450,7 +525,7 @@ const ENGLISH_BOOKS = [
   {day:5,  emoji:'🎨', title:'My Hobbies and Free Time — Kegiatan waktu luang dan cara membicarakannya'},
   {day:6,  emoji:'🛒', title:'At the Market — Dialog belanja, menanyakan harga dan jumlah barang'},
   {day:7,  emoji:'👫', title:'My Best Friend — Mendeskripsikan penampilan dan kepribadian seseorang'},
-  {day:8,  emoji:'☀️', title:'How\'s the Weather Today? — Kosakata cuaca dan perkiraan cuaca sederhana'},
+  {day:8,  emoji:'☀️', title:"How's the Weather Today? — Kosakata cuaca dan perkiraan cuaca sederhana"},
   {day:9,  emoji:'✉️', title:'A Letter to My Pen Pal — Menulis surat pribadi dengan salam dan penutup'},
   {day:10, emoji:'💼', title:'Jobs and Work — Pekerjaan umum, tempat kerja, dan tugas sehari-hari'},
   {day:11, emoji:'🏫', title:'My School Day — Mata pelajaran, jadwal, dan bahasa di dalam kelas'},
@@ -458,15 +533,11 @@ const ENGLISH_BOOKS = [
   {day:13, emoji:'📱', title:'On the Phone — Percakapan telepon sederhana dan frasa umum'},
   {day:14, emoji:'🩹', title:'Going to the Doctor — Kosakata kesehatan, gejala sakit, dan dialog di klinik'},
   {day:15, emoji:'🎉', title:'Special Days and Celebrations — Hari raya, ulang tahun, dan ucapan selamat'},
-  
-  // Transisi A2 → B1
   {day:16, emoji:'🧠', title:'My Childhood Memories — Menceritakan kenangan masa kecil dengan kalimat lampau'},
   {day:17, emoji:'🦒', title:'A Trip to the Zoo — Menceritakan kunjungan ke kebun binatang secara runtut'},
   {day:18, emoji:'📅', title:'When I Was Young… — Membandingkan kehidupan dulu dan sekarang'},
   {day:19, emoji:'📖', title:'My Favourite Book — Mendeskripsikan cerita sebuah buku dengan kalimat sendiri'},
   {day:20, emoji:'🌧️', title:'A Rainy Saturday — Menceritakan pengalaman pribadi dengan detail yang lebih kaya'},
-  
-  // B1 — Intermediate
   {day:21, emoji:'🚌', title:'My Journey to the City — Mendeskripsikan perjalanan mandiri menggunakan transportasi'},
   {day:22, emoji:'🤔', title:'A Problem at School — Mengungkapkan pendapat dan mendiskusikan solusi'},
   {day:23, emoji:'📱', title:'The World of Social Media — Membaca teks tentang kehidupan digital dan dampaknya'},
@@ -479,6 +550,41 @@ const ENGLISH_BOOKS = [
   {day:30, emoji:'🏆', title:'My English Journey — Merefleksikan kemajuan belajar dan menetapkan tujuan'},
 ];
 
+// ═══ DATA BUKU SAINS & PETUALANGAN (201-230) ═══
+const SAINS_BOOKS = [
+  {day:1,  no:201, emoji:'🌍', title:'Petualangan ke Pusat Bumi — Rahasia Lapisan Bumi'},
+  {day:2,  no:202, emoji:'🌋', title:'Gunung Berapi yang Marah — Mengapa Mereka Meletus?'},
+  {day:3,  no:203, emoji:'🪨', title:'Batu Ajaib yang Berubah Jadi Berlian'},
+  {day:4,  no:204, emoji:'🌊', title:'Rahasia Laut Dalam — Monster Laut dan Cahaya Biru'},
+  {day:5,  no:205, emoji:'🐠', title:'Petualangan di Terumbu Karang Ajaib'},
+  {day:6,  no:206, emoji:'🌧️', title:'Siapa yang Mengatur Hujan dan Petir?'},
+  {day:7,  no:207, emoji:'🌪️', title:'Badai Super dan Tornado yang Menari'},
+  {day:8,  no:208, emoji:'🦕', title:'Dinosaurus Terakhir — Misteri Kepunahan Raksasa'},
+  {day:9,  no:209, emoji:'🦖', title:'Pertarungan Tyrannosaurus vs Triceratops'},
+  {day:10, no:210, emoji:'🐚', title:'Fosil Ajaib — Jejak Kehidupan Purba'},
+  {day:11, no:211, emoji:'🪲', title:'Serangga Raksasa Zaman Purba'},
+  {day:12, no:212, emoji:'🌴', title:'Hutan Prasejarah yang Hidup Kembali'},
+  {day:13, no:213, emoji:'🦋', title:'Metamorfosis Ajaib: Dari Ulat ke Kupu-kupu'},
+  {day:14, no:214, emoji:'🐘', title:'Hewan Raksasa yang Masih Hidup'},
+  {day:15, no:215, emoji:'🔬', title:'Perjalanan ke Dunia Mikroskopis — Bakteri dan Virus'},
+  {day:16, no:216, emoji:'🧬', title:'Kode Rahasia Tubuh Kita — DNA dan Genetika'},
+  {day:17, no:217, emoji:'❤️', title:'Petualangan di Dalam Jantung dan Darah'},
+  {day:18, no:218, emoji:'🧠', title:'Otak Super Pintar — Pabrik Pikiran Manusia'},
+  {day:19, no:219, emoji:'🥼', title:'Ilmuwan Kecil: Percobaan Sains di Rumah'},
+  {day:20, no:220, emoji:'🦠', title:'Perang Melawan Kuman Jahat di Tubuh'},
+  {day:21, no:221, emoji:'🚀', title:'Perjalanan ke Planet Mars — Rumah Baru Manusia?'},
+  {day:22, no:222, emoji:'🌑', title:'Misteri Bulan dan Sisi Gelapnya'},
+  {day:23, no:223, emoji:'⭐', title:'Black Hole — Lubang Hitam Pemakan Bintang'},
+  {day:24, no:224, emoji:'☄️', title:'Asteroid yang Hampir Menabrak Bumi'},
+  {day:25, no:225, emoji:'🪐', title:'Petualangan ke Cincin Saturnus'},
+  {day:26, no:226, emoji:'🌌', title:'Galaksi Bima Sakti dan Alien?'},
+  {day:27, no:227, emoji:'🌱', title:'Tumbuhan yang Bisa Makan Serangga'},
+  {day:28, no:228, emoji:'🍄', title:'Jamur Ajaib dan Hutan Bawah Tanah'},
+  {day:29, no:229, emoji:'🌈', title:'Rahasia Pelangi dan Warna-warni Cahaya'},
+  {day:30, no:230, emoji:'🔭', title:'Menjadi Ilmuwan Besar — Impianku di Tahun 2035'},
+];
+
+// ═══ WEEK LABELS ═══
 const CODING_WEEK_LABELS = [
   {week:1, label:'Minggu 1', sub:'Petualangan Teknologi Awal',       emoji:'🖥️', wclass:'cw1'},
   {week:2, label:'Minggu 2', sub:'Belajar Coding dengan Cara Seru',  emoji:'🧑‍💻', wclass:'cw2'},
@@ -490,14 +596,18 @@ const ENGLISH_WEEK_LABELS = [
   {week:1, label:'Week 1', sub:'Hello English! — Perkenalan Pertama',   emoji:'👋', wclass:'ew1'},
   {week:2, label:'Week 2', sub:'My World — Dunia di Sekelilingku',      emoji:'🌏', wclass:'ew2'},
   {week:3, label:'Week 3', sub:'Everyday Life — Kehidupan Sehari-hari', emoji:'☀️', wclass:'ew3'},
-  {week:4, label:'Week 4', sub:'Let\'s Talk! — Ayo Berbicara',          emoji:'💬', wclass:'ew4'},
+  {week:4, label:"Week 4", sub:"Let's Talk! — Ayo Berbicara",           emoji:'💬', wclass:'ew4'},
   {week:5, label:'Week 5', sub:'English Champion! — Juara Bahasa',      emoji:'🏆', wclass:'ew5'},
 ];
+const SAINS_WEEK_LABELS = [
+  {week:1, label:'Minggu 1', sub:'Bumi, Samudra & Cuaca',            emoji:'🌍', wclass:'sw1'},
+  {week:2, label:'Minggu 2', sub:'Dinosaurus & Kehidupan Purba',     emoji:'🦕', wclass:'sw2'},
+  {week:3, label:'Minggu 3', sub:'Tubuh Manusia & Ilmu Hayati',      emoji:'🔬', wclass:'sw3'},
+  {week:4, label:'Minggu 4', sub:'Luar Angkasa & Alam Semesta',      emoji:'🚀', wclass:'sw4'},
+  {week:5, label:'Minggu 5', sub:'Tumbuhan, Cahaya & Impian Sains',  emoji:'🌈', wclass:'sw5'},
+];
 
-const DAYS_ID   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-const DAYS_LONG = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-
+// ═══ MOTIVATIONS ═══
 const CODING_MOTIVATIONS = [
   '"Membaca satu buku sehari sama seperti naik level setiap hari! Kamu bisa, Aslan! 📚⚡"',
   '"Setiap halaman yang kamu baca menambah kekuatan otakmu! Terus semangat! 🧠💪"',
@@ -516,29 +626,71 @@ const ENGLISH_MOTIVATIONS = [
   '"English heroes are made one book at a time! 🏆📖"',
   '"You\'re not just reading — you\'re building your future! 🚀💫"',
 ];
+const SAINS_MOTIVATIONS = [
+  '"Setiap pertanyaan adalah awal dari penemuan besar! Terus bertanya, Aslan! 🔬✨"',
+  '"Ilmuwan hebat dulunya juga anak yang penasaran sepertimu! 🧪💡"',
+  '"Bumi, bintang, dan tubuhmu menyimpan misteri yang menunggu kamu ungkap! 🌍⭐"',
+  '"Sains bukan cuma di laboratorium — ada di mana-mana! Baca dan temukan! 🔭📚"',
+  '"Setiap buku sains = 1 rahasia alam yang terpecahkan! Kumpulkan semuanya! 🏆🔬"',
+  '"Dinosaurus pun tidak menyangka akan hidup di buku favoritmu! 🦕📖"',
+  '"Dari atom terkecil hingga galaksi terluas — semuanya menunggumu! 🌌🚀"',
+];
+
+// ═══ DATES ═══
+const ENGLISH_START_DATE = new Date('2026-05-17T00:00:00');
+const SAINS_START_DATE   = new Date('2026-06-01T00:00:00');
 
 // ═══ STATE ═══
-let codingReadBooks  = {};
+let codingReadBooks = {};
 let englishReadBooks = {};
-let codingStartDate  = null;
+let sainsReadBooks  = {};
+let codingStartDate = null;
+
+// ═══ DATE HELPERS ═══
+const DAYS_ID   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const DAYS_LONG = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+function getTodayBookDay(startDate) {
+  if(!startDate) return 1;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.floor((today - startDate) / (1000*60*60*24));
+  return Math.min(Math.max(diff + 1, 1), 30);
+}
+function isUnlocked(bookDay, startDate) { return bookDay <= getTodayBookDay(startDate); }
+function isToday(bookDay, startDate)    { return bookDay === getTodayBookDay(startDate); }
+function formatDateShort(d) { return DAYS_ID[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()]; }
+function formatDateLong(d)  { return d.getDate()+' '+MONTHS_ID[d.getMonth()]+' '+d.getFullYear(); }
+function getUnlockDate(bookDay, startDate) {
+  const d = new Date(startDate);
+  d.setDate(startDate.getDate() + (bookDay - 1));
+  return d;
+}
+function getCodingWeekClass(day)  { if(day<=7) return 'cw1'; if(day<=14) return 'cw2'; if(day<=21) return 'cw3'; if(day<=28) return 'cw4'; return 'cw5'; }
+function getEnglishWeekClass(day) { if(day<=7) return 'ew1'; if(day<=14) return 'ew2'; if(day<=21) return 'ew3'; if(day<=28) return 'ew4'; return 'ew5'; }
+function getSainsWeekClass(day)   { if(day<=7) return 'sw1'; if(day<=14) return 'sw2'; if(day<=21) return 'sw3'; if(day<=28) return 'sw4'; return 'sw5'; }
 
 // ═══ FIREBASE INIT ═══
 function initAll(callback) {
   Promise.all([
     CODING_REF.once('value'),
-    ENGLISH_REF.once('value')
-  ]).then(([cSnap, eSnap]) => {
+    ENGLISH_REF.once('value'),
+    SAINS_REF.once('value')
+  ]).then(([cSnap, eSnap, sSnap]) => {
     const cData = cSnap.val() || {};
     const eData = eSnap.val() || {};
+    const sData = sSnap.val() || {};
     if (cData.startDate) { codingStartDate = new Date(cData.startDate); }
     else { codingStartDate = new Date(); codingStartDate.setHours(0,0,0,0); CODING_REF.child('startDate').set(codingStartDate.toISOString()); }
-    codingReadBooks  = cData.readBooks  || {};
-    englishReadBooks = eData.readBooks  || {};
+    codingReadBooks  = cData.readBooks || {};
+    englishReadBooks = eData.readBooks || {};
+    sainsReadBooks   = sData.readBooks || {};
     callback();
   }).catch(() => {
     codingStartDate  = getLocalDate('aslan_library_start');
     codingReadBooks  = getLocalBooks('aslan_library_v1');
     englishReadBooks = getLocalBooks('aslan_english_v1');
+    sainsReadBooks   = getLocalBooks('aslan_sains_v1');
     callback();
   });
 }
@@ -553,6 +705,12 @@ function markEnglishRead(day) {
   ENGLISH_REF.child('readBooks/'+day).set({ readAt: Date.now() }).catch(() => saveLocalBooks('aslan_english_v1', englishReadBooks));
   setTimeout(() => { renderAll(); showToast('🇬🇧 English Book #'+day+' done! Great job! ⭐'); }, 300);
 }
+function markSainsRead(day) {
+  const no = day + 200;
+  sainsReadBooks[day] = { readAt: Date.now() };
+  SAINS_REF.child('readBooks/'+day).set({ readAt: Date.now() }).catch(() => saveLocalBooks('aslan_sains_v1', sainsReadBooks));
+  setTimeout(() => { renderAll(); showToast('🔬 Buku Sains #'+no+' selesai! Keren Aslan! 🧪'); }, 300);
+}
 
 // ═══ LOCALSTORAGE FALLBACK ═══
 function getLocalBooks(key) { try { return JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { return {}; } }
@@ -564,28 +722,6 @@ function getLocalDate(key) {
   return t;
 }
 
-// ═══ DATE HELPERS ═══
-function getTodayBookDay(startDate) {
-  if(!startDate) return 1;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diff = Math.floor((today - startDate) / (1000*60*60*24));
-  return Math.min(Math.max(diff + 1, 1), 30);
-}
-function isUnlocked(bookDay, startDate) { return bookDay <= getTodayBookDay(startDate); }
-function isToday(bookDay, startDate)    { return bookDay === getTodayBookDay(startDate); }
-function formatDateShort(d) { return DAYS_ID[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()]; }
-function getUnlockDate(bookDay, startDate) {
-  const d = new Date(startDate);
-  d.setDate(startDate.getDate() + (bookDay - 1));
-  return d;
-}
-function getCodingWeekClass(day) {
-  if(day<=7) return 'cw1'; if(day<=14) return 'cw2'; if(day<=21) return 'cw3'; if(day<=28) return 'cw4'; return 'cw5';
-}
-function getEnglishWeekClass(day) {
-  if(day<=7) return 'ew1'; if(day<=14) return 'ew2'; if(day<=21) return 'ew3'; if(day<=28) return 'ew4'; return 'ew5';
-}
-
 // ═══ TAB SWITCH ═══
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -593,9 +729,12 @@ function switchTab(tab) {
   if(tab === 'coding') {
     document.querySelector('.coding-tab').classList.add('active');
     document.getElementById('codingSection').classList.add('active');
-  } else {
+  } else if(tab === 'english') {
     document.querySelector('.english-tab').classList.add('active');
     document.getElementById('englishSection').classList.add('active');
+  } else {
+    document.querySelector('.sains-tab').classList.add('active');
+    document.getElementById('sainsSection').classList.add('active');
   }
 }
 
@@ -608,8 +747,12 @@ function renderDate() {
 function renderStats() {
   const cRead = Object.keys(codingReadBooks).length;
   const eRead = Object.keys(englishReadBooks).length;
+  const sRead = Object.keys(sainsReadBooks).length;
   const cDay  = getTodayBookDay(codingStartDate);
   const eDay  = getTodayBookDay(ENGLISH_START_DATE);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const sainsStarted = today >= SAINS_START_DATE;
+  const sDay  = sainsStarted ? getTodayBookDay(SAINS_START_DATE) : 0;
 
   document.getElementById('cStatRead').textContent   = cRead;
   document.getElementById('cStatToday').textContent  = cDay > 30 ? '🏆' : cDay;
@@ -617,35 +760,77 @@ function renderStats() {
   document.getElementById('eStatRead').textContent   = eRead;
   document.getElementById('eStatToday').textContent  = eDay > 30 ? '🏆' : eDay;
   document.getElementById('eStatLocked').textContent = Math.max(0, 30 - eDay);
+  document.getElementById('sStatRead').textContent   = sRead;
+  document.getElementById('sStatToday').textContent  = !sainsStarted ? '📅' : (sDay > 30 ? '🏆' : sDay);
+  document.getElementById('sStatLocked').textContent = !sainsStarted ? 30 : Math.max(0, 30 - sDay);
 
   document.getElementById('codingProgressText').textContent  = cRead + ' / 30';
   document.getElementById('englishProgressText').textContent = eRead + ' / 30';
+  document.getElementById('sainsProgressText').textContent   = sRead + ' / 30';
   document.getElementById('codingProgressFill').style.width  = (cRead/30*100)+'%';
   document.getElementById('englishProgressFill').style.width = (eRead/30*100)+'%';
+  document.getElementById('sainsProgressFill').style.width   = (sRead/30*100)+'%';
 }
 
 function renderMotivations() {
-  const cIdx = getTodayBookDay(codingStartDate)  % CODING_MOTIVATIONS.length;
+  const cIdx = getTodayBookDay(codingStartDate)    % CODING_MOTIVATIONS.length;
   const eIdx = getTodayBookDay(ENGLISH_START_DATE) % ENGLISH_MOTIVATIONS.length;
+  const sIdx = new Date().getDay() % SAINS_MOTIVATIONS.length;
   document.getElementById('codingMotivation').textContent  = CODING_MOTIVATIONS[cIdx];
   document.getElementById('englishMotivation').textContent = ENGLISH_MOTIVATIONS[eIdx];
+  document.getElementById('sainsMotivation').textContent   = SAINS_MOTIVATIONS[sIdx];
 }
 
-function renderTodayHighlight(books, readBooks, startDate, containerId, isCoding) {
-  const todayDay = getTodayBookDay(startDate);
+function renderTodayHighlight(books, readBooks, startDate, containerId, type) {
   const container = document.getElementById(containerId);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Sains: belum mulai
+  if(type === 'sains' && today < SAINS_START_DATE) {
+    container.innerHTML = `
+      <div class="coming-soon-card">
+        <div class="coming-soon-emoji">🔬</div>
+        <div class="coming-soon-title">KOLEKSI SAINS &<br>PETUALANGAN</div>
+        <div style="color:#A5D6A7;font-size:12px;font-weight:700;margin-bottom:14px;">30 buku seru menunggumu!</div>
+        <div class="coming-soon-date">📅 Mulai: 1 Juni 2026</div>
+      </div>`;
+    return;
+  }
+
+  const todayDay = getTodayBookDay(startDate);
   if(todayDay < 1 || todayDay > 30) { container.innerHTML=''; return; }
   const book   = books[todayDay - 1];
   const isRead = !!readBooks[todayDay];
-  const wclass = isCoding ? getCodingWeekClass(todayDay) : getEnglishWeekClass(todayDay);
-  const colors = isCoding
-    ? {cw1:['#1565C0','#0D47A1'], cw2:['#2E7D32','#1B5E20'], cw3:['#E65100','#BF360C'], cw4:['#6A1B9A','#4A148C'], cw5:['#00695C','#004D40']}
-    : {ew1:['#0D47A1','#01579B'], ew2:['#00695C','#004D40'], ew3:['#4527A0','#311B92'], ew4:['#880E4F','#4A148C'], ew5:['#E65100','#BF360C']};
-  const [c1,c2] = colors[wclass];
-  const label = isCoding ? 'BUKU CODING HARI INI' : 'ENGLISH BOOK TODAY';
-  const btnClass = isCoding ? 'coding-btn' : 'english-btn';
-  const btnText = isCoding ? '📖 BACA SEKARANG!' : '📖 READ NOW!';
-  const flipNum = isCoding ? todayDay : (100 + todayDay);
+
+  let wclass, flipNum, label, btnClass, btnText;
+  if(type === 'coding') {
+    wclass   = getCodingWeekClass(todayDay);
+    flipNum  = todayDay;
+    label    = 'BUKU CODING HARI INI';
+    btnClass = 'coding-btn';
+    btnText  = '📖 BACA SEKARANG!';
+  } else if(type === 'english') {
+    wclass   = getEnglishWeekClass(todayDay);
+    flipNum  = 100 + todayDay;
+    label    = 'ENGLISH BOOK TODAY';
+    btnClass = 'english-btn';
+    btnText  = '📖 READ NOW!';
+  } else {
+    wclass   = getSainsWeekClass(todayDay);
+    flipNum  = book.no;
+    label    = 'BUKU SAINS HARI INI';
+    btnClass = 'sains-btn';
+    btnText  = '🔬 BACA SEKARANG!';
+  }
+
+  const colorMap = {
+    cw1:['#1565C0','#0D47A1'], cw2:['#2E7D32','#1B5E20'], cw3:['#E65100','#BF360C'], cw4:['#6A1B9A','#4A148C'], cw5:['#00695C','#004D40'],
+    ew1:['#0D47A1','#01579B'], ew2:['#00695C','#004D40'], ew3:['#4527A0','#311B92'], ew4:['#880E4F','#4A148C'], ew5:['#E65100','#BF360C'],
+    sw1:['#00695C','#004D40'], sw2:['#E65100','#BF360C'], sw3:['#C62828','#B71C1C'], sw4:['#283593','#1A237E'], sw5:['#1B5E20','#33691E'],
+  };
+  const [c1,c2] = colorMap[wclass];
+  const markFn = type === 'coding' ? 'markCodingRead' : (type === 'english' ? 'markEnglishRead' : 'markSainsRead');
+
   container.innerHTML = `
     <div class="today-book-card" style="background:linear-gradient(135deg,${c1},${c2});border-color:${c2};">
       <div class="today-book-badge">📖 ${label} — HARI KE-${todayDay}</div>
@@ -653,21 +838,77 @@ function renderTodayHighlight(books, readBooks, startDate, containerId, isCoding
       <div class="today-book-title">${book.title}</div>
       ${isRead
         ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:800;color:white;">✅ Sudah dibaca! Keren Aslan! 🎉</div>`
-        : `<a href="flip/${flipNum}.html" class="today-book-btn ${btnClass}" onclick="${isCoding ? 'markCodingRead' : 'markEnglishRead'}(${todayDay})">${btnText}</a>`
+        : `<a href="flip/${flipNum}.html" class="today-book-btn ${btnClass}" onclick="${markFn}(${todayDay})">${btnText}</a>`
       }
     </div>`;
 }
 
-function renderBooks(books, weekLabels, readBooks, startDate, containerId, isCoding) {
+function renderBooks(books, weekLabels, readBooks, startDate, containerId, type) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Sains belum mulai — tampilkan coming-soon grid
+  if(type === 'sains' && today < SAINS_START_DATE) {
+    const days = Math.ceil((SAINS_START_DATE - today) / (1000*60*60*24));
+    const infoDiv = document.createElement('div');
+    infoDiv.style.cssText = 'text-align:center;padding:30px 20px;';
+    infoDiv.innerHTML = `
+      <div style="font-size:48px;margin-bottom:12px;">🔬</div>
+      <div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#1B5E20;line-height:1.8;margin-bottom:10px;">30 BUKU SAINS<br>MENUNGGUMU!</div>
+      <div style="font-size:13px;font-weight:700;color:#558B2F;">Koleksi terbuka dalam <strong>${days}</strong> hari lagi</div>
+      <div style="font-size:12px;color:#8BC34A;margin-top:6px;font-weight:700;">📅 1 Juni 2026</div>`;
+    container.appendChild(infoDiv);
+
+    // Pratinjau judul-judul buku (terkunci semua)
+    weekLabels.forEach(wk => {
+      const startDay = (wk.week-1)*7 + 1;
+      const endDay   = Math.min(wk.week*7, 30);
+      const booksInWeek = books.filter(b => b.day >= startDay && b.day <= endDay);
+
+      const weekTitle = document.createElement('div');
+      weekTitle.className = 'week-title sains';
+      weekTitle.innerHTML = `<span class="week-title-emoji">${wk.emoji}</span><span>${wk.label}: ${wk.sub}</span>`;
+      container.appendChild(weekTitle);
+
+      const grid = document.createElement('div');
+      grid.className = 'books-grid';
+      booksInWeek.forEach(book => {
+        const wclass = getSainsWeekClass(book.day);
+        const card = document.createElement('div');
+        card.className = `book-card ${wclass} locked`;
+        card.addEventListener('click', () => showToast('📅 Terbuka 1 Juni 2026! Sabar ya! 😊'));
+        card.innerHTML = `
+          <div class="book-spine spine-${wclass}"></div>
+          <div class="book-cover">
+            <div class="book-cover-top">
+              <div class="book-emoji">📕</div>
+              <div class="book-num-badge num-${wclass}">#${book.no}</div>
+            </div>
+            <div class="book-title" style="color:#90A4AE;">${book.title}</div>
+            <div class="book-footer"><span class="book-status status-locked">🔒 1 Jun 2026</span><span class="book-day">Hari ${book.day}</span></div>
+          </div>
+          <div class="book-lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">1 Jun 2026</div></div>`;
+        grid.appendChild(card);
+      });
+      container.appendChild(grid);
+      if(wk.week < 5) {
+        const shelf = document.createElement('div');
+        shelf.className = 'shelf-deco sains';
+        container.appendChild(shelf);
+      }
+    });
+    return;
+  }
+
+  // Normal render
   weekLabels.forEach(wk => {
     const startDay = (wk.week-1)*7 + 1;
     const endDay   = Math.min(wk.week*7, 30);
     const booksInWeek = books.filter(b => b.day >= startDay && b.day <= endDay);
 
     const weekTitle = document.createElement('div');
-    weekTitle.className = 'week-title' + (isCoding ? '' : ' english');
+    weekTitle.className = 'week-title' + (type === 'coding' ? '' : (type === 'english' ? ' english' : ' sains'));
     weekTitle.innerHTML = `<span class="week-title-emoji">${wk.emoji}</span><span>${wk.label}: ${wk.sub}</span>`;
     container.appendChild(weekTitle);
 
@@ -675,14 +916,16 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, isCod
     grid.className = 'books-grid';
 
     booksInWeek.forEach(book => {
-      const unlocked   = isUnlocked(book.day, startDate);
+      const unlocked    = isUnlocked(book.day, startDate);
       const bookIsToday = isToday(book.day, startDate);
-      const isRead     = !!readBooks[book.day];
-      const wclass     = isCoding ? getCodingWeekClass(book.day) : getEnglishWeekClass(book.day);
-      const unlockDate = getUnlockDate(book.day, startDate);
+      const isRead      = !!readBooks[book.day];
+      const wclass      = type === 'coding' ? getCodingWeekClass(book.day) : (type === 'english' ? getEnglishWeekClass(book.day) : getSainsWeekClass(book.day));
+      const unlockDate  = getUnlockDate(book.day, startDate);
+      const flipNum     = type === 'coding' ? book.day : (type === 'english' ? (100 + book.day) : book.no);
+      const displayNum  = type === 'sains' ? book.no : book.day;
 
       const card = document.createElement('div');
-      let cardClass = 'book-card '+wclass;
+      let cardClass = `book-card ${wclass}`;
       if(bookIsToday) cardClass += ' today-book-card-item';
       if(isRead)      cardClass += ' read';
       if(!unlocked)   cardClass += ' locked';
@@ -690,28 +933,27 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, isCod
 
       if(unlocked && !isRead) {
         card.addEventListener('click', () => {
-          if(isCoding) markCodingRead(book.day); else markEnglishRead(book.day);
-          const flipNum = isCoding ? book.day : (100 + book.day);
+          if(type==='coding') markCodingRead(book.day);
+          else if(type==='english') markEnglishRead(book.day);
+          else markSainsRead(book.day);
           window.location.href = 'flip/'+flipNum+'.html';
         });
       } else if(isRead) {
-        card.addEventListener('click', () => {
-          const flipNum = isCoding ? book.day : (100 + book.day);
-          window.location.href = 'flip/'+flipNum+'.html';
-        });
+        card.addEventListener('click', () => { window.location.href = 'flip/'+flipNum+'.html'; });
       } else {
         card.addEventListener('click', () => { showToast('🔒 Terbuka '+formatDateShort(unlockDate)+'! Sabar ya! 😊'); });
       }
 
-      const todayStatus = isCoding ? 'status-today' : 'status-today-en';
-      const todayLabel  = isCoding ? '📖 Hari Ini!' : '📖 Today!';
-      const baca        = isCoding ? '📚 Baca!' : '📖 Read!';
+      let statusClass, todayLabel, baca;
+      if(type === 'coding')       { statusClass='status-today';      todayLabel='📖 Hari Ini!'; baca='📚 Baca!'; }
+      else if(type === 'english') { statusClass='status-today-en';   todayLabel='📖 Today!';    baca='📖 Read!'; }
+      else                        { statusClass='status-today-sains'; todayLabel='🔬 Hari Ini!'; baca='🔬 Baca!'; }
 
       let statusHtml = '';
-      if(bookIsToday)    statusHtml = `<span class="book-status ${todayStatus}">${todayLabel}</span>`;
-      else if(isRead)    statusHtml = `<span class="book-status status-read">✅ Selesai!</span>`;
-      else if(unlocked)  statusHtml = `<span class="book-status ${todayStatus}">${baca}</span>`;
-      else               statusHtml = `<span class="book-status status-locked">🔒 ${formatDateShort(unlockDate)}</span>`;
+      if(bookIsToday)   statusHtml = `<span class="book-status ${statusClass}">${todayLabel}</span>`;
+      else if(isRead)   statusHtml = `<span class="book-status status-read">✅ Selesai!</span>`;
+      else if(unlocked) statusHtml = `<span class="book-status ${statusClass}">${baca}</span>`;
+      else              statusHtml = `<span class="book-status status-locked">🔒 ${formatDateShort(unlockDate)}</span>`;
 
       card.innerHTML = `
         <div class="book-spine spine-${wclass}"></div>
@@ -719,7 +961,7 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, isCod
         <div class="book-cover">
           <div class="book-cover-top">
             <div class="book-emoji">${unlocked ? book.emoji : '📕'}</div>
-            <div class="book-num-badge num-${wclass}">#${book.day}</div>
+            <div class="book-num-badge num-${wclass}">#${displayNum}</div>
           </div>
           <div class="book-title">${unlocked ? book.title : 'Buku Tersembunyi...'}</div>
           <div class="book-footer">${statusHtml}<span class="book-day">Hari ${book.day}</span></div>
@@ -731,7 +973,7 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, isCod
     container.appendChild(grid);
     if(wk.week < 5) {
       const shelf = document.createElement('div');
-      shelf.className = 'shelf-deco ' + (isCoding ? 'coding' : 'english');
+      shelf.className = 'shelf-deco ' + (type === 'coding' ? 'coding' : (type === 'english' ? 'english' : 'sains'));
       container.appendChild(shelf);
     }
   });
@@ -741,10 +983,12 @@ function renderAll() {
   renderDate();
   renderStats();
   renderMotivations();
-  renderTodayHighlight(CODING_BOOKS,  codingReadBooks,  codingStartDate,    'codingTodayHighlight',  true);
-  renderTodayHighlight(ENGLISH_BOOKS, englishReadBooks, ENGLISH_START_DATE, 'englishTodayHighlight', false);
-  renderBooks(CODING_BOOKS,  CODING_WEEK_LABELS,  codingReadBooks,  codingStartDate,    'codingBooksContainer',  true);
-  renderBooks(ENGLISH_BOOKS, ENGLISH_WEEK_LABELS, englishReadBooks, ENGLISH_START_DATE, 'englishBooksContainer', false);
+  renderTodayHighlight(CODING_BOOKS,  codingReadBooks,  codingStartDate,    'codingTodayHighlight',  'coding');
+  renderTodayHighlight(ENGLISH_BOOKS, englishReadBooks, ENGLISH_START_DATE, 'englishTodayHighlight', 'english');
+  renderTodayHighlight(SAINS_BOOKS,   sainsReadBooks,   SAINS_START_DATE,   'sainsTodayHighlight',   'sains');
+  renderBooks(CODING_BOOKS,  CODING_WEEK_LABELS,  codingReadBooks,  codingStartDate,    'codingBooksContainer',  'coding');
+  renderBooks(ENGLISH_BOOKS, ENGLISH_WEEK_LABELS, englishReadBooks, ENGLISH_START_DATE, 'englishBooksContainer', 'english');
+  renderBooks(SAINS_BOOKS,   SAINS_WEEK_LABELS,   sainsReadBooks,   SAINS_START_DATE,   'sainsBooksContainer',   'sains');
 }
 
 // ═══ TOAST ═══
@@ -757,8 +1001,9 @@ function showToast(msg) {
 }
 
 // ═══ INIT ═══
-document.getElementById('codingBooksContainer').innerHTML = '<div style="text-align:center;padding:40px;color:#8D6E63;font-weight:700;">⏳ Memuat perpustakaan...</div>';
+document.getElementById('codingBooksContainer').innerHTML  = '<div style="text-align:center;padding:40px;color:#8D6E63;font-weight:700;">⏳ Memuat perpustakaan...</div>';
 document.getElementById('englishBooksContainer').innerHTML = '<div style="text-align:center;padding:40px;color:#5C6BC0;font-weight:700;">⏳ Loading English books...</div>';
+document.getElementById('sainsBooksContainer').innerHTML   = '<div style="text-align:center;padding:40px;color:#388E3C;font-weight:700;">⏳ Memuat buku Sains...</div>';
 initAll(() => { renderAll(); });
 </script>
 </body>
