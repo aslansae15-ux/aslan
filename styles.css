@@ -358,6 +358,8 @@ body {
 .streak-label  { font-size: 11px; font-weight: 800; color: #90A4AE; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
 .streak-fire   { font-size: 44px; animation: floatDeco 2s ease-in-out infinite; }
 .week-row { display: flex; gap: 6px; }
+.week-day { flex: 1; height: 18px; border-radius: 8px; background: #F5F5F5; border: 1px solid #E0E0E0; }
+.week-day.done { background: #C8E6A5; border-color: #9CCC65; }
 .day-dot { flex: 1; padding: 8px 4px; border-radius: 8px; border: 2px solid #E0E0E0; background: #F5F5F5; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .day-dot.done  { background: #FFF8E1; border-color: #FFB300; }
 .day-dot.today { border-color: var(--blue); }
@@ -998,17 +1000,59 @@ body {
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVE TWEAKS
    ═══════════════════════════════════════════════════════════ */
-@media (max-width: 400px) {
-  .badges-grid, .custom-badges-grid { grid-template-columns: repeat(4,1fr); }
+@media (max-width: 600px) {
+  /* Header */
   .hero-info h1 { font-size: 11px; }
+  .avatar { width: 56px; height: 56px; font-size: 26px; }
+  .family-badge, .date-badge { font-size: 9px; padding: 4px 10px; }
+
+  /* Messages — stack vertically */
+  .msg-grid { grid-template-columns: 1fr; }
+
+  /* Quest grid — always 2 columns on mobile */
+  .quest-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .quest-card { padding: 14px 6px 10px; }
+  .quest-icon-wrap { width: 48px; height: 48px; font-size: 24px; }
+  .quest-name { font-size: 11px; }
+
+  /* Badges */
+  .badges-grid, .custom-badges-grid { grid-template-columns: repeat(4,1fr); }
+
+  /* Progress calendar */
   .days-grid-30 { grid-template-columns: repeat(6,1fr); }
   .day-box { min-width: 22px; }
+
+  /* Profile tab */
   .profile-details-grid { grid-template-columns: 1fr; }
+  .profile-stats-row { grid-template-columns: repeat(3,1fr); }
+
+  /* Karakter */
   .karakter-badges-grid { grid-template-columns: repeat(2,1fr); }
+
+  /* Admin panel */
   .adm2-kar-grid { grid-template-columns: repeat(3,1fr); }
+  .adm2-invest-grid { grid-template-columns: 1fr; }
+
+  /* Games */
   .games-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Ideas */
   .idea-cat-select { grid-template-columns: repeat(2,1fr); }
   .idea-emoji-select { grid-template-columns: repeat(6,1fr); }
-  .msg-grid { grid-template-columns: 1fr; }
-  .adm2-invest-grid { grid-template-columns: 1fr; }
+
+  /* Savings hero amount */
+  .savings-hero-amount { font-size: 17px; }
+
+  /* Submission button */
+  .submit-btn { font-size: 8px; padding: 12px 24px; }
 }
+
+/* Progress calendar (tab-progress) */
+.month-card { background:#fff;border:2px solid #E0E0E0;border-radius:12px;padding:12px;margin-bottom:12px; }
+.month-card summary { cursor:pointer; list-style:none; }
+.month-card[open] { box-shadow:0 8px 20px rgba(0,0,0,.06); }
+.progress-day { height:34px;border-radius:8px;background:#F5F5F5;border:1px solid #E0E0E0;display:flex;align-items:center;justify-content:center;font-weight:800;color:#546E7A }
+.progress-day.empty { background:transparent;border:none }
+.progress-day.done { background:linear-gradient(135deg,#C8E6A7,#8BC34A);color:#1B5E20;border-color:#7CB342 }
+.month-card summary { font-size:13px; display:block; padding:8px 4px; }
+.month-card .month-grid { margin-top:8px }

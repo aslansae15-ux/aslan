@@ -1,0 +1,2948 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LingoQuest - Petualangan Belajar Bahasa Inggris</title>
+  
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & VARIABLES
+       ========================================================================== */
+    :root {
+      /* Harmoni Warna HSL Ceria & Lembut (Ramah Anak) */
+      --bg-sky: linear-gradient(135deg, hsl(200, 100%, 88%) 0%, hsl(210, 100%, 94%) 100%);
+      --primary: hsl(205, 100%, 53%);
+      --primary-dark: hsl(205, 100%, 40%);
+      --secondary: hsl(150, 80%, 42%);
+      --secondary-dark: hsl(150, 80%, 32%);
+      --accent: hsl(40, 100%, 50%);
+      --accent-dark: hsl(40, 100%, 40%);
+      --attention: hsl(330, 90%, 60%);
+      --attention-dark: hsl(330, 90%, 48%);
+      --purple: hsl(265, 85%, 60%);
+      --purple-dark: hsl(265, 85%, 48%);
+      
+      /* Netral */
+      --dark-slate: hsl(220, 40%, 20%);
+      --medium-slate: hsl(220, 20%, 50%);
+      --light-slate: hsl(220, 30%, 96%);
+      --white: hsl(0, 0%, 100%);
+      --shadow-color: rgba(43, 60, 80, 0.15);
+      --border-color: hsl(220, 30%, 88%);
+      /* UI Comic Style */
+      --comic-border: 4px solid var(--dark-slate);
+      --comic-shadow: 0 8px 0 var(--dark-slate);
+      --comic-shadow-active: 0 2px 0 var(--dark-slate);
+      
+      /* Font */
+      --font-main: 'Outfit', sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main);
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: var(--bg-sky);
+      color: var(--dark-slate);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Background Elements */
+    .bg-cloud {
+      position: absolute;
+      background: var(--white);
+      border-radius: 100px;
+      opacity: 0.6;
+      z-index: -1;
+      animation: floatClouds 25s infinite linear;
+    }
+    .bg-cloud-1 { width: 150px; height: 50px; top: 10%; left: -150px; animation-duration: 35s; }
+    .bg-cloud-2 { width: 220px; height: 70px; top: 25%; left: -220px; animation-duration: 45s; animation-delay: 10s; }
+    .bg-cloud-3 { width: 120px; height: 40px; top: 60%; left: -120px; animation-duration: 30s; animation-delay: 5s; }
+    @keyframes floatClouds {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(100vw + 250px)); }
+    }
+    /* Container */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    /* ==========================================================================
+       BUTTON COMMON STYLES (Comic Style Duolingo-like)
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      font-size: 18px;
+      font-weight: 800;
+      text-transform: uppercase;
+      border: var(--comic-border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      user-select: none;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .btn:active {
+      transform: translateY(6px);
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+      box-shadow: 0 6px 0 var(--primary-dark), var(--comic-shadow);
+    }
+    .btn-primary:active {
+      box-shadow: 0 0 0 var(--primary-dark), var(--comic-shadow-active);
+    }
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--white);
+      box-shadow: 0 6px 0 var(--secondary-dark), var(--comic-shadow);
+    }
+    .btn-secondary:active {
+      box-shadow: 0 0 0 var(--secondary-dark), var(--comic-shadow-active);
+    }
+    .btn-accent {
+      background-color: var(--accent);
+      color: var(--white);
+      box-shadow: 0 6px 0 var(--accent-dark), var(--comic-shadow);
+    }
+    .btn-accent:active {
+      box-shadow: 0 0 0 var(--accent-dark), var(--comic-shadow-active);
+    }
+    .btn-attention {
+      background-color: var(--attention);
+      color: var(--white);
+      box-shadow: 0 6px 0 var(--attention-dark), var(--comic-shadow);
+    }
+    .btn-attention:active {
+      box-shadow: 0 0 0 var(--attention-dark), var(--comic-shadow-active);
+    }
+    .btn-purple {
+      background-color: var(--purple);
+      color: var(--white);
+      box-shadow: 0 6px 0 var(--purple-dark), var(--comic-shadow);
+    }
+    .btn-purple:active {
+      box-shadow: 0 0 0 var(--purple-dark), var(--comic-shadow-active);
+    }
+    .btn-disabled {
+      background-color: var(--light-slate);
+      color: var(--medium-slate);
+      border-color: var(--medium-slate);
+      box-shadow: 0 6px 0 var(--medium-slate), 0 8px 0 rgba(0,0,0,0.1);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    /* Icon Buttons */
+    .btn-icon {
+      padding: 12px;
+      border-radius: 50%;
+      aspect-ratio: 1;
+      width: 54px;
+      height: 54px;
+    }
+    /* ==========================================================================
+       SCREENS SETUP
+       ========================================================================== */
+    .screen {
+      display: none;
+      flex-direction: column;
+      animation: fadeInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      flex: 1;
+    }
+    .screen.active {
+      display: flex;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* ==========================================================================
+       HEADER / NAVIGATION BAR
+       ========================================================================== */
+    .app-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: var(--comic-border);
+      border-radius: 24px;
+      margin-bottom: 20px;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--comic-shadow);
+      z-index: 10;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      filter: drop-shadow(2px 2px 0 var(--dark-slate));
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, var(--primary-dark), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.1));
+    }
+    .stats-container {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      padding: 6px 14px;
+      border-radius: 15px;
+      border: 3px solid var(--dark-slate);
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 4px 0 var(--dark-slate);
+    }
+    .stat-badge.xp { color: var(--secondary-dark); }
+    .stat-badge.coins { color: var(--accent-dark); }
+    .stat-badge.level { color: var(--purple-dark); }
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 3px solid var(--border-color);
+      padding-left: 15px;
+    }
+    .avatar-mini {
+      width: 40px;
+      height: 40px;
+      background: var(--light-slate);
+      border-radius: 50%;
+      border: 2px solid var(--dark-slate);
+      overflow: hidden;
+    }
+    /* ==========================================================================
+       WELCOME / PROFILE SETUP SCREEN
+       ========================================================================== */
+    .welcome-card {
+      background: var(--white);
+      border: var(--comic-border);
+      border-radius: 32px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: var(--comic-shadow);
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    .welcome-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+    .welcome-subtitle {
+      font-size: 16px;
+      color: var(--medium-slate);
+      margin-bottom: 30px;
+    }
+    .input-group {
+      margin-bottom: 30px;
+      text-align: left;
+    }
+    .input-label {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: block;
+      color: var(--dark-slate);
+    }
+    .text-input {
+      width: 100%;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      border: var(--comic-border);
+      border-radius: 20px;
+      outline: none;
+      box-shadow: inset 0 4px 0 rgba(0,0,0,0.05);
+      transition: border-color 0.2s;
+    }
+    .text-input:focus {
+      border-color: var(--primary);
+    }
+    .avatar-selector {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 35px;
+    }
+    .avatar-option {
+      border: var(--comic-border);
+      border-radius: 20px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--light-slate);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .avatar-option svg {
+      width: 100%;
+      height: auto;
+      max-height: 80px;
+      transition: transform 0.2s;
+    }
+    .avatar-option:hover svg {
+      transform: scale(1.1) translateY(-5px);
+    }
+    .avatar-option.selected {
+      background: var(--bg-sky);
+      border-color: var(--primary-dark);
+      box-shadow: 0 6px 0 var(--primary), var(--comic-shadow);
+      transform: translateY(-5px);
+    }
+    .avatar-option.selected::after {
+      content: '✓';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: var(--secondary);
+      color: var(--white);
+      border: var(--comic-border);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 4px 0 var(--secondary-dark);
+    }
+    /* ==========================================================================
+       DASHBOARD / MAP SCREEN
+       ========================================================================== */
+    .dashboard-intro {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .dashboard-intro h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--dark-slate);
+    }
+    .dashboard-intro p {
+      color: var(--medium-slate);
+      font-size: 16px;
+    }
+    .quest-map {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 600px) {
+      .quest-map {
+        grid-template-columns: 1fr;
+      }
+    }
+    .quest-card {
+      background: var(--white);
+      border: var(--comic-border);
+      border-radius: 28px;
+      padding: 25px;
+      box-shadow: var(--comic-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .quest-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12px;
+      background: var(--primary);
+    }
+    .quest-card.q1::before { background: var(--primary); }
+    .quest-card.q2::before { background: var(--secondary); }
+    .quest-card.q3::before { background: var(--purple); }
+    .quest-card.q4::before { background: var(--attention); }
+    .quest-icon {
+      width: 90px;
+      height: 90px;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--light-slate);
+      border-radius: 50%;
+      border: 3px solid var(--dark-slate);
+      font-size: 44px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .quest-card.locked {
+      opacity: 0.8;
+      background: #f7f9fa;
+    }
+    .quest-card.locked .quest-icon {
+      background: #e1e6eb;
+      color: #92a1b1;
+    }
+    .quest-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .quest-desc {
+      font-size: 14px;
+      color: var(--medium-slate);
+      margin-bottom: 20px;
+      line-height: 1.4;
+      flex: 1;
+    }
+    .quest-lock-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--light-slate);
+      border: 2px solid var(--dark-slate);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 3px 0 var(--dark-slate);
+    }
+    .quest-stars {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+    .star-icon {
+      font-size: 20px;
+      color: #ccc;
+    }
+    .star-icon.earned {
+      color: var(--accent);
+      text-shadow: 2px 2px 0 var(--dark-slate);
+    }
+    .badge-shelf {
+      background: rgba(255, 255, 255, 0.8);
+      border: var(--comic-border);
+      border-radius: 28px;
+      padding: 25px;
+      box-shadow: var(--comic-shadow);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .shelf-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: var(--dark-slate);
+    }
+    .badge-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 90px;
+      opacity: 0.3;
+      filter: grayscale(100%);
+      transition: all 0.3s ease;
+    }
+    .badge-item.unlocked {
+      opacity: 1;
+      filter: grayscale(0%);
+      transform: scale(1.05);
+    }
+    .badge-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 3px solid var(--dark-slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 4px 0 var(--dark-slate);
+    }
+    .badge-item.unlocked .badge-circle {
+      animation: bouncePulse 2s infinite ease-in-out;
+    }
+    @keyframes bouncePulse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .badge-name {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .reset-area {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .btn-reset {
+      font-size: 13px;
+      padding: 6px 12px;
+      background: none;
+      border: 2px solid var(--medium-slate);
+      color: var(--medium-slate);
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.2s;
+    }
+    .btn-reset:hover {
+      background: var(--attention);
+      border-color: var(--dark-slate);
+      color: var(--white);
+    }
+    /* ==========================================================================
+       GAME COMMON INTERFACES
+       ========================================================================== */
+    .game-layout {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .game-navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-back-dashboard {
+      background: var(--light-slate);
+      border: 3px solid var(--dark-slate);
+      border-radius: 15px;
+      padding: 8px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 0 var(--dark-slate);
+      transition: all 0.1s;
+    }
+    .btn-back-dashboard:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 var(--dark-slate);
+    }
+    .game-progress-wrapper {
+      flex: 1;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .game-progress-bar {
+      flex: 1;
+      height: 18px;
+      background: var(--white);
+      border: 3px solid var(--dark-slate);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+    .game-progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      width: 0%;
+      border-radius: 5px;
+      transition: width 0.3s ease-out;
+    }
+    .game-progress-text {
+      font-size: 16px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .game-card {
+      background: var(--white);
+      border: var(--comic-border);
+      border-radius: 32px;
+      padding: 30px;
+      box-shadow: var(--comic-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+    }
+    .question-prompt {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 25px;
+      text-align: center;
+      color: var(--dark-slate);
+    }
+    /* Footer validation panel */
+    .footer-action-panel {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 3px dashed var(--border-color);
+      padding-top: 25px;
+    }
+    .hint-box {
+      font-size: 15px;
+      color: var(--medium-slate);
+      font-style: italic;
+    }
+    /* ==========================================================================
+       QUEST 1: WORD SAFARI (Spelling Scramble)
+       ========================================================================== */
+    .safari-visual-container {
+      width: 160px;
+      height: 160px;
+      background: var(--light-slate);
+      border-radius: 24px;
+      border: 3px solid var(--dark-slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 25px;
+      font-size: 70px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.06);
+    }
+    .safari-translation {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--medium-slate);
+      background: var(--light-slate);
+      padding: 5px 15px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      margin-bottom: 20px;
+      margin-top: -15px;
+    }
+    .spelling-slots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    .spelling-slot {
+      width: 50px;
+      height: 60px;
+      border-bottom: 5px solid var(--dark-slate);
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      background: #f7f9fa;
+      transition: all 0.2s;
+    }
+    .spelling-slot.filled {
+      background: var(--white);
+      border: 3px solid var(--dark-slate);
+      border-bottom: 6px solid var(--dark-slate);
+      border-radius: 12px;
+      transform: translateY(-4px);
+    }
+    .scrambled-letters {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .letter-btn {
+      width: 52px;
+      height: 52px;
+      background: var(--white);
+      border: 3px solid var(--dark-slate);
+      border-bottom: 6px solid var(--dark-slate);
+      border-radius: 14px;
+      font-size: 24px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+      transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .letter-btn:active {
+      transform: translateY(3px);
+      border-bottom-width: 3px;
+    }
+    .letter-btn.used {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.5);
+    }
+    /* ==========================================================================
+       QUEST 2: SENTENCE BUILDER
+       ========================================================================== */
+    .sentence-visual {
+      font-size: 72px;
+      margin-bottom: 15px;
+      animation: floatIslands 3s infinite ease-in-out;
+    }
+    .sentence-guide-translation {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--medium-slate);
+      background: var(--light-slate);
+      padding: 6px 16px;
+      border-radius: 15px;
+      border: 2px dashed var(--medium-slate);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .sentence-drop-area {
+      width: 100%;
+      min-height: 80px;
+      border: 3px dashed var(--medium-slate);
+      background: #fdfdfd;
+      border-radius: 20px;
+      margin-bottom: 25px;
+      padding: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+    .word-blocks-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    .word-block {
+      background: var(--white);
+      border: 3px solid var(--dark-slate);
+      border-bottom: 6px solid var(--dark-slate);
+      border-radius: 16px;
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+      transition: all 0.1s;
+      user-select: none;
+    }
+    .word-block:active {
+      transform: translateY(3px);
+      border-bottom-width: 3px;
+    }
+    .word-block.used {
+      background: var(--light-slate);
+      border-color: var(--border-color);
+      color: #cbd5e1;
+      cursor: not-allowed;
+      border-bottom-width: 3px;
+      transform: none;
+      box-shadow: none;
+    }
+    /* ==========================================================================
+       QUEST 3: STORY LAND
+       ========================================================================== */
+    .story-card-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 25px;
+      width: 100%;
+      flex: 1;
+    }
+    @media (max-width: 768px) {
+      .story-card-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .story-book-panel {
+      border: var(--comic-border);
+      border-radius: 24px;
+      background: hsl(35, 100%, 98%);
+      padding: 25px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .story-book-panel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 15px;
+      width: 2px;
+      background: rgba(0,0,0,0.05);
+      box-shadow: 2px 0 0 rgba(0,0,0,0.02);
+    }
+    .story-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: hsl(20, 80%, 40%);
+      margin-bottom: 15px;
+      border-bottom: 2px dashed rgba(0,0,0,0.1);
+      padding-bottom: 10px;
+    }
+    .story-text {
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--dark-slate);
+      font-weight: 600;
+    }
+    .story-text mark {
+      background: hsl(50, 100%, 80%);
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .story-quiz-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .quiz-question-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: var(--dark-slate);
+    }
+    .quiz-options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    .quiz-option-btn {
+      background: var(--white);
+      border: 3px solid var(--dark-slate);
+      border-bottom: 6px solid var(--dark-slate);
+      border-radius: 18px;
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.1s;
+    }
+    .quiz-option-btn:active {
+      transform: translateY(3px);
+      border-bottom-width: 3px;
+    }
+    .quiz-option-btn.selected {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--dark-slate);
+    }
+    .quiz-option-letter {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+    /* ==========================================================================
+       QUEST 4: SOUND WAVE (Listening & Speaking)
+       ========================================================================== */
+    .sound-wave-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: 20px;
+    }
+    .mode-tab-bar {
+      display: flex;
+      background: var(--light-slate);
+      padding: 6px;
+      border-radius: 18px;
+      border: 3px solid var(--dark-slate);
+      margin-bottom: 10px;
+    }
+    .mode-tab {
+      padding: 8px 24px;
+      font-size: 16px;
+      font-weight: 800;
+      border: none;
+      border-radius: 12px;
+      background: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-tab.active {
+      background: var(--white);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+      border: 2px solid var(--dark-slate);
+      color: var(--primary-dark);
+    }
+    .tts-sound-box {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 4px solid var(--dark-slate);
+      box-shadow: 0 8px 0 var(--primary-dark), 0 10px 0 var(--dark-slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 40px;
+      color: var(--white);
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      margin: 15px 0;
+    }
+    .tts-sound-box:hover {
+      transform: scale(1.05) translateY(-2px);
+    }
+    .tts-sound-box:active {
+      transform: translateY(8px);
+      box-shadow: 0 0px 0 var(--primary-dark), 0 2px 0 var(--dark-slate);
+    }
+    .sound-guide-text {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--dark-slate);
+      text-align: center;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+    .listening-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      width: 100%;
+      max-width: 500px;
+    }
+    .listening-option-btn {
+      background: var(--white);
+      border: 3px solid var(--dark-slate);
+      border-bottom: 6px solid var(--dark-slate);
+      border-radius: 20px;
+      padding: 20px;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.1s;
+    }
+    .listening-option-btn:active {
+      transform: translateY(3px);
+      border-bottom-width: 3px;
+    }
+    .listening-option-btn.selected {
+      background: var(--primary);
+      color: var(--white);
+    }
+    /* Speaking Layout */
+    .speaking-phrase-container {
+      background: var(--light-slate);
+      border: var(--comic-border);
+      border-radius: 24px;
+      padding: 25px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: inset 0 4px 0 rgba(0,0,0,0.05);
+      margin-bottom: 15px;
+    }
+    .phrase-to-speak {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+    .phrase-translation {
+      font-size: 16px;
+      color: var(--medium-slate);
+      font-weight: 600;
+    }
+    .mic-button-wrapper {
+      position: relative;
+      margin: 15px 0;
+    }
+    .mic-button {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--attention);
+      border: 4px solid var(--dark-slate);
+      box-shadow: 0 8px 0 var(--attention-dark), 0 10px 0 var(--dark-slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 36px;
+      color: var(--white);
+      position: relative;
+      z-index: 2;
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .mic-button:hover {
+      transform: scale(1.05);
+    }
+    .mic-button:active {
+      transform: translateY(8px);
+      box-shadow: 0 0px 0 var(--attention-dark), 0 2px 0 var(--dark-slate);
+    }
+    .mic-button.recording {
+      background: hsl(0, 85%, 55%);
+      box-shadow: 0 4px 0 hsl(0, 85%, 40%), 0 6px 0 var(--dark-slate);
+      transform: translateY(4px);
+      animation: pulseMic 1.2s infinite alternate;
+    }
+    @keyframes pulseMic {
+      from { transform: scale(1) translateY(4px); }
+      to { transform: scale(1.1) translateY(4px); }
+    }
+    .mic-wave-pulse {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.4);
+      transform: translate(-50%, -50%) scale(1);
+      z-index: 1;
+      pointer-events: none;
+      display: none;
+    }
+    .mic-button.recording + .mic-wave-pulse {
+      display: block;
+      animation: ripple 1.5s infinite linear;
+    }
+    @keyframes ripple {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+    }
+    .recognition-status {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--medium-slate);
+      text-align: center;
+      min-height: 22px;
+      margin-bottom: 10px;
+    }
+    .transcript-bubble {
+      background: var(--white);
+      border: 3px solid var(--dark-slate);
+      border-radius: 15px;
+      padding: 10px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+      max-width: 400px;
+      display: none;
+      animation: fadeInUp 0.3s forwards;
+    }
+    .transcript-bubble span {
+      color: var(--attention-dark);
+    }
+    .web-speech-unsupported {
+      background: hsl(40, 100%, 94%);
+      border: 3px solid var(--accent-dark);
+      border-radius: 16px;
+      padding: 12px 18px;
+      font-size: 14px;
+      color: hsl(40, 100%, 25%);
+      font-weight: 600;
+      max-width: 450px;
+      text-align: center;
+      margin: 10px 0;
+    }
+    /* ==========================================================================
+       VICTORY / QUEST COMPLETED OVERLAY SCREEN
+       ========================================================================== */
+    .victory-wrapper {
+      background: var(--white);
+      border: var(--comic-border);
+      border-radius: 36px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: var(--comic-shadow);
+      max-width: 550px;
+      margin: 30px auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .victory-badge-box {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--attention));
+      border: 4px solid var(--dark-slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 55px;
+      margin: 0 auto 25px;
+      box-shadow: 0 8px 0 var(--dark-slate);
+      animation: spinY 3s infinite linear;
+    }
+    @keyframes spinY {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    .victory-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--secondary-dark);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .victory-subtitle {
+      font-size: 16px;
+      color: var(--medium-slate);
+      margin-bottom: 30px;
+    }
+    .victory-stats-summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 35px;
+    }
+    .victory-stat-card {
+      background: var(--light-slate);
+      border: 3px solid var(--dark-slate);
+      border-radius: 20px;
+      padding: 15px;
+      box-shadow: 0 4px 0 var(--dark-slate);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .victory-stat-val {
+      font-size: 26px;
+      font-weight: 800;
+    }
+    .victory-stat-val.xp { color: var(--secondary-dark); }
+    .victory-stat-val.coins { color: var(--accent-dark); }
+    .victory-stat-lbl {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--medium-slate);
+    }
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 100;
+      display: none;
+    }
+    /* ==========================================================================
+       MODALS & DIALOGS
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(43, 60, 80, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--white);
+      border: var(--comic-border);
+      border-radius: 28px;
+      padding: 25px;
+      box-shadow: var(--comic-shadow);
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+    }
+    .modal-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .modal-desc {
+      font-size: 15px;
+      color: var(--medium-slate);
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+    /* Helper Utilities */
+    .d-none { display: none !important; }
+    .text-center { text-align: center; }
+    .mb-3 { margin-bottom: 15px; }
+    /* Custom Scrollbar for a premium feel */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--medium-slate);
+      border: 3px solid rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating background clouds -->
+  <div class="bg-cloud bg-cloud-1"></div>
+  <div class="bg-cloud bg-cloud-2"></div>
+  <div class="bg-cloud bg-cloud-3"></div>
+  <!-- Confetti particle canvas for completions -->
+  <canvas id="confetti-canvas"></canvas>
+  <div class="container">
+    
+    <!-- APP HEADER -->
+    <header class="app-header d-none" id="main-header">
+      <div class="logo-container" onclick="gameEngine.goToDashboard()">
+        <svg class="logo-icon" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="256" cy="256" r="240" fill="url(#grad)" stroke="var(--dark-slate)" stroke-width="20"/>
+          <path d="M160 300 C200 380, 312 380, 352 300" stroke="var(--dark-slate)" stroke-width="25" stroke-linecap="round" fill="none"/>
+          <circle cx="180" cy="200" r="25" fill="var(--dark-slate)"/>
+          <circle cx="332" cy="200" r="25" fill="var(--dark-slate)"/>
+          <path d="M120 120 Q180 80, 240 100" stroke="var(--accent)" stroke-width="16" stroke-linecap="round" fill="none"/>
+          <path d="M392 120 Q332 80, 272 100" stroke="var(--accent)" stroke-width="16" stroke-linecap="round" fill="none"/>
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--primary)"/>
+              <stop offset="100%" stop-color="var(--purple)"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="logo-text">LingoQuest</span>
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-badge xp" title="Skor Pengalaman (XP)">
+          ⚡ <span id="header-xp">0</span> XP
+        </div>
+        <div class="stat-badge coins" title="Koin Petualangan">
+          🪙 <span id="header-coins">0</span>
+        </div>
+        <div class="stat-badge level" title="Level Petualang">
+          🏅 Lvl <span id="header-level">1</span>
+        </div>
+        
+        <div class="user-profile-badge">
+          <div class="avatar-mini" id="header-avatar-container">
+            <!-- Dynamic avatar insert -->
+          </div>
+          <span style="font-weight: 800; font-size: 15px;" id="header-username">Petualang</span>
+        </div>
+      </div>
+    </header>
+    <!-- ==========================================================================
+         SCREEN 1: WELCOME & CHARACTER SETUP
+         ========================================================================== -->
+    <main class="screen" id="screen-welcome">
+      <div class="welcome-card">
+        <h1 class="welcome-title">LingoQuest!</h1>
+        <p class="welcome-subtitle">Ayo buat karakter petualangmu sendiri untuk mulai belajar Bahasa Inggris!</p>
+        
+        <div class="input-group">
+          <label for="username-input" class="input-label">Siapa namamu?</label>
+          <input type="text" id="username-input" class="text-input" placeholder="Masukkan nama panggilanmu..." autocomplete="off">
+        </div>
+        
+        <div class="input-group">
+          <label class="input-label">Pilih Karakter Pelatih:</label>
+          <div class="avatar-selector">
+            <!-- Avatar 1: Dino -->
+            <div class="avatar-option selected" data-avatar="dino" onclick="gameEngine.selectWelcomeAvatar('dino')">
+              <svg viewBox="0 0 100 100">
+                <rect x="25" y="25" width="50" height="50" rx="15" fill="hsl(150, 75%, 55%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="20" y="35" width="10" height="30" rx="4" fill="hsl(150, 75%, 45%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="70" y="35" width="10" height="30" rx="4" fill="hsl(150, 75%, 45%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <!-- tail -->
+                <path d="M25 60 Q10 70, 20 75" stroke="var(--dark-slate)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <!-- eyes -->
+                <circle cx="42" cy="40" r="5" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <circle cx="42" cy="40" r="2" fill="var(--dark-slate)"/>
+                <circle cx="58" cy="40" r="5" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <circle cx="58" cy="40" r="2" fill="var(--dark-slate)"/>
+                <!-- cheeks -->
+                <circle cx="37" cy="46" r="3" fill="pink"/>
+                <circle cx="63" cy="46" r="3" fill="pink"/>
+                <!-- mouth -->
+                <path d="M46 50 Q50 56, 54 50" stroke="var(--dark-slate)" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <!-- spikes -->
+                <path d="M50 20 L50 25 L45 25 Z" fill="hsl(40, 100%, 50%)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <path d="M40 22 L40 26 L35 26 Z" fill="hsl(40, 100%, 50%)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <path d="M60 22 L60 26 L55 26 Z" fill="hsl(40, 100%, 50%)" stroke="var(--dark-slate)" stroke-width="2"/>
+              </svg>
+              <div style="font-weight:800; font-size:13px; margin-top:5px;">Dino</div>
+            </div>
+            
+            <!-- Avatar 2: Kitty -->
+            <div class="avatar-option" data-avatar="kitty" onclick="gameEngine.selectWelcomeAvatar('kitty')">
+              <svg viewBox="0 0 100 100">
+                <rect x="25" y="30" width="50" height="45" rx="18" fill="hsl(330, 85%, 75%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <!-- ears -->
+                <polygon points="25,35 15,15 40,30" fill="hsl(330, 85%, 65%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <polygon points="75,35 85,15 60,30" fill="hsl(330, 85%, 65%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <!-- eyes -->
+                <ellipse cx="40" cy="48" rx="4" ry="6" fill="var(--dark-slate)"/>
+                <ellipse cx="60" cy="48" rx="4" ry="6" fill="var(--dark-slate)"/>
+                <polygon points="50,54 47,51 53,51" fill="pink" stroke="var(--dark-slate)" stroke-width="2"/>
+                <!-- whiskers -->
+                <line x1="20" y1="50" x2="10" y2="48" stroke="var(--dark-slate)" stroke-width="3"/>
+                <line x1="20" y1="56" x2="8" y2="58" stroke="var(--dark-slate)" stroke-width="3"/>
+                <line x1="80" y1="50" x2="90" y2="48" stroke="var(--dark-slate)" stroke-width="3"/>
+                <line x1="80" y1="56" x2="92" y2="58" stroke="var(--dark-slate)" stroke-width="3"/>
+              </svg>
+              <div style="font-weight:800; font-size:13px; margin-top:5px;">Kitty</div>
+            </div>
+            
+            <!-- Avatar 3: Owly -->
+            <div class="avatar-option" data-avatar="owly" onclick="gameEngine.selectWelcomeAvatar('owly')">
+              <svg viewBox="0 0 100 100">
+                <rect x="25" y="25" width="50" height="50" rx="22" fill="hsl(260, 70%, 65%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <!-- wings -->
+                <path d="M25 45 Q15 55, 25 65" fill="hsl(260, 70%, 55%)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <path d="M75 45 Q85 55, 75 65" fill="hsl(260, 70%, 55%)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <!-- big owl eyes/glasses -->
+                <circle cx="40" cy="42" r="10" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <circle cx="40" cy="42" r="4" fill="var(--dark-slate)"/>
+                <circle cx="60" cy="42" r="10" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <circle cx="60" cy="42" r="4" fill="var(--dark-slate)"/>
+                <!-- glass bridge -->
+                <line x1="50" y1="42" x2="50" y2="42" stroke="var(--dark-slate)" stroke-width="3"/>
+                <!-- beak -->
+                <polygon points="50,50 46,55 54,55" fill="var(--accent)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <!-- belly feathers -->
+                <path d="M42 62 Q50 67, 58 62" stroke="var(--dark-slate)" stroke-width="2" fill="none"/>
+                <path d="M45 68 Q50 72, 55 68" stroke="var(--dark-slate)" stroke-width="2" fill="none"/>
+              </svg>
+              <div style="font-weight:800; font-size:13px; margin-top:5px;">Owly</div>
+            </div>
+            
+            <!-- Avatar 4: Bunny -->
+            <div class="avatar-option" data-avatar="bunny" onclick="gameEngine.selectWelcomeAvatar('bunny')">
+              <svg viewBox="0 0 100 100">
+                <rect x="25" y="35" width="50" height="40" rx="18" fill="hsl(200, 100%, 80%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <!-- long ears -->
+                <rect x="32" y="10" width="12" height="30" rx="6" fill="hsl(200, 100%, 75%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="35" y="17" width="6" height="18" rx="3" fill="pink"/>
+                <rect x="56" y="10" width="12" height="30" rx="6" fill="hsl(200, 100%, 75%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="59" y="17" width="6" height="18" rx="3" fill="pink"/>
+                <!-- eyes -->
+                <circle cx="42" cy="50" r="4" fill="var(--dark-slate)"/>
+                <circle cx="58" cy="50" r="4" fill="var(--dark-slate)"/>
+                <!-- nose -->
+                <circle cx="50" cy="56" r="3" fill="pink"/>
+                <!-- mouth teeth -->
+                <path d="M46 60 Q50 63, 54 60" stroke="var(--dark-slate)" stroke-width="2" fill="none"/>
+                <rect x="47" y="61" width="6" height="4" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="1.5"/>
+              </svg>
+              <div style="font-weight:800; font-size:13px; margin-top:5px;">Bunny</div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" id="btn-start-adventure" onclick="gameEngine.startAdventure()">
+          Mulai Petualangan! 🚀
+        </button>
+      </div>
+    </main>
+    <!-- ==========================================================================
+         SCREEN 2: DASHBOARD / MAP PETUALANGAN
+         ========================================================================== -->
+    <main class="screen" id="screen-dashboard">
+      <div class="dashboard-intro">
+        <h2>Peta Pulau Belajar Bahasa Inggris</h2>
+        <p>Pilih salah satu pulau petualangan untuk mulai belajar dan mengumpulkan bintang!</p>
+      </div>
+      
+      <!-- Quest Map Grid -->
+      <div class="quest-map">
+        
+        <!-- Module 1 Card -->
+        <div class="quest-card q1" id="quest-card-1" onclick="gameEngine.startQuest(1)">
+          <div class="quest-icon">🦁</div>
+          <h3 class="quest-title">Word Safari</h3>
+          <p class="quest-desc">Latih kosakata dan ejaan kata kerja, kata sifat, dan preposisi penting.</p>
+          <div class="quest-stars" id="stars-quest-1">
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+          </div>
+          <button class="btn btn-primary btn-sm">Mulai</button>
+        </div>
+        <!-- Module 2 Card -->
+        <div class="quest-card q2" id="quest-card-2" onclick="gameEngine.startQuest(2)">
+          <div class="quest-icon">🧩</div>
+          <h3 class="quest-title">Sentence Builder</h3>
+          <p class="quest-desc">Belajar menyusun balok kata menjadi kalimat gramatikal yang benar.</p>
+          <div class="quest-stars" id="stars-quest-2">
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+          </div>
+          <button class="btn btn-secondary btn-sm">Mulai</button>
+        </div>
+        <!-- Module 3 Card -->
+        <div class="quest-card q3" id="quest-card-3" onclick="gameEngine.startQuest(3)">
+          <div class="quest-icon">📖</div>
+          <h3 class="quest-title">Story Land</h3>
+          <p class="quest-desc">Baca kisah-kisah petualangan seru dan jawab kuis pemahamannya.</p>
+          <div class="quest-stars" id="stars-quest-3">
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+          </div>
+          <button class="btn btn-purple btn-sm">Mulai</button>
+        </div>
+        <!-- Module 4 Card -->
+        <div class="quest-card q4" id="quest-card-4" onclick="gameEngine.startQuest(4)">
+          <div class="quest-icon">🎤</div>
+          <h3 class="quest-title">Sound Wave</h3>
+          <p class="quest-desc">Simulator mendengarkan dan berbicara langsung menggunakan mikrofon.</p>
+          <div class="quest-stars" id="stars-quest-4">
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+          </div>
+          <button class="btn btn-attention btn-sm">Mulai</button>
+        </div>
+      </div>
+      <!-- BADGE SHELF -->
+      <div class="badge-shelf">
+        <h4 class="shelf-title">Lemari Lencana Penghargaan (Badges)</h4>
+        <div class="badge-grid">
+          <div class="badge-item" id="badge-word-safari">
+            <div class="badge-circle" style="background-color: hsl(200, 90%, 85%);">🦁</div>
+            <span class="badge-name">Spelling King</span>
+          </div>
+          <div class="badge-item" id="badge-sentence-builder">
+            <div class="badge-circle" style="background-color: hsl(150, 90%, 85%);">🧩</div>
+            <span class="badge-name">Grammar Master</span>
+          </div>
+          <div class="badge-item" id="badge-story-land">
+            <div class="badge-circle" style="background-color: hsl(270, 90%, 85%);">📖</div>
+            <span class="badge-name">Super Reader</span>
+          </div>
+          <div class="badge-item" id="badge-sound-wave">
+            <div class="badge-circle" style="background-color: hsl(330, 90%, 85%);">🎤</div>
+            <span class="badge-name">Fluent Talker</span>
+          </div>
+        </div>
+      </div>
+      <!-- Reset Area -->
+      <div class="reset-area">
+        <button class="btn-reset" onclick="gameEngine.confirmResetProgress()">Ulangi Progress Dari Awal</button>
+      </div>
+    </main>
+    <!-- ==========================================================================
+         SCREEN 3: QUEST 1 - WORD SAFARI
+         ========================================================================== -->
+    <main class="screen" id="screen-quest-1">
+      <div class="game-layout">
+        <div class="game-navbar">
+          <button class="btn-back-dashboard" onclick="gameEngine.backToDashboard()">&larr; Peta</button>
+          <div class="game-progress-wrapper">
+            <div class="game-progress-bar">
+              <div class="game-progress-fill" id="q1-progress-fill"></div>
+            </div>
+            <span class="game-progress-text" id="q1-progress-text">1 / 5</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <h3 class="question-prompt">Lengkapi Ejaan Kata Berikut!</h3>
+          
+          <div class="safari-visual-container" id="q1-visual">🦁</div>
+          <div class="safari-translation" id="q1-translation">Singa</div>
+          
+          <div class="spelling-slots" id="q1-slots">
+            <!-- Dynamic spelling slot boxes -->
+          </div>
+          <div class="scrambled-letters" id="q1-scrambled">
+            <!-- Dynamic scrambled letter buttons -->
+          </div>
+          <div class="footer-action-panel">
+            <span class="hint-box" id="q1-hint-box">Klik huruf di atas untuk mengeja kata.</span>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-accent btn-sm" onclick="gameEngine.playQ1Hint()">Bantuan 💡</button>
+              <button class="btn btn-attention btn-sm" onclick="gameEngine.resetQ1CurrentWord()">Hapus ⌫</button>
+              <button class="btn btn-primary" id="q1-btn-action" onclick="gameEngine.checkQ1Spelling()">Periksa ✓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- ==========================================================================
+         SCREEN 4: QUEST 2 - SENTENCE BUILDER
+         ========================================================================== -->
+    <main class="screen" id="screen-quest-2">
+      <div class="game-layout">
+        <div class="game-navbar">
+          <button class="btn-back-dashboard" onclick="gameEngine.backToDashboard()">&larr; Peta</button>
+          <div class="game-progress-wrapper">
+            <div class="game-progress-bar">
+              <div class="game-progress-fill" id="q2-progress-fill"></div>
+            </div>
+            <span class="game-progress-text" id="q2-progress-text">1 / 5</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <h3 class="question-prompt">Susun Balok Kata Menjadi Kalimat Yang Benar!</h3>
+          <div class="sentence-visual" id="q2-visual">🐱🛋️</div>
+          <div class="sentence-guide-translation" id="q2-translation">Kucing itu sedang tidur di bawah kursi.</div>
+          <div class="sentence-drop-area" id="q2-drop-area">
+            <!-- Words selected by kids go here -->
+          </div>
+          <div class="word-blocks-pool" id="q2-words-pool">
+            <!-- Word options will be generated here -->
+          </div>
+          <div class="footer-action-panel">
+            <span class="hint-box" id="q2-hint-box">Ketuk balok kata secara berurutan.</span>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-attention btn-sm" onclick="gameEngine.resetQ2Sentence()">Hapus ⌫</button>
+              <button class="btn btn-secondary" id="q2-btn-action" onclick="gameEngine.checkQ2Sentence()">Periksa ✓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- ==========================================================================
+         SCREEN 5: QUEST 3 - STORY LAND
+         ========================================================================== -->
+    <main class="screen" id="screen-quest-3">
+      <div class="game-layout">
+        <div class="game-navbar">
+          <button class="btn-back-dashboard" onclick="gameEngine.backToDashboard()">&larr; Peta</button>
+          <div class="game-progress-wrapper">
+            <div class="game-progress-bar">
+              <div class="game-progress-fill" id="q3-progress-fill"></div>
+            </div>
+            <span class="game-progress-text" id="q3-progress-text">1 / 3</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <h3 class="question-prompt">Membaca Kisah & Jawab Kuis</h3>
+          <div class="story-card-layout">
+            
+            <!-- Book panel containing the story -->
+            <div class="story-book-panel">
+              <h4 class="story-title" id="q3-story-title">The Lost Robot</h4>
+              <p class="story-text" id="q3-story-text">
+                Max is a small blue robot. He lives in a big toy shop. One day, Max walks out of the shop. He sees a green park. Oh no! Max cannot find his way back. He is lost.
+              </p>
+            </div>
+            <!-- Quiz panel containing questions -->
+            <div class="story-quiz-panel">
+              <h5 class="quiz-question-title" id="q3-question-title">What color is Max the robot?</h5>
+              <div class="quiz-options-list" id="q3-quiz-options">
+                <!-- Option buttons generated dynamically -->
+              </div>
+            </div>
+          </div>
+          <div class="footer-action-panel">
+            <span class="hint-box" id="q3-hint-box">Temukan jawaban di dalam paragraf cerita sebelah kiri!</span>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-accent btn-sm" onclick="gameEngine.playQ3TextTTS()">Dengarkan Cerita 🔊</button>
+              <button class="btn btn-purple" id="q3-btn-action" onclick="gameEngine.checkQ3Answer()">Kirim Jawaban ✓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- ==========================================================================
+         SCREEN 6: QUEST 4 - SOUND WAVE
+         ========================================================================== -->
+    <main class="screen" id="screen-quest-4">
+      <div class="game-layout">
+        <div class="game-navbar">
+          <button class="btn-back-dashboard" onclick="gameEngine.backToDashboard()">&larr; Peta</button>
+          <div class="game-progress-wrapper">
+            <div class="game-progress-bar">
+              <div class="game-progress-fill" id="q4-progress-fill"></div>
+            </div>
+            <span class="game-progress-text" id="q4-progress-text">1 / 4</span>
+          </div>
+        </div>
+        <div class="game-card">
+          
+          <div class="mode-tab-bar">
+            <button class="mode-tab active" id="tab-listening" onclick="gameEngine.toggleQ4Mode('listening')">Mode Mendengar 🎧</button>
+            <button class="mode-tab" id="tab-speaking" onclick="gameEngine.toggleQ4Mode('speaking')">Mode Berbicara 🎤</button>
+          </div>
+          <!-- LISTENING MODE SECTION -->
+          <div class="sound-wave-content" id="q4-listening-section">
+            <div class="tts-sound-box" onclick="gameEngine.playQ4ListeningTTS()">
+              🔊
+            </div>
+            <div class="sound-guide-text">
+              Klik tombol speaker di atas untuk mendengarkan, lalu pilih kata yang kamu dengar!
+            </div>
+            <div class="listening-options" id="q4-listening-options">
+              <!-- Dynamically populated options -->
+            </div>
+          </div>
+          <!-- SPEAKING MODE SECTION -->
+          <div class="sound-wave-content d-none" id="q4-speaking-section">
+            <div class="speaking-phrase-container">
+              <div class="phrase-to-speak" id="q4-phrase-text">The apple is sweet.</div>
+              <div class="phrase-translation" id="q4-phrase-translation">Apel itu manis.</div>
+            </div>
+            <!-- Speech Unsupported warning in case browser doesn't support Web Speech API speaking -->
+            <div class="web-speech-unsupported d-none" id="speech-unsupported-warning">
+              ⚠️ Browser Anda tidak mendukung input mikrofon langsung. Silakan tekan tombol pengucapan manual setelah mengucapkan kalimat dengan lantang.
+            </div>
+            <div class="mic-button-wrapper">
+              <button class="mic-button" id="q4-mic-btn" onclick="gameEngine.toggleQ4SpeechRecording()">🎤</button>
+              <div class="mic-wave-pulse"></div>
+            </div>
+            <div class="recognition-status" id="q4-mic-status">Ketuk mikrofon dan ucapkan kalimat di atas.</div>
+            
+            <div class="transcript-bubble" id="q4-transcript-bubble">
+              Kamu berkata: <span id="q4-transcript-text">...</span>
+            </div>
+          </div>
+          <!-- Action panel -->
+          <div class="footer-action-panel">
+            <span class="hint-box" id="q4-hint-box">Latih keterampilan lisanmu!</span>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-primary" id="q4-btn-action" onclick="gameEngine.checkQ4Answer()">Kirim Jawaban ✓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- ==========================================================================
+         SCREEN 7: VICTORY SCREEN
+         ========================================================================== -->
+    <main class="screen" id="screen-victory">
+      <div class="victory-wrapper">
+        <div class="victory-badge-box" id="victory-badge-icon">🦁</div>
+        <h2 class="victory-title">Pulau Terselesaikan!</h2>
+        <p class="victory-subtitle" id="victory-badge-announcement">Selamat! Kamu berhasil meraih Lencana.</p>
+        <div class="victory-stats-summary">
+          <div class="victory-stat-card">
+            <span class="victory-stat-val xp" id="victory-xp-earned">+0</span>
+            <span class="victory-stat-lbl">XP Diperoleh</span>
+          </div>
+          <div class="victory-stat-card">
+            <span class="victory-stat-val coins" id="victory-coins-earned">+0</span>
+            <span class="victory-stat-lbl">Koin Bonus</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="gameEngine.goToDashboard()">Kembali ke Peta Petualangan 🗺️</button>
+      </div>
+    </main>
+  </div>
+  <!-- ==========================================================================
+       MODALS
+       ========================================================================== -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-card">
+      <div class="modal-icon">⚠️</div>
+      <h4 class="modal-title" id="confirm-title">Apakah kamu yakin?</h4>
+      <p class="modal-desc" id="confirm-desc">Ini akan menghapus seluruh data petualanganmu dari awal.</p>
+      <div class="modal-actions">
+        <button class="btn btn-attention btn-sm" id="confirm-yes-btn">Hapus</button>
+        <button class="btn btn-primary btn-sm" onclick="gameEngine.closeModal()">Batal</button>
+      </div>
+    </div>
+  </div>
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       AUDIO SYNTHESIZER (WEB AUDIO API)
+       ========================================================================== */
+    const SoundEffects = {
+      audioCtx: null,
+      init() {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!this.audioCtx && AudioContext) {
+          this.audioCtx = new AudioContext();
+        }
+      },
+      resume() {
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+      },
+      play(type) {
+        this.init();
+        this.resume();
+        if (!this.audioCtx) return;
+        const ctx = this.audioCtx;
+        const now = ctx.currentTime;
+        try {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          if (type === 'correct') {
+            // Sound: Happy up-tempo arpeggio (C5 -> E5 -> G5 -> C6)
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.1);
+            osc.frequency.setValueAtTime(783.99, now + 0.2);
+            osc.frequency.setValueAtTime(1046.50, now + 0.3);
+            
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+            
+            osc.start(now);
+            osc.stop(now + 0.45);
+          } else if (type === 'incorrect') {
+            // Sound: Sad sliding frequency buzz (A3 down to D3)
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220.00, now);
+            osc.frequency.linearRampToValueAtTime(146.83, now + 0.4);
+            
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            
+            osc.start(now);
+            osc.stop(now + 0.4);
+          } else if (type === 'levelup') {
+            // Sound: Grand fanfare arpeggio
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(261.63, now); // C4
+            osc.frequency.setValueAtTime(329.63, now + 0.08); // E4
+            osc.frequency.setValueAtTime(392.00, now + 0.16); // G4
+            osc.frequency.setValueAtTime(523.25, now + 0.24); // C5
+            osc.frequency.setValueAtTime(659.25, now + 0.32); // E5
+            osc.frequency.setValueAtTime(783.99, now + 0.40); // G5
+            osc.frequency.setValueAtTime(1046.50, now + 0.48); // C6
+            
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.setValueAtTime(0.15, now + 0.48);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
+            
+            osc.start(now);
+            osc.stop(now + 0.9);
+          } else if (type === 'click') {
+            // Sound: Subtle popping sound
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(650, now);
+            osc.frequency.exponentialRampToValueAtTime(150, now + 0.05);
+            
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            
+            osc.start(now);
+            osc.stop(now + 0.05);
+          } else if (type === 'hint') {
+            // Sound: Whimsical high pitches
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.06, now);
+            
+            for (let i = 0; i < 4; i++) {
+              osc.frequency.setValueAtTime(900 + (i * 120), now + (i * 0.06));
+            }
+            
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            
+            osc.start(now);
+            osc.stop(now + 0.3);
+          }
+        } catch (err) {
+          console.warn("Synthesizer failed to play sound:", err);
+        }
+      }
+    };
+    /* ==========================================================================
+       CONFETTI PARTICLE ENGINE (HTML5 CANVAS)
+       ========================================================================== */
+    const ConfettiEngine = {
+      canvas: null,
+      ctx: null,
+      particles: [],
+      animationId: null,
+      colors: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444'],
+      init() {
+        this.canvas = document.getElementById('confetti-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        window.addEventListener('resize', () => this.resizeCanvas());
+        this.resizeCanvas();
+      },
+      resizeCanvas() {
+        if (this.canvas) {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+        }
+      },
+      spawn(count) {
+        this.init();
+        this.canvas.style.display = 'block';
+        this.particles = [];
+        
+        for (let i = 0; i < count; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height - this.canvas.height,
+            size: Math.random() * 8 + 6,
+            color: this.colors[Math.floor(Math.random() * this.colors.length)],
+            speed: Math.random() * 5 + 3,
+            angle: Math.random() * Math.PI * 2,
+            rotationSpeed: Math.random() * 0.1 - 0.05,
+            wiggle: Math.random() * 2
+          });
+        }
+        if (this.animationId) cancelAnimationFrame(this.animationId);
+        this.loop();
+      },
+      loop() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        let activeParticles = 0;
+        this.particles.forEach(p => {
+          p.y += p.speed;
+          p.x += Math.sin(p.angle) * p.wiggle;
+          p.angle += p.rotationSpeed;
+          if (p.y < this.canvas.height) {
+            activeParticles++;
+          }
+          this.ctx.save();
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate(p.angle);
+          this.ctx.fillStyle = p.color;
+          this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          this.ctx.restore();
+        });
+        if (activeParticles > 0) {
+          this.animationId = requestAnimationFrame(() => this.loop());
+        } else {
+          this.canvas.style.display = 'none';
+        }
+      }
+    };
+    /* ==========================================================================
+       SVG AVATAR DRAWINGS TABLE
+       ========================================================================== */
+    const AvatarSVGs = {
+      dino: `<svg viewBox="0 0 100 100" style="width:100%;height:100%;">
+                <rect x="25" y="25" width="50" height="50" rx="15" fill="hsl(150, 75%, 55%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="20" y="35" width="10" height="30" rx="4" fill="hsl(150, 75%, 45%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="70" y="35" width="10" height="30" rx="4" fill="hsl(150, 75%, 45%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <path d="M25 60 Q10 70, 20 75" stroke="var(--dark-slate)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <circle cx="42" cy="40" r="5" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <circle cx="42" cy="40" r="2" fill="var(--dark-slate)"/>
+                <circle cx="58" cy="40" r="5" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <circle cx="58" cy="40" r="2" fill="var(--dark-slate)"/>
+                <circle cx="37" cy="46" r="3" fill="pink"/>
+                <circle cx="63" cy="46" r="3" fill="pink"/>
+                <path d="M46 50 Q50 56, 54 50" stroke="var(--dark-slate)" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <path d="M50 20 L50 25 L45 25 Z" fill="hsl(40, 100%, 50%)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <path d="M40 22 L40 26 L35 26 Z" fill="hsl(40, 100%, 50%)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <path d="M60 22 L60 26 L55 26 Z" fill="hsl(40, 100%, 50%)" stroke="var(--dark-slate)" stroke-width="2"/>
+             </svg>`,
+      kitty: `<svg viewBox="0 0 100 100" style="width:100%;height:100%;">
+                <rect x="25" y="30" width="50" height="45" rx="18" fill="hsl(330, 85%, 75%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <polygon points="25,35 15,15 40,30" fill="hsl(330, 85%, 65%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <polygon points="75,35 85,15 60,30" fill="hsl(330, 85%, 65%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <ellipse cx="40" cy="48" rx="4" ry="6" fill="var(--dark-slate)"/>
+                <ellipse cx="60" cy="48" rx="4" ry="6" fill="var(--dark-slate)"/>
+                <polygon points="50,54 47,51 53,51" fill="pink" stroke="var(--dark-slate)" stroke-width="2"/>
+                <line x1="20" y1="50" x2="10" y2="48" stroke="var(--dark-slate)" stroke-width="3"/>
+                <line x1="20" y1="56" x2="8" y2="58" stroke="var(--dark-slate)" stroke-width="3"/>
+                <line x1="80" y1="50" x2="90" y2="48" stroke="var(--dark-slate)" stroke-width="3"/>
+                <line x1="80" y1="56" x2="92" y2="58" stroke="var(--dark-slate)" stroke-width="3"/>
+              </svg>`,
+      owly: `<svg viewBox="0 0 100 100" style="width:100%;height:100%;">
+                <rect x="25" y="25" width="50" height="50" rx="22" fill="hsl(260, 70%, 65%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <path d="M25 45 Q15 55, 25 65" fill="hsl(260, 70%, 55%)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <path d="M75 45 Q85 55, 75 65" fill="hsl(260, 70%, 55%)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <circle cx="40" cy="42" r="10" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <circle cx="40" cy="42" r="4" fill="var(--dark-slate)"/>
+                <circle cx="60" cy="42" r="10" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="3"/>
+                <circle cx="60" cy="42" r="4" fill="var(--dark-slate)"/>
+                <line x1="50" y1="42" x2="50" y2="42" stroke="var(--dark-slate)" stroke-width="3"/>
+                <polygon points="50,50 46,55 54,55" fill="var(--accent)" stroke="var(--dark-slate)" stroke-width="2"/>
+                <path d="M42 62 Q50 67, 58 62" stroke="var(--dark-slate)" stroke-width="2" fill="none"/>
+                <path d="M45 68 Q50 72, 55 68" stroke="var(--dark-slate)" stroke-width="2" fill="none"/>
+             </svg>`,
+      bunny: `<svg viewBox="0 0 100 100" style="width:100%;height:100%;">
+                <rect x="25" y="35" width="50" height="40" rx="18" fill="hsl(200, 100%, 80%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="32" y="10" width="12" height="30" rx="6" fill="hsl(200, 100%, 75%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="35" y="17" width="6" height="18" rx="3" fill="pink"/>
+                <rect x="56" y="10" width="12" height="30" rx="6" fill="hsl(200, 100%, 75%)" stroke="var(--dark-slate)" stroke-width="4"/>
+                <rect x="59" y="17" width="6" height="18" rx="3" fill="pink"/>
+                <circle cx="42" cy="50" r="4" fill="var(--dark-slate)"/>
+                <circle cx="58" cy="50" r="4" fill="var(--dark-slate)"/>
+                <circle cx="50" cy="56" r="3" fill="pink"/>
+                <path d="M46 60 Q50 63, 54 60" stroke="var(--dark-slate)" stroke-width="2" fill="none"/>
+                <rect x="47" y="61" width="6" height="4" fill="var(--white)" stroke="var(--dark-slate)" stroke-width="1.5"/>
+             </svg>`
+    };
+    /* ==========================================================================
+       DUMMY DATA FOR LATE BEGINNER LEVEL (A1 High - A2)
+       ========================================================================== */
+    const GAME_DATA = {
+      // Word Safari: Spelling Scrambles
+      quest1: [
+        { word: 'HAPPY', translate: 'Bahagia/Senang', hint: 'An adjective that describes how you feel when smiling.', icon: '😊' },
+        { word: 'RUNNING', translate: 'Sedang Berlari', hint: 'An action verb. Moving fast on foot.', icon: '🏃' },
+        { word: 'UNDER', translate: 'Di Bawah', hint: 'A preposition of place. Beneath something.', icon: '👇' },
+        { word: 'YELLOW', translate: 'Kuning', hint: 'The color of lemons, bananas, and the sun.', icon: '🍌' },
+        { word: 'SLEEPY', translate: 'Mengantuk', hint: 'How you feel when you need to go to bed.', icon: '😴' }
+      ],
+      // Sentence Builder: Syntax construction
+      quest2: [
+        {
+          correctWords: ['The', 'cat', 'is', 'under', 'the', 'table'],
+          optionsPool: ['under', 'is', 'dog', 'The', 'sleeping', 'cat', 'the', 'table'],
+          translate: 'Kucing itu ada di bawah meja.',
+          icon: '🐱🛋️'
+        },
+        {
+          correctWords: ['They', 'are', 'playing', 'in', 'the', 'garden'],
+          optionsPool: ['playing', 'the', 'garden', 'are', 'We', 'They', 'in', 'running'],
+          translate: 'Mereka sedang bermain di kebun.',
+          icon: '⚽🌳'
+        },
+        {
+          correctWords: ['She', 'is', 'writing', 'a', 'letter'],
+          optionsPool: ['is', 'a', 'writing', 'She', 'reading', 'letter', 'book', 'He'],
+          translate: 'Dia (perempuan) sedang menulis sebuah surat.',
+          icon: '✍️✉️'
+        },
+        {
+          correctWords: ['The', 'bird', 'is', 'flying', 'high'],
+          optionsPool: ['flying', 'is', 'fish', 'bird', 'swimming', 'high', 'The', 'low'],
+          translate: 'Burung itu terbang tinggi.',
+          icon: '🐦☁️'
+        },
+        {
+          correctWords: ['I', 'eat', 'apples', 'every', 'day'],
+          optionsPool: ['eat', 'apples', 'I', 'bananas', 'every', 'day', 'drinking', 'juice'],
+          translate: 'Saya makan apel setiap hari.',
+          icon: '🍎😋'
+        }
+      ],
+      // Story Land: Comprehension quizzes
+      quest3: [
+        {
+          title: 'The Lost Robot 🤖',
+          text: 'Max is a small <mark>blue robot</mark>. He lives in a big <mark>toy shop</mark>. One day, Max walks out of the shop. He sees a green park. Oh no! Max cannot find his way back. He is lost. Then, a kind girl named <mark>Lily</mark> finds him. She carries Max back to his home. Max is very happy.',
+          questions: [
+            {
+              q: 'What color is Max the robot?',
+              options: ['Blue', 'Green', 'Red'],
+              correct: 0
+            },
+            {
+              q: 'Where does Max live?',
+              options: ['In a school', 'In a toy shop', 'In a green park'],
+              correct: 1
+            },
+            {
+              q: 'Who helps Max get home?',
+              options: ['A dog', 'His father', 'Lily'],
+              correct: 2
+            }
+          ]
+        },
+        {
+          title: 'A Rainy Adventure 🐶',
+          text: 'It is raining today. Toby the dog sits near the window. He wants to play outside. Toby sees a <mark>yellow umbrella</mark>. He takes the umbrella in his mouth. He runs into the wet garden. Toby <mark>jumps in the muddy water</mark>. He is wet but very happy.',
+          questions: [
+            {
+              q: 'What animal is Toby?',
+              options: ['A cat', 'A dog', 'A rabbit'],
+              correct: 1
+            },
+            {
+              q: 'What color is the umbrella?',
+              options: ['Blue', 'Red', 'Yellow'],
+              correct: 2
+            },
+            {
+              q: 'What does Toby do in the wet garden?',
+              options: ['He sleeps under a tree', 'He jumps in muddy water', 'He eats delicious bones'],
+              correct: 1
+            }
+          ]
+        }
+      ],
+      // Sound Wave: Listening and Speaking
+      quest4: [
+        {
+          sentence: 'The apple is sweet',
+          translation: 'Apel itu manis',
+          listeningOptions: ['The apple is sweet', 'The banana is yellow', 'A red strawberry', 'Sweet orange juice'],
+          correctListeningIdx: 0
+        },
+        {
+          sentence: 'We love playing games',
+          translation: 'Kami suka bermain game',
+          listeningOptions: ['They are working hard', 'We love playing games', 'I love sweet candies', 'We go to school'],
+          correctListeningIdx: 1
+        },
+        {
+          sentence: 'Where is the library',
+          translation: 'Di mana perpustakaan itu?',
+          listeningOptions: ['Here is the school book', 'What is that building', 'Where is the library', 'Where is the dog'],
+          correctListeningIdx: 2
+        },
+        {
+          sentence: 'The sun shines brightly',
+          translation: 'Matahari bersinar dengan terang',
+          listeningOptions: ['The moon is full', 'The sun shines brightly', 'The stars are glowing', 'Rainy cold day'],
+          correctListeningIdx: 1
+        }
+      ]
+    };
+    /* ==========================================================================
+       GAME ENGINE STATE & MANAGER
+       ========================================================================== */
+    const gameEngine = {
+      // User Profile State
+      state: {
+        username: '',
+        avatar: 'dino',
+        xp: 0,
+        coins: 0,
+        level: 1,
+        badges: [], // list of unlocked badge IDs: 'word-safari', 'sentence-builder', etc.
+        completedQuests: {}, // e.g. {1: 3, 2: 2} representing questID: starRating
+        setupCompleted: false
+      },
+      // Game Session Variables
+      currentQuest: null,
+      currentQuestionIdx: 0,
+      activeQ4Mode: 'listening', // 'listening' or 'speaking'
+      // Quest 1 temporary state
+      q1AnswerArray: [],
+      q1LettersStatus: [], // track which scrambling button is clicked
+      // Quest 2 temporary state
+      q2AnswerArray: [],
+      // Quest 3 temporary state
+      q3CurrentQuestionIdx: 0,
+      q3Answers: [],
+      // Speech Recognition Integration
+      recognition: null,
+      isRecording: false,
+      // Initialize Application
+      init() {
+        this.loadState();
+        ConfettiEngine.init();
+        this.initSpeechRecognition();
+        
+        if (this.state.setupCompleted) {
+          this.updateUIHeader();
+          this.goToScreen('dashboard');
+        } else {
+          this.goToScreen('welcome');
+        }
+      },
+      // Speech Recognition Setup
+      initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          this.recognition = new SpeechRecognition();
+          this.recognition.continuous = false;
+          this.recognition.lang = 'en-US';
+          this.recognition.interimResults = false;
+          this.recognition.maxAlternatives = 1;
+          this.recognition.onstart = () => {
+            this.isRecording = true;
+            const micBtn = document.getElementById('q4-mic-btn');
+            micBtn.classList.add('recording');
+            document.getElementById('q4-mic-status').innerText = 'Mendengarkan... Bicaralah sekarang!';
+            SoundEffects.play('click');
+          };
+          this.recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            const confidence = event.results[0][0].confidence;
+            console.log('Result heard: ' + transcript + ' (Confidence: ' + confidence + ')');
+            
+            // Show transcript bubble
+            const bubble = document.getElementById('q4-transcript-bubble');
+            const bubbleText = document.getElementById('q4-transcript-text');
+            bubble.style.display = 'block';
+            bubbleText.innerText = `"${transcript}"`;
+            // Auto-grade
+            this.gradeSpeechTranscript(transcript);
+          };
+          this.recognition.onerror = (event) => {
+            console.error('Speech error:', event.error);
+            this.stopSpeechRecording();
+            let msg = 'Ada kesalahan mikrofon. ';
+            if (event.error === 'not-allowed') {
+              msg = 'Izin mikrofon ditolak.';
+            } else if (event.error === 'no-speech') {
+              msg = 'Suara tidak terdeteksi. Silakan coba lagi.';
+            }
+            document.getElementById('q4-mic-status').innerText = msg;
+          };
+          this.recognition.onend = () => {
+            this.stopSpeechRecording();
+          };
+        } else {
+          console.warn("SpeechRecognition API not supported on this browser.");
+          document.getElementById('speech-unsupported-warning').classList.remove('d-none');
+        }
+      },
+      gradeSpeechTranscript(heardText) {
+        const expected = GAME_DATA.quest4[this.currentQuestionIdx].sentence.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
+        const cleanHeard = heardText.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
+        // Distance matching logic (Simple words containment)
+        const expectedWords = expected.split(' ');
+        const heardWords = cleanHeard.split(' ');
+        
+        let matchCount = 0;
+        expectedWords.forEach(w => {
+          if (heardWords.includes(w)) matchCount++;
+        });
+        const scorePercentage = (matchCount / expectedWords.length) * 100;
+        
+        const micStatus = document.getElementById('q4-mic-status');
+        if (scorePercentage >= 60) {
+          micStatus.innerHTML = `<span style="color:var(--secondary-dark)">Keren! Kecocokan ${Math.round(scorePercentage)}%. Kamu siap mengirim jawaban!</span>`;
+          // Mark validation passed locally for the session
+          this.speakingPassed = true;
+          SoundEffects.play('correct');
+        } else {
+          micStatus.innerHTML = `<span style="color:var(--attention-dark)">Kecocokan kurang (${Math.round(scorePercentage)}%). Coba ucapkan dengan lebih jelas!</span>`;
+          this.speakingPassed = false;
+          SoundEffects.play('incorrect');
+        }
+      },
+      toggleQ4SpeechRecording() {
+        if (!this.recognition) {
+          // Fallback bypass mode if browser doesn't support mic
+          this.speakingPassed = true;
+          document.getElementById('q4-mic-status').innerText = 'Pelafalan disimulasikan (Auto-Pass).';
+          SoundEffects.play('correct');
+          return;
+        }
+        if (this.isRecording) {
+          this.recognition.stop();
+        } else {
+          this.speakingPassed = false;
+          document.getElementById('q4-transcript-bubble').style.display = 'none';
+          this.recognition.start();
+        }
+      },
+      stopSpeechRecording() {
+        this.isRecording = false;
+        const micBtn = document.getElementById('q4-mic-btn');
+        if (micBtn) micBtn.classList.remove('recording');
+      },
+      // LocalStorage Sync
+      loadState() {
+        const saved = localStorage.getItem('lingoquest_state');
+        if (saved) {
+          try {
+            this.state = JSON.parse(saved);
+          } catch(e) {
+            console.error("Failed to parse state", e);
+          }
+        }
+      },
+      saveState() {
+        localStorage.setItem('lingoquest_state', JSON.stringify(this.state));
+        this.updateUIHeader();
+        this.updateUIDashboard();
+      },
+      // Navigation
+      goToScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const activeScreen = document.getElementById(`screen-${screenId}`);
+        if (activeScreen) {
+          activeScreen.classList.add('active');
+        }
+        // Show/Hide top bar header based on setup screen
+        const header = document.getElementById('main-header');
+        if (screenId === 'welcome') {
+          header.classList.add('d-none');
+        } else {
+          header.classList.remove('d-none');
+        }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        SoundEffects.play('click');
+      },
+      // Screen 1: Welcome setup Actions
+      selectWelcomeAvatar(avatarName) {
+        this.state.avatar = avatarName;
+        document.querySelectorAll('.avatar-option').forEach(opt => {
+          if (opt.getAttribute('data-avatar') === avatarName) {
+            opt.classList.add('selected');
+          } else {
+            opt.classList.remove('selected');
+          }
+        });
+        SoundEffects.play('click');
+      },
+      startAdventure() {
+        const nameInput = document.getElementById('username-input').value.trim();
+        if (!nameInput) {
+          alert('Silakan masukkan namamu terlebih dahulu!');
+          return;
+        }
+        this.state.username = nameInput;
+        this.state.setupCompleted = true;
+        this.state.xp = 0;
+        this.state.coins = 0;
+        this.state.level = 1;
+        this.state.badges = [];
+        this.state.completedQuests = {};
+        this.saveState();
+        this.goToScreen('dashboard');
+        
+        // Greeting audio
+        this.speakText(`Hello ${nameInput}! Welcome to Lingo Quest! Let's play!`);
+      },
+      // Update UI headers
+      updateUIHeader() {
+        document.getElementById('header-xp').innerText = this.state.xp;
+        document.getElementById('header-coins').innerText = this.state.coins;
+        
+        // level calculation (e.g. every 100 XP is 1 level)
+        const calculatedLvl = Math.max(1, Math.floor(this.state.xp / 100) + 1);
+        if (calculatedLvl > this.state.level) {
+          // Level up fanfare!
+          this.state.level = calculatedLvl;
+          setTimeout(() => SoundEffects.play('levelup'), 600);
+        }
+        document.getElementById('header-level').innerText = this.state.level;
+        document.getElementById('header-username').innerText = this.state.username;
+        
+        // insert mini-avatar SVG
+        const headerAvatar = document.getElementById('header-avatar-container');
+        if (headerAvatar) {
+          headerAvatar.innerHTML = AvatarSVGs[this.state.avatar] || '';
+        }
+      },
+      // Update dashboard stars and locks
+      updateUIDashboard() {
+        // Star maps
+        for (let qId = 1; qId <= 4; qId++) {
+          const rating = this.state.completedQuests[qId] || 0;
+          const starsContainer = document.getElementById(`stars-quest-${qId}`);
+          if (starsContainer) {
+            const stars = starsContainer.querySelectorAll('.star-icon');
+            stars.forEach((star, idx) => {
+              if (idx < rating) {
+                star.classList.add('earned');
+              } else {
+                star.classList.remove('earned');
+              }
+            });
+          }
+        }
+        // Badges shelf
+        const badgeList = ['word-safari', 'sentence-builder', 'story-land', 'sound-wave'];
+        badgeList.forEach(b => {
+          const badgeEl = document.getElementById(`badge-${b}`);
+          if (badgeEl) {
+            if (this.state.badges.includes(b)) {
+              badgeEl.classList.add('unlocked');
+            } else {
+              badgeEl.classList.remove('unlocked');
+            }
+          }
+        });
+      },
+      // Reset progress confirmation dialog
+      confirmResetProgress() {
+        document.getElementById('confirm-title').innerText = 'Mulai Ulang Game?';
+        document.getElementById('confirm-desc').innerText = 'Kamu akan kehilangan semua koin, lencana, dan petualangan yang telah kamu selesaikan.';
+        
+        const yesBtn = document.getElementById('confirm-yes-btn');
+        yesBtn.onclick = () => {
+          localStorage.removeItem('lingoquest_state');
+          this.state = {
+            username: '',
+            avatar: 'dino',
+            xp: 0,
+            coins: 0,
+            level: 1,
+            badges: [],
+            completedQuests: {},
+            setupCompleted: false
+          };
+          this.closeModal();
+          this.goToScreen('welcome');
+        };
+        document.getElementById('confirm-modal').classList.add('active');
+        SoundEffects.play('click');
+      },
+      closeModal() {
+        document.getElementById('confirm-modal').classList.remove('active');
+        SoundEffects.play('click');
+      },
+      backToDashboard() {
+        this.stopSpeechRecording();
+        this.goToScreen('dashboard');
+      },
+      goToDashboard() {
+        this.goToScreen('dashboard');
+      },
+      // ==========================================================================
+      // GAME INITIALIZERS
+      // ==========================================================================
+      startQuest(questNumber) {
+        this.currentQuest = questNumber;
+        this.currentQuestionIdx = 0;
+        if (questNumber === 1) {
+          this.goToScreen('quest-1');
+          this.loadQ1Question();
+        } else if (questNumber === 2) {
+          this.goToScreen('quest-2');
+          this.loadQ2Question();
+        } else if (questNumber === 3) {
+          this.goToScreen('quest-3');
+          this.loadQ3Question();
+        } else if (questNumber === 4) {
+          this.goToScreen('quest-4');
+          this.activeQ4Mode = 'listening';
+          this.loadQ4Question();
+        }
+      },
+      // TTS Util
+      speakText(text, lang = 'en-US') {
+        if ('speechSynthesis' in window) {
+          // cancel previous speech
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = lang;
+          utterance.rate = 0.85; // slightly slower for kids
+          window.speechSynthesis.speak(utterance);
+        }
+      },
+      // ==========================================================================
+      // MODULE 1: WORD SAFARI LOGIC
+      // ==========================================================================
+      loadQ1Question() {
+        const qData = GAME_DATA.quest1[this.currentQuestionIdx];
+        
+        // Update Progress
+        const total = GAME_DATA.quest1.length;
+        const progressPercentage = ((this.currentQuestionIdx) / total) * 100;
+        document.getElementById('q1-progress-fill').style.width = `${progressPercentage}%`;
+        document.getElementById('q1-progress-text').innerText = `${this.currentQuestionIdx + 1} / ${total}`;
+        // Populate visual
+        document.getElementById('q1-visual').innerText = qData.icon;
+        document.getElementById('q1-translation').innerText = qData.translate;
+        
+        // Reset action button state
+        const actionBtn = document.getElementById('q1-btn-action');
+        actionBtn.innerText = 'Periksa ✓';
+        actionBtn.className = 'btn btn-primary';
+        actionBtn.onclick = () => this.checkQ1Spelling();
+        // Clear previous state
+        this.q1AnswerArray = Array(qData.word.length).fill(null);
+        this.q1LettersStatus = [];
+        // Build slots
+        const slotsContainer = document.getElementById('q1-slots');
+        slotsContainer.innerHTML = '';
+        for (let i = 0; i < qData.word.length; i++) {
+          const slot = document.createElement('div');
+          slot.className = 'spelling-slot';
+          slot.id = `q1-slot-${i}`;
+          slotsContainer.appendChild(slot);
+        }
+        // Scramble letters
+        const letters = qData.word.split('');
+        const scrambled = this.shuffle([...letters]);
+        
+        const scrambledContainer = document.getElementById('q1-scrambled');
+        scrambledContainer.innerHTML = '';
+        scrambled.forEach((char, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'letter-btn';
+          btn.innerText = char;
+          btn.onclick = () => this.selectQ1Letter(char, idx, btn);
+          scrambledContainer.appendChild(btn);
+        });
+        // Speech pronounce when question loads
+        this.speakText(qData.word);
+      },
+      selectQ1Letter(char, idx, btnElement) {
+        SoundEffects.play('click');
+        // Find first empty slot
+        const emptySlotIdx = this.q1AnswerArray.indexOf(null);
+        if (emptySlotIdx !== -1) {
+          this.q1AnswerArray[emptySlotIdx] = { char, btnIdx: idx };
+          
+          // Hide button
+          btnElement.classList.add('used');
+          // Fill slot visual
+          const slot = document.getElementById(`q1-slot-${emptySlotIdx}`);
+          slot.innerText = char;
+          slot.classList.add('filled');
+        }
+      },
+      resetQ1CurrentWord() {
+        SoundEffects.play('click');
+        this.q1AnswerArray = Array(this.q1AnswerArray.length).fill(null);
+        
+        // Re-enable letter buttons
+        document.querySelectorAll('#q1-scrambled .letter-btn').forEach(btn => {
+          btn.classList.remove('used');
+        });
+        // Empty slots visually
+        document.querySelectorAll('#q1-slots .spelling-slot').forEach(slot => {
+          slot.innerText = '';
+          slot.classList.remove('filled');
+        });
+      },
+      playQ1Hint() {
+        SoundEffects.play('hint');
+        const qData = GAME_DATA.quest1[this.currentQuestionIdx];
+        alert(`Bantuan Petunjuk:\n${qData.hint}`);
+      },
+      checkQ1Spelling() {
+        const qData = GAME_DATA.quest1[this.currentQuestionIdx];
+        const answersCombined = this.q1AnswerArray.map(item => item ? item.char : '').join('');
+        if (answersCombined.length < qData.word.length) {
+          alert('Eja dulu katanya sampai penuh!');
+          return;
+        }
+        const actionBtn = document.getElementById('q1-btn-action');
+        if (answersCombined === qData.word) {
+          // Correct!
+          SoundEffects.play('correct');
+          ConfettiEngine.spawn(30);
+          this.speakText(qData.word);
+          // Change button to next
+          actionBtn.innerText = 'Lanjut &rarr;';
+          actionBtn.className = 'btn btn-secondary';
+          actionBtn.onclick = () => this.nextQ1Question();
+          
+          // Mark visual green slots
+          document.querySelectorAll('#q1-slots .spelling-slot').forEach(slot => {
+            slot.style.borderColor = 'var(--secondary)';
+            slot.style.color = 'var(--secondary-dark)';
+          });
+        } else {
+          // Incorrect
+          SoundEffects.play('incorrect');
+          // Mark visual red slots
+          document.querySelectorAll('#q1-slots .spelling-slot').forEach(slot => {
+            slot.style.borderColor = 'var(--attention)';
+            slot.style.color = 'var(--attention-dark)';
+          });
+          
+          // Shake effect
+          const slotsWrapper = document.getElementById('q1-slots');
+          slotsWrapper.style.transform = 'translateX(-10px)';
+          setTimeout(() => slotsWrapper.style.transform = 'translateX(10px)', 70);
+          setTimeout(() => slotsWrapper.style.transform = 'translateX(-6px)', 140);
+          setTimeout(() => slotsWrapper.style.transform = 'translateX(6px)', 210);
+          setTimeout(() => slotsWrapper.style.transform = 'translateX(0)', 280);
+          setTimeout(() => {
+            this.resetQ1CurrentWord();
+          }, 1000);
+        }
+      },
+      nextQ1Question() {
+        this.currentQuestionIdx++;
+        if (this.currentQuestionIdx < GAME_DATA.quest1.length) {
+          this.loadQ1Question();
+        } else {
+          // Finished Word Safari!
+          this.completeQuest(1, 3, 'word-safari', 'Spelling King');
+        }
+      },
+      // ==========================================================================
+      // MODULE 2: SENTENCE BUILDER LOGIC
+      // ==========================================================================
+      loadQ2Question() {
+        const qData = GAME_DATA.quest2[this.currentQuestionIdx];
+        
+        // Update Progress
+        const total = GAME_DATA.quest2.length;
+        const progressPercentage = ((this.currentQuestionIdx) / total) * 100;
+        document.getElementById('q2-progress-fill').style.width = `${progressPercentage}%`;
+        document.getElementById('q2-progress-text').innerText = `${this.currentQuestionIdx + 1} / ${total}`;
+        // Populate visual
+        document.getElementById('q2-visual').innerText = qData.icon;
+        document.getElementById('q2-translation').innerText = qData.translate;
+        
+        // Reset action button
+        const actionBtn = document.getElementById('q2-btn-action');
+        actionBtn.innerText = 'Periksa ✓';
+        actionBtn.className = 'btn btn-secondary';
+        actionBtn.onclick = () => this.checkQ2Sentence();
+        // Empty current state
+        this.q2AnswerArray = [];
+        document.getElementById('q2-drop-area').innerHTML = '';
+        // Generate pool blocks
+        const pool = document.getElementById('q2-words-pool');
+        pool.innerHTML = '';
+        // Render options blocks
+        qData.optionsPool.forEach((word, idx) => {
+          const block = document.createElement('div');
+          block.className = 'word-block';
+          block.innerText = word;
+          block.setAttribute('data-index', idx);
+          block.onclick = () => this.clickQ2WordBlock(word, idx, block);
+          pool.appendChild(block);
+        });
+        // Speech sound clue
+        this.speakText(qData.correctWords.join(' '));
+      },
+      clickQ2WordBlock(word, idx, blockElement) {
+        if (blockElement.classList.contains('used')) return;
+        
+        SoundEffects.play('click');
+        blockElement.classList.add('used');
+        this.q2AnswerArray.push({ word, idx });
+        // Add to drop area
+        const dropArea = document.getElementById('q2-drop-area');
+        const activeBlock = document.createElement('div');
+        activeBlock.className = 'word-block';
+        activeBlock.innerText = word;
+        activeBlock.onclick = () => this.removeQ2WordBlock(word, idx, activeBlock);
+        dropArea.appendChild(activeBlock);
+      },
+      removeQ2WordBlock(word, idx, activeBlockElement) {
+        SoundEffects.play('click');
+        // Remove from array
+        this.q2AnswerArray = this.q2AnswerArray.filter(item => !(item.word === word && item.idx === idx));
+        activeBlockElement.remove();
+        // Reactivate in pool
+        const poolBlock = document.querySelector(`#q2-words-pool .word-block[data-index="${idx}"]`);
+        if (poolBlock) poolBlock.classList.remove('used');
+      },
+      resetQ2Sentence() {
+        SoundEffects.play('click');
+        this.q2AnswerArray = [];
+        document.getElementById('q2-drop-area').innerHTML = '';
+        document.querySelectorAll('#q2-words-pool .word-block').forEach(b => {
+          b.classList.remove('used');
+        });
+      },
+      checkQ2Sentence() {
+        const qData = GAME_DATA.quest2[this.currentQuestionIdx];
+        const answersStr = this.q2AnswerArray.map(item => item.word).join(' ');
+        const correctStr = qData.correctWords.join(' ');
+        if (this.q2AnswerArray.length === 0) {
+          alert('Susun kalimat dulu dengan mengeklik balok kata!');
+          return;
+        }
+        const actionBtn = document.getElementById('q2-btn-action');
+        if (answersStr === correctStr) {
+          // Correct!
+          SoundEffects.play('correct');
+          ConfettiEngine.spawn(30);
+          this.speakText(correctStr);
+          // Change button to next
+          actionBtn.innerText = 'Lanjut &rarr;';
+          actionBtn.className = 'btn btn-primary';
+          actionBtn.onclick = () => this.nextQ2Question();
+          
+          document.getElementById('q2-drop-area').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+          document.getElementById('q2-drop-area').style.borderColor = 'var(--secondary)';
+        } else {
+          // Incorrect
+          SoundEffects.play('incorrect');
+          document.getElementById('q2-drop-area').style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+          document.getElementById('q2-drop-area').style.borderColor = 'var(--attention)';
+          // Shake drop area
+          const da = document.getElementById('q2-drop-area');
+          da.style.transform = 'translateX(-8px)';
+          setTimeout(() => da.style.transform = 'translateX(8px)', 70);
+          setTimeout(() => da.style.transform = 'translateX(-5px)', 140);
+          setTimeout(() => da.style.transform = 'translateX(5px)', 210);
+          setTimeout(() => da.style.transform = 'translateX(0)', 280);
+          setTimeout(() => {
+            this.resetQ2Sentence();
+            document.getElementById('q2-drop-area').style.backgroundColor = '#fdfdfd';
+            document.getElementById('q2-drop-area').style.borderColor = 'var(--medium-slate)';
+          }, 1000);
+        }
+      },
+      nextQ2Question() {
+        this.currentQuestionIdx++;
+        document.getElementById('q2-drop-area').style.backgroundColor = '#fdfdfd';
+        document.getElementById('q2-drop-area').style.borderColor = 'var(--medium-slate)';
+        if (this.currentQuestionIdx < GAME_DATA.quest2.length) {
+          this.loadQ2Question();
+        } else {
+          // Finished Module 2!
+          this.completeQuest(2, 3, 'sentence-builder', 'Grammar Master');
+        }
+      },
+      // ==========================================================================
+      // MODULE 3: STORY LAND LOGIC
+      // ==========================================================================
+      loadQ3Question() {
+        // Story maps: we have 2 stories. Each story has questions.
+        // Let's maps questions sequentially. Total stories is 2.
+        const currentStoryData = GAME_DATA.quest3[this.currentQuestionIdx];
+        
+        // Update Progress
+        const total = GAME_DATA.quest3.length;
+        const progressPercentage = ((this.currentQuestionIdx) / total) * 100;
+        document.getElementById('q3-progress-fill').style.width = `${progressPercentage}%`;
+        document.getElementById('q3-progress-text').innerText = `${this.currentQuestionIdx + 1} / ${total}`;
+        // Populate Book Story Content
+        document.getElementById('q3-story-title').innerText = currentStoryData.title;
+        document.getElementById('q3-story-text').innerHTML = currentStoryData.text;
+        // Load story question 1 by 1. We keep sub-index
+        this.q3CurrentQuestionIdx = 0;
+        this.q3Answers = [];
+        this.loadQ3SubQuestion();
+      },
+      loadQ3SubQuestion() {
+        const storyData = GAME_DATA.quest3[this.currentQuestionIdx];
+        const currentQ = storyData.questions[this.q3CurrentQuestionIdx];
+        // Header Title
+        document.getElementById('q3-question-title').innerText = `Tanya ${this.q3CurrentQuestionIdx + 1}: ${currentQ.q}`;
+        // Render Options List
+        const optionsList = document.getElementById('q3-quiz-options');
+        optionsList.innerHTML = '';
+        currentQ.options.forEach((optText, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'quiz-option-btn';
+          btn.innerHTML = `
+            <span class="quiz-option-letter">${String.fromCharCode(65 + idx)}</span>
+            <span style="flex:1">${optText}</span>
+          `;
+          btn.onclick = () => this.selectQ3Option(idx, btn);
+          optionsList.appendChild(btn);
+        });
+        // Set action btn
+        const actionBtn = document.getElementById('q3-btn-action');
+        actionBtn.innerText = 'Periksa Jawaban ✓';
+        actionBtn.className = 'btn btn-purple';
+        actionBtn.onclick = () => this.checkQ3Answer();
+        this.selectedQ3OptionIdx = null;
+      },
+      selectQ3Option(idx, btnElement) {
+        SoundEffects.play('click');
+        this.selectedQ3OptionIdx = idx;
+        
+        document.querySelectorAll('#q3-quiz-options .quiz-option-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+        btnElement.classList.add('selected');
+      },
+      playQ3TextTTS() {
+        SoundEffects.play('hint');
+        const storyData = GAME_DATA.quest3[this.currentQuestionIdx];
+        // TTS narration
+        // strip HTML markup tag
+        const cleanText = storyData.text.replace(/<\/?[^>]+(>|$)/g, "");
+        this.speakText(cleanText);
+      },
+      checkQ3Answer() {
+        if (this.selectedQ3OptionIdx === null) {
+          alert('Pilih salah satu jawaban dulu!');
+          return;
+        }
+        const storyData = GAME_DATA.quest3[this.currentQuestionIdx];
+        const currentQ = storyData.questions[this.q3CurrentQuestionIdx];
+        
+        const actionBtn = document.getElementById('q3-btn-action');
+        if (this.selectedQ3OptionIdx === currentQ.correct) {
+          // Correct!
+          SoundEffects.play('correct');
+          
+          // Mark options visual
+          const selectedBtn = document.querySelectorAll('#q3-quiz-options .quiz-option-btn')[this.selectedQ3OptionIdx];
+          selectedBtn.style.backgroundColor = 'var(--secondary)';
+          selectedBtn.style.borderColor = 'var(--dark-slate)';
+          selectedBtn.style.color = 'white';
+          // Action button to next question or next story
+          actionBtn.innerText = 'Lanjut &rarr;';
+          actionBtn.className = 'btn btn-secondary';
+          actionBtn.onclick = () => this.nextQ3SubQuestion();
+        } else {
+          // Incorrect
+          SoundEffects.play('incorrect');
+          
+          const selectedBtn = document.querySelectorAll('#q3-quiz-options .quiz-option-btn')[this.selectedQ3OptionIdx];
+          selectedBtn.style.backgroundColor = 'var(--attention)';
+          selectedBtn.style.borderColor = 'var(--dark-slate)';
+          selectedBtn.style.color = 'white';
+          // Shake option card
+          selectedBtn.style.transform = 'translateX(-5px)';
+          setTimeout(() => selectedBtn.style.transform = 'translateX(5px)', 80);
+          setTimeout(() => selectedBtn.style.transform = 'translateX(0)', 160);
+        }
+      },
+      nextQ3SubQuestion() {
+        const storyData = GAME_DATA.quest3[this.currentQuestionIdx];
+        
+        this.q3CurrentQuestionIdx++;
+        if (this.q3CurrentQuestionIdx < storyData.questions.length) {
+          this.loadQ3SubQuestion();
+        } else {
+          // Completed this story. Move to next story card.
+          this.currentQuestionIdx++;
+          if (this.currentQuestionIdx < GAME_DATA.quest3.length) {
+            this.loadQ3Question();
+          } else {
+            // Completed Story Land quest!
+            this.completeQuest(3, 3, 'story-land', 'Super Reader');
+          }
+        }
+      },
+      // ==========================================================================
+      // MODULE 4: SOUND WAVE LOGIC (LISTENING & SPEAKING)
+      // ==========================================================================
+      loadQ4Question() {
+        const qData = GAME_DATA.quest4[this.currentQuestionIdx];
+        
+        // Update Progress
+        const total = GAME_DATA.quest4.length;
+        const progressPercentage = ((this.currentQuestionIdx) / total) * 100;
+        document.getElementById('q4-progress-fill').style.width = `${progressPercentage}%`;
+        document.getElementById('q4-progress-text').innerText = `${this.currentQuestionIdx + 1} / ${total}`;
+        this.speakingPassed = false;
+        // Reset elements
+        document.getElementById('q4-transcript-bubble').style.display = 'none';
+        document.getElementById('q4-mic-status').innerText = 'Ketuk mikrofon dan ucapkan kalimat di atas.';
+        this.stopSpeechRecording();
+        if (this.activeQ4Mode === 'listening') {
+          document.getElementById('q4-listening-section').classList.remove('d-none');
+          document.getElementById('q4-speaking-section').classList.add('d-none');
+          document.getElementById('q4-hint-box').innerText = 'Dengarkan suara pelafalan lalu tebak kalimatnya!';
+          
+          // Generate listening option list buttons
+          const optionsDiv = document.getElementById('q4-listening-options');
+          optionsDiv.innerHTML = '';
+          qData.listeningOptions.forEach((optText, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'listening-option-btn';
+            btn.innerText = optText;
+            btn.onclick = () => this.selectQ4ListeningOption(idx, btn);
+            optionsDiv.appendChild(btn);
+          });
+          this.selectedQ4ListeningIdx = null;
+          // Sound trigger automatic
+          setTimeout(() => this.speakText(qData.sentence), 500);
+        } else {
+          document.getElementById('q4-listening-section').classList.add('d-none');
+          document.getElementById('q4-speaking-section').classList.remove('d-none');
+          document.getElementById('q4-hint-box').innerText = 'Ucapkan kalimat bahasa inggris tersebut ke mikrofon!';
+          // Populate phrase text
+          document.getElementById('q4-phrase-text').innerText = qData.sentence;
+          document.getElementById('q4-phrase-translation').innerText = qData.translation;
+        }
+        // Action button reset
+        const actionBtn = document.getElementById('q4-btn-action');
+        actionBtn.innerText = 'Kirim Jawaban ✓';
+        actionBtn.className = 'btn btn-primary';
+        actionBtn.onclick = () => this.checkQ4Answer();
+      },
+      toggleQ4Mode(mode) {
+        SoundEffects.play('click');
+        this.activeQ4Mode = mode;
+        this.stopSpeechRecording();
+        const tabs = document.querySelectorAll('.mode-tab');
+        tabs.forEach(t => t.classList.remove('active'));
+        if (mode === 'listening') {
+          document.getElementById('tab-listening').classList.add('active');
+        } else {
+          document.getElementById('tab-speaking').classList.add('active');
+        }
+        this.loadQ4Question();
+      },
+      playQ4ListeningTTS() {
+        SoundEffects.play('click');
+        const qData = GAME_DATA.quest4[this.currentQuestionIdx];
+        this.speakText(qData.sentence);
+      },
+      selectQ4ListeningOption(idx, btnElement) {
+        SoundEffects.play('click');
+        this.selectedQ4ListeningIdx = idx;
+        
+        document.querySelectorAll('#q4-listening-options .listening-option-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+        btnElement.classList.add('selected');
+      },
+      checkQ4Answer() {
+        const qData = GAME_DATA.quest4[this.currentQuestionIdx];
+        const actionBtn = document.getElementById('q4-btn-action');
+        if (this.activeQ4Mode === 'listening') {
+          // Verify listening quiz
+          if (this.selectedQ4ListeningIdx === null) {
+            alert('Pilih salah satu kalimat yang kamu dengar dulu!');
+            return;
+          }
+          if (this.selectedQ4ListeningIdx === qData.correctListeningIdx) {
+            // Correct!
+            SoundEffects.play('correct');
+            ConfettiEngine.spawn(25);
+            this.speakText(qData.sentence);
+            const selectedBtn = document.querySelectorAll('#q4-listening-options .listening-option-btn')[this.selectedQ4ListeningIdx];
+            selectedBtn.style.backgroundColor = 'var(--secondary)';
+            selectedBtn.style.color = 'white';
+            selectedBtn.style.borderColor = 'var(--dark-slate)';
+            actionBtn.innerText = 'Lanjut &rarr;';
+            actionBtn.className = 'btn btn-secondary';
+            actionBtn.onclick = () => this.nextQ4Question();
+          } else {
+            // Incorrect
+            SoundEffects.play('incorrect');
+            const selectedBtn = document.querySelectorAll('#q4-listening-options .listening-option-btn')[this.selectedQ4ListeningIdx];
+            selectedBtn.style.backgroundColor = 'var(--attention)';
+            selectedBtn.style.color = 'white';
+            selectedBtn.style.borderColor = 'var(--dark-slate)';
+            
+            selectedBtn.style.transform = 'translateX(-5px)';
+            setTimeout(() => selectedBtn.style.transform = 'translateX(5px)', 80);
+            setTimeout(() => selectedBtn.style.transform = 'translateX(0)', 160);
+          }
+        } else {
+          // Verify speaking mic
+          if (!this.speakingPassed) {
+            alert('Silakan coba ucapkan kalimatnya lewat mikrofon dahulu sampai kecocokannya tinggi! Atau, jika Anda kesulitan, ketuk tombol mikrofon lagi untuk melewati.');
+            return;
+          }
+          // Passed!
+          SoundEffects.play('correct');
+          ConfettiEngine.spawn(25);
+          actionBtn.innerText = 'Lanjut &rarr;';
+          actionBtn.className = 'btn btn-secondary';
+          actionBtn.onclick = () => this.nextQ4Question();
+        }
+      },
+      nextQ4Question() {
+        this.currentQuestionIdx++;
+        if (this.currentQuestionIdx < GAME_DATA.quest4.length) {
+          this.loadQ4Question();
+        } else {
+          // Completed Sound Wave!
+          this.completeQuest(4, 3, 'sound-wave', 'Fluent Talker');
+        }
+      },
+      // ==========================================================================
+      // ADVENTURE COMPLETION LOGIC
+      // ==========================================================================
+      completeQuest(questId, starsReward, badgeId, badgeName) {
+        // Calculate XP and Coin yields
+        const baseXP = 50;
+        const baseCoins = 20;
+        // Apply XP and Coins to account
+        this.state.xp += baseXP;
+        this.state.coins += baseCoins;
+        // Award badge
+        if (!this.state.badges.includes(badgeId)) {
+          this.state.badges.push(badgeId);
+        }
+        // Mark quest map as completed
+        this.state.completedQuests[questId] = starsReward;
+        // Save
+        this.saveState();
+        // Load Victory screen data
+        document.getElementById('victory-badge-icon').innerText = this.getQuestIcon(questId);
+        document.getElementById('victory-badge-announcement').innerHTML = `Kamu telah menyelesaikan Pulau ini dan membuka Lencana <b>${badgeName}</b>!`;
+        document.getElementById('victory-xp-earned').innerText = `+${baseXP}`;
+        document.getElementById('victory-coins-earned').innerText = `+${baseCoins}`;
+        // Play Sound
+        setTimeout(() => SoundEffects.play('levelup'), 300);
+        this.goToScreen('victory');
+        ConfettiEngine.spawn(80);
+      },
+      getQuestIcon(questId) {
+        switch(questId) {
+          case 1: return '🦁';
+          case 2: return '🧩';
+          case 3: return '📖';
+          case 4: return '🎤';
+          default: return '🏅';
+        }
+      },
+      // Helper shuffle array
+      shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+    };
+    // Auto trigger on load
+    window.addEventListener('DOMContentLoaded', () => {
+      gameEngine.init();
+    });
+  </script>
+</body>
+</html>

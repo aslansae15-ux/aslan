@@ -894,7 +894,11 @@
           <label class="adm2-label">📛 Nama</label>
           <input type="text" id="editName" class="adm2-input" placeholder="Aslan Adika Prada" maxlength="40">
           <label class="adm2-label">🎂 Tanggal Lahir</label>
-          <input type="date" id="editBirthdate" class="adm2-input">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+            <input type="date" id="editBirthdate" class="adm2-input" style="margin-bottom:0;flex:1;">
+            <button type="button" onclick="clearBirthdate()" title="Hapus tanggal lahir"
+              style="flex-shrink:0;padding:10px 12px;border-radius:10px;border:2px solid #EF9A9A;background:#FFEBEE;color:#C62828;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;">✕ Hapus</button>
+          </div>
           <label class="adm2-label">🏫 Kelas / Info</label>
           <input type="text" id="editClass" class="adm2-input" placeholder="Kelas 3 SD" maxlength="30">
           <label class="adm2-label">⚖️ Berat Badan (kg)</label>
@@ -1129,6 +1133,18 @@
      ═══════════════════════════════════════════════════════════ -->
 
 <script>
+function clearBirthdate() {
+  const el = document.getElementById('editBirthdate');
+  if (el) el.value = '';
+  // Auto-save immediately so the profile page refreshes
+  if (typeof state !== 'undefined') {
+    if (!state.profile) state.profile = {};
+    state.profile.birthdate = null;
+    save(); renderAll();
+    showToast('✅ Tanggal lahir dihapus!');
+  }
+}
+
 function adm2Tab(name) {
   document.querySelectorAll('.adm2-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.adm2-section').forEach(s => s.classList.remove('active'));
