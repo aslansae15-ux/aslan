@@ -47,7 +47,7 @@ const COLOR_POOL=[
   {bg:'#EDE7F6',bc:'#B39DDB'},{bg:'#F9FBE7',bc:'#DCE775'},
   {bg:'#E3F2FD',bc:'#90CAF9'},{bg:'#FFF8E1',bc:'#FFD54F'},
 ];
-const DEFAULT_MSG='"Hei Aslan! Ayah bangga sama kamu. Selesaikan semua misi hari ini dan kamu jadi HERO sejati Keluarga Sejati! Yuk semangat! 💪🔥"';
+const DEFAULT_MSG='"Hei Aslan! Ayah bangga sama kamu. Selesaikan semua misi hari ini dan kamu jadi Hero Keluarga! Yuk semangat! 💪🔥"';
 const DEFAULT_BUNDA_MSG='"Aslan sayang Bunda! Jangan lupa makan, minum air yang cukup, dan tetap semangat belajar ya, nak! Bunda selalu sayang kamu! ❤️🤗"';
 const DEFAULT_KARAKTER_MOTIVATION='Terus tunjukkan karakter terbaikmu setiap hari, Aslan! 💪\nAyah & Bunda selalu bangga sama kamu! ❤️';
 const TANK_UNLOCK_XP=400;
@@ -170,6 +170,14 @@ function mergeState(p){
   if(!p.ayahMsg)state.ayahMsg=DEFAULT_MSG;
   if(!p.bundaMsg)state.bundaMsg=DEFAULT_BUNDA_MSG;
   if(!p.customBadges)state.customBadges=[];
+  if(state.customBadges && Array.isArray(state.customBadges)){
+    state.customBadges = state.customBadges.map(cb => {
+      if(cb.name && cb.name.toLowerCase().includes('nonton bioskop') && cb.xpRequired===3500){
+        return Object.assign({}, cb, {xpRequired:4000});
+      }
+      return cb;
+    });
+  }
   if(!p.profile)state.profile={name:'Aslan Adika Prada',birthdate:'',class:'Kelas 3 SD',photo:null};
   if(!p.savings)state.savings={transactions:[],goal:null};
   if(!p.savings||!p.savings.transactions)state.savings.transactions=[];
@@ -207,6 +215,23 @@ function dateKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 function todayKey(){return dateKey(new Date());}
 function todayData(){const k=todayKey();if(!state.history[k])state.history[k]={};return state.history[k];}
 function getDataForKey(k){if(!state.history[k])state.history[k]={};return state.history[k];}
+function getHistoricalStreakThreshold(){
+  let minCount=Infinity;
+  Object.values(state.history).forEach(h=>{
+    if(h.submitted){
+      const count = Object.keys(h).filter(k=>k!=='submitted' && h[k]).length;
+      if(count>0 && count < minCount) minCount = count;
+    }
+  });
+  return minCount===Infinity ? 1 : minCount;
+}
+function isDayComplete(key){
+  const h=state.history[key]||{};
+  if(h.submitted) return true;
+  const completedCount = Object.keys(h).filter(k=>k!=='submitted' && h[k]).length;
+  const threshold = getHistoricalStreakThreshold();
+  return completedCount >= threshold && completedCount > 0;
+}
 function getWeekKey(d){
   const dt=new Date(d);dt.setHours(0,0,0,0);dt.setDate(dt.getDate()+4-(dt.getDay()||7));
   const yearStart=new Date(dt.getFullYear(),0,1);
@@ -282,20 +307,18 @@ function saveGoal(){
   save();renderSavings();showToast('🎯 Target tabungan disimpan!');
 }
 
-// ✅ PATCH: computeStreak dengan manualStreak override
+// ✅ PATCH: computeStreak berdasarkan riwayat nyata
 function computeStreak(){
-  if(state.manualStreak && state.manualStreak > 0) return state.manualStreak;
   const today=new Date();
   let streak=0;
   const todayK=dateKey(today);
-  const todaySubmitted=state.history[todayK]&&state.history[todayK].submitted;
-  const startFrom=todaySubmitted?0:1;
+  const todayComplete=isDayComplete(todayK);
+  const startFrom=todayComplete?0:1;
   for(let i=startFrom;i<400;i++){
     const d=new Date(today);
     d.setDate(today.getDate()-i);
     const k=dateKey(d);
-    const submitted=state.history[k]&&state.history[k].submitted;
-    if(submitted){streak++;}else{break;}
+    if(isDayComplete(k)) {streak++;} else {break;}
   }
   return streak;
 }
@@ -563,11 +586,34 @@ function renderStreak(){
   document.getElementById('totalXpDisplay').textContent=state.totalXP+' XP';
   const row=document.getElementById('weekRow');row.innerHTML='';
   const today=new Date();
-  for(let i=6;i>=0;i--){
-    const d=new Date(today);d.setDate(today.getDate()-i);
-    const k=dateKey(d);const done=!!(state.history[k]&&state.history[k].submitted);const isToday=i===0;
+  // Render full month calendar (31 days from start of month to today or end of month)
+  const year=today.getFullYear();
+  const month=today.getMonth();
+  const firstDay=new Date(year,month,1);
+  const lastDay=new Date(year,month+1,0);
+  const daysInMonth=lastDay.getDate();
+  const startDayOfWeek=firstDay.getDay();
+  
+  // Add day labels
+  const dayLabels=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  dayLabels.forEach(label=>{
+    const labelEl=document.createElement('div');labelEl.className='day-label';labelEl.textContent=label;
+    row.appendChild(labelEl);
+  });
+  
+  // Add empty cells for days before month starts
+  for(let i=0;i<startDayOfWeek;i++){
+    const emptyEl=document.createElement('div');emptyEl.className='day-dot empty';
+    row.appendChild(emptyEl);
+  }
+  
+  // Add days of month
+  const todayK=dateKey(today);
+  for(let day=1;day<=daysInMonth;day++){
+    const d=new Date(year,month,day);
+    const k=dateKey(d);const done=isDayComplete(k);const isToday=k===todayK;
     const el=document.createElement('div');el.className='day-dot'+(done?' done':'')+(isToday?' today':'');
-    el.innerHTML='<span class="day-name">'+DAYS_ID[d.getDay()]+'</span><span class="day-check">'+(done?'⭐':(isToday?'→':'·'))+'</span>';
+    el.innerHTML='<span class="day-num">'+day+'</span><span class="day-check">'+(done?'✓':(isToday?'▸':''))+'</span>';
     row.appendChild(el);
   }
 }
@@ -592,7 +638,7 @@ function checkBadges(){
   if(xp>=100)unlock('xp100');if(xp>=300)unlock('xp300');
   if(xp>=1000)unlock('xp1000');if(xp>=1500)unlock('xp1500');if(xp>=2500)unlock('xp2500');
   if(td>=3)unlock('quest3');if(td>=20)unlock('quest20');if(td>=50)unlock('quest50');
-  if(st>=14||xp>=1500)unlock('hero');
+  if(st>=60)unlock('hero');
   (state.customBadges||[]).forEach(cb=>{if(xp>=cb.xpRequired)state.badges[cb.id]=true;});
 }
 

@@ -357,10 +357,10 @@ body {
 .streak-number { font-family: 'Press Start 2P', monospace; font-size: 32px; color: var(--amber); line-height: 1; }
 .streak-label  { font-size: 11px; font-weight: 800; color: #90A4AE; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
 .streak-fire   { font-size: 44px; animation: floatDeco 2s ease-in-out infinite; }
-.week-row { display: flex; gap: 6px; }
-.week-day { flex: 1; height: 18px; border-radius: 8px; background: #F5F5F5; border: 1px solid #E0E0E0; }
-.week-day.done { background: #C8E6A5; border-color: #9CCC65; }
-.day-dot { flex: 1; padding: 8px 4px; border-radius: 8px; border: 2px solid #E0E0E0; background: #F5F5F5; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.week-row { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 8px; }
+.day-label { text-align: center; font-size: 9px; font-weight: 800; color: #9E9E9E; text-transform: uppercase; }
+.day-dot { min-height: 60px; padding: 10px 6px; border-radius: 8px; border: 2px solid #E0E0E0; background: #F5F5F5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.day-dot.empty { background: transparent; border: 0; }
 .day-dot.done  { background: #FFF8E1; border-color: #FFB300; }
 .day-dot.today { border-color: var(--blue); }
 .day-name { font-size: 8px; font-weight: 800; color: #BDBDBD; text-transform: uppercase; }

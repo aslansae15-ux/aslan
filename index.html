@@ -512,13 +512,19 @@
         <div class="badge-item"><div class="badge-icon" id="bicon-streak14">🎈</div><div class="badge-name">Streak 14 Hari</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-streak15">🌭</div><div class="badge-name">Streak 15 Hari</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-streak30">🚀</div><div class="badge-name">Streak 30 Hari</div></div>
+        <div class="badge-item"><div class="badge-icon" id="bicon-streak40">🌟</div><div class="badge-name">Streak 40 Hari</div></div>
+        <div class="badge-item"><div class="badge-icon" id="bicon-streak50">🌟</div><div class="badge-name">Streak 50 Hari</div></div>
+        <div class="badge-item"><div class="badge-icon" id="bicon-streak60">🌟</div><div class="badge-name">Streak 60 Hari</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-xp100">⚡</div><div class="badge-name">100 XP</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-xp300">🍓</div><div class="badge-name">300 XP</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-xp1000">💰</div><div class="badge-name">1000 XP</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-xp1500">🐯</div><div class="badge-name">1500 XP</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-xp2500">🔥</div><div class="badge-name">2500 XP</div></div>
+        <div class="badge-item"><div class="badge-icon" id="bicon-xp4000">🎯</div><div class="badge-name">4000 XP</div></div>
+        <div class="badge-item"><div class="badge-icon" id="bicon-xp5000">🎯</div><div class="badge-name">5000 XP</div></div>
+        <div class="badge-item"><div class="badge-icon" id="bicon-xp6000">🎯</div><div class="badge-name">6000 XP</div></div>
         <div class="badge-item"><div class="badge-icon" id="bicon-quest3">🥉</div><div class="badge-name">3 Misi</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-hero">🦸</div><div class="badge-name">HERO Sejati</div></div>
+        <div class="badge-item"><div class="badge-icon" id="bicon-hero">👪</div><div class="badge-name">Hero Keluarga</div></div>
       </div>
     </div>
     <div class="badges-card custom-badges-section" id="customBadgesSection" style="display:none;">
@@ -1407,14 +1413,8 @@ document.getElementById('notif-update').onclick=function(){
 };
 </script>
 <script>
-// PATCH: Manual streak override
-(function(){
-  const _orig = window.computeStreak;
-  window.computeStreak = function(){
-    if(typeof state !== 'undefined' && state.manualStreak > 0) return state.manualStreak;
-    return _orig ? _orig() : 0;
-  };
-})();
+// NOTE: streak is computed from actual history data, not manual override.
+</script>
 </script>
 </body>
 </html>
