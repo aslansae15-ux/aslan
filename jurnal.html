@@ -618,8 +618,9 @@ function closeConfirm() {
 }
 // Satu event listener permanen untuk tombol OK — tidak diganti tiap klik
 document.getElementById('confirmOkBtn').addEventListener('click', function() {
+  const cb = confirmCallback;
   closeConfirm();
-  if (typeof confirmCallback === 'function') confirmCallback();
+  if (typeof cb === 'function') cb();
 });
 
 function setSyncStatus(st){
@@ -945,21 +946,11 @@ function renderBirthdays(){
         <span class="bday-item-cat cat-${b.cat}">${ci.label}</span>
       </div>
       <div class="bday-item-actions">
-        <button class="bday-edit-btn" data-id="${b.id}" data-action="edit">✏️</button>
-        <button class="bday-del-btn" data-id="${b.id}" data-action="delete">🗑️</button>
+        <button class="bday-edit-btn" onclick="openBdayEdit('${b.id}')">✏️</button>
+        <button class="bday-del-btn" onclick="deleteBirthday('${b.id}')">🗑️</button>
       </div>`;
     upcoming.appendChild(row);
   });
-
-  // Event delegation untuk tombol aksi di upcoming list
-  upcoming.onclick = function(e) {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const id = btn.dataset.id;
-    const action = btn.dataset.action;
-    if (action === 'edit') openBdayEdit(id);
-    else if (action === 'delete') deleteBirthday(id);
-  };
 
   const allList=document.getElementById('allBdayList');
   if(!bdays.length){allList.innerHTML='<div class="bday-empty" style="text-align:center;padding:20px;">Belum ada data. Tambahkan di atas! 🎈</div>';return;}
@@ -981,21 +972,11 @@ function renderBirthdays(){
         <span class="bday-item-cat cat-${b.cat}">${ci.label}</span>
       </div>
       <div class="bday-item-actions">
-        <button class="bday-edit-btn" data-id="${b.id}" data-action="edit">✏️</button>
-        <button class="bday-del-btn" data-id="${b.id}" data-action="delete">🗑️</button>
+        <button class="bday-edit-btn" onclick="openBdayEdit('${b.id}')">✏️</button>
+        <button class="bday-del-btn" onclick="deleteBirthday('${b.id}')">🗑️</button>
       </div>`;
     allList.appendChild(row);
   });
-
-  // Event delegation untuk tombol aksi di all list
-  allList.onclick = function(e) {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const id = btn.dataset.id;
-    const action = btn.dataset.action;
-    if (action === 'edit') openBdayEdit(id);
-    else if (action === 'delete') deleteBirthday(id);
-  };
 }
 function switchTab(tab){
   ['harian','catatan','ultah'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('active',t===tab));
