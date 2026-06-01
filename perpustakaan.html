@@ -848,20 +848,20 @@ function initAll(callback) {
     codingReadBooks    = cData.readBooks  || {};
     englishReadBooks   = eData.readBooks  || {};
     sainsReadBooks     = sData.readBooks  || {};
-    adventureReadBooks = {};
-    hardwareReadBooks  = {};
-    aiReadBooks        = {};
-    try { localStorage.removeItem('aslan_adventure_v1'); localStorage.removeItem('aslan_hardware_v1'); localStorage.removeItem('aslan_ai_v1'); } catch(e) {}
+    // load adventure/hardware/ai from firebase if available, fall back to empty object
+    adventureReadBooks = aData.readBooks  || {};
+    hardwareReadBooks  = hwData.readBooks || {};
+    aiReadBooks        = aiData.readBooks || {};
     callback();
   }).catch(() => {
     codingStartDate    = getLocalDate('aslan_library_start');
     codingReadBooks    = getLocalBooks('aslan_library_v2');
     englishReadBooks   = getLocalBooks('aslan_english_v1');
     sainsReadBooks     = getLocalBooks('aslan_sains_v1');
-    adventureReadBooks = {};
-    hardwareReadBooks  = {};
-    aiReadBooks        = {};
-    try { localStorage.removeItem('aslan_adventure_v1'); localStorage.removeItem('aslan_hardware_v1'); localStorage.removeItem('aslan_ai_v1'); } catch(e) {}
+    // restore adventure/hardware/ai from localStorage as fallback
+    adventureReadBooks = getLocalBooks('aslan_adventure_v1');
+    hardwareReadBooks  = getLocalBooks('aslan_hardware_v1');
+    aiReadBooks        = getLocalBooks('aslan_ai_v1');
     callback();
   });
 }
