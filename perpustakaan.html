@@ -114,6 +114,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
 .tab-btn.active.english-tab{color:#1A237E;border-bottom-color:#1A237E;background:#E8EAF6;}
 .tab-btn.active.sains-tab{color:#1B5E20;border-bottom-color:#1B5E20;background:#F1F8E9;}
 .tab-btn.active.adventure-tab{color:#4A148C;border-bottom-color:#7B1FA2;background:#F3E5F5;}
+.tab-btn.active.digital-tab{color:#1565C0;border-bottom-color:#1976D2;background:#E3F2FD;}
 .tab-btn.active.hardware-tab{color:#1A237E;border-bottom-color:#283593;background:#E8EAF6;}
 .tab-btn.active.ai-tab{color:#006064;border-bottom-color:#00838F;background:#E0F7FA;}
 .tab-btn:hover:not(.active){background:rgba(0,0,0,0.04);}
@@ -346,8 +347,7 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
       <div class="library-icon-wrap coding-icon" id="headerIcon">📚</div>
       <div>
         <div class="header-title" id="headerTitle">PERPUSTAKAAN<br>ASLAN</div>
-        <div class="header-sub" id="headerSub">💻 Coding · 🇬🇧 English · ✨ Adventure<br>🔬 Sains · 🖥️ Hardware · 🤖 AI</div>
-      </div>
+              </div>
     </div>
     <div id="progressBars"></div>
   </div>
@@ -357,9 +357,11 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
     <button class="tab-btn coding-tab active" onclick="switchTab('coding')">💻 CODING</button>
     <button class="tab-btn english-tab" onclick="switchTab('english')">🇬🇧 ENGLISH</button>
     <button class="tab-btn sains-tab" onclick="switchTab('sains')">🔬 SAINS</button>
-    <button class="tab-btn adventure-tab" id="adventureTabBtn" onclick="switchTab('adventure')">✨ ADV</button>
+    <button class="tab-btn adventure-tab" id="adventureTabBtn" onclick="switchTab('adventure')">✨ ADVENTURE</button>
+    <button class="tab-btn digital-tab" id="digitalTabBtn" onclick="switchTab('digital')">🌊 LAUTAN</button>
     <button class="tab-btn hardware-tab" id="hardwareTabBtn" onclick="switchTab('hardware')">🖥️ HW</button>
     <button class="tab-btn ai-tab" id="aiTabBtn" onclick="switchTab('ai')">🤖 AI</button>
+    <button class="tab-btn evolusi-tab" id="evolusiTabBtn" onclick="switchTab('evolusi')">🦴 EVO</button>
   </div>
 
   <!-- ═══ CODING SECTION ═══ -->
@@ -418,6 +420,20 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
     </div>
   </div>
 
+  <!-- ═══ LAUTAN DIGITAL SECTION ═══ -->
+  <div class="collection-section" id="digitalSection">
+    <div class="main">
+      <div class="stats-row">
+        <div class="stat-card read-card"><div class="stat-num" id="dStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
+        <div class="stat-card today-card digital"><div class="stat-num" id="dStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
+        <div class="stat-card locked-card"><div class="stat-num" id="dStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
+      </div>
+      <div class="today-book-wrap" id="digitalTodayHighlight"></div>
+      <div class="motivation-card digital"><div class="motivation-text" id="digitalMotivation"></div></div>
+      <div id="digitalBooksContainer"></div>
+    </div>
+  </div>
+
   <!-- ═══ HARDWARE SECTION ═══ -->
   <div class="collection-section" id="hardwareSection">
     <div class="main">
@@ -446,6 +462,20 @@ body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-con
     </div>
   </div>
 
+  <!-- ═══ EVOLUSI SECTION ═══ -->
+  <div class="collection-section" id="evolusiSection">
+    <div class="main">
+      <div class="stats-row">
+        <div class="stat-card read-card"><div class="stat-num" id="evStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
+        <div class="stat-card today-card evolusi"><div class="stat-num" id="evStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
+        <div class="stat-card locked-card"><div class="stat-num" id="evStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
+      </div>
+      <div class="today-book-wrap" id="evolusiTodayHighlight"></div>
+      <div class="motivation-card evolusi"><div class="motivation-text" id="evolusiMotivation"></div></div>
+      <div id="evolusiBooksContainer"></div>
+    </div>
+  </div>
+
 </div>
 
 <a href="#" class="back-top" title="Ke Atas">☝️</a>
@@ -467,8 +497,10 @@ const CODING_REF    = db.ref('aslan_library_v2');
 const ENGLISH_REF   = db.ref('aslan_english_v1');
 const SAINS_REF     = db.ref('aslan_sains_v1');
 const ADVENTURE_REF = db.ref('aslan_adventure_v1');
+const DIGITAL_REF   = db.ref('aslan_digital_v1');
 const HARDWARE_REF  = db.ref('aslan_hardware_v1');
 const AI_REF        = db.ref('aslan_ai_v1');
+const EVOLUSI_REF   = db.ref('aslan_evolusi_v1');
 
 // ═══ DATA BUKU CODING ═══
 const CODING_BOOKS = [
@@ -574,36 +606,79 @@ const SAINS_BOOKS = [
 
 // ═══ DATA BUKU ADVENTURE (English) ═══
 const ADVENTURE_BOOKS = [
-  {day:1,  no:301, emoji:'🎒', title:"The Magic Red Backpack"},
-  {day:2,  no:302, emoji:'🌲', title:"The Whispering Forest"},
-  {day:3,  no:303, emoji:'⭐', title:"The Starlight Library"},
-  {day:4,  no:304, emoji:'🚲', title:"The Flying Bicycle"},
-  {day:5,  no:305, emoji:'🚪', title:"The Secret Garden Door"},
-  {day:6,  no:306, emoji:'🐱', title:"The Talking Cat Detective"},
-  {day:7,  no:307, emoji:'🌙', title:"The Moonlight Train"},
-  {day:8,  no:308, emoji:'🌈', title:"The Invisible Rainbow Bridge"},
-  {day:9,  no:309, emoji:'🐉', title:"The Dragon Who Loved Books"},
-  {day:10, no:310, emoji:'🧸', title:"The Tiny Giant Friend"},
-  {day:11, no:311, emoji:'🏰', title:"The Underwater Castle"},
-  {day:12, no:312, emoji:'⏰', title:"The Clock That Stopped Time"},
-  {day:13, no:313, emoji:'🎵', title:"The Magical Music Box"},
-  {day:14, no:314, emoji:'💫', title:"The Lost Star"},
-  {day:15, no:315, emoji:'🍫', title:"The Chocolate River Adventure"},
-  {day:16, no:316, emoji:'🪄', title:"The Flying Carpet Market"},
-  {day:17, no:317, emoji:'👾', title:"The Kind Monster Next Door"},
-  {day:18, no:318, emoji:'🪞', title:"The Mirror of Dreams"},
-  {day:19, no:319, emoji:'🔥', title:"The Phoenix Feather"},
-  {day:20, no:320, emoji:'🤖', title:"The Robot with a Heart"},
-  {day:21, no:321, emoji:'🏴‍☠️', title:"The Hidden Pirate Island"},
-  {day:22, no:322, emoji:'❄️', title:"The Snow Queen's Garden"},
-  {day:23, no:323, emoji:'🥚', title:"The Dinosaur Egg Mystery"},
-  {day:24, no:324, emoji:'☁️', title:"The Cloud Kingdom"},
-  {day:25, no:325, emoji:'🖌️', title:"The Magic Paintbrush"},
-  {day:26, no:326, emoji:'🏮', title:"The Brave Little Lantern"},
-  {day:27, no:327, emoji:'🎆', title:"The Festival of Lights"},
-  {day:28, no:328, emoji:'🌾', title:"The Last Golden Seed"},
-  {day:29, no:329, emoji:'🌠', title:"The Star That Fell to Earth"},
-  {day:30, no:330, emoji:'✨', title:"The Greatest Magic of All"},
+  {day:1,  no:131, emoji:'🎒', title:'The Magic Red Backpack (Click any word for meaning)'},
+  {day:2,  no:132, emoji:'🌲', title:'The Whispering Forest'},
+  {day:3,  no:133, emoji:'📚', title:'The Starlight Library'},
+  {day:4,  no:134, emoji:'🚲', title:'The Flying Bicycle'},
+  {day:5,  no:135, emoji:'🌸', title:'The Secret Garden Door'},
+  {day:6,  no:136, emoji:'🐱', title:'The Talking Cat Detective'},
+  {day:7,  no:137, emoji:'🚂', title:'The Moonlight Train (Click any word for meaning)'},
+  {day:8,  no:138, emoji:'🌈', title:'The Invisible Rainbow Bridge (Click any word for meaning)'},
+  {day:9,  no:139, emoji:'🐉', title:'The Dragon Who Loved Books'},
+  {day:10, no:140, emoji:'🧚', title:'The Tiny Giant Friend (Click any word for meaning)'},
+  {day:11, no:141, emoji:'🏰', title:'The Underwater Castle (Click any word for meaning)'},
+  {day:12, no:142, emoji:'⏰', title:'The Clock That Stopped Time'},
+  {day:13, no:143, emoji:'🎵', title:'The Magical Music Box (Click any word for meaning)'},
+  {day:14, no:144, emoji:'⭐', title:'The Lost Star'},
+  {day:15, no:145, emoji:'🍫', title:'The Chocolate River Adventure'},
+  {day:16, no:146, emoji:'🪄', title:'The Flying Carpet Market (Click any word for meaning)'},
+  {day:17, no:147, emoji:'👹', title:'The Kind Monster Next Door'},
+  {day:18, no:148, emoji:'🪞', title:'The Mirror of Dreams'},
+  {day:19, no:149, emoji:'🪶', title:'The Phoenix Feather (Click any word for meaning)'},
+  {day:20, no:150, emoji:'🤖', title:'The Robot with a Heart (Click any word for meaning)'},
+  {day:21, no:151, emoji:'🏴‍☠️', title:'The Hidden Pirate Island'},
+  {day:22, no:152, emoji:'❄️', title:'The Snow Queen\'s Garden'},
+  {day:23, no:153, emoji:'🦕', title:'The Dinosaur Egg Mystery'},
+  {day:24, no:154, emoji:'☁️', title:'The Cloud Kingdom'},
+  {day:25, no:155, emoji:'🖌️', title:'The Magic Paintbrush'},
+  {day:26, no:156, emoji:'🏮', title:'The Brave Little Lantern'},
+  {day:27, no:157, emoji:'🎆', title:'The Festival of Lights'},
+  {day:28, no:158, emoji:'🌱', title:'The Last Golden Seed'},
+  {day:29, no:159, emoji:'🌟', title:'The Star That Fell to Earth'},
+  {day:30, no:160, emoji:'✨', title:'The Greatest Magic of All'},
+];
+
+const DIGITAL_BOOKS = [
+  {day:1,  no:301, emoji:'🧭', title:'Kapten Cerdas Menemukan Lautan Digital'},
+  {day:2,  no:302, emoji:'🚢', title:'Kapal Ajaib Bernama Tablet dan HP'},
+  {day:3,  no:303, emoji:'🌊', title:'Arus Kuat yang Bernama Internet'},
+  {day:4,  no:304, emoji:'🏝️', title:'Pulau-Pulau di Lautan Digital (YouTube, TikTok, Instagram, dll)'},
+  {day:5,  no:305, emoji:'💨', title:'Angin Kencang Viral dan Ombak Tren'},
+  {day:6,  no:306, emoji:'🗺️', title:'Peta Rahasia Dunia Digital'},
+  {day:7,  no:307, emoji:'🛟', title:'Pertama Kali Berlayar – Aturan Dasar Keselamatan'},
+  {day:8,  no:308, emoji:'🗑️', title:'Sampah Mengambang di Lautan Digital'},
+  {day:9,  no:309, emoji:'💎', title:'Berlian yang Tersembunyi di Dasar Laut'},
+  {day:10, no:310, emoji:'🧪', title:'Cara Menguji Apakah Ini Berlian atau Sampah'},
+  {day:11, no:311, emoji:'🐠', title:'Ikan-ikan Beracun (Berita Bohong & Hoax)'},
+  {day:12, no:312, emoji:'📢', title:'Mutiara Ilmu vs Plastik Iklan'},
+  {day:13, no:313, emoji:'🕵️', title:'Mengapa Banyak Orang Tertipu Sampah Digital?'},
+  {day:14, no:314, emoji:'🔍', title:'Lensa Ajaib untuk Melihat Kebenaran'},
+  {day:15, no:315, emoji:'👹', title:'Monster yang Sembunyi di Balik Layar'},
+  {day:16, no:316, emoji:'🔐', title:'Jangan Kasih Kunci Rumah ke Orang Asing (Privasi)'},
+  {day:17, no:317, emoji:'🎭', title:'Sandiwara di Dunia Digital (Orang Pura-pura)'},
+  {day:18, no:318, emoji:'👣', title:'Jejak Kaki di Pasir Digital (Digital Footprint)'},
+  {day:19, no:319, emoji:'🗡️', title:'Kata Sandi adalah Pedang Ajaib'},
+  {day:20, no:320, emoji:'🌩️', title:'Bahaya Badai Cyberbullying'},
+  {day:21, no:321, emoji:'🆘', title:'Pelampung Keselamatan (Cara Minta Tolong)'},
+  {day:22, no:322, emoji:'🤝', title:'Menggunakan Lautan Digital untuk Kebaikan'},
+  {day:23, no:323, emoji:'🧑‍🤝‍🧑', title:'Menolong Teman di Lautan Digital'},
+  {day:24, no:324, emoji:'⏰', title:'Waktu Berlayar yang Seimbang (Screen Time)'},
+  {day:25, no:325, emoji:'🎨', title:'Harta Karun Kreatif (Membuat Konten yang Bagus)'},
+  {day:26, no:326, emoji:'🧜', title:'Berteman dengan Anak Lautan Lain (Teman Online)'},
+  {day:27, no:327, emoji:'🧹', title:'Membersihkan Lautan Digital dari Sampah'},
+  {day:28, no:328, emoji:'🧠', title:'Menjadi Kapten Cerdas Sejati'},
+  {day:29, no:329, emoji:'🏆', title:'Harta Karun yang Dibawa Pulang dari Lautan Digital'},
+  {day:30, no:330, emoji:'🌟', title:'Petualangan Berikutnya – Lautan Digital Selamanya'},
+];
+
+const DIGITAL_MOTIVATIONS = [
+  '"Lautan Digital menunggu kapten yang cerdas! 🌊🧭"',
+  '"Jangan terjebak di sampah internet! Baca dan jadi pintar! 🧠💡"',
+  '"Simpan privasimu seperti kunci kapal. Selamat berlayar! 🔐🚢"',
+  '"Konten bagus adalah harta karun. Ambil dengan bijak! 💎🌟"',
+  '"Bersahabat di dunia digital itu keren. Ayo belajar! 🤝📱"',
+  '"Pelajari cara menjadi kapten digital yang cerdas! 🧠🌐"',
+  '"30 cerita Lautan Digital siap membentukmu jadi pahlawan internet! 🏆✨"',
 ];
 
 // ═══ DATA BUKU HARDWARE ═══
@@ -674,6 +749,39 @@ const AI_BOOKS = [
   {day:30, no:530, emoji:'🏆', title:'Aslan Jadi Pahlawan AI! (Ringkasan + Sertifikat)'},
 ];
 
+const EVOLUSI_BOOKS = [
+  {day:1,  no:231, emoji:'🧬', title:'Lahirnya Bumi dan Lautan Ajaib'},
+  {day:2,  no:232, emoji:'🦠', title:'Kemunculan Kehidupan Pertama (mikroba)'},
+  {day:3,  no:233, emoji:'🐟', title:'Dari Ikan ke Amfibi (keluar dari air)'},
+  {day:4,  no:234, emoji:'🦕', title:'Zaman Dinosaurus dan Kepunahannya'},
+  {day:5,  no:235, emoji:'🐒', title:'Kemunculan Mamalia dan Primata'},
+  {day:6,  no:236, emoji:'🦍', title:'Leluhur Manusia – Si Kera Kecil yang Penasaran'},
+  {day:7,  no:237, emoji:'🧠', title:'Pertemuan dengan Australopithecus (Lucy)'},
+  {day:8,  no:238, emoji:'🔨', title:'Homo Habilis – Manusia yang Pertama Membuat Alat'},
+  {day:9,  no:239, emoji:'🌍', title:'Homo Erectus – Manusia yang Berani Keluar Afrika'},
+  {day:10, no:240, emoji:'🔥', title:'Misteri Api dan Masak Makanan'},
+  {day:11, no:241, emoji:'🧟', title:'Neanderthal dan Denisovan (sepupu kita)'},
+  {day:12, no:242, emoji:'👤', title:'Lahirnya Homo Sapiens (Manusia Modern)'},
+  {day:13, no:243, emoji:'🧠', title:'Mengapa Otak Kita Jadi Sangat Besar?'},
+  {day:14, no:244, emoji:'🌍', title:'Review & Petualangan di Afrika Purba'},
+  {day:15, no:245, emoji:'🌾', title:'Revolusi Pertanian (dari berburu ke bertani)'},
+  {day:16, no:246, emoji:'🏘️', title:'Lahirnya Desa dan Kota Pertama'},
+  {day:17, no:247, emoji:'🌊', title:'Sungai Nil, Mesopotamia, dan Indus'},
+  {day:18, no:248, emoji:'🛞', title:'Penemuan Tulisan dan Roda'},
+  {day:19, no:249, emoji:'🕌', title:'Piramida, Kerajaan, dan Raja Pertama'},
+  {day:20, no:250, emoji:'🌍', title:'Perdagangan dan Pertukaran Budaya'},
+  {day:21, no:251, emoji:'⚔️', title:'Perang dan Kerja Sama di Zaman Purba'},
+  {day:22, no:252, emoji:'⚒️', title:'Zaman Logam, Besi, dan Teknologi Awal'},
+  {day:23, no:253, emoji:'📚', title:'Penemuan Ilmu Pengetahuan dan Filsafat'},
+  {day:24, no:254, emoji:'⛵', title:'Zaman Penjelajahan dan Kolonial'},
+  {day:25, no:255, emoji:'🏭', title:'Revolusi Industri (Mesin Uap & Pabrik)'},
+  {day:26, no:256, emoji:'💻', title:'Komputer, Internet, dan Dunia Digital'},
+  {day:27, no:257, emoji:'🔮', title:'Evolusi Manusia Masih Berlanjut?'},
+  {day:28, no:258, emoji:'🧘', title:'Menjadi Manusia yang Bijak di Zaman Sekarang'},
+  {day:29, no:259, emoji:'🗺️', title:'Harta Karun yang Ditinggalkan Leluhur Kita'},
+  {day:30, no:260, emoji:'🚀', title:'Petualangan Manusia Berikutnya – Menuju Bintang'},
+];
+
 // ═══ WEEK LABELS ═══
 const CODING_WEEK_LABELS = [
   {week:1,label:'Minggu 1',sub:'Petualangan Teknologi Awal',emoji:'🖥️',wclass:'cw1'},
@@ -697,12 +805,13 @@ const SAINS_WEEK_LABELS = [
   {week:5,label:'Minggu 5',sub:'Tumbuhan, Cahaya & Impian Sains',emoji:'🌈',wclass:'sw5'},
 ];
 const ADVENTURE_WEEK_LABELS = [
-  {week:1,label:'Week 1',sub:'The First Magic — Awal Petualangan',emoji:'🌟',wclass:'aw1'},
-  {week:2,label:'Week 2',sub:'Enchanted Places — Tempat Ajaib',emoji:'🏰',wclass:'aw2'},
-  {week:3,label:'Week 3',sub:'Friends & Feelings — Sahabat Ajaib',emoji:'🤗',wclass:'aw3'},
-  {week:4,label:'Week 4',sub:'Great Journeys — Petualangan Besar',emoji:'🗺️',wclass:'aw4'},
-  {week:5,label:'Week 5',sub:'The Greatest Magic — Keajaiban Terbesar',emoji:'✨',wclass:'aw5'},
+  {week:1,label:'Minggu 1',sub:'Kapten Cerdas dan Lautan Digital',emoji:'🧭',wclass:'aw1'},
+  {week:2,label:'Minggu 2',sub:'Pulau Digital, Viral, dan Kebenaran',emoji:'🌐',wclass:'aw2'},
+  {week:3,label:'Minggu 3',sub:'Keselamatan dan Perlindungan',emoji:'🛟',wclass:'aw3'},
+  {week:4,label:'Minggu 4',sub:'Menjadi Nahkoda yang Bijak',emoji:'⚓',wclass:'aw4'},
+  {week:5,label:'Minggu 5',sub:'Penutup & Refleksi Lautan Digital',emoji:'🌟',wclass:'aw5'},
 ];
+const DIGITAL_WEEK_LABELS = ADVENTURE_WEEK_LABELS;
 const HARDWARE_WEEK_LABELS = [
   {week:1,label:'Minggu 1',sub:'Bagian Utama Komputer',emoji:'🖥️',wclass:'hw1'},
   {week:2,label:'Minggu 2',sub:'Ukuran Data (Satu per Satu)',emoji:'📊',wclass:'hw2'},
@@ -715,6 +824,13 @@ const AI_WEEK_LABELS = [
   {week:2,label:'Minggu 2',sub:'Perjalanan AI Modern (Hari 8–14)',emoji:'🚂',wclass:'aiw2'},
   {week:3,label:'Minggu 3',sub:'Cara Kerja AI + Tier AI (Hari 15–21)',emoji:'🧬',wclass:'aiw3'},
   {week:4,label:'Minggu 4',sub:'AI di Hidup Kita & Masa Depan (Hari 22–30)',emoji:'🌍',wclass:'aiw4'},
+];
+const EVOLUSI_WEEK_LABELS = [
+  {week:1,label:'Minggu 1',sub:'Awal Sejarah Manusia & Alam',emoji:'🌿',wclass:'ev1'},
+  {week:2,label:'Minggu 2',sub:'Perubahan Hidup & Revolusi Besar',emoji:'🔥',wclass:'ev2'},
+  {week:3,label:'Minggu 3',sub:'Budaya, Teknologi, dan Penemuan',emoji:'🏛️',wclass:'ev3'},
+  {week:4,label:'Minggu 4',sub:'Masa Depan Manusia & Evolusi Lanjutan',emoji:'🚀',wclass:'ev4'},
+  {week:5,label:'Minggu 5',sub:'Dari Masa Lalu ke Era Baru',emoji:'🦴',wclass:'ev5'},
 ];
 
 // ═══ MOTIVATIONS ═══
@@ -746,13 +862,13 @@ const SAINS_MOTIVATIONS = [
   '"Dari atom terkecil hingga galaksi terluas — semuanya menunggumu! 🌌🚀"',
 ];
 const ADVENTURE_MOTIVATIONS = [
-  '"Every story is a door to a magical world! Open it, Aslan! 🚪✨"',
-  '"Magic is real when you read — let your imagination fly! 🧚📖"',
-  '"The best adventures start with a single page! Turn it, brave reader! 🌟🗺️"',
-  '"Dragons, castles, and faraway stars are waiting for you! 🐉⭐"',
-  '"Reading makes your heart bold and your mind brave! 🦁💫"',
-  '"Every hero in every story was once just a reader like you! 🏆📚"',
-  '"The greatest magic of all? A good book! Read on, Aslan! ✨🌈"',
+  '"Baca Lautan Digital untuk jadi kapten yang bijak! 🌊🧭"',
+  '"Setiap hari adalah pelayaran baru di dunia digital. Lanjutkan, Aslan! 🚢✨"',
+  '"Temukan kebenaran di dasar laut digital dan jangan sampai terjebak sampah. 🕵️‍♂️💡"',
+  '"Belajar aman berlayar di internet itu keren! Selamatkan dirimu dan temanmu. 🛟🤝"',
+  '"Konten bagus adalah harta karun. Baca terus agar kamu bisa membuatnya! 🎨💎"',
+  '"Jaga privasimu seperti kunci kapal. Lautan digital aman dimulai dari kamu! 🔐⚓"',
+  '"Lautan Digital tidak pernah berhenti. Jadilah kapten cerdas selamanya! 🌟📚"',
 ];
 const HARDWARE_MOTIVATIONS = [
   '"Mengerti cara kerja komputer = kamu lebih pintar dari kebanyakan orang! 🖥️⚡"',
@@ -772,21 +888,34 @@ const AI_MOTIVATIONS = [
   '"Dari Tier 1 hingga ASI — kamu tahu semuanya, Aslan Sang Ahli AI! 🎯🌌"',
   '"Masa depan milik mereka yang mengerti teknologi. Masa depan milikmu! 💡🚀"',
 ];
+const EVOLUSI_MOTIVATIONS = [
+  '"Setiap bab Evolusi membawa kita lebih dekat memahami siapa kita sebenarnya. Teruslah membaca! 🦴✨"',
+  '"Perjalanan manusia dimulai di masa lalu — kamu sedang membukanya kembali. 📖🌍"',
+  '"Buku Evolusi adalah cermin untuk masa depanmu. Baca hari ini, lihat esok! 🔮📚"',
+  '"Dari tulang ke teknologi, setiap cerita membuatmu lebih bijak. Lanjutkan! 💡🧠"',
+  '"Menemukan jejak dunia lama bisa membantumu mencipta masa depan baru. 🚀🌿"',
+  '"Pelajari evolusi, dan kamu akan memahami perubahan dalam dirimu sendiri. 🌱🦴"',
+  '"Setiap halaman Evolusi adalah satu langkah ke puncak pengetahuan. Tetap semangat! 🏔️📘"',
+];
 
 // ═══ START DATES ═══
 const ENGLISH_START_DATE   = new Date('2026-05-17T00:00:00');
 const SAINS_START_DATE     = new Date('2026-06-02T00:00:00');
 const ADVENTURE_START_DATE = new Date('2026-06-16T00:00:00');
+const DIGITAL_START_DATE   = new Date('2026-07-01T00:00:00');
 const HARDWARE_START_DATE  = new Date('2026-06-01T00:00:00');
 const AI_START_DATE        = new Date('2026-06-01T00:00:00');
+const EVOLUSI_START_DATE   = new Date('2026-07-01T00:00:00');
 
 // ═══ STATE ═══
 let codingReadBooks   = {};
 let englishReadBooks  = {};
 let sainsReadBooks    = {};
 let adventureReadBooks= {};
+let digitalReadBooks  = {};
 let hardwareReadBooks = {};
 let aiReadBooks       = {};
+let evolusiReadBooks  = {};
 let codingStartDate   = null;
 
 // Keep these collections locked and reset for release
@@ -818,7 +947,7 @@ function hasStarted(startDate) {
 
 function getWeekClass(day, type) {
   const w = day <= 7 ? 1 : day <= 14 ? 2 : day <= 21 ? 3 : day <= 28 ? 4 : 5;
-  const prefixes = {coding:'cw', english:'ew', sains:'sw', adventure:'aw', hardware:'hw', ai:'aiw'};
+  const prefixes = {coding:'cw', english:'ew', sains:'sw', adventure:'aw', hardware:'hw', ai:'aiw', evolusi:'ev'};
   // AI only has 4 weeks (30 books, week 4 covers days 22-30)
   if(type === 'ai') {
     const aw = day <= 7 ? 1 : day <= 14 ? 2 : day <= 21 ? 3 : 4;
@@ -834,15 +963,19 @@ function initAll(callback) {
     ENGLISH_REF.once('value'),
     SAINS_REF.once('value'),
     ADVENTURE_REF.once('value'),
+    DIGITAL_REF.once('value'),
     HARDWARE_REF.once('value'),
     AI_REF.once('value'),
-  ]).then(([cSnap, eSnap, sSnap, aSnap, hwSnap, aiSnap]) => {
+    EVOLUSI_REF.once('value'),
+  ]).then(([cSnap, eSnap, sSnap, aSnap, dSnap, hwSnap, aiSnap, evSnap]) => {
     const cData  = cSnap.val()  || {};
     const eData  = eSnap.val()  || {};
     const sData  = sSnap.val()  || {};
     const aData  = aSnap.val()  || {};
+    const dData  = dSnap.val()  || {};
     const hwData = hwSnap.val() || {};
     const aiData = aiSnap.val() || {};
+    const evData = evSnap.val() || {};
     if (cData.startDate) { codingStartDate = new Date(cData.startDate); }
     else { codingStartDate = new Date(); codingStartDate.setHours(0,0,0,0); CODING_REF.child('startDate').set(codingStartDate.toISOString()); }
     codingReadBooks    = cData.readBooks  || {};
@@ -850,32 +983,38 @@ function initAll(callback) {
     sainsReadBooks     = sData.readBooks  || {};
     // load adventure/hardware/ai from firebase if available, fall back to empty object
     adventureReadBooks = aData.readBooks  || {};
+    digitalReadBooks   = dData.readBooks  || {};
     hardwareReadBooks  = hwData.readBooks || {};
     aiReadBooks        = aiData.readBooks || {};
+    evolusiReadBooks   = evData.readBooks || {};
     callback();
   }).catch(() => {
     codingStartDate    = getLocalDate('aslan_library_start');
     codingReadBooks    = getLocalBooks('aslan_library_v2');
     englishReadBooks   = getLocalBooks('aslan_english_v1');
     sainsReadBooks     = getLocalBooks('aslan_sains_v1');
-    // restore adventure/hardware/ai from localStorage as fallback
+    // restore adventure/hardware/ai/evolusi from localStorage as fallback
     adventureReadBooks = getLocalBooks('aslan_adventure_v1');
+    digitalReadBooks   = getLocalBooks('aslan_digital_v1');
     hardwareReadBooks  = getLocalBooks('aslan_hardware_v1');
     aiReadBooks        = getLocalBooks('aslan_ai_v1');
+    evolusiReadBooks   = getLocalBooks('aslan_evolusi_v1');
     callback();
   });
 }
 
 function markRead(day, type) {
-  const refMap = {coding:CODING_REF, english:ENGLISH_REF, sains:SAINS_REF, adventure:ADVENTURE_REF, hardware:HARDWARE_REF, ai:AI_REF};
-  const stateMap = {coding:codingReadBooks, english:englishReadBooks, sains:sainsReadBooks, adventure:adventureReadBooks, hardware:hardwareReadBooks, ai:aiReadBooks};
+  const refMap = {coding:CODING_REF, english:ENGLISH_REF, sains:SAINS_REF, adventure:ADVENTURE_REF, digital:DIGITAL_REF, hardware:HARDWARE_REF, ai:AI_REF, evolusi:EVOLUSI_REF};
+  const stateMap = {coding:codingReadBooks, english:englishReadBooks, sains:sainsReadBooks, adventure:adventureReadBooks, digital:digitalReadBooks, hardware:hardwareReadBooks, ai:aiReadBooks, evolusi:evolusiReadBooks};
   const toastMap = {
     coding:   d => '💻 Buku Coding ke-'+d+' selesai! +XP! 🌟',
     english:  d => '🇬🇧 English Book #'+d+' done! Great job! ⭐',
     sains:    d => '🔬 Buku Sains #'+(d+200)+' selesai! Keren! 🧪',
-    adventure:d => '✨ Adventure Book #'+(d+300)+' done! Magical! 🌟',
+    adventure:d => '✨ Adventure Book #'+(d+130)+' selesai! Magical! 🌟',
+    digital:  d => '🌊 Lautan Digital #'+(d+300)+' selesai! Hebat! 🚀',
     hardware: d => '🖥️ Buku Hardware #'+(d+400)+' selesai! Mantap! 💡',
     ai:       d => '🤖 Buku AI #'+(d+500)+' selesai! Luar biasa! 🚀',
+    evolusi:  d => '🦴 Buku Evolusi #'+(d+230)+' selesai! Mantap! 🌟',
   };
   stateMap[type][day] = { readAt: Date.now() };
   refMap[type].child('readBooks/'+day).set({ readAt: Date.now() }).catch(() => {
@@ -897,8 +1036,8 @@ function getLocalDate(key) {
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.collection-section').forEach(s => s.classList.remove('active'));
-  const sectionMap = {coding:'codingSection',english:'englishSection',sains:'sainsSection',adventure:'adventureSection',hardware:'hardwareSection',ai:'aiSection'};
-  const tabMap = {coding:'.coding-tab',english:'.english-tab',sains:'.sains-tab',adventure:'.adventure-tab',hardware:'.hardware-tab',ai:'.ai-tab'};
+  const sectionMap = {coding:'codingSection',english:'englishSection',sains:'sainsSection',adventure:'adventureSection',digital:'digitalSection',hardware:'hardwareSection',ai:'aiSection',evolusi:'evolusiSection'};
+  const tabMap = {coding:'.coding-tab',english:'.english-tab',sains:'.sains-tab',adventure:'.adventure-tab',digital:'.digital-tab',hardware:'.hardware-tab',ai:'.ai-tab',evolusi:'.evolusi-tab'};
   document.querySelector(tabMap[tab]).classList.add('active');
   document.getElementById(sectionMap[tab]).classList.add('active');
 }
@@ -916,16 +1055,20 @@ function renderProgressBars() {
     english:  Object.keys(englishReadBooks).length,
     sains:    Object.keys(sainsReadBooks).length,
     adventure:Object.keys(adventureReadBooks).length,
+    digital:  Object.keys(digitalReadBooks).length,
     hardware: Object.keys(hardwareReadBooks).length,
     ai:       Object.keys(aiReadBooks).length,
+    evolusi:  Object.keys(evolusiReadBooks).length,
   };
   const bars = [
     {label:'💻 Coding',    id:'coding',    cls:'coding-progress'},
     {label:'🇬🇧 English',  id:'english',   cls:'english-progress'},
     {label:'🔬 Sains',     id:'sains',     cls:'sains-progress'},
     {label:'✨ Adventure', id:'adventure', cls:'adventure-progress'},
+    {label:'🌊 Lautan Digital', id:'digital', cls:'digital-progress'},
     {label:'🖥️ Hardware',  id:'hardware',  cls:'hardware-progress'},
     {label:'🤖 AI',        id:'ai',        cls:'ai-progress'},
+    {label:'🦴 Evolusi',   id:'evolusi',   cls:'evolusi-progress'},
   ];
   const container = document.getElementById('progressBars');
   container.innerHTML = bars.map(b => `
@@ -942,9 +1085,9 @@ function renderProgressBars() {
 
 // ═══ RENDER STATS ═══
 function renderStats() {
-  const startDates = {coding:codingStartDate, english:ENGLISH_START_DATE, sains:SAINS_START_DATE, adventure:ADVENTURE_START_DATE, hardware:HARDWARE_START_DATE, ai:AI_START_DATE};
-  const reads = {coding:codingReadBooks, english:englishReadBooks, sains:sainsReadBooks, adventure:adventureReadBooks, hardware:hardwareReadBooks, ai:aiReadBooks};
-  const ids = {coding:'c', english:'e', sains:'s', adventure:'a', hardware:'hw', ai:'ai'};
+  const startDates = {coding:codingStartDate, english:ENGLISH_START_DATE, sains:SAINS_START_DATE, adventure:ADVENTURE_START_DATE, digital:DIGITAL_START_DATE, hardware:HARDWARE_START_DATE, ai:AI_START_DATE, evolusi:EVOLUSI_START_DATE};
+  const reads = {coding:codingReadBooks, english:englishReadBooks, sains:sainsReadBooks, adventure:adventureReadBooks, digital:digitalReadBooks, hardware:hardwareReadBooks, ai:aiReadBooks, evolusi:evolusiReadBooks};
+  const ids = {coding:'c', english:'e', sains:'s', adventure:'a', digital:'d', hardware:'hw', ai:'ai', evolusi:'ev'};
 
   for(const [type, prefix] of Object.entries(ids)) {
     const started = hasStarted(startDates[type]);
@@ -963,8 +1106,10 @@ function renderMotivations() {
   document.getElementById('englishMotivation').textContent  = ENGLISH_MOTIVATIONS[idx % ENGLISH_MOTIVATIONS.length];
   document.getElementById('sainsMotivation').textContent    = SAINS_MOTIVATIONS[idx % SAINS_MOTIVATIONS.length];
   document.getElementById('adventureMotivation').textContent= ADVENTURE_MOTIVATIONS[idx % ADVENTURE_MOTIVATIONS.length];
+  document.getElementById('digitalMotivation').textContent  = DIGITAL_MOTIVATIONS[idx % DIGITAL_MOTIVATIONS.length];
   document.getElementById('hardwareMotivation').textContent = HARDWARE_MOTIVATIONS[idx % HARDWARE_MOTIVATIONS.length];
   document.getElementById('aiMotivation').textContent       = AI_MOTIVATIONS[idx % AI_MOTIVATIONS.length];
+  document.getElementById('evolusiMotivation').textContent  = EVOLUSI_MOTIVATIONS[idx % EVOLUSI_MOTIVATIONS.length];
 }
 
 // ═══ COLOR MAP ═══
@@ -975,6 +1120,7 @@ const colorMap = {
   aw1:['#6A1B9A','#4A148C'],aw2:['#00695C','#004D40'],aw3:['#E65100','#BF360C'],aw4:['#880E4F','#4A148C'],aw5:['#1B5E20','#33691E'],
   hw1:['#1565C0','#0D47A1'],hw2:['#2E7D32','#1B5E20'],hw3:['#E65100','#BF360C'],hw4:['#6A1B9A','#4A148C'],hw5:['#00695C','#004D40'],
   aiw1:['#006064','#004D40'],aiw2:['#2E7D32','#1B5E20'],aiw3:['#E65100','#BF360C'],aiw4:['#6A1B9A','#4A148C'],
+  ev1:['#4E342E','#3E2723'],ev2:['#6D4C41','#5D4037'],ev3:['#3E2723','#1B1B1B'],ev4:['#263238','#1A242F'],ev5:['#4A148C','#311B92'],
 };
 
 // ═══ RENDER TODAY HIGHLIGHT ═══
@@ -984,20 +1130,23 @@ function renderTodayHighlight(books, readBooks, startDate, containerId, type) {
     if(!hasStarted(startDate) && !TEST_UNLOCK_TYPES[type]) {
     // For Sains we skip the large coming-soon hero card (user requested deletion)
     if(type === 'sains') { container.innerHTML = ''; return; }
-    const csClassMap = {sains:'sains-cs',adventure:'adventure-cs',hardware:'hardware-cs',ai:'ai-cs'};
-    const csEmojiMap = {sains:'🔬',adventure:'✨',hardware:'🖥️',ai:'🤖'};
+    const csClassMap = {sains:'sains-cs',adventure:'adventure-cs',digital:'adventure-cs',hardware:'hardware-cs',ai:'ai-cs'};
+    const csEmojiMap = {sains:'🔬',adventure:'✨',digital:'🌊',hardware:'🖥️',ai:'🤖'};
     const csTitleMap = {
       sains:    'KOLEKSI SAINS &<br>PETUALANGAN',
       adventure:'ASLAN\'S ENGLISH<br>ADVENTURE',
+      digital:  'LAUTAN<br>DIGITAL',
       hardware: 'PETUALANGAN DI<br>KOMPUTER AJAIB',
       ai:       'PETUALANGAN DI<br>NEGERI AI',
     };
-    const csSubMap = {sains:'30 buku sains seru menunggumu!',adventure:'30 magical English stories!',hardware:'30 buku hardware keren!',ai:'30 buku AI menunggumu!'};
+    const csSubMap = {sains:'30 buku sains seru menunggumu!',adventure:'30 cerita petualangan seru menunggumu!',digital:'30 cerita Lautan Digital dari halaman 301 sampai 330!',hardware:'30 buku hardware keren!',ai:'30 buku AI menunggumu!',evolusi:'30 buku evolusi haus ilmu menunggumu!'};
     const csDateMap = {
       sains:'📅 Mulai: 2 Juni 2026',
       adventure:'📅 Mulai: 16 Juni 2026',
+      digital:'📅 Mulai: 1 Juli 2026',
       hardware:'📅 Mulai: 1 Juni 2026',
       ai:'📅 Mulai: 1 Juni 2026',
+      evolusi:'📅 Mulai: 1 Juli 2026',
     };
     const cs = csClassMap[type] || '';
     container.innerHTML = `
@@ -1017,14 +1166,22 @@ function renderTodayHighlight(books, readBooks, startDate, containerId, type) {
   const wclass = getWeekClass(todayDay, type);
   const [c1, c2] = colorMap[wclass] || ['#555','#333'];
 
-  const labelMap  = {coding:'BUKU CODING HARI INI',english:'ENGLISH BOOK TODAY',sains:'BUKU SAINS HARI INI',adventure:'ADVENTURE BOOK TODAY',hardware:'BUKU HARDWARE HARI INI',ai:'BUKU AI HARI INI'};
-  const btnClsMap = {coding:'coding-btn',english:'english-btn',sains:'sains-btn',adventure:'adventure-btn',hardware:'hardware-btn',ai:'ai-btn'};
-  const btnTxtMap = {coding:'📖 BACA SEKARANG!',english:'📖 READ NOW!',sains:'🔬 BACA SEKARANG!',adventure:'✨ READ NOW!',hardware:'🖥️ BACA SEKARANG!',ai:'🤖 BACA SEKARANG!'};
+  const labelMap  = {coding:'BUKU CODING HARI INI',english:'ENGLISH BOOK TODAY',sains:'BUKU SAINS HARI INI',adventure:'BUKU ADVENTURE HARI INI',digital:'BUKU LAUTAN DIGITAL HARI INI',hardware:'BUKU HARDWARE HARI INI',ai:'BUKU AI HARI INI',evolusi:'BUKU EVOLUSI HARI INI'};
+  const btnClsMap = {coding:'coding-btn',english:'english-btn',sains:'sains-btn',adventure:'adventure-btn',digital:'digital-btn',hardware:'hardware-btn',ai:'ai-btn',evolusi:'evolusi-btn'};
+  const btnTxtMap = {coding:'📖 BACA SEKARANG!',english:'📖 READ NOW!',sains:'🔬 BACA SEKARANG!',adventure:'✨ READ NOW!',digital:'🌊 READ NOW!',hardware:'🖥️ BACA SEKARANG!',ai:'🤖 BACA SEKARANG!',evolusi:'🦴 BACA SEKARANG!'};
   const flipNum = type === 'coding'
     ? todayDay
     : type === 'english'
       ? (100 + todayDay)
-      : (type === 'hardware' ? (30 + todayDay) : (type === 'ai' ? (60 + todayDay) : (type === 'adventure' ? (130 + todayDay) : book.no)));
+      : type === 'hardware'
+        ? (30 + todayDay)
+        : type === 'ai'
+          ? (60 + todayDay)
+          : type === 'digital'
+            ? (300 + todayDay)
+            : type === 'adventure'
+              ? (130 + todayDay)
+              : (type === 'evolusi' ? (230 + todayDay) : book.no);
 
   container.innerHTML = `
     <div class="today-book-card" style="background:linear-gradient(135deg,${c1},${c2});border-color:${c2};">
@@ -1043,15 +1200,15 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, type)
   const container = document.getElementById(containerId);
   container.innerHTML = '';
 
-  const statusClsMap = {coding:'status-today',english:'status-today-en',sains:'status-today-sains',adventure:'status-today-adv',hardware:'status-today-hw',ai:'status-today-ai'};
-  const todayLblMap  = {coding:'📖 Hari Ini!',english:'📖 Today!',sains:'🔬 Hari Ini!',adventure:'✨ Today!',hardware:'🖥️ Hari Ini!',ai:'🤖 Hari Ini!'};
-  const bacaLblMap   = {coding:'📚 Baca!',english:'📖 Read!',sains:'🔬 Baca!',adventure:'✨ Read!',hardware:'🖥️ Baca!',ai:'🤖 Baca!'};
+const statusClsMap = {coding:'status-today',english:'status-today-en',sains:'status-today-sains',adventure:'status-today-adv',digital:'status-today-adv',hardware:'status-today-hw',ai:'status-today-ai',evolusi:'status-today-ev'};
+      const todayLblMap  = {coding:'📖 Hari Ini!',english:'📖 Today!',sains:'🔬 Hari Ini!',adventure:'✨ Hari Ini!',digital:'🌊 Hari Ini!',hardware:'🖥️ Hari Ini!',ai:'🤖 Hari Ini!',evolusi:'🦴 Hari Ini!'};
+      const bacaLblMap   = {coding:'📚 Baca!',english:'📖 Read!',sains:'🔬 Baca!',adventure:'✨ Baca!',digital:'🌊 Baca!',hardware:'🖥️ Baca!',ai:'🤖 Baca!',evolusi:'🦴 Baca!'};
   const wclassMap    = type;
 
   if(!hasStarted(startDate) && !TEST_UNLOCK_TYPES[type]) {
     // Show coming-soon grid (all locked)
     const days = Math.max(0, Math.ceil((startDate - new Date().setHours(0,0,0,0)) / (1000*60*60*24)));
-    const csDateStrs = {sains:'2 Jun 2026',adventure:'16 Jun 2026',hardware:'1 Jun 2026',ai:'1 Jun 2026'};
+    const csDateStrs = {sains:'2 Jun 2026',adventure:'16 Jun 2026',digital:'1 Jul 2026',hardware:'1 Jun 2026',ai:'1 Jun 2026',evolusi:'1 Jul 2026'};
     const csDate = csDateStrs[type] || '';
     const lockMsg = `📅 Terbuka ${csDate}! Sabar ya! 😊`;
 
@@ -1074,7 +1231,17 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, type)
             ? book.day
             : type === 'english'
               ? (100 + book.day)
-              : (type === 'hardware' ? (30 + book.day) : (type === 'ai' ? (60 + book.day) : (type === 'adventure' ? (130 + book.day) : book.no)));
+              : type === 'hardware'
+                ? (30 + book.day)
+                : type === 'ai'
+                  ? (60 + book.day)
+                  : type === 'digital'
+                    ? (300 + book.day)
+                    : type === 'adventure'
+                      ? (130 + book.day)
+                      : type === 'evolusi'
+                        ? (230 + book.day)
+                        : book.no;
           card.innerHTML = `
             <div class="book-spine spine-${wclass}"></div>
             <div class="book-cover">
@@ -1116,7 +1283,17 @@ function renderBooks(books, weekLabels, readBooks, startDate, containerId, type)
         ? book.day
         : type === 'english'
           ? (100 + book.day)
-          : (type === 'hardware' ? (30 + book.day) : (type === 'ai' ? (60 + book.day) : (type === 'adventure' ? (130 + book.day) : book.no)));
+          : type === 'hardware'
+            ? (30 + book.day)
+            : type === 'ai'
+              ? (60 + book.day)
+              : type === 'digital'
+                ? (300 + book.day)
+                : type === 'adventure'
+                  ? (130 + book.day)
+                  : type === 'evolusi'
+                    ? (230 + book.day)
+                    : book.no;
       const displayNum  = flipNum;
 
       const card = document.createElement('div');
@@ -1178,8 +1355,10 @@ function renderAll() {
     {books:ENGLISH_BOOKS,  wl:ENGLISH_WEEK_LABELS,  rb:englishReadBooks,   sd:ENGLISH_START_DATE,   th:'englishTodayHighlight',  bc:'englishBooksContainer',  type:'english'},
     {books:SAINS_BOOKS,    wl:SAINS_WEEK_LABELS,    rb:sainsReadBooks,     sd:SAINS_START_DATE,     th:'sainsTodayHighlight',    bc:'sainsBooksContainer',    type:'sains'},
     {books:ADVENTURE_BOOKS,wl:ADVENTURE_WEEK_LABELS,rb:adventureReadBooks, sd:ADVENTURE_START_DATE, th:'adventureTodayHighlight',bc:'adventureBooksContainer',type:'adventure'},
+    {books:DIGITAL_BOOKS,  wl:DIGITAL_WEEK_LABELS,  rb:digitalReadBooks,   sd:DIGITAL_START_DATE,  th:'digitalTodayHighlight',  bc:'digitalBooksContainer',  type:'digital'},
     {books:HARDWARE_BOOKS, wl:HARDWARE_WEEK_LABELS, rb:hardwareReadBooks,  sd:HARDWARE_START_DATE,  th:'hardwareTodayHighlight', bc:'hardwareBooksContainer', type:'hardware'},
     {books:AI_BOOKS,       wl:AI_WEEK_LABELS,       rb:aiReadBooks,        sd:AI_START_DATE,        th:'aiTodayHighlight',       bc:'aiBooksContainer',       type:'ai'},
+    {books:EVOLUSI_BOOKS,  wl:EVOLUSI_WEEK_LABELS,  rb:evolusiReadBooks,   sd:EVOLUSI_START_DATE,   th:'evolusiTodayHighlight',bc:'evolusiBooksContainer',type:'evolusi'},
   ];
   configs.forEach(c => {
     renderTodayHighlight(c.books, c.rb, c.sd, c.th, c.type);
@@ -1197,7 +1376,7 @@ function showToast(msg) {
 }
 
 // ═══ INIT ═══
-['codingBooksContainer','englishBooksContainer','sainsBooksContainer','adventureBooksContainer','hardwareBooksContainer','aiBooksContainer'].forEach(id => {
+['codingBooksContainer','englishBooksContainer','sainsBooksContainer','adventureBooksContainer','digitalBooksContainer','hardwareBooksContainer','aiBooksContainer','evolusiBooksContainer'].forEach(id => {
   document.getElementById(id).innerHTML = '<div style="text-align:center;padding:40px;color:#8D6E63;font-weight:700;">⏳ Memuat perpustakaan...</div>';
 });
 initAll(() => { renderAll(); });

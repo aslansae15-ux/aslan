@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulasi Rangkaian Seri – Lampu Natal vs Lab Circuit</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+    :root {
+      --red:    #E63946;
+      --green:  #2D6A4F;
+      --green-l:#52B788;
+      --gold:   #F4A261;
+      --gold-l: #FFD166;
+      --bg-xmas:#0D1F0F;
+      --card-xmas:#13280F;
+      --blue:   #1B4FD8;
+      --blue-l: #4A90D9;
+      --teal:   #0EA5E9;
+      --bg-lab: #050E1A;
+      --card-lab:#0A1929;
+      --white:  #F0F4F8;
+      --grey:   #94A3B8;
+      --radius: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #08101C;
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 2.5rem 1rem 1.5rem;
+      background: linear-gradient(180deg, #0d1a2a 0%, #08101C 100%);
+      border-bottom: 1px solid #1e2d3f;
+    }
+    header .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: .6rem;
+    }
+    header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.4rem, 4vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    header h1 span.xmas { color: var(--gold-l); }
+    header h1 span.lab  { color: var(--teal); }
+    header p.sub {
+      margin-top: .6rem;
+      color: var(--grey);
+      font-size: .9rem;
+      max-width: 560px;
+      margin-inline: auto;
+    }
+
+    /* ── LAYOUT ── */
+    .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 860px) {
+      .cols { grid-template-columns: 1fr; }
+    }
+
+    /* ── CARD BASE ── */
+    .card {
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .card-xmas { background: var(--card-xmas); border: 1px solid #2D6A4F55; }
+    .card-lab  { background: var(--card-lab);  border: 1px solid #1B4FD855; }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card-xmas .card-title { color: var(--gold-l); }
+    .card-lab  .card-title { color: var(--teal); }
+
+    /* ── WIRE LINE (decorative) ── */
+    .wire-container {
+      position: relative;
+      width: 100%;
+      overflow: visible;
+    }
+
+    /* ── XMAS LIGHTS ── */
+    #xmas-string {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: .5rem .25rem 1.2rem;
+      position: relative;
+    }
+    #xmas-string::before {
+      content: '';
+      position: absolute;
+      top: 24px; left: 12px; right: 12px;
+      height: 3px;
+      background: #444;
+      z-index: 0;
+    }
+    .bulb-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .bulb-wire {
+      width: 2px;
+      height: 14px;
+      background: #555;
+    }
+    .bulb {
+      width: 24px;
+      height: 34px;
+      border-radius: 12px 12px 4px 4px;
+      background: #333;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      border: 2px solid #555;
+    }
+    .bulb::after {
+      content: '';
+      display: block;
+      width: 12px;
+      height: 6px;
+      background: #444;
+      border-radius: 2px;
+      margin: 0 auto;
+      margin-top: -2px;
+    }
+    .bulb.on {
+      border-color: currentColor;
+    }
+    .bulb.on.c0  { background: #ff4444; color: #ff4444; box-shadow: 0 0 12px 5px #ff444488, 0 0 24px 8px #ff444444; }
+    .bulb.on.c1  { background: #44ff44; color: #44ff44; box-shadow: 0 0 12px 5px #44ff4488, 0 0 24px 8px #44ff4444; }
+    .bulb.on.c2  { background: #ffff44; color: #ffff44; box-shadow: 0 0 12px 5px #ffff4488, 0 0 24px 8px #ffff4444; }
+    .bulb.on.c3  { background: #4444ff; color: #4444ff; box-shadow: 0 0 12px 5px #4444ff88, 0 0 24px 8px #4444ff44; }
+    .bulb.on.c4  { background: #ff44ff; color: #ff44ff; box-shadow: 0 0 12px 5px #ff44ff88, 0 0 24px 8px #ff44ff44; }
+    .bulb.on.c5  { background: #44ffff; color: #44ffff; box-shadow: 0 0 12px 5px #44ffff88, 0 0 24px 8px #44ffff44; }
+    .bulb.broken { background: #444; border-color: #ff4444; opacity: .5; cursor: not-allowed; }
+    .bulb.broken::before { content: '✕'; color: #ff4444; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: .65rem; font-weight: bold; }
+    .bulb-label { font-size: .6rem; color: #888; margin-top: 2px; font-family: 'Space Mono', monospace; }
+
+    /* ── INFO STRIP ── */
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .5rem;
+    }
+    .info-box {
+      border-radius: 8px;
+      padding: .65rem .75rem;
+      text-align: center;
+    }
+    .info-box .val {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .info-box .lbl {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-top: 2px;
+    }
+    .card-xmas .info-box { background: #1a3a1a; }
+    .card-xmas .info-box .val { color: var(--gold-l); }
+    .card-xmas .info-box .lbl { color: #7aad7a; }
+    .card-lab  .info-box { background: #091525; }
+    .card-lab  .info-box .val { color: var(--teal); }
+    .card-lab  .info-box .lbl { color: #5b8fa8; }
+
+    /* ── STATUS BADGE ── */
+    .status-badge {
+      padding: .4rem .9rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      transition: all .3s;
+    }
+    .badge-on  { background: #1a4a1a; color: #66ff66; border: 1px solid #66ff6655; }
+    .badge-off { background: #3a1a1a; color: #ff6666; border: 1px solid #ff666655; }
+    .badge-lab-on  { background: #0a2a3a; color: #66ddff; border: 1px solid #66ddff55; }
+    .badge-lab-off { background: #1a0a2a; color: #aa88ff; border: 1px solid #aa88ff55; }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    button {
+      font-family: 'Inter', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: .45rem .9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+    button:hover { opacity: .85; transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .btn-xmas-green { background: #2D6A4F; color: #d0ffea; }
+    .btn-xmas-red   { background: #7a1a1a; color: #ffd0d0; }
+    .btn-xmas-gold  { background: #7a5a0a; color: #fff0a0; }
+
+    .btn-lab-blue   { background: #1B4FD8; color: #d0e8ff; }
+    .btn-lab-teal   { background: #0a4a5a; color: #a0f0ff; }
+
+    /* ── TOGGLE SWITCH ── */
+    .toggle-wrap { display: flex; align-items: center; gap: .6rem; font-size: .8rem; }
+    .toggle-switch { position: relative; width: 42px; height: 22px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: #2a3a2a; border-radius: 22px; cursor: pointer;
+      transition: .3s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 16px; height: 16px; left: 3px; bottom: 3px;
+      background: #666; border-radius: 50%; transition: .3s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #2D6A4F; }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px); background: var(--gold-l);
+    }
+
+    /* ── LAB CIRCUIT SVG AREA ── */
+    #circuit-svg {
+      width: 100%;
+      border-radius: 12px;
+      background: #060f1c;
+      border: 1px solid #1e3050;
+    }
+
+    /* ── SLIDERS ── */
+    .slider-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .6rem .9rem;
+    }
+    .slider-item label {
+      font-size: .7rem;
+      color: #7aafcf;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .25rem;
+    }
+    .slider-item label span { color: var(--teal); font-family: 'Space Mono', monospace; }
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 5px;
+      background: #1e3050;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--teal);
+      cursor: pointer;
+    }
+
+    /* ── LAB BULB VISUAL ── */
+    .lab-bulbs-row {
+      display: flex;
+      justify-content: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      padding: .5rem 0;
+    }
+    .lab-bulb-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .25rem;
+    }
+    .lab-bulb-svg { width: 48px; height: 64px; }
+    .lab-volt-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      background: #091525;
+      color: var(--teal);
+      border: 1px solid #1e3a60;
+      border-radius: 4px;
+      padding: 2px 5px;
+    }
+    .lab-bulb-lbl { font-size: .6rem; color: var(--grey); }
+
+    /* ── LAB MAIN SWITCH ── */
+    .lab-switch-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      background: #060f1c;
+      border: 1px solid #1e3050;
+      border-radius: 10px;
+      padding: .6rem 1rem;
+    }
+    .lab-switch-label { font-size: .8rem; font-weight: 600; color: #7aafcf; }
+    .lab-switch-status { font-size: .75rem; }
+
+    /* ── EDUKATIF BOX ── */
+    .edu-box {
+      border-radius: 10px;
+      padding: .9rem 1rem;
+      font-size: .78rem;
+      line-height: 1.6;
+    }
+    .edu-box.xmas { background: #0f2710; border-left: 3px solid var(--green-l); color: #a8d5b0; }
+    .edu-box.lab  { background: #060f1c; border-left: 3px solid var(--teal); color: #7aafcf; }
+    .edu-box strong { color: var(--white); }
+    .edu-box .formula {
+      font-family: 'Space Mono', monospace;
+      background: #ffffff11;
+      padding: .25rem .5rem;
+      border-radius: 4px;
+      margin: .4rem 0;
+      display: block;
+      font-size: .72rem;
+    }
+
+    /* ── COMPARISON NOTE ── */
+    .compare-bar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem 2rem;
+    }
+    .compare-card {
+      background: #0a1628;
+      border: 1px solid #1B4FD855;
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+    }
+    .compare-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      color: var(--gold-l);
+      margin-bottom: .75rem;
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem 1.5rem;
+    }
+    @media (max-width: 500px) {
+      .compare-grid { grid-template-columns: 1fr; }
+      .slider-grid { grid-template-columns: 1fr; }
+    }
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: .5rem;
+      font-size: .75rem;
+      padding: .35rem 0;
+      border-bottom: 1px solid #1e2d3f;
+      align-items: center;
+    }
+    .compare-row:last-child { border: none; }
+    .compare-row .aspect { color: var(--grey); }
+    .compare-row .seri   { color: var(--gold-l); text-align: center; }
+    .compare-row .para   { color: var(--teal);   text-align: center; }
+    .compare-header { font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+    .compare-header .seri { color: var(--gold-l); }
+    .compare-header .para { color: var(--teal); }
+
+    /* ── SNOW PARTICLES (cosmetic) ── */
+    .snow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; overflow: hidden; }
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: #ffffffaa;
+      font-size: 0.8rem;
+      animation: snowfall linear infinite;
+      pointer-events: none;
+    }
+    @keyframes snowfall {
+      0%   { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── GLOW TEXT ── */
+    .glow-red  { text-shadow: 0 0 8px #ff4444aa; }
+    .glow-grn  { text-shadow: 0 0 8px #44ff44aa; }
+    .glow-teal { text-shadow: 0 0 8px #44ddffaa; }
+  </style>
+</head>
+<body>
+
+<!-- Snow -->
+<div class="snow" id="snow-container"></div>
+
+<header>
+  <div class="eyebrow">⚡ Simulasi Fisika Interaktif · Kelas VIII–X</div>
+  <h1>Perbandingan <span class="xmas">Lampu Natal</span> vs <span class="lab">Lab Circuit</span><br>dalam Rangkaian Seri</h1>
+  <p class="sub">Klik lampu, geser slider, dan lihat bagaimana hukum fisika bekerja secara nyata!</p>
+</header>
+
+<div class="cols">
+
+  <!-- ══════════════════════════════════════
+       KOLOM A — LAMPU NATAL
+  ══════════════════════════════════════ -->
+  <div class="card card-xmas">
+    <div class="card-title">🎄 Kolom A — Lampu Natal Rangkaian Seri</div>
+
+    <!-- Status -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+      <span id="xmas-status" class="status-badge badge-off">⚫ Rangkaian Mati</span>
+      <div class="toggle-wrap">
+        <label class="toggle-switch">
+          <input type="checkbox" id="xmas-power" onchange="xmasPowerToggle()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size:.8rem;color:#aaa;">Daya Utama</span>
+      </div>
+    </div>
+
+    <!-- String lampu -->
+    <div class="wire-container">
+      <div id="xmas-string"></div>
+    </div>
+
+    <!-- Info strip -->
+    <div class="info-strip">
+      <div class="info-box">
+        <div class="val" id="x-volt">24 V</div>
+        <div class="lbl">Total Tegangan</div>
+      </div>
+      <div class="info-box">
+        <div class="val" id="x-amp">0 mA</div>
+        <div class="lbl">Arus (sama semua)</div>
+      </div>
+      <div class="info-box">
+        <div class="val" id="x-count">12 / 12</div>
+        <div class="lbl">Lampu Aktif</div>
+      </div>
+    </div>
+
+    <!-- Tombol kontrol -->
+    <div class="btn-row">
+      <button class="btn-xmas-green" onclick="startBlink()">✨ Nyalakan Kelap-Kelip</button>
+      <button class="btn-xmas-red"   onclick="randomBurnOut()">🔥 Random Burn Out</button>
+      <button class="btn-xmas-gold"  onclick="resetXmas()">🔄 Reset Semua</button>
+    </div>
+
+    <!-- Edukatif -->
+    <div class="edu-box xmas">
+      <strong>🔴 Sifat Rangkaian Seri:</strong><br>
+      Semua lampu terhubung dalam satu jalur. Jika <em>satu lampu putus</em>, arus tidak bisa mengalir dan <strong>semua lampu mati</strong>. Klik lampu mana saja untuk mensimulasikan kerusakan!
+      <span class="formula">V_total = V₁ + V₂ + … + V₁₂ = 24 V</span>
+      <span class="formula">I = sama di setiap lampu (arus seri)</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       KOLOM B — LAB CIRCUIT
+  ══════════════════════════════════════ -->
+  <div class="card card-lab">
+    <div class="card-title">🔬 Kolom B — Lab Circuit Rangkaian Seri</div>
+
+    <!-- Status & main switch -->
+    <div class="lab-switch-row">
+      <div>
+        <div class="lab-switch-label">🔌 Saklar Utama</div>
+        <div id="lab-status-text" class="lab-switch-status" style="color:#aa88ff;">● Rangkaian Terbuka</div>
+      </div>
+      <button class="btn-lab-blue" id="lab-sw-btn" onclick="labToggleSwitch()">Tutup Saklar</button>
+      <span id="lab-status" class="status-badge badge-lab-off" style="margin-left:auto;">⬛ OFF</span>
+    </div>
+
+    <!-- Lab bulbs -->
+    <div class="lab-bulbs-row" id="lab-bulbs-row"></div>
+
+    <!-- Amperemeter -->
+    <div class="info-strip" style="grid-template-columns:1fr 1fr 1fr 1fr;">
+      <div class="info-box" style="grid-column:1/-1;">
+        <div class="val" id="lab-amp">I = 0.000 A</div>
+        <div class="lbl">⚡ Amperemeter — Arus sama di seluruh rangkaian</div>
+      </div>
+    </div>
+
+    <!-- Voltmeter baterai -->
+    <div class="info-strip">
+      <div class="info-box">
+        <div class="val" id="lab-batt">12.0 V</div>
+        <div class="lbl">🔋 Baterai</div>
+      </div>
+      <div class="info-box">
+        <div class="val" id="lab-rtotal">— Ω</div>
+        <div class="lbl">R Total</div>
+      </div>
+      <div class="info-box">
+        <div class="val" id="lab-power">0.00 W</div>
+        <div class="lbl">Daya Total</div>
+      </div>
+    </div>
+
+    <!-- Sliders resistansi -->
+    <div>
+      <div style="font-size:.72rem;color:#5b8fa8;margin-bottom:.4rem;font-weight:600;">⚙️ Atur Resistansi Lampu (Ω):</div>
+      <div class="slider-grid" id="slider-grid"></div>
+    </div>
+
+    <!-- Button -->
+    <div class="btn-row">
+      <button class="btn-lab-blue"  onclick="equalizeR()">⚖️ Samakan Resistansi</button>
+      <button class="btn-lab-teal"  onclick="randomR()">🎲 Resistansi Acak</button>
+    </div>
+
+    <!-- Edukatif -->
+    <div class="edu-box lab">
+      <strong>🔵 Hukum Kirchhoff & Ohm pada Rangkaian Seri:</strong><br>
+      Tegangan terbagi-bagi <em>sebanding dengan resistansi</em> tiap lampu. Lampu dengan R lebih besar mendapat tegangan lebih besar dan bersinar lebih terang.
+      <span class="formula">V_lampu = I × R_lampu</span>
+      <span class="formula">I = V_baterai ÷ (R₁ + R₂ + R₃ + R₄)</span>
+      <span class="formula">V₁ : V₂ : V₃ : V₄ = R₁ : R₂ : R₃ : R₄</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PERBANDINGAN SERI vs PARALEL
+══════════════════════════════════════ -->
+<div class="compare-bar">
+  <div class="compare-card">
+    <h3>📊 Perbandingan: Rangkaian Seri vs Paralel</h3>
+    <div class="compare-row compare-header">
+      <div class="aspect">Aspek</div>
+      <div class="seri">Seri 🎄</div>
+      <div class="para">Paralel 🔀</div>
+    </div>
+    <div class="compare-row">
+      <div class="aspect">Arus listrik</div>
+      <div class="seri">Sama di semua komponen</div>
+      <div class="para">Terbagi di tiap cabang</div>
+    </div>
+    <div class="compare-row">
+      <div class="aspect">Tegangan</div>
+      <div class="seri">Terbagi-bagi (V = V₁+V₂+…)</div>
+      <div class="para">Sama di tiap komponen</div>
+    </div>
+    <div class="compare-row">
+      <div class="aspect">Jika 1 lampu mati</div>
+      <div class="seri glow-red" style="color:#ff8888;">Semua mati 💀</div>
+      <div class="para glow-teal" style="color:#88ffdd;">Lainnya tetap nyala ✅</div>
+    </div>
+    <div class="compare-row">
+      <div class="aspect">R total vs R komponen</div>
+      <div class="seri">R_total > R tiap komponen</div>
+      <div class="para">R_total < R tiap komponen</div>
+    </div>
+    <div class="compare-row">
+      <div class="aspect">Contoh nyata</div>
+      <div class="seri">Lampu Natal lama 🎄</div>
+      <div class="para">Instalasi rumah 🏠</div>
+    </div>
+    <div class="compare-row">
+      <div class="aspect">Rumus R total</div>
+      <div class="seri" style="font-family:'Space Mono',monospace;font-size:.65rem;">R = R₁+R₂+…+Rₙ</div>
+      <div class="para" style="font-family:'Space Mono',monospace;font-size:.65rem;">1/R = 1/R₁+1/R₂+…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//   KOLOM A — LAMPU NATAL
+// ════════════════════════════════════════════
+const NUM_BULBS = 12;
+const COLORS = ['c0','c1','c2','c3','c4','c5'];
+const XMAS_VOLTAGE = 24;
+const XMAS_BULB_R  = 10; // ohm each
+
+let xmasState = {
+  power: false,
+  blinking: false,
+  broken: Array(NUM_BULBS).fill(false),
+  blinkPattern: Array(NUM_BULBS).fill(true),
+  blinkTimer: null,
+};
+
+function buildXmasString() {
+  const container = document.getElementById('xmas-string');
+  container.innerHTML = '';
+  for (let i = 0; i < NUM_BULBS; i++) {
+    const colorClass = COLORS[i % COLORS.length];
+    const wrap = document.createElement('div');
+    wrap.className = 'bulb-wrap';
+    wrap.innerHTML = `
+      <div class="bulb-wire"></div>
+      <div class="bulb ${colorClass}" id="bulb-${i}" onclick="toggleBulb(${i})" title="Klik untuk merusak lampu ${i+1}"></div>
+      <div class="bulb-label">L${i+1}</div>
+    `;
+    container.appendChild(wrap);
+  }
+}
+
+function toggleBulb(idx) {
+  if (!xmasState.power) return;
+  xmasState.broken[idx] = !xmasState.broken[idx];
+  updateXmasDisplay();
+}
+
+function xmasPowerToggle() {
+  xmasState.power = document.getElementById('xmas-power').checked;
+  if (!xmasState.power) {
+    clearInterval(xmasState.blinkTimer);
+    xmasState.blinking = false;
+    xmasState.blinkTimer = null;
+  }
+  updateXmasDisplay();
+}
+
+function anyBroken() {
+  return xmasState.broken.some(b => b);
+}
+
+function updateXmasDisplay() {
+  const on = xmasState.power && !anyBroken();
+  const statusEl = document.getElementById('xmas-status');
+
+  for (let i = 0; i < NUM_BULBS; i++) {
+    const el = document.getElementById(`bulb-${i}`);
+    const colorClass = COLORS[i % COLORS.length];
+    el.className = 'bulb ' + colorClass;
+    if (xmasState.broken[i]) {
+      el.className += ' broken';
+    } else if (on && xmasState.blinkPattern[i]) {
+      el.className += ' on';
+    }
+  }
+
+  const brokenCount = xmasState.broken.filter(Boolean).length;
+  const activeCount = NUM_BULBS - brokenCount;
+  document.getElementById('x-count').textContent = activeCount + ' / ' + NUM_BULBS;
+
+  if (!xmasState.power) {
+    statusEl.textContent = '⚫ Daya Mati';
+    statusEl.className = 'status-badge badge-off';
+    document.getElementById('x-amp').textContent = '0 mA';
+    document.getElementById('x-volt').textContent = XMAS_VOLTAGE + ' V';
+  } else if (anyBroken()) {
+    statusEl.textContent = '💀 Rangkaian Terbuka — Semua Mati!';
+    statusEl.className = 'status-badge badge-off';
+    document.getElementById('x-amp').textContent = '0 mA';
+    document.getElementById('x-volt').textContent = XMAS_VOLTAGE + ' V';
+  } else {
+    statusEl.textContent = '✅ Rangkaian Mengalir';
+    statusEl.className = 'status-badge badge-on';
+    const Rtotal = NUM_BULBS * XMAS_BULB_R;
+    const I = XMAS_VOLTAGE / Rtotal * 1000; // mA
+    document.getElementById('x-amp').textContent = I.toFixed(1) + ' mA';
+    document.getElementById('x-volt').textContent = XMAS_VOLTAGE + ' V';
+  }
+}
+
+let blinkStep = 0;
+function startBlink() {
+  if (!xmasState.power) {
+    document.getElementById('xmas-power').checked = true;
+    xmasState.power = true;
+  }
+  if (xmasState.blinkTimer) clearInterval(xmasState.blinkTimer);
+  xmasState.blinking = true;
+  xmasState.blinkTimer = setInterval(() => {
+    blinkStep++;
+    // Pattern: snake wave
+    for (let i = 0; i < NUM_BULBS; i++) {
+      xmasState.blinkPattern[i] = (i + blinkStep) % 3 !== 0;
+    }
+    updateXmasDisplay();
+  }, 300);
+}
+
+function randomBurnOut() {
+  if (!xmasState.power) {
+    document.getElementById('xmas-power').checked = true;
+    xmasState.power = true;
+  }
+  const active = [];
+  for (let i = 0; i < NUM_BULBS; i++) {
+    if (!xmasState.broken[i]) active.push(i);
+  }
+  if (active.length === 0) return;
+  const idx = active[Math.floor(Math.random() * active.length)];
+  xmasState.broken[idx] = true;
+  updateXmasDisplay();
+}
+
+function resetXmas() {
+  clearInterval(xmasState.blinkTimer);
+  xmasState = {
+    power: false,
+    blinking: false,
+    broken: Array(NUM_BULBS).fill(false),
+    blinkPattern: Array(NUM_BULBS).fill(true),
+    blinkTimer: null,
+  };
+  document.getElementById('xmas-power').checked = false;
+  blinkStep = 0;
+  updateXmasDisplay();
+}
+
+// ════════════════════════════════════════════
+//   KOLOM B — LAB CIRCUIT
+// ════════════════════════════════════════════
+const NUM_LAB = 4;
+const BATT_V  = 12;
+let labClosed = false;
+let labR = [30, 20, 40, 10]; // default resistances
+
+function buildLabBulbs() {
+  const row = document.getElementById('lab-bulbs-row');
+  row.innerHTML = '';
+  for (let i = 0; i < NUM_LAB; i++) {
+    const unit = document.createElement('div');
+    unit.className = 'lab-bulb-unit';
+    unit.innerHTML = `
+      <svg class="lab-bulb-svg" viewBox="0 0 48 64" id="lab-bulb-svg-${i}">
+        <!-- Glass -->
+        <ellipse cx="24" cy="26" rx="16" ry="18" fill="#0d1f30" stroke="#2a4a70" stroke-width="1.5"/>
+        <!-- Filament -->
+        <path d="M18 28 Q22 22 24 26 Q26 30 30 24" stroke="#aaa" stroke-width="1.5" fill="none" id="lab-filament-${i}"/>
+        <!-- Base -->
+        <rect x="16" y="42" width="16" height="8" rx="2" fill="#1e3050"/>
+        <rect x="18" y="50" width="5" height="6" rx="1" fill="#2a4070"/>
+        <rect x="25" y="50" width="5" height="6" rx="1" fill="#2a4070"/>
+        <!-- Glow overlay -->
+        <ellipse cx="24" cy="26" rx="14" ry="16" fill="transparent" id="lab-glow-${i}"/>
+        <!-- Shine -->
+        <ellipse cx="18" cy="20" rx="4" ry="3" fill="#ffffff08"/>
+      </svg>
+      <div class="lab-volt-badge" id="lab-volt-${i}">0.00 V</div>
+      <div class="lab-bulb-lbl">💡 L${i+1} (R${i+1})</div>
+    `;
+    row.appendChild(unit);
+  }
+}
+
+function buildSliders() {
+  const grid = document.getElementById('slider-grid');
+  grid.innerHTML = '';
+  for (let i = 0; i < NUM_LAB; i++) {
+    const item = document.createElement('div');
+    item.className = 'slider-item';
+    item.innerHTML = `
+      <label>💡 Lampu ${i+1} <span id="r-val-${i}">${labR[i]} Ω</span></label>
+      <input type="range" min="5" max="100" value="${labR[i]}" id="slider-${i}"
+             oninput="onSlider(${i}, this.value)">
+    `;
+    grid.appendChild(item);
+  }
+}
+
+function onSlider(i, val) {
+  labR[i] = parseInt(val);
+  document.getElementById(`r-val-${i}`).textContent = val + ' Ω';
+  updateLab();
+}
+
+function labToggleSwitch() {
+  labClosed = !labClosed;
+  document.getElementById('lab-sw-btn').textContent = labClosed ? 'Buka Saklar' : 'Tutup Saklar';
+  updateLab();
+}
+
+function updateLab() {
+  const Rtotal = labR.reduce((a, b) => a + b, 0);
+  const I = labClosed ? BATT_V / Rtotal : 0;
+  const P = labClosed ? BATT_V * I : 0;
+
+  document.getElementById('lab-amp').textContent = 'I = ' + I.toFixed(4) + ' A';
+  document.getElementById('lab-rtotal').textContent = Rtotal + ' Ω';
+  document.getElementById('lab-power').textContent = P.toFixed(3) + ' W';
+
+  const statusEl = document.getElementById('lab-status');
+  const statusText = document.getElementById('lab-status-text');
+  if (labClosed) {
+    statusEl.textContent = '🟢 ON';
+    statusEl.className = 'status-badge badge-lab-on';
+    statusText.textContent = '● Rangkaian Tertutup';
+    statusText.style.color = '#66ddff';
+  } else {
+    statusEl.textContent = '⬛ OFF';
+    statusEl.className = 'status-badge badge-lab-off';
+    statusText.textContent = '● Rangkaian Terbuka';
+    statusText.style.color = '#aa88ff';
+  }
+
+  for (let i = 0; i < NUM_LAB; i++) {
+    const V = I * labR[i];
+    document.getElementById(`lab-volt-${i}`).textContent = V.toFixed(2) + ' V';
+
+    // Brightness: ratio of V to max possible
+    const brightness = labClosed ? Math.min(V / (BATT_V * 0.6), 1) : 0;
+    const glowEl = document.getElementById(`lab-glow-${i}`);
+    const filEl  = document.getElementById(`lab-filament-${i}`);
+
+    if (brightness > 0.01) {
+      const r = Math.round(200 + 55 * brightness);
+      const g = Math.round(150 + 80 * brightness);
+      const b = Math.round(50 * brightness);
+      const alpha = 0.15 + 0.6 * brightness;
+      glowEl.setAttribute('fill', `rgba(${r},${g},${b},${alpha.toFixed(2)})`);
+      filEl.setAttribute('stroke', `rgba(${r},${g},100,1)`);
+      glowEl.setAttribute('filter', brightness > 0.5 ? 'url(#glow-filter)' : '');
+    } else {
+      glowEl.setAttribute('fill', 'transparent');
+      filEl.setAttribute('stroke', '#333');
+    }
+  }
+}
+
+function equalizeR() {
+  const avg = Math.round(labR.reduce((a,b)=>a+b,0) / NUM_LAB);
+  for (let i = 0; i < NUM_LAB; i++) {
+    labR[i] = avg;
+    document.getElementById(`slider-${i}`).value = avg;
+    document.getElementById(`r-val-${i}`).textContent = avg + ' Ω';
+  }
+  updateLab();
+}
+
+function randomR() {
+  for (let i = 0; i < NUM_LAB; i++) {
+    const v = Math.round((Math.random() * 90 + 5) / 5) * 5;
+    labR[i] = v;
+    document.getElementById(`slider-${i}`).value = v;
+    document.getElementById(`r-val-${i}`).textContent = v + ' Ω';
+  }
+  updateLab();
+}
+
+// ════════════════════════════════════════════
+//   SNOW
+// ════════════════════════════════════════════
+function createSnow() {
+  const container = document.getElementById('snow-container');
+  const flakes = ['❄','❅','❆','✦','⋆'];
+  for (let i = 0; i < 18; i++) {
+    const flake = document.createElement('div');
+    flake.className = 'snowflake';
+    flake.textContent = flakes[Math.floor(Math.random() * flakes.length)];
+    flake.style.left = Math.random() * 100 + 'vw';
+    flake.style.animationDuration = (Math.random() * 8 + 5) + 's';
+    flake.style.animationDelay    = (Math.random() * 10) + 's';
+    flake.style.fontSize          = (Math.random() * 0.6 + 0.5) + 'rem';
+    flake.style.opacity           = (Math.random() * 0.4 + 0.1).toString();
+    container.appendChild(flake);
+  }
+}
+
+// ════════════════════════════════════════════
+//   INIT
+// ════════════════════════════════════════════
+buildXmasString();
+updateXmasDisplay();
+buildLabBulbs();
+buildSliders();
+updateLab();
+createSnow();
+</script>
+</body>
+</html>

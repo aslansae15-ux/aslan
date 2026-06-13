@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Latihan Pertambahan – Harian</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --lv1:    #F97316;
+    --lv1-dk: #C2410C;
+    --lv2:    #8B5CF6;
+    --lv2-dk: #6D28D9;
+    --lv3:    #0EA5E9;
+    --lv3-dk: #0369A1;
+    --green:  #22C55E;
+    --red:    #EF4444;
+    --yellow: #FBBF24;
+    --pink:   #EC4899;
+    --bg:     #F8FAFF;
+    --card:   #FFFFFF;
+    --text:   #1E293B;
+    --muted:  #64748B;
+    --border: #CBD5E1;
+    --active: #F97316;
+  }
+
+  body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header {
+    background: #1E293B;
+    color: #fff;
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .brand { font-size: 1.3rem; font-weight: 900; }
+  .brand span { color: var(--yellow); }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .date-badge {
+    background: rgba(255,255,255,.12);
+    border-radius: 999px; padding: 5px 14px;
+    font-size: .82rem; font-weight: 700;
+  }
+
+  /* ── TIMER DISPLAY in header ── */
+  #timer-display {
+    display: flex;
+    align-items: center; gap: 8px;
+    background: rgba(255,255,255,.1);
+    border: 2px solid rgba(255,255,255,.25);
+    border-radius: 12px;
+    padding: 6px 14px;
+  }
+  #timer-display .timer-icon { font-size: 1rem; }
+  #timer-clock {
+    font-size: 1.5rem; font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .5px;
+    color: #fff;
+    min-width: 80px;
+    text-align: center;
+  }
+  #timer-clock.running { color: var(--yellow); }
+  #timer-clock.done    { color: #86EFAC; }
+  #timer-clock.urgent  { color: #FCA5A5; }
+
+  /* ── LEVEL PICKER ── */
+  #level-picker { max-width: 760px; margin: 48px auto; padding: 0 16px; text-align: center; }
+  #level-picker h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 6px; }
+  #level-picker > p { color: var(--muted); font-size: 1rem; font-weight: 600; margin-bottom: 36px; }
+
+  .level-cards { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+
+  .level-card {
+    background: var(--card); border: 3px solid var(--border);
+    border-radius: 22px; padding: 26px 22px; width: 215px;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+    text-align: left; position: relative; overflow: hidden;
+  }
+  .level-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 5px; border-radius: 22px 22px 0 0;
+  }
+  .level-card.lv1::before { background: var(--lv1); }
+  .level-card.lv2::before { background: var(--lv2); }
+  .level-card.lv3::before { background: var(--lv3); }
+  .level-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,.13); }
+  .level-card.lv1 { border-color: #FED7AA; } .level-card.lv1:hover { border-color: var(--lv1); }
+  .level-card.lv2 { border-color: #DDD6FE; } .level-card.lv2:hover { border-color: var(--lv2); }
+  .level-card.lv3 { border-color: #BAE6FD; } .level-card.lv3:hover { border-color: var(--lv3); }
+
+  .lv-badge { display: inline-block; border-radius: 8px; padding: 3px 11px; font-size: .75rem; font-weight: 800; color: #fff; margin-bottom: 12px; margin-top: 6px; }
+  .lv1 .lv-badge { background: var(--lv1); }
+  .lv2 .lv-badge { background: var(--lv2); }
+  .lv3 .lv-badge { background: var(--lv3); }
+  .level-card .emoji { font-size: 2.4rem; display: block; margin-bottom: 8px; }
+  .level-card h2 { font-size: 1.1rem; font-weight: 900; margin-bottom: 5px; }
+  .level-card .desc { font-size: .82rem; color: var(--muted); font-weight: 600; line-height: 1.5; }
+  .level-card .range-tag { display: inline-block; margin-top: 10px; background: var(--bg); border-radius: 8px; padding: 4px 10px; font-size: .78rem; font-weight: 800; }
+
+  /* ── WORKSHEET ── */
+  #worksheet { display: none; max-width: 920px; margin: 0 auto; padding: 22px 16px 60px; }
+
+  /* ── START BANNER ── */
+  #start-banner {
+    background: var(--card);
+    border: 3px dashed var(--border);
+    border-radius: 18px;
+    padding: 28px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  #start-banner h3 { font-size: 1.2rem; font-weight: 900; margin-bottom: 6px; }
+  #start-banner p  { font-size: .9rem; color: var(--muted); font-weight: 600; margin-bottom: 18px; }
+  #start-banner.ready { border-color: var(--active); background: #FFFBEB; }
+
+  .btn-start {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 40px;
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform .12s, filter .12s;
+    box-shadow: 0 4px 16px rgba(34,197,94,.35);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-start:hover  { filter: brightness(.92); }
+  .btn-start:active { transform: scale(.95); }
+  .btn-start:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; box-shadow: none; }
+
+  /* ── WS TOP ── */
+  .ws-top {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+  }
+  .ws-top-left h2 { font-size: 1.35rem; font-weight: 900; }
+  .level-tag { display: inline-block; border-radius: 999px; padding: 3px 14px; font-size: .78rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .tag-lv1 { background: var(--lv1); }
+  .tag-lv2 { background: var(--lv2); }
+  .tag-lv3 { background: var(--lv3); }
+  .ws-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    border: none; border-radius: 999px;
+    padding: 10px 20px;
+    font-family: inherit; font-size: .88rem; font-weight: 800;
+    cursor: pointer; transition: transform .1s, filter .1s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:active { transform: scale(.95); }
+  .btn-green  { background: var(--green);  color: #fff; }
+  .btn-green:hover  { filter: brightness(.9); }
+  .btn-yellow { background: var(--yellow); color: #1E293B; }
+  .btn-yellow:hover { filter: brightness(.94); }
+  .btn-ghost  { background: #fff; color: var(--text); border: 2px solid var(--border); }
+  .btn-ghost:hover  { background: var(--bg); }
+  .btn-sm { padding: 7px 15px; font-size: .8rem; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  /* ── SCORE BANNER ── */
+  #score-banner {
+    display: none; background: var(--card); border-radius: 16px;
+    padding: 22px 24px; margin-bottom: 20px; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,.09); border: 3px solid var(--green);
+  }
+  .score-num  { font-size: 3rem; font-weight: 900; color: var(--green); line-height: 1; }
+  .score-msg  { font-size: 1.1rem; font-weight: 800; margin-top: 6px; }
+  .score-sub  { font-size: .88rem; color: var(--muted); font-weight: 600; margin-top: 4px; }
+  .score-time {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px; background: #F1F5F9;
+    border-radius: 10px; padding: 8px 16px;
+    font-size: .95rem; font-weight: 800; color: var(--text);
+  }
+  #score-banner.bad  { border-color: var(--red); }
+  #score-banner.bad  .score-num { color: var(--red); }
+  #score-banner.okay { border-color: var(--yellow); }
+  #score-banner.okay .score-num { color: #D97706; }
+
+  /* ── MISSING SOAL ALERT ── */
+  #missing-alert {
+    display: none;
+    background: #FEF2F2;
+    border: 2px solid var(--red);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: .88rem;
+    font-weight: 700;
+    color: #991B1B;
+  }
+  #missing-alert .miss-title { font-size: 1rem; font-weight: 900; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  #missing-nums { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .miss-chip {
+    background: var(--red); color: #fff;
+    border-radius: 6px; padding: 3px 10px;
+    font-size: .78rem; font-weight: 800;
+    cursor: pointer; transition: filter .1s;
+  }
+  .miss-chip:hover { filter: brightness(.85); }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 16px; }
+  .progress-text { font-size: .82rem; font-weight: 700; color: var(--muted); }
+  .progress-bar-bg { height: 8px; background: #E2E8F0; border-radius: 999px; overflow: hidden; margin-top: 4px; }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--active), var(--pink));
+    border-radius: 999px; transition: width .4s ease; width: 0%;
+  }
+
+  /* ── GRID ── */
+  .grid-label { font-size: .78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .problem-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+  }
+  @media (max-width: 620px) { .problem-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+  @media (max-width: 390px) { .problem-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ── PROBLEM CARD ── */
+  .problem-card {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: 12px; padding: 10px 8px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    transition: border-color .15s;
+  }
+  .problem-card.locked { background: #F8FAFC; opacity: .65; }
+  .problem-card:not(.locked):focus-within { border-color: var(--active); }
+  .problem-card.correct  { border-color: var(--green); background: #F0FDF4; opacity: 1; }
+  .problem-card.wrong    { border-color: var(--red);   background: #FEF2F2; opacity: 1; }
+  .problem-card.missing  { border-color: var(--red);   background: #FFF1F1; animation: pulse-red .5s ease 3; }
+
+  @keyframes pulse-red {
+    0%,100% { box-shadow: none; }
+    50%      { box-shadow: 0 0 0 4px rgba(239,68,68,.3); }
+  }
+
+  .prob-num { font-size: .67rem; font-weight: 800; color: var(--muted); align-self: flex-start; padding-left: 2px; }
+  .prob-body { width: 100%; display: flex; flex-direction: column; align-items: flex-end; gap: 0; padding-right: 4px; }
+  .prob-top  { font-size: 1.05rem; font-weight: 900; line-height: 1.3; }
+  .prob-op-row { display: flex; width: 100%; align-items: center; gap: 4px; }
+  .prob-op   { font-size: .85rem; font-weight: 900; color: var(--muted); }
+  .prob-bottom { font-size: 1.05rem; font-weight: 900; line-height: 1.3; margin-left: auto; }
+  .prob-line { width: 100%; height: 2px; background: var(--border); border-radius: 2px; margin: 3px 0 5px; }
+  .problem-card.correct .prob-line { background: var(--green); }
+  .problem-card.wrong   .prob-line { background: var(--red); }
+
+  .prob-answer {
+    width: 100%; border: 2px solid var(--border); border-radius: 8px;
+    padding: 5px 4px; font-family: inherit; font-size: 1rem; font-weight: 800;
+    text-align: center; outline: none; background: #fff;
+    transition: border-color .15s; color: var(--text);
+  }
+  .prob-answer:disabled { background: #F1F5F9; color: var(--muted); cursor: not-allowed; }
+  .prob-answer:not(:disabled):focus { border-color: var(--active); }
+  .problem-card.correct .prob-answer { background: #DCFCE7; border-color: var(--green); color: #15803D; }
+  .problem-card.wrong   .prob-answer { background: #FEE2E2; border-color: var(--red);   color: var(--red); }
+
+  .correct-answer { font-size: .72rem; font-weight: 800; color: var(--green); display: none; }
+  .problem-card.wrong .correct-answer { display: block; }
+
+  .lock-icon { font-size: .8rem; color: var(--muted); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes pop-in {
+    from { transform: scale(.82); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .pop-in { animation: pop-in .26s cubic-bezier(.34,1.56,.64,1) both; }
+
+  @keyframes timer-tick { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  .timer-ticking { animation: timer-tick .5s ease infinite; }
+
+  @media (prefers-reduced-motion: reduce) { .pop-in, .timer-ticking { animation: none; } }
+
+  footer { text-align: center; padding: 24px 16px; font-size: .8rem; color: var(--muted); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── */
+<header>
+  <div class="brand">➕ Latihan <span>Pertambahan</span></div>
+  <div class="header-right">
+    <!-- Timer -->
+    <div id="timer-display">
+      <span class="timer-icon">⏱️</span>
+      <span id="timer-clock">00:00</span>
+    </div>
+    <div class="date-badge" id="header-date">—</div>
+  </div>
+</header>
+
+<!-- ── LEVEL PICKER ── -->
+<section id="level-picker">
+  <h1>🔢 Pilih Level Kamu</h1>
+  <p>Naik level satu-satu — dari yang mudah sampai yang menantang!</p>
+  <div class="level-cards">
+    <div class="level-card lv1" onclick="startLevel(1)">
+      <span class="emoji">🌱</span>
+      <span class="lv-badge">Level 1</span>
+      <h2>Mulai dari Sini</h2>
+      <p class="desc">Penjumlahan angka 4 sampai 9<br/>Hasilnya 8 sampai 18</p>
+      <span class="range-tag">4 + 4 &nbsp;→&nbsp; 9 + 9</span>
+    </div>
+    <div class="level-card lv2" onclick="startLevel(2)">
+      <span class="emoji">⭐</span>
+      <span class="lv-badge">Level 2</span>
+      <h2>Naik Satu Tangga</h2>
+      <p class="desc">Satu angka belasan, satu angka satuan<br/>Hasilnya 11 sampai 28</p>
+      <span class="range-tag">10 + 1 &nbsp;→&nbsp; 19 + 9</span>
+    </div>
+    <div class="level-card lv3" onclick="startLevel(3)">
+      <span class="emoji">🚀</span>
+      <span class="lv-badge">Level 3</span>
+      <h2>Tantangan Puluhan</h2>
+      <p class="desc">Angka belasan ditambah belasan<br/>Hasilnya 20 sampai 38</p>
+      <span class="range-tag">10 + 10 &nbsp;→&nbsp; 29 + 9</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORKSHEET ── -->
+<main id="worksheet">
+
+  <!-- Top bar -->
+  <div class="ws-top">
+    <div class="ws-top-left">
+      <span class="level-tag" id="level-tag">—</span>
+      <h2 id="ws-title">Latihan Pertambahan</h2>
+    </div>
+    <div class="ws-actions">
+      <button class="btn btn-yellow" id="btn-new" onclick="generateProblems()">🔄 Soal Baru</button>
+      <button class="btn btn-green"  id="btn-cek" onclick="checkAnswers()" disabled>✅ Cek Jawaban</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetAll()">🏠 Ganti Level</button>
+    </div>
+  </div>
+
+  <!-- Start banner -->
+  <div id="start-banner" class="ready">
+    <h3>🎯 Soal sudah siap!</h3>
+    <p>Tekan tombol START ketika kamu siap — timer akan mulai berjalan!</p>
+    <button class="btn-start" id="btn-start" onclick="startTimer()">▶ START</button>
+  </div>
+
+  <!-- Score banner -->
+  <div id="score-banner">
+    <div class="score-num" id="score-num">—</div>
+    <div class="score-msg" id="score-msg">—</div>
+    <div class="score-sub" id="score-sub">—</div>
+    <div class="score-time" id="score-time"><span>⏱️</span><span id="score-time-val">—</span></div>
+  </div>
+
+  <!-- Missing alert -->
+  <div id="missing-alert">
+    <div class="miss-title">⚠️ Soal belum diisi — timer tidak bisa berhenti!</div>
+    <div>Klik nomor di bawah untuk langsung ke soal yang kosong:</div>
+    <div id="missing-nums"></div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-text" id="progress-text">Tekan START untuk mulai mengerjakan soal!</div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div class="grid-label">📋 100 Soal Pertambahan</div>
+  <div class="problem-grid" id="problem-grid"></div>
+
+  <div style="margin-top:24px; display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn btn-green"  id="btn-cek2" onclick="checkAnswers()" disabled>✅ Cek Jawaban</button>
+    <button class="btn btn-yellow" id="btn-new2" onclick="generateProblems()">🔄 Soal Baru</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetAll()">🏠 Ganti Level</button>
+  </div>
+</main>
+
+<footer>Pelan-pelan tapi pasti — setiap hari pasti makin pintar! 💪</footer>
+
+<script>
+  /* ────────────────────────────────────────────
+     STATE
+  ──────────────────────────────────────────── */
+  let currentLevel  = null;
+  let problems      = [];
+  let timerInterval = null;
+  let elapsedSec    = 0;
+  let timerRunning  = false;
+  let timerDone     = false;   // true after Cek Jawaban stops it
+  let checked       = false;   // have we checked answers?
+
+  const LEVEL_COLOR = { 1: '#F97316', 2: '#8B5CF6', 3: '#0EA5E9' };
+
+  /* ────────────────────────────────────────────
+     DATE
+  ──────────────────────────────────────────── */
+  (function() {
+    const d = new Date();
+    const days   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    document.getElementById('header-date').textContent =
+      `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  })();
+
+  /* ────────────────────────────────────────────
+     UTILS
+  ──────────────────────────────────────────── */
+  function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  function formatTime(sec) {
+    const m = String(Math.floor(sec / 60)).padStart(2, '0');
+    const s = String(sec % 60).padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  /* ────────────────────────────────────────────
+     START LEVEL
+  ──────────────────────────────────────────── */
+  function startLevel(level) {
+    currentLevel = level;
+    document.getElementById('level-picker').style.display = 'none';
+    document.getElementById('worksheet').style.display = 'block';
+    document.documentElement.style.setProperty('--active', LEVEL_COLOR[level]);
+
+    const cfg = {
+      1: { label: 'Level 1 – Dasar',        cls: 'tag-lv1', title: 'Pertambahan 4+4 s/d 9+9' },
+      2: { label: 'Level 2 – Belasan Awal',  cls: 'tag-lv2', title: 'Pertambahan 10+1 s/d 19+9' },
+      3: { label: 'Level 3 – Puluhan',       cls: 'tag-lv3', title: 'Pertambahan 10+10 s/d 29+9' },
+    };
+    document.getElementById('level-tag').textContent = cfg[level].label;
+    document.getElementById('level-tag').className   = `level-tag ${cfg[level].cls}`;
+    document.getElementById('ws-title').textContent  = cfg[level].title;
+
+    hideBanner();
+    generateProblems();
+    document.getElementById('worksheet').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ────────────────────────────────────────────
+     GENERATE 100 PROBLEMS
+  ──────────────────────────────────────────── */
+  function generateProblems() {
+    stopTimer();
+    resetTimerDisplay();
+    hideBanner();
+    hideMissingAlert();
+    checked = false;
+    problems = [];
+
+    const pool = [];
+    if (currentLevel === 1) {
+      for (let a = 4; a <= 9; a++)
+        for (let b = 4; b <= 9; b++) pool.push({ a, b });
+    } else if (currentLevel === 2) {
+      for (let a = 10; a <= 19; a++)
+        for (let b = 1;  b <= 9;  b++) pool.push({ a, b });
+    } else {
+      for (let a = 10; a <= 29; a++)
+        for (let b = 1;  b <= 9;  b++) pool.push({ a, b });
+    }
+
+    let result = [];
+    while (result.length < 100) {
+      const shuffled = [...pool].sort(() => Math.random() - .5);
+      result = result.concat(shuffled);
+    }
+    result = result.sort(() => Math.random() - .5).slice(0, 100);
+    problems = result.map(p => ({ ...p, answer: p.a + p.b }));
+
+    renderGrid(true); // locked = true, timer not started
+    updateProgress();
+
+    // Re-show start banner
+    document.getElementById('start-banner').style.display = 'block';
+    document.getElementById('btn-start').disabled = false;
+    document.getElementById('btn-start').textContent = '▶ START';
+
+    // Disable Cek Jawaban until timer runs
+    setCheckEnabled(false);
+  }
+
+  /* ────────────────────────────────────────────
+     RENDER GRID
+  ──────────────────────────────────────────── */
+  function renderGrid(locked) {
+    const grid = document.getElementById('problem-grid');
+    grid.innerHTML = '';
+
+    problems.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'problem-card pop-in' + (locked ? ' locked' : '');
+      card.id = `card-${i}`;
+      card.style.animationDelay = `${Math.min(i * 4, 180)}ms`;
+
+      card.innerHTML = `
+        <span class="prob-num">${i + 1}</span>
+        <div class="prob-body">
+          <span class="prob-top">${p.a}</span>
+          <div class="prob-op-row">
+            <span class="prob-op">+</span>
+            <span class="prob-bottom">${p.b}</span>
+          </div>
+        </div>
+        <div class="prob-line"></div>
+        <input
+          class="prob-answer"
+          id="ans-${i}"
+          type="number"
+          inputmode="numeric"
+          placeholder="${locked ? '🔒' : '?'}"
+          autocomplete="off"
+          ${locked ? 'disabled' : ''}
+          onkeydown="handleKey(event,${i})"
+          oninput="onAnswerInput()"
+        />
+        <span class="correct-answer" id="correct-${i}">✓ ${p.answer}</span>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  /* Unlock all inputs after timer starts */
+  function unlockInputs() {
+    problems.forEach((_, i) => {
+      const card  = document.getElementById(`card-${i}`);
+      const input = document.getElementById(`ans-${i}`);
+      card.classList.remove('locked');
+      input.disabled = false;
+      input.placeholder = '?';
+    });
+  }
+
+  /* ────────────────────────────────────────────
+     TIMER
+  ──────────────────────────────────────────── */
+  function startTimer() {
+    if (timerRunning) return;
+    timerRunning = true;
+    timerDone    = false;
+    elapsedSec   = 0;
+
+    // Hide start banner
+    document.getElementById('start-banner').style.display = 'none';
+
+    // Show timer in header
+    const disp = document.getElementById('timer-display');
+    disp.style.display = 'flex';
+    const clock = document.getElementById('timer-clock');
+    clock.className = 'running';
+    clock.classList.add('timer-ticking');
+    clock.textContent = '00:00';
+
+    // Enable Cek Jawaban & unlock inputs
+    setCheckEnabled(true);
+    unlockInputs();
+
+    // Focus first input
+    const firstInput = document.getElementById('ans-0');
+    if (firstInput) firstInput.focus();
+
+    timerInterval = setInterval(() => {
+      elapsedSec++;
+      clock.textContent = formatTime(elapsedSec);
+      // After 10 min change color to orange-ish urgency hint
+      if (elapsedSec > 600) clock.classList.add('urgent');
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    timerRunning = false;
+  }
+
+  function finalizeTimer() {
+    stopTimer();
+    timerDone = true;
+    const clock = document.getElementById('timer-clock');
+    clock.classList.remove('running', 'timer-ticking', 'urgent');
+    clock.classList.add('done');
+  }
+
+  function resetTimerDisplay() {
+    stopTimer();
+    timerDone  = false;
+    elapsedSec = 0;
+    const disp  = document.getElementById('timer-display');
+    const clock = document.getElementById('timer-clock');
+    disp.style.display = 'none';
+    clock.textContent  = '00:00';
+    clock.className    = '';
+  }
+
+  /* ────────────────────────────────────────────
+     KEY NAV
+  ──────────────────────────────────────────── */
+  function handleKey(e, idx) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const next = document.getElementById(`ans-${idx + 1}`);
+      if (next) next.focus();
+    }
+  }
+
+  /* ────────────────────────────────────────────
+     PROGRESS
+  ──────────────────────────────────────────── */
+  function onAnswerInput() { updateProgress(); }
+
+  function updateProgress() {
+    let filled = 0;
+    problems.forEach((_, i) => {
+      const v = document.getElementById(`ans-${i}`)?.value;
+      if (v && v.trim() !== '') filled++;
+    });
+    const pct = Math.round((filled / 100) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    if (!timerRunning && !timerDone) {
+      document.getElementById('progress-text').textContent = 'Tekan START untuk mulai mengerjakan soal!';
+    } else {
+      document.getElementById('progress-text').textContent =
+        filled === 100
+          ? '🎉 Semua soal sudah diisi! Klik "Cek Jawaban".'
+          : `Sudah diisi: ${filled} / 100 soal`;
+    }
+  }
+
+  /* ────────────────────────────────────────────
+     CHECK ANSWERS
+  ──────────────────────────────────────────── */
+  function checkAnswers() {
+    // Find empty soal
+    const empty = [];
+    problems.forEach((_, i) => {
+      const v = document.getElementById(`ans-${i}`)?.value?.trim();
+      if (!v) empty.push(i + 1); // 1-indexed display
+    });
+
+    // If any empty → show alert, highlight cards, keep timer running
+    if (empty.length > 0) {
+      showMissingAlert(empty);
+      // Highlight missing cards
+      problems.forEach((_, i) => {
+        const card = document.getElementById(`card-${i}`);
+        card.classList.remove('missing');
+      });
+      empty.forEach(n => {
+        const card = document.getElementById(`card-${n - 1}`);
+        card.classList.add('missing');
+        // Remove class after animation so it can re-trigger
+        setTimeout(() => card.classList.remove('missing'), 1600);
+      });
+      return;
+    }
+
+    // All filled — stop timer!
+    hideMissingAlert();
+    finalizeTimer();
+    checked = true;
+
+    let correct = 0;
+    problems.forEach((p, i) => {
+      const input = document.getElementById(`ans-${i}`);
+      const card  = document.getElementById(`card-${i}`);
+      card.classList.remove('correct', 'wrong');
+
+      const userAns = parseInt(input.value.trim(), 10);
+      if (userAns === p.answer) {
+        card.classList.add('correct'); correct++;
+      } else {
+        card.classList.add('wrong');
+      }
+    });
+
+    // Disable inputs after check
+    problems.forEach((_, i) => { document.getElementById(`ans-${i}`).disabled = true; });
+    setCheckEnabled(false);
+
+    showScoreBanner(correct, 100, elapsedSec);
+    document.getElementById('score-banner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ────────────────────────────────────────────
+     MISSING ALERT
+  ──────────────────────────────────────────── */
+  function showMissingAlert(emptyNums) {
+    const alert  = document.getElementById('missing-alert');
+    const numsEl = document.getElementById('missing-nums');
+    alert.style.display = 'block';
+    numsEl.innerHTML = '';
+
+    // Show max 30 chips to avoid overflow
+    const show = emptyNums.slice(0, 30);
+    show.forEach(n => {
+      const chip = document.createElement('span');
+      chip.className = 'miss-chip';
+      chip.textContent = `No. ${n}`;
+      chip.onclick = () => {
+        const input = document.getElementById(`ans-${n - 1}`);
+        if (input) { input.scrollIntoView({ behavior: 'smooth', block: 'center' }); input.focus(); }
+      };
+      numsEl.appendChild(chip);
+    });
+
+    if (emptyNums.length > 30) {
+      const more = document.createElement('span');
+      more.style.cssText = 'font-size:.78rem; color:var(--muted); align-self:center;';
+      more.textContent = `...dan ${emptyNums.length - 30} soal lainnya`;
+      numsEl.appendChild(more);
+    }
+  }
+
+  function hideMissingAlert() {
+    document.getElementById('missing-alert').style.display = 'none';
+    document.getElementById('missing-nums').innerHTML = '';
+  }
+
+  /* ────────────────────────────────────────────
+     SCORE BANNER
+  ──────────────────────────────────────────── */
+  function showScoreBanner(correct, total, sec) {
+    const banner = document.getElementById('score-banner');
+    const pct    = Math.round((correct / total) * 100);
+
+    document.getElementById('score-num').textContent = `${correct} / ${total}`;
+    banner.classList.remove('bad', 'okay');
+
+    let msg = '';
+    if      (pct === 100) msg = '🏆 SEMPURNA! Luar biasa sekali!';
+    else if (pct >= 90)   msg = '🌟 Hebat banget! Hampir sempurna!';
+    else if (pct >= 75) { msg = '😊 Sangat Bagus! Terus berlatih ya!'; banner.classList.add('okay'); }
+    else if (pct >= 50) { msg = '💪 Bagus! Masih bisa lebih tinggi nih!'; banner.classList.add('okay'); }
+    else                { msg = '📚 Semangat! Pelan-pelan pasti bisa!'; banner.classList.add('bad'); }
+
+    document.getElementById('score-msg').textContent = msg;
+    document.getElementById('score-sub').textContent = `Nilai: ${pct}% · ${total - correct} soal kurang tepat`;
+
+    // Time display
+    const timeLabel = sec < 60
+      ? `${sec} detik`
+      : `${Math.floor(sec/60)} menit ${sec%60} detik`;
+    document.getElementById('score-time-val').textContent = `Waktu: ${timeLabel}`;
+
+    banner.style.display = 'block';
+    banner.classList.remove('pop-in');
+    void banner.offsetWidth;
+    banner.classList.add('pop-in');
+  }
+
+  function hideBanner() {
+    const b = document.getElementById('score-banner');
+    b.style.display = 'none';
+    b.classList.remove('bad', 'okay');
+  }
+
+  /* ────────────────────────────────────────────
+     HELPERS
+  ──────────────────────────────────────────── */
+  function setCheckEnabled(enabled) {
+    document.getElementById('btn-cek').disabled  = !enabled;
+    document.getElementById('btn-cek2').disabled = !enabled;
+  }
+
+  /* ────────────────────────────────────────────
+     RESET / HOME
+  ──────────────────────────────────────────── */
+  function resetAll() {
+    stopTimer();
+    resetTimerDisplay();
+    currentLevel = null;
+    problems     = [];
+    checked      = false;
+    hideBanner();
+    hideMissingAlert();
+    document.getElementById('problem-grid').innerHTML = '';
+    document.getElementById('progress-fill').style.width = '0%';
+    document.getElementById('progress-text').textContent = 'Tekan START untuk mulai mengerjakan soal!';
+    document.getElementById('start-banner').style.display = 'none';
+    document.getElementById('worksheet').style.display = 'none';
+    document.getElementById('level-picker').style.display = 'block';
+    setCheckEnabled(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

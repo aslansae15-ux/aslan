@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏠 Simulasi Listrik Paralel Rumah - Belajar Bersama Aslan!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+  :root {
+    --plus: #e63946;       /* merah = kabel FASE/PLUS */
+    --minus: #2196F3;      /* biru = kabel NETRAL/MINUS */
+    --earth: #4caf50;      /* hijau = kabel grounding */
+    --on-color: #FFD700;
+    --off-color: #bbb;
+    --bg: #eef2ff;
+    --card: #fff;
+    --dark: #1a237e;
+    --warn: #FF6B00;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: #333;
+    min-height: 100vh;
+  }
+
+  /* ======== HEADER ======== */
+  .header {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+    color: white;
+    text-align: center;
+    padding: 18px 20px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
+  }
+  .header h1 { font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 900; position: relative; }
+  .header p  { font-size: 0.88rem; opacity: 0.85; margin-top: 4px; position: relative; }
+
+  /* ======== LEGEND ======== */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 2px solid #e0e7ff;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px;
+    border: 2px solid transparent;
+  }
+  .legend-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+  .leg-plus  { border-color: var(--plus);  background: #fff5f5; color: var(--plus); }
+  .leg-minus { border-color: var(--minus); background: #f0f7ff; color: var(--minus);}
+  .leg-earth { border-color: var(--earth); background: #f0fff4; color: #2e7d32; }
+
+  /* ======== MAIN WRAPPER ======== */
+  .main { max-width: 920px; margin: 0 auto; padding: 12px 10px 40px; }
+
+  /* ======== SECTION TITLE ======== */
+  .sec-title {
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #7986cb;
+    margin: 16px 0 6px;
+  }
+
+  /* ======== PLN OUTSIDE SECTION ======== */
+  .pln-outside {
+    background: #fff3e0;
+    border: 2.5px dashed #FF9800;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 0;
+    position: relative;
+  }
+  .pln-outside-label {
+    position: absolute; top: -10px; left: 16px;
+    background: #FF9800; color: white;
+    font-size: 0.7rem; font-weight: 800;
+    padding: 2px 10px; border-radius: 10px;
+    letter-spacing: 1px;
+  }
+  .pln-pole {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .pole-icon { font-size: 1.8rem; }
+  .pole-info h3 { font-size: 0.95rem; font-weight: 900; color: #e65100; }
+  .pole-info p  { font-size: 0.75rem; color: #bf360c; }
+
+  /* PLN wires coming from pole */
+  .pln-wires {
+    display: flex; flex-direction: column; gap: 4px;
+    margin-top: 10px;
+  }
+  .wire-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.75rem; font-weight: 700;
+  }
+  .wire-line {
+    height: 6px; flex: 1; border-radius: 3px;
+    position: relative; overflow: hidden;
+  }
+  .wire-line.plus-wire  { background: var(--plus); }
+  .wire-line.minus-wire { background: var(--minus); }
+  .wire-anim {
+    position: absolute; top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    animation: wireFlow 1.5s linear infinite;
+  }
+  @keyframes wireFlow { to { left: 200%; } }
+  .wire-label-plus  { color: var(--plus);  min-width: 75px; }
+  .wire-label-minus { color: var(--minus); min-width: 75px; }
+
+  /* ======== ARROW DOWN ======== */
+  .arrow-down {
+    text-align: center; font-size: 1.6rem; color: #FF9800;
+    margin: 4px 0;
+    animation: bounce 1s ease-in-out infinite alternate;
+  }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(5px); } }
+
+  /* ======== METER BOX ======== */
+  .meter-box {
+    background: linear-gradient(135deg, #263238, #37474f);
+    border-radius: 14px;
+    padding: 14px;
+    color: white;
+    position: relative;
+    border: 3px solid #546e7a;
+  }
+  .meter-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .meter-icon { font-size: 2rem; }
+  .meter-title h3 { font-size: 1rem; font-weight: 900; }
+  .meter-title p  { font-size: 0.72rem; color: #90a4ae; }
+
+  .meter-display {
+    background: #000;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: monospace;
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border: 2px solid #1a237e;
+    box-shadow: 0 0 10px rgba(33,150,243,0.4) inset;
+  }
+  .meter-val { text-align: center; }
+  .meter-val .num {
+    font-size: 1.4rem; font-weight: 900;
+    color: #00e676;
+    text-shadow: 0 0 8px #00e67688;
+  }
+  .meter-val .unit { font-size: 0.65rem; color: #69f0ae; }
+
+  /* CB / MCB */
+  .mcb-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .mcb-label { font-size: 0.72rem; color: #b0bec5; }
+  .mcb-btn {
+    padding: 5px 14px; border-radius: 8px; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .mcb-btn.on  { background: #43a047; color: white; }
+  .mcb-btn.off { background: #e53935; color: white; animation: shake 0.3s; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)}
+  }
+  .mcb-status { font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; }
+  .mcb-ok    { background: #1b5e20; color: #a5d6a7; }
+  .mcb-trip  { background: #b71c1c; color: #ffcdd2; animation: blink 0.4s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* meter wires out */
+  .meter-wires-out {
+    display: flex; flex-direction: column; gap: 3px; margin-top: 10px;
+  }
+
+  /* ======== HOUSE SECTION ======== */
+  .house-wrapper {
+    background: white;
+    border: 3px solid #c5cae9;
+    border-radius: 14px;
+    padding: 12px;
+    position: relative;
+  }
+  .house-label {
+    position: absolute; top: -12px; left: 16px;
+    background: #3949ab; color: white;
+    font-size: 0.7rem; font-weight: 800;
+    padding: 2px 12px; border-radius: 10px;
+  }
+
+  /* Main bus bars inside house */
+  .busbar {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 4px;
+  }
+  .busbar-line {
+    flex: 1; height: 8px; border-radius: 4px;
+  }
+  .busbar-line.plus  { background: var(--plus); }
+  .busbar-line.minus { background: var(--minus); }
+  .busbar-line.earth { background: var(--earth); }
+  .busbar-tag {
+    font-size: 0.65rem; font-weight: 800;
+    padding: 1px 6px; border-radius: 4px; white-space: nowrap;
+  }
+  .tag-plus  { background: var(--plus);  color: white; }
+  .tag-minus { background: var(--minus); color: white; }
+  .tag-earth { background: var(--earth); color: white; }
+
+  /* ======== ROOMS GRID ======== */
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .room-card {
+    border: 2.5px solid #c5cae9;
+    border-radius: 12px;
+    padding: 10px 8px;
+    background: #f8f9ff;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .room-card.lit {
+    border-color: #FFD700;
+    background: #fffde7;
+    box-shadow: 0 0 14px rgba(255,215,0,0.35);
+  }
+  .room-title {
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #5c6bc0;
+    text-align: center; margin-bottom: 8px;
+  }
+
+  /* Wiring diagram inside room */
+  .room-wiring { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+  .wire-segment {
+    width: 6px; border-radius: 3px;
+    height: 18px;
+  }
+  .ws-plus  { background: var(--plus); }
+  .ws-minus { background: var(--minus); }
+
+  .lamp {
+    width: 50px; height: 50px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    border: 3px solid #bbb;
+    background: #f5f5f5;
+    transition: all 0.4s;
+    position: relative;
+  }
+  .lamp.on {
+    border-color: #FFD700;
+    background: radial-gradient(circle, #fff8e1, #ffe082);
+    box-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.3);
+    animation: glow 1.5s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    from { box-shadow: 0 0 16px rgba(255,215,0,0.6), 0 0 32px rgba(255,215,0,0.2); }
+    to   { box-shadow: 0 0 28px rgba(255,215,0,1),   0 0 50px rgba(255,215,0,0.5); }
+  }
+  .lamp-status { font-size: 0.65rem; font-weight: 800; margin-top: 3px; color: #888; text-align: center; }
+  .lamp-status.on { color: #f57f17; }
+
+  /* Mini wires showing + and - to lamp */
+  .lamp-wires {
+    display: flex; gap: 8px; margin-bottom: 4px;
+  }
+  .lw { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .lw-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .lw-line { width: 3px; height: 20px; border-radius: 2px; }
+  .lw-label { font-size: 0.55rem; font-weight: 800; }
+  .lw.plus  .lw-dot, .lw.plus  .lw-line { background: var(--plus); }
+  .lw.minus .lw-dot, .lw.minus .lw-line { background: var(--minus); }
+  .lw.plus  .lw-label { color: var(--plus); }
+  .lw.minus .lw-label { color: var(--minus); }
+
+  /* Switch */
+  .switch-wrap { display: flex; flex-direction: column; align-items: center; margin-top: 4px; }
+  .switch {
+    width: 52px; height: 26px;
+    background: #ccc; border-radius: 13px;
+    position: relative; cursor: pointer;
+    transition: background 0.3s;
+    border: none; outline: none;
+  }
+  .switch.on { background: #43a047; }
+  .switch::after {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    background: white; border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .switch.on::after { transform: translateX(26px); }
+  .switch-label { font-size: 0.62rem; font-weight: 800; color: #7986cb; margin-top: 3px; }
+
+  /* ======== APPLIANCES SECTION ======== */
+  .appliances-section {
+    background: white;
+    border: 3px solid #c5cae9;
+    border-radius: 14px;
+    padding: 12px;
+    margin-top: 0;
+    position: relative;
+  }
+  .appl-label {
+    position: absolute; top: -12px; left: 16px;
+    background: #7b1fa2; color: white;
+    font-size: 0.7rem; font-weight: 800;
+    padding: 2px 12px; border-radius: 10px;
+  }
+  .appl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px; margin-top: 8px;
+  }
+  .appl-card {
+    border: 2.5px solid #e1bee7;
+    border-radius: 10px; padding: 8px;
+    text-align: center; background: #fce4ec;
+    cursor: pointer; transition: all 0.3s;
+    position: relative;
+  }
+  .appl-card:hover { transform: scale(1.03); }
+  .appl-card.active {
+    border-color: #ab47bc;
+    background: #f3e5f5;
+    box-shadow: 0 0 10px rgba(171,71,188,0.3);
+  }
+  .appl-card.danger { border-color: var(--plus); background: #ffebee; }
+  .appl-icon { font-size: 1.8rem; display: block; }
+  .appl-name { font-size: 0.7rem; font-weight: 800; color: #6a1b9a; margin-top: 3px; }
+  .appl-watt { font-size: 0.65rem; color: #9c27b0; }
+  .appl-toggle {
+    margin-top: 6px; padding: 3px 10px;
+    border-radius: 6px; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.7rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .appl-toggle.on  { background: #43a047; color: white; }
+  .appl-toggle.off { background: #9e9e9e; color: white; }
+
+  /* Wattage bar */
+  .watt-bar-wrap { margin-top: 10px; }
+  .watt-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.72rem; font-weight: 700; margin-bottom: 4px;
+  }
+  .watt-bar-outer {
+    background: #e8eaf6; border-radius: 8px; height: 14px; overflow: hidden;
+    border: 1.5px solid #c5cae9;
+  }
+  .watt-bar-inner {
+    height: 100%; border-radius: 6px;
+    transition: width 0.5s, background 0.5s;
+    background: #43a047;
+    position: relative;
+  }
+  .watt-bar-inner::after {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    animation: shimmer 2s linear infinite;
+  }
+  @keyframes shimmer { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
+  .watt-bar-inner.warn { background: #ff9800; }
+  .watt-bar-inner.danger { background: #e53935; }
+
+  /* ======== STATS ======== */
+  .stats-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .stat-box {
+    background: white; border-radius: 12px;
+    padding: 10px 16px; text-align: center;
+    border: 2px solid #e8eaf6; flex: 1; min-width: 100px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .stat-num { font-size: 1.4rem; font-weight: 900; color: #3949ab; }
+  .stat-label { font-size: 0.68rem; color: #7986cb; font-weight: 600; }
+
+  /* ======== TRIP / JEPRET OVERLAY ======== */
+  .trip-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    animation: fadeIn 0.2s;
+  }
+  .trip-overlay.show { display: flex; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .trip-content {
+    background: #1a0000;
+    border: 4px solid #e53935;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px; width: 90%;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(229,57,53,0.6);
+    animation: tripPop 0.4s ease-out;
+  }
+  @keyframes tripPop { from{transform:scale(0.5) rotate(-5deg)} to{transform:scale(1) rotate(0)} }
+
+  .trip-icon { font-size: 4rem; animation: zapSpin 0.5s ease-out 3; }
+  @keyframes zapSpin { 0%{transform:scale(1)} 50%{transform:scale(1.4) rotate(10deg)} 100%{transform:scale(1)} }
+  .trip-title { font-size: 1.6rem; font-weight: 900; color: #ef5350; margin: 10px 0; }
+  .trip-msg   { font-size: 0.85rem; color: #ef9a9a; line-height: 1.5; }
+  .trip-detail { font-size: 0.75rem; color: #ffcdd2; margin-top: 8px; font-weight: 700; }
+
+  .trip-reset {
+    margin-top: 20px; padding: 10px 28px;
+    background: #43a047; color: white;
+    border: none; border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .trip-reset:hover { background: #2e7d32; transform: scale(1.05); }
+
+  /* spark animation */
+  .spark { position: fixed; pointer-events: none; z-index: 999; }
+  .spark-particle {
+    position: absolute; width: 6px; height: 6px;
+    border-radius: 50%; background: #FFD700;
+    animation: sparkFly 0.8s ease-out forwards;
+  }
+  @keyframes sparkFly {
+    from { transform: translate(0,0) scale(1); opacity: 1; }
+    to   { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+  }
+
+  /* screen flash */
+  .flash-overlay {
+    display: none; position: fixed; inset: 0;
+    background: white; z-index: 998; pointer-events: none;
+    animation: flashAnim 0.3s ease-out;
+  }
+  .flash-overlay.show { display: block; }
+  @keyframes flashAnim { 0%{opacity:1} 100%{opacity:0} }
+
+  /* ======== EXPLANATION BOX ======== */
+  .explain-box {
+    background: #e8f5e9;
+    border: 2px solid #a5d6a7;
+    border-radius: 12px; padding: 12px;
+    margin-top: 8px;
+  }
+  .explain-box h4 { font-size: 0.82rem; font-weight: 800; color: #1b5e20; margin-bottom: 6px; }
+  .explain-box ul { padding-left: 16px; }
+  .explain-box li { font-size: 0.76rem; color: #2e7d32; margin-bottom: 3px; line-height: 1.4; }
+
+  /* ======== BUTTON ROW ======== */
+  .btn-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 10px; justify-content: center;
+  }
+  .btn-all-on, .btn-all-off {
+    padding: 10px 22px; border-radius: 10px; border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-all-on  { background: #1565c0; color: white; }
+  .btn-all-on:hover  { background: #0d47a1; transform: scale(1.03); }
+  .btn-all-off { background: #546e7a; color: white; }
+  .btn-all-off:hover { background: #37474f; transform: scale(1.03); }
+
+  /* warning text */
+  .warn-text {
+    text-align: center; font-size: 0.72rem; font-weight: 700;
+    padding: 5px 10px; border-radius: 8px; margin-top: 5px;
+  }
+  .warn-text.ok      { background: #e8f5e9; color: #2e7d32; }
+  .warn-text.warning { background: #fff3e0; color: #e65100; }
+  .warn-text.over    { background: #ffebee; color: #c62828; animation: blink 0.5s step-end infinite; }
+
+  /* tooltip */
+  [data-tip] { position: relative; cursor: help; }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%);
+    background: #212121; color: white;
+    font-size: 0.68rem; font-weight: 600;
+    padding: 4px 8px; border-radius: 6px;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s;
+    z-index: 10;
+  }
+  [data-tip]:hover::after { opacity: 1; }
+
+  /* wiring indicator: shows current flow */
+  .flow-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    display: inline-block; margin-right: 4px;
+  }
+  .flow-dot.plus  { background: var(--plus); }
+  .flow-dot.minus { background: var(--minus); }
+
+  /* responsive */
+  @media (max-width: 480px) {
+    .rooms-grid { grid-template-columns: repeat(2, 1fr); }
+    .appl-grid  { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- TRIP OVERLAY -->
+<div class="trip-overlay" id="tripOverlay">
+  <div class="trip-content">
+    <div class="trip-icon">⚡</div>
+    <div class="trip-title">MCB JEPRET! 🔴</div>
+    <div class="trip-msg" id="tripMsg">Daya melebihi batas! MCB otomatis memutus aliran listrik untuk mencegah kebakaran!</div>
+    <div class="trip-detail" id="tripDetail"></div>
+    <button class="trip-reset" onclick="resetMCB()">🔄 Reset MCB & Matikan Peralatan Boros</button>
+  </div>
+</div>
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>🏠 Simulasi Listrik Paralel Rumah</h1>
+  <p>Belajar Rangkaian Paralel bersama Aslan! ⚡ Klik saklar &amp; peralatan untuk menyalakan!</p>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item leg-plus">
+    <div class="legend-dot" style="background:var(--plus)"></div>
+    Kabel FASE / PLUS (+) — Merah
+  </div>
+  <div class="legend-item leg-minus">
+    <div class="legend-dot" style="background:var(--minus)"></div>
+    Kabel NETRAL / MINUS (−) — Biru
+  </div>
+  <div class="legend-item leg-earth">
+    <div class="legend-dot" style="background:var(--earth)"></div>
+    Kabel GROUND (pengaman) — Hijau
+  </div>
+  <div class="legend-item" style="border-color:#FF9800; background:#fff8f0; color:#e65100;">
+    <div class="legend-dot" style="background:#FF9800"></div>
+    Kabel PLN dari Tiang
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ===== PLN OUTSIDE ===== -->
+  <div class="sec-title">📍 LUAR RUMAH — Sumber PLN</div>
+  <div class="pln-outside">
+    <div class="pln-outside-label">AREA LUAR RUMAH 🌤️</div>
+    <div class="pln-pole">
+      <div class="pole-icon">🏗️</div>
+      <div class="pole-info">
+        <h3>Tiang Listrik PLN</h3>
+        <p>Tegangan 220V AC · 50Hz · Dari Gardu Distribusi</p>
+      </div>
+    </div>
+    <div class="pln-wires">
+      <div class="wire-row">
+        <span class="wire-label-plus" data-tip="Kabel Fase: ada tegangan 220V">⚡ FASE (+)</span>
+        <div class="wire-line plus-wire"><div class="wire-anim"></div></div>
+        <span style="font-size:0.7rem; color:#e53935;">220V ⚠️</span>
+      </div>
+      <div class="wire-row">
+        <span class="wire-label-minus" data-tip="Kabel Netral: balik ke PLN, tegangan 0V">↩ NETRAL (−)</span>
+        <div class="wire-line minus-wire"><div class="wire-anim" style="animation-delay:0.5s"></div></div>
+        <span style="font-size:0.7rem; color:#1565c0;">0V (balik)</span>
+      </div>
+      <div class="wire-row">
+        <span class="wire-label-plus" data-tip="Grounding: keamanan, disalurkan ke tanah" style="color:#2e7d32;">🌱 GROUND</span>
+        <div class="wire-line" style="background:var(--earth)"><div class="wire-anim" style="animation-delay:1s"></div></div>
+        <span style="font-size:0.7rem; color:#2e7d32;">Ke Tanah 🌍</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <!-- ===== METERAN PLN ===== -->
+  <div class="sec-title">⚡ METERAN PLN</div>
+  <div class="meter-box">
+    <div class="meter-header">
+      <div class="meter-icon">🔌</div>
+      <div class="meter-title">
+          <h3>KWH Meter PLN</h3>
+          <p>Batas Daya: <strong style="color:#80cbc4">2.200 Watt (2.2 kVA)</strong> · MCB 10A</p>
+      </div>
+    </div>
+    <div class="meter-display">
+      <div class="meter-val">
+        <div class="num" id="meterKwh">0.000</div>
+        <div class="unit">kWh terpakai</div>
+      </div>
+      <div class="meter-val">
+        <div class="num" id="meterWatt">0</div>
+        <div class="unit">Watt sekarang</div>
+      </div>
+      <div class="meter-val">
+        <div class="num">220</div>
+        <div class="unit">Volt</div>
+      </div>
+      <div class="meter-val">
+        <div class="num" id="meterAmp">0.0</div>
+        <div class="unit">Ampere</div>
+      </div>
+    </div>
+    <div class="mcb-row">
+      <span class="mcb-label">MCB / CB Utama:</span>
+      <span class="mcb-status mcb-ok" id="mcbStatus">✅ ON — Listrik Mengalir</span>
+      <button class="mcb-btn on" id="mcbBtn" onclick="toggleMCB()">🔴 Trip MCB (Test)</button>
+    </div>
+    <div class="meter-wires-out">
+      <div class="wire-row" style="margin-top:6px">
+        <span class="wire-label-plus" data-tip="Dari MCB ke panel dalam rumah">🔴 FASE → Panel Dalam</span>
+        <div class="wire-line plus-wire"><div class="wire-anim"></div></div>
+      </div>
+      <div class="wire-row">
+        <span class="wire-label-minus" data-tip="Netral kembali ke PLN">🔵 NETRAL → Kembali PLN</span>
+        <div class="wire-line minus-wire"><div class="wire-anim" style="animation-delay:0.5s"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wattage bar -->
+  <div class="watt-bar-wrap">
+    <div class="watt-bar-label">
+      <span>⚡ Penggunaan Daya</span>
+      <span id="wattLabel">0 W / 2.200 W</span>
+    </div>
+    <div class="watt-bar-outer">
+      <div class="watt-bar-inner" id="wattBar" style="width:0%"></div>
+    </div>
+    <div class="warn-text ok" id="warnText">✅ Listrik aman — daya masih jauh dari batas</div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <!-- ===== INSIDE HOUSE ===== -->
+  <div class="sec-title">🏠 DALAM RUMAH — Jaringan Paralel</div>
+  <div class="house-wrapper">
+    <div class="house-label">🏠 DALAM RUMAH</div>
+
+    <!-- Bus bar -->
+    <div style="margin-bottom:8px; padding: 6px; background:#fff3f3; border-radius:8px; border:1.5px solid #ffcdd2;">
+      <div style="font-size:0.68rem; font-weight:800; color:#c62828; margin-bottom:4px;">📌 BUSBAR UTAMA — Kabel terhubung ke semua kamar (PARALEL)</div>
+      <div class="busbar">
+        <span class="busbar-tag tag-plus">FASE (+)</span>
+        <div class="busbar-line plus"></div>
+        <span style="font-size:0.6rem; color:#c62828;">→ ke semua kamar</span>
+      </div>
+      <div class="busbar" style="margin-top:3px">
+        <span class="busbar-tag tag-minus">NETRAL (−)</span>
+        <div class="busbar-line minus"></div>
+        <span style="font-size:0.6rem; color:#1565c0;">→ ke semua kamar</span>
+      </div>
+      <div class="busbar" style="margin-top:3px">
+        <span class="busbar-tag tag-earth">GROUND</span>
+        <div class="busbar-line earth"></div>
+        <span style="font-size:0.6rem; color:#2e7d32;">→ ke tanah (keamanan)</span>
+      </div>
+    </div>
+
+    <!-- ROOMS -->
+    <div class="rooms-grid" id="roomsGrid">
+      <!-- generated by JS -->
+    </div>
+
+    <!-- btn row -->
+    <div class="btn-row">
+      <button class="btn-all-on" onclick="allOn()">💡 Nyalakan Semua Lampu</button>
+      <button class="btn-all-off" onclick="allOff()">🌙 Matikan Semua Lampu</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-box">
+      <div class="stat-num" id="statOn">0</div>
+      <div class="stat-label">Lampu Menyala</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statOff">5</div>
+      <div class="stat-label">Lampu Mati</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">220V</div>
+      <div class="stat-label">Tegangan Tiap Lampu</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statTotalW">0W</div>
+      <div class="stat-label">Total Daya Lampu</div>
+    </div>
+  </div>
+
+  <!-- ===== APPLIANCES ===== -->
+  <div class="sec-title" style="margin-top:16px">🔌 PERALATAN RUMAH — Sambungan Paralel</div>
+  <div class="appliances-section">
+    <div class="appl-label">⚡ PERALATAN LISTRIK</div>
+      <div style="font-size:0.72rem; color:#6a1b9a; margin-top:6px; font-weight:700;">
+      💡 Setiap peralatan disambung PARALEL — masing-masing mendapat 220V penuh!<br>
+      ⚠️ Jika total daya melebihi <strong>2.200W</strong>, MCB akan JEPRET otomatis!
+    </div>
+    <div class="appl-grid" id="applGrid">
+      <!-- generated by JS -->
+    </div>
+    <div class="watt-bar-wrap" style="margin-top:10px">
+      <div class="watt-bar-label">
+        <span>⚡ Total Semua Daya</span>
+        <span id="totalWLabel">0 W / 2.200 W</span>
+      </div>
+      <div class="watt-bar-outer">
+        <div class="watt-bar-inner" id="totalWBar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-all-on" style="background:#7b1fa2" onclick="allApplOn()">🔌 Nyalakan Semua Alat</button>
+      <button class="btn-all-off" onclick="allApplOff()">🔌 Matikan Semua Alat</button>
+    </div>
+  </div>
+
+  <!-- EXPLANATION -->
+  <div class="explain-box" style="margin-top:10px">
+    <h4>⚡ Kenapa Listrik Rumah Pakai Rangkaian PARALEL?</h4>
+    <ul>
+      <li>🔴 <strong>Kabel FASE/PLUS (merah):</strong> Membawa tegangan 220V dari PLN ke semua peralatan</li>
+      <li>🔵 <strong>Kabel NETRAL/MINUS (biru):</strong> Arus balik ke PLN, tegangan 0V, melengkapi rangkaian</li>
+      <li>🟢 <strong>Kabel GROUND (hijau):</strong> Keamanan! Jika ada kebocoran arus, langsung ke tanah, bukan ke manusia</li>
+      <li>💡 Setiap lampu &amp; alat mendapat <strong>220V penuh</strong> — nyalanya sama terang!</li>
+      <li>🔗 Setiap kamar punya jalur sendiri — kalau 1 lampu mati, yang lain tetap menyala!</li>
+      <li>⚡ Saklar memutus <strong>kabel FASE (+)</strong> saja — ini cara paling aman!</li>
+      <li>🔒 MCB (Miniature Circuit Breaker) = pengaman otomatis — jika daya berlebih, <strong>JEPRET!</strong> memutus listrik supaya tidak terbakar</li>
+    </ul>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const MAX_WATT = 2200; // 2.2 kVA rumah
+const MCB_AMP  = Math.round(MAX_WATT / 220);
+
+const rooms = [
+  { id: 'ruang_tamu',   name: 'Ruang Tamu',   icon: '🛋️',  watt: 15,  on: false },
+  { id: 'kamar_utama',  name: 'Kamar Utama',  icon: '🛏️',  watt: 15,  on: false },
+  { id: 'kamar_aslan',  name: 'Kamar Aslan',  icon: '⭐',  watt: 10,  on: false },
+  { id: 'dapur',        name: 'Dapur',        icon: '🍳',  watt: 20,  on: false },
+  { id: 'kamar_mandi',  name: 'Kamar Mandi',  icon: '🚿',  watt: 10,  on: false },
+];
+
+const appliances = [
+  { id: 'kulkas',    name: 'Kulkas',         icon: '🧊', watt: 150,  on: true,  alwaysOn: true  },
+  { id: 'setrika',   name: 'Setrika',        icon: '🫡', watt: 350,  on: true,  alwaysOn: false },
+  { id: 'jetpam',    name: 'Pompa Jet (Jetpam)', icon: '💧', watt: 400, on: true,  alwaysOn: false },
+  { id: 'tv',        name: 'TV 32"',         icon: '📺', watt: 80,   on: false, alwaysOn: false },
+  { id: 'ac',        name: 'AC 1 PK',        icon: '❄️', watt: 900,  on: false, alwaysOn: false },
+  { id: 'mesin_cuci',name: 'Mesin Cuci',     icon: '🌀', watt: 500,  on: false, alwaysOn: false },
+  { id: 'rice_cooker',name:'Rice Cooker',    icon: '🍚', watt: 400,  on: false, alwaysOn: false },
+  { id: 'dispenser', name: 'Dispenser',      icon: '🥤', watt: 350,  on: false, alwaysOn: false },
+  { id: 'komputer',  name: 'Komputer',       icon: '💻', watt: 300,  on: false, alwaysOn: false },
+  { id: 'water_heater', name: 'Water Heater',icon: '🔥', watt: 2000, on: false, alwaysOn: false },
+];
+
+let mcbOn = true;
+let kwhAccum = 0;
+let kwhInterval = null;
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderRooms() {
+  const grid = document.getElementById('roomsGrid');
+  grid.innerHTML = rooms.map(r => `
+    <div class="room-card ${r.on ? 'lit' : ''}" id="card_${r.id}">
+      <div class="room-title">${r.icon} ${r.name}</div>
+      <div class="room-wiring">
+        <!-- wire coming in: FASE dan NETRAL dari busbar -->
+        <div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:2px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
+            <div style="width:4px;height:14px;background:var(--plus);border-radius:2px"></div>
+            <div style="font-size:0.5rem;color:var(--plus);font-weight:800">+</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
+            <div style="width:4px;height:14px;background:var(--minus);border-radius:2px"></div>
+            <div style="font-size:0.5rem;color:var(--minus);font-weight:800">−</div>
+          </div>
+        </div>
+        <!-- saklar on FASE line -->
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:2px">
+          <div>
+            <button class="switch ${r.on ? 'on' : ''}" id="sw_${r.id}" onclick="toggleRoom('${r.id}')" title="Saklar FASE (+)"></button>
+            <div style="font-size:0.55rem;text-align:center;color:#777;font-weight:700">SAKLAR (+)</div>
+          </div>
+          <div style="width:4px;height:32px;background:var(--minus);border-radius:2px;margin-top:0"></div>
+        </div>
+        <!-- lamp wires -->
+        <div class="lamp-wires">
+          <div class="lw plus"><div class="lw-line"></div><div class="lw-dot"></div><div class="lw-label">+</div></div>
+          <div class="lw minus"><div class="lw-line"></div><div class="lw-dot"></div><div class="lw-label">−</div></div>
+        </div>
+        <!-- lamp -->
+        <div class="lamp ${r.on ? 'on' : ''}" id="lamp_${r.id}">💡</div>
+        <div class="lamp-status ${r.on ? 'on' : ''}" id="lstatus_${r.id}">${r.on ? '🔆 MENYALA' : '⚫ MATI'}</div>
+        <div style="font-size:0.6rem;color:#aaa;margin-top:2px">${r.watt}W</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAppliances() {
+  const grid = document.getElementById('applGrid');
+  grid.innerHTML = appliances.map(a => `
+    <div class="appl-card ${a.on ? 'active' : ''}" id="acard_${a.id}">
+      <span class="appl-icon">${a.icon}</span>
+      <div class="appl-name">${a.name}</div>
+      <div class="appl-watt">${a.watt}W</div>
+      <div style="display:flex;gap:4px;justify-content:center;margin-top:4px">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--plus);display:inline-block" title="Terhubung ke FASE +"></span>
+        <span style="font-size:0.55rem;color:#888">paralel</span>
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--minus);display:inline-block" title="Terhubung ke NETRAL −"></span>
+      </div>
+      <button class="appl-toggle ${a.on ? 'on' : 'off'}" id="abtn_${a.id}" onclick="toggleAppl('${a.id}')">
+        ${a.on ? '🔌 ON' : '⭕ OFF'}
+      </button>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// TOGGLE ROOM
+// ============================================================
+function toggleRoom(id) {
+  if (!mcbOn) { showNoMCB(); return; }
+  const r = rooms.find(x => x.id === id);
+  r.on = !r.on;
+  updateRoomUI(r);
+  updateStats();
+  checkOverload();
+}
+
+function updateRoomUI(r) {
+  const card = document.getElementById('card_' + r.id);
+  const sw   = document.getElementById('sw_' + r.id);
+  const lamp = document.getElementById('lamp_' + r.id);
+  const ls   = document.getElementById('lstatus_' + r.id);
+  if (!card) return;
+  if (r.on) { card.classList.add('lit'); sw.classList.add('on'); lamp.classList.add('on'); ls.textContent = '🔆 MENYALA'; ls.classList.add('on'); }
+  else       { card.classList.remove('lit'); sw.classList.remove('on'); lamp.classList.remove('on'); ls.textContent = '⚫ MATI'; ls.classList.remove('on'); }
+}
+
+// ============================================================
+// TOGGLE APPLIANCE
+// ============================================================
+function toggleAppl(id) {
+  if (!mcbOn) { showNoMCB(); return; }
+  const a = appliances.find(x => x.id === id);
+  a.on = !a.on;
+  updateApplUI(a);
+  updateStats();
+  checkOverload();
+}
+
+function updateApplUI(a) {
+  const card = document.getElementById('acard_' + a.id);
+  const btn  = document.getElementById('abtn_' + a.id);
+  if (!card) return;
+  if (a.on) { card.classList.add('active'); btn.textContent = '🔌 ON'; btn.className = 'appl-toggle on'; }
+  else       { card.classList.remove('active'); btn.textContent = '⭕ OFF'; btn.className = 'appl-toggle off'; }
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function calcTotal() {
+  const lampW = rooms.reduce((s, r) => s + (r.on ? r.watt : 0), 0);
+  const applW = appliances.reduce((s, a) => s + (a.on ? a.watt : 0), 0);
+  return lampW + applW;
+}
+
+function updateStats() {
+  const onCount  = rooms.filter(r => r.on).length;
+  const lampW    = rooms.reduce((s, r) => s + (r.on ? r.watt : 0), 0);
+  const totalW   = calcTotal();
+  const pct      = Math.min(totalW / MAX_WATT * 100, 100);
+  const amp      = (totalW / 220).toFixed(1);
+
+  document.getElementById('statOn').textContent   = onCount;
+  document.getElementById('statOff').textContent  = rooms.length - onCount;
+  document.getElementById('statTotalW').textContent = lampW + 'W';
+
+  document.getElementById('meterWatt').textContent = totalW;
+  document.getElementById('meterAmp').textContent  = amp;
+  document.getElementById('wattLabel').textContent  = totalW.toLocaleString() + ' W / ' + MAX_WATT.toLocaleString() + ' W';
+  document.getElementById('totalWLabel').textContent = totalW.toLocaleString() + ' W / ' + MAX_WATT.toLocaleString() + ' W';
+
+  const bar = document.getElementById('wattBar');
+  const tbar = document.getElementById('totalWBar');
+  bar.style.width  = pct + '%';
+  tbar.style.width = pct + '%';
+
+  const warnText = document.getElementById('warnText');
+  [bar, tbar].forEach(b => {
+    b.classList.remove('warn', 'danger');
+    if (pct > 90)      b.classList.add('danger');
+    else if (pct > 70) b.classList.add('warn');
+  });
+
+  if (pct > 90) {
+    warnText.textContent = '🚨 BAHAYA! Hampir overload! Segera matikan peralatan!';
+    warnText.className = 'warn-text over';
+  } else if (pct > 70) {
+    warnText.textContent = '⚠️ Peringatan! Daya sudah ' + Math.round(pct) + '% — cukup besar!';
+    warnText.className = 'warn-text warning';
+  } else {
+    warnText.textContent = '✅ Listrik aman — daya masih ' + Math.round(pct) + '% dari batas';
+    warnText.className = 'warn-text ok';
+  }
+}
+
+// kWh accumulator
+function startKwh() {
+  if (kwhInterval) clearInterval(kwhInterval);
+  kwhInterval = setInterval(() => {
+    const w = calcTotal();
+    kwhAccum += w / 1000 / 3600; // per second
+    document.getElementById('meterKwh').textContent = kwhAccum.toFixed(4);
+  }, 1000);
+}
+startKwh();
+
+// ============================================================
+// OVERLOAD CHECK — MCB JEPRET!
+// ============================================================
+function checkOverload() {
+  const total = calcTotal();
+  if (total > MAX_WATT && mcbOn) {
+    triggerTrip(total);
+  }
+}
+
+function triggerTrip(totalW) {
+  mcbOn = false;
+  // flash
+  const flash = document.getElementById('flashOverlay');
+  flash.classList.add('show');
+  setTimeout(() => flash.classList.remove('show'), 300);
+  // sparks
+  createSparks();
+  // show overlay
+  setTimeout(() => {
+    document.getElementById('tripMsg').innerHTML =
+      `Daya yang digunakan <strong>${totalW.toLocaleString()}W</strong> melebihi batas MCB <strong>${MAX_WATT.toLocaleString()}W</strong>!<br>MCB otomatis JEPRET untuk melindungi kabel dari panas berlebih dan mencegah <strong>kebakaran</strong>! 🔥`;
+    document.getElementById('tripDetail').innerHTML =
+      `Total Arus: ${(totalW/220).toFixed(1)}A &nbsp;|&nbsp; Batas MCB: ${MCB_AMP}A<br>⚠️ Matikan beberapa alat sebelum reset!`;
+    document.getElementById('tripOverlay').classList.add('show');
+    updateMCBUI();
+  }, 300);
+}
+
+function createSparks() {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const container = document.createElement('div');
+  container.className = 'spark';
+  container.style.left = cx + 'px';
+  container.style.top  = cy + 'px';
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'spark-particle';
+    const angle = Math.random() * Math.PI * 2;
+    const dist  = 80 + Math.random() * 120;
+    p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+    p.style.background = ['#FFD700','#FF6B00','#ff4444','#fff','#00bcd4'][Math.floor(Math.random()*5)];
+    p.style.animationDelay = Math.random() * 0.3 + 's';
+    container.appendChild(p);
+  }
+  document.body.appendChild(container);
+  setTimeout(() => document.body.removeChild(container), 1200);
+}
+
+function resetMCB() {
+  // turn off heavy appliances
+  appliances.forEach(a => { if (a.watt >= 350) a.on = false; });
+  mcbOn = true;
+  document.getElementById('tripOverlay').classList.remove('show');
+  updateMCBUI();
+  renderAppliances();
+  updateStats();
+}
+
+function toggleMCB() {
+  if (mcbOn) {
+    mcbOn = false;
+    updateMCBUI();
+    // visually darken all lights
+    rooms.forEach(r => {
+      const lamp = document.getElementById('lamp_' + r.id);
+      if (lamp) lamp.style.opacity = '0.3';
+    });
+  } else {
+    mcbOn = true;
+    updateMCBUI();
+    rooms.forEach(r => {
+      const lamp = document.getElementById('lamp_' + r.id);
+      if (lamp) lamp.style.opacity = '1';
+    });
+    checkOverload();
+  }
+}
+
+function updateMCBUI() {
+  const st  = document.getElementById('mcbStatus');
+  const btn = document.getElementById('mcbBtn');
+  if (mcbOn) {
+    st.textContent  = '✅ ON — Listrik Mengalir';
+    st.className    = 'mcb-status mcb-ok';
+    btn.textContent = '🔴 Trip MCB (Test)';
+    btn.className   = 'mcb-btn on';
+  } else {
+    st.textContent  = '❌ TRIP! — Listrik Terputus!';
+    st.className    = 'mcb-status mcb-trip';
+    btn.textContent = '🔄 Reset MCB';
+    btn.className   = 'mcb-btn off';
+    btn.onclick     = resetMCB;
+  }
+}
+
+function showNoMCB() {
+  alert('⚠️ MCB sedang TRIP! Listrik terputus. Reset MCB dulu sebelum menyalakan apapun!');
+}
+
+// ============================================================
+// ALL ON / OFF
+// ============================================================
+function allOn() {
+  if (!mcbOn) { showNoMCB(); return; }
+  rooms.forEach(r => { r.on = true; updateRoomUI(r); });
+  updateStats(); checkOverload();
+}
+function allOff() {
+  rooms.forEach(r => { r.on = false; updateRoomUI(r); });
+  updateStats();
+}
+function allApplOn() {
+  if (!mcbOn) { showNoMCB(); return; }
+  appliances.forEach(a => { a.on = true; updateApplUI(a); });
+  updateStats(); checkOverload();
+}
+function allApplOff() {
+  appliances.forEach(a => { a.on = false; updateApplUI(a); });
+  updateStats();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderRooms();
+renderAppliances();
+updateStats();
+</script>
+</body>
+</html>

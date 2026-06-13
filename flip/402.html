@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Aslan - Buku 2: Rangkaian Paralel</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:    #00C9A7;
+    --orange:  #FF6B35;
+    --yellow:  #FFD93D;
+    --purple:  #845EC2;
+    --pink:    #FF9671;
+    --blue:    #0081CF;
+    --green:   #4CAF50;
+    --red:     #FF4757;
+    --bg:      #F0F9FF;
+    --white:   #FFFFFF;
+    --dark:    #2D3436;
+    --light:   #DFF6FF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── BACK BUTTON ── */
+  #back-btn {
+    position: fixed; top: 14px; left: 14px; z-index: 999;
+    background: var(--white); border: 3px solid var(--teal);
+    color: var(--teal); font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem; padding: 7px 14px; border-radius: 20px;
+    cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,.15);
+    text-decoration: none; display: flex; align-items: center; gap: 5px;
+    transition: all .2s;
+  }
+  #back-btn:hover { background: var(--teal); color: var(--white); transform: translateY(-2px); }
+
+  /* ── PAGE CONTAINER ── */
+  .book { width: 100vw; height: 100vh; position: relative; }
+
+  .page {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: flex-start;
+    padding: 70px 20px 80px;
+    overflow-y: auto;
+    animation: fadeIn .4s ease;
+  }
+  .page.active { display: flex; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    display: flex; justify-content: center; align-items: center; gap: 14px;
+    padding: 12px 20px; background: var(--white);
+    box-shadow: 0 -3px 12px rgba(0,0,0,.1); z-index: 998;
+  }
+  .nav-btn {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    padding: 10px 26px; border: none; border-radius: 25px;
+    cursor: pointer; transition: all .2s; box-shadow: 0 4px 10px rgba(0,0,0,.15);
+  }
+  .nav-btn.prev { background: var(--purple); color: var(--white); }
+  .nav-btn.next { background: var(--teal);   color: var(--white); }
+  .nav-btn:hover { transform: translateY(-3px) scale(1.04); }
+  .nav-btn:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+
+  .page-indicator {
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    color: var(--dark); background: var(--light);
+    padding: 8px 20px; border-radius: 20px;
+    border: 2px solid var(--teal);
+  }
+
+  /* ── TYPOGRAPHY HELPERS ── */
+  .fredoka  { font-family: 'Fredoka One', cursive; }
+  .title-xl { font-family: 'Fredoka One', cursive; font-size: clamp(1.8rem,5vw,3rem); }
+  .title-lg { font-family: 'Fredoka One', cursive; font-size: clamp(1.4rem,4vw,2.2rem); }
+  .title-md { font-family: 'Fredoka One', cursive; font-size: clamp(1.1rem,3vw,1.7rem); }
+  .body-lg  { font-size: clamp(1rem,2.5vw,1.25rem); line-height: 1.6; }
+  .body-md  { font-size: clamp(.9rem,2vw,1.1rem);  line-height: 1.6; }
+
+  /* ── CARDS & BOXES ── */
+  .card {
+    background: var(--white); border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.1);
+    padding: 22px 26px; margin: 10px 0; width: 100%; max-width: 720px;
+  }
+  .card-color { border-left: 6px solid var(--teal); }
+
+  .bubble {
+    border-radius: 22px; padding: 16px 22px;
+    margin: 8px 0; font-size: clamp(.95rem,2vw,1.1rem);
+    font-weight: 700; line-height: 1.55;
+  }
+
+  /* ── ASLAN CHARACTER ── */
+  .aslan-wrap { display:flex; align-items:flex-end; gap:14px; margin: 8px 0; max-width:720px; width:100%; }
+  .aslan-wrap.right { flex-direction:row-reverse; }
+  .aslan-svg { flex-shrink:0; }
+
+  .speech {
+    background: var(--white); border-radius: 20px 20px 20px 4px;
+    border: 3px solid var(--teal); padding: 14px 18px;
+    font-size: clamp(.95rem,2vw,1.1rem); font-weight:700;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1); flex:1; line-height:1.5;
+  }
+  .aslan-wrap.right .speech { border-radius: 20px 20px 4px 20px; border-color: var(--orange); }
+
+  /* ── CIRCUIT ILLUSTRATIONS (SVG inline) ── */
+  .circuit-container {
+    width:100%; max-width:680px; background:var(--white);
+    border-radius:20px; border:3px solid var(--teal);
+    padding:18px; overflow:hidden; margin:10px 0;
+    box-shadow:0 4px 14px rgba(0,0,0,.08);
+  }
+
+  /* ── TABLE ── */
+  .compare-table { width:100%; border-collapse:collapse; margin:10px 0; }
+  .compare-table th {
+    font-family:'Fredoka One',cursive; font-size:1rem; padding:12px 10px;
+    color:var(--white); text-align:center;
+  }
+  .compare-table td { padding:10px 10px; text-align:center; font-size:.95rem; font-weight:700; border-bottom:2px solid #eee; }
+  .compare-table tr:last-child td { border-bottom:none; }
+  .compare-table tr:nth-child(even) td { background:#f9f9f9; }
+
+  .th-seri  { background:var(--purple); }
+  .th-par   { background:var(--teal); }
+  .th-label { background:var(--orange); }
+
+  /* ── QUIZ ── */
+  .quiz-box { background:var(--white); border-radius:20px; padding:18px 22px; margin:10px 0; width:100%; max-width:720px; box-shadow:0 4px 14px rgba(0,0,0,.08); border:3px solid var(--yellow); }
+  .quiz-box h3 { font-family:'Fredoka One',cursive; color:var(--purple); font-size:1.1rem; margin-bottom:10px; }
+  .quiz-option {
+    display:flex; align-items:center; gap:10px;
+    background:var(--light); border:2.5px solid transparent;
+    border-radius:14px; padding:10px 16px; margin:7px 0;
+    cursor:pointer; font-size:1rem; font-weight:700; transition:all .2s;
+  }
+  .quiz-option:hover { border-color:var(--teal); transform:translateX(4px); }
+  .quiz-option.correct { background:#d4fce8; border-color:var(--green); color:var(--green); }
+  .quiz-option.wrong   { background:#ffe0e0; border-color:var(--red);   color:var(--red);   }
+  .quiz-option.disabled { pointer-events:none; }
+  .quiz-feedback { font-family:'Fredoka One',cursive; font-size:1rem; margin-top:8px; padding:8px 14px; border-radius:12px; display:none; }
+
+  /* ── ICON EMOJI BOX ── */
+  .icon-row { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:10px 0; }
+  .icon-card {
+    background:var(--white); border-radius:18px; padding:16px 18px;
+    text-align:center; box-shadow:0 4px 12px rgba(0,0,0,.09);
+    border:3px solid var(--yellow); flex:1 1 140px; max-width:170px;
+    transition:transform .2s;
+  }
+  .icon-card:hover { transform:scale(1.06) rotate(-1deg); }
+  .icon-card .emoji { font-size:2.2rem; }
+  .icon-card p { font-size:.85rem; font-weight:800; margin-top:6px; color:var(--dark); }
+
+  /* ── PROGRESS DOTS ── */
+  .dots { display:flex; gap:7px; justify-content:center; margin-bottom:4px; }
+  .dot { width:11px; height:11px; border-radius:50%; background:#ccc; transition:background .3s; }
+  .dot.done { background:var(--teal); }
+  .dot.active { background:var(--orange); transform:scale(1.3); }
+
+  /* ── BADGE ── */
+  .badge {
+    display:inline-block; font-family:'Fredoka One',cursive;
+    padding:6px 18px; border-radius:30px; font-size:1rem;
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+  @keyframes glow { 0%,100%{box-shadow:0 0 0 0 rgba(0,201,167,.4)} 50%{box-shadow:0 0 0 12px rgba(0,201,167,0)} }
+
+  .bounce  { animation:bounce 2s infinite; }
+  .pulse   { animation:pulse 2.2s infinite; }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: linear-gradient(135deg,var(--teal),var(--blue));
+    border-radius:20px; padding:22px 28px; text-align:center;
+    color:var(--white); margin:10px 0; max-width:720px; width:100%;
+    box-shadow:0 6px 18px rgba(0,201,167,.3);
+  }
+  .formula { font-family:'Fredoka One',cursive; font-size:clamp(1.2rem,4vw,1.9rem); margin:8px 0; }
+
+  /* ── STAR RATING ── */
+  .stars { font-size:1.8rem; letter-spacing:4px; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:500px){
+    .page { padding:65px 14px 75px; }
+    .card { padding:16px 18px; }
+    .compare-table th, .compare-table td { font-size:.82rem; padding:8px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<a id="back-btn" href="../perpustakaan.html">🏠 Perpustakaan</a>
+
+<div class="book">
+
+<!-- ════════════════════════════════════════
+     HALAMAN 1 – COVER
+════════════════════════════════════════ -->
+<div class="page active" id="page-1">
+  <div style="text-align:center;width:100%;max-width:720px;">
+
+    <!-- Decorative top strip -->
+    <div style="height:10px;background:linear-gradient(90deg,var(--teal),var(--blue),var(--purple),var(--teal));border-radius:10px;margin-bottom:18px;"></div>
+
+    <div class="badge" style="background:var(--teal);color:#fff;margin-bottom:10px;">📚 BUKU 2</div>
+
+    <!-- Cover card -->
+    <div style="background:linear-gradient(145deg,#00C9A7,#0081CF);border-radius:30px;padding:30px 26px;box-shadow:0 10px 35px rgba(0,201,167,.4);position:relative;overflow:hidden;">
+
+      <!-- BG bubbles decorative -->
+      <div style="position:absolute;width:120px;height:120px;background:rgba(255,255,255,.12);border-radius:50%;top:-20px;right:-20px;"></div>
+      <div style="position:absolute;width:80px;height:80px;background:rgba(255,255,255,.1);border-radius:50%;bottom:-10px;left:-10px;"></div>
+
+      <!-- Lightning bolts deco -->
+      <div style="font-size:2.5rem;margin-bottom:6px;">⚡⚡⚡</div>
+
+      <!-- Main circuit SVG (parallel) -->
+      <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:380px;margin:0 auto 12px;display:block;">
+        <!-- wires horizontal -->
+        <line x1="20" y1="30" x2="320" y2="30" stroke="#FFD93D" stroke-width="5" stroke-linecap="round"/>
+        <line x1="20" y1="130" x2="320" y2="130" stroke="#FFD93D" stroke-width="5" stroke-linecap="round"/>
+        <!-- left vertical -->
+        <line x1="20" y1="30" x2="20" y2="130" stroke="#FFD93D" stroke-width="5" stroke-linecap="round"/>
+        <!-- right vertical -->
+        <line x1="320" y1="30" x2="320" y2="130" stroke="#FFD93D" stroke-width="5" stroke-linecap="round"/>
+        <!-- Branch 1 verticals -->
+        <line x1="110" y1="30" x2="110" y2="65" stroke="#FF9671" stroke-width="4"/>
+        <line x1="110" y1="95" x2="110" y2="130" stroke="#FF9671" stroke-width="4"/>
+        <!-- Bulb 1 -->
+        <circle cx="110" cy="80" r="18" fill="#FFD93D" stroke="#FF6B35" stroke-width="3"/>
+        <text x="110" y="86" text-anchor="middle" font-size="18">💡</text>
+        <!-- Branch 2 verticals -->
+        <line x1="180" y1="30" x2="180" y2="65" stroke="#FF9671" stroke-width="4"/>
+        <line x1="180" y1="95" x2="180" y2="130" stroke="#FF9671" stroke-width="4"/>
+        <!-- Bulb 2 -->
+        <circle cx="180" cy="80" r="18" fill="#FFD93D" stroke="#FF6B35" stroke-width="3"/>
+        <text x="180" y="86" text-anchor="middle" font-size="18">💡</text>
+        <!-- Branch 3 verticals -->
+        <line x1="250" y1="30" x2="250" y2="65" stroke="#FF9671" stroke-width="4"/>
+        <line x1="250" y1="95" x2="250" y2="130" stroke="#FF9671" stroke-width="4"/>
+        <!-- Bulb 3 -->
+        <circle cx="250" cy="80" r="18" fill="#FFD93D" stroke="#FF6B35" stroke-width="3"/>
+        <text x="250" y="86" text-anchor="middle" font-size="18">💡</text>
+        <!-- Battery -->
+        <rect x="5" y="70" width="28" height="22" rx="5" fill="#FF4757" stroke="white" stroke-width="2"/>
+        <text x="19" y="85" text-anchor="middle" fill="white" font-size="13" font-weight="bold">🔋</text>
+        <!-- Labels -->
+        <text x="170" y="20" text-anchor="middle" fill="white" font-size="11" font-weight="bold">JALUR LISTRIK</text>
+        <text x="170" y="152" text-anchor="middle" fill="white" font-size="11" font-weight="bold">PARALEL = BANYAK JALUR!</text>
+      </svg>
+
+      <h1 class="title-xl" style="color:#FFD93D;text-shadow:2px 3px 0 rgba(0,0,0,.25);line-height:1.2;margin-bottom:8px;">
+        Petualangan Aslan<br>dengan Listrik Ajaib
+      </h1>
+      <div style="background:rgba(255,255,255,.2);border-radius:15px;padding:8px 20px;display:inline-block;margin:8px 0;">
+        <span class="title-md" style="color:#fff;">📘 Buku 2: Rangkaian Paralel</span>
+      </div>
+
+      <!-- Aslan mascot inline SVG -->
+      <div class="bounce" style="font-size:5rem;margin:12px 0;">🧑‍🔬</div>
+
+      <div style="background:rgba(255,255,255,.15);border-radius:15px;padding:12px 18px;margin-top:8px;">
+        <p class="body-md" style="color:#fff;"><strong>"Kalau satu mati, yang lain tetap nyala! Seru banget kan?"</strong></p>
+        <p style="color:#FFD93D;font-size:.9rem;margin-top:4px;">— Aslan, Penjelajah Listrik Cilik 🔬</p>
+      </div>
+    </div>
+
+    <div style="height:10px;background:linear-gradient(90deg,var(--purple),var(--teal),var(--orange),var(--purple));border-radius:10px;margin-top:18px;"></div>
+
+    <div style="display:flex;justify-content:center;gap:12px;margin-top:14px;flex-wrap:wrap;">
+      <span class="badge" style="background:var(--yellow);color:var(--dark);">🎯 Usia 10 Tahun</span>
+      <span class="badge" style="background:var(--pink);color:#fff;">⚡ 13 Halaman Seru</span>
+      <span class="badge" style="background:var(--purple);color:#fff;">🧠 Fisika Dasar</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 2 – DAFTAR ISI
+════════════════════════════════════════ -->
+<div class="page" id="page-2">
+  <div style="width:100%;max-width:720px;">
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3.5rem;">🧑‍🔬</div></div>
+      <div class="speech">Halo Aslan! Ini peta perjalanan kita di Buku 2. Yuk kita jelajahi bareng! 🗺️</div>
+    </div>
+
+    <h2 class="title-lg" style="color:var(--teal);text-align:center;margin:14px 0 10px;">📋 Daftar Isi Buku 2</h2>
+
+    <div class="card" style="background:linear-gradient(135deg,#e8fff9,#fff);border:3px solid var(--teal);">
+      <!-- TOC items -->
+      <div onclick="goToPage(1)" style="cursor:pointer;">
+        <div class="bubble" style="background:linear-gradient(90deg,var(--teal),#00b38f);color:white;" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          📖 Halaman 1 — Cover Buku 2
+        </div>
+      </div>
+      <div onclick="goToPage(2)" style="cursor:pointer;">
+        <div class="bubble" style="background:#f0f9ff;color:var(--dark);border:2px dashed var(--teal);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          📋 Halaman 2 — Daftar Isi <span style="color:var(--teal)">← Kamu di sini!</span>
+        </div>
+      </div>
+      <div onclick="goToPage(3)" style="cursor:pointer;">
+        <div class="bubble" style="background:#fffbe6;color:var(--dark);border:2px dashed var(--yellow);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          🔁 Halaman 3 — Review Buku 1: Rangkaian Seri
+        </div>
+      </div>
+      <div onclick="goToPage(4)" style="cursor:pointer;">
+        <div class="bubble" style="background:#f0fff0;color:var(--dark);border:2px dashed var(--green);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          ❓ Halaman 4 — Apa itu Rangkaian Paralel?
+        </div>
+      </div>
+      <div onclick="goToPage(5)" style="cursor:pointer;">
+        <div class="bubble" style="background:#fff0f5;color:var(--dark);border:2px dashed var(--pink);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          🌟 Halaman 5 — Ciri-ciri Rangkaian Paralel
+        </div>
+      </div>
+      <div onclick="goToPage(6)" style="cursor:pointer;">
+        <div class="bubble" style="background:#f5f0ff;color:var(--dark);border:2px dashed var(--purple);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          ⚖️ Halaman 6 — Seri vs Paralel (Perbandingan)
+        </div>
+      </div>
+      <div onclick="goToPage(7)" style="cursor:pointer;">
+        <div class="bubble" style="background:#f0f9ff;color:var(--dark);border:2px dashed var(--blue);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          🏠 Halaman 7 — Contoh di Rumah Sehari-hari
+        </div>
+      </div>
+      <div onclick="goToPage(8)" style="cursor:pointer;">
+        <div class="bubble" style="background:#fff8e6;color:var(--dark);border:2px dashed var(--orange);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          📐 Halaman 8 — Rumus Dasar Rangkaian Paralel
+        </div>
+      </div>
+      <div onclick="goToPage(9)" style="cursor:pointer;">
+        <div class="bubble" style="background:#e6ffe6;color:var(--dark);border:2px dashed var(--green);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          👍 Halaman 9 — Kelebihan Rangkaian Paralel
+        </div>
+      </div>
+      <div onclick="goToPage(10)" style="cursor:pointer;">
+        <div class="bubble" style="background:#ffe6e6;color:var(--dark);border:2px dashed var(--red);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          👎 Halaman 10 — Kekurangan Rangkaian Paralel
+        </div>
+      </div>
+      <div onclick="goToPage(11)" style="cursor:pointer;">
+        <div class="bubble" style="background:#e6f0ff;color:var(--dark);border:2px dashed var(--blue);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          ✏️ Halaman 11 — Latihan Soal Seru
+        </div>
+      </div>
+      <div onclick="goToPage(12)" style="cursor:pointer;">
+        <div class="bubble" style="background:#f5f0ff;color:var(--dark);border:2px dashed var(--purple);" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          🎉 Halaman 12 — Kesimpulan + Pesan Semangat
+        </div>
+      </div>
+      <div onclick="goToPage(13)" style="cursor:pointer;">
+        <div class="bubble" style="background:linear-gradient(90deg,#FFD93D,#FF9671);color:white;" onmouseenter="this.style.transform='translateX(6px)'" onmouseleave="this.style.transform=''">
+          🚀 Halaman 13 — Penutup: Siap Lanjut ke Buku 3!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 3 – REVIEW BUKU 1
+════════════════════════════════════════ -->
+<div class="page" id="page-3">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--purple);text-align:center;margin-bottom:4px;">🔁 Review Buku 1</h2>
+    <p class="title-md" style="color:var(--teal);text-align:center;margin-bottom:14px;">Ingat lagi tentang Rangkaian Seri?</p>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3.2rem;">🧑‍🔬</div></div>
+      <div class="speech">Di Buku 1 kita sudah belajar tentang <strong>Rangkaian Seri</strong>. Yuk ingat-ingat lagi supaya kita bisa bandingkan! 💭</div>
+    </div>
+
+    <div class="card" style="border:3px solid var(--purple);">
+      <h3 class="title-md" style="color:var(--purple);margin-bottom:12px;">⚡ Rangkaian Seri = Satu Jalur!</h3>
+
+      <!-- Series circuit SVG -->
+      <svg viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:400px;display:block;margin:0 auto 14px;">
+        <!-- wire loop -->
+        <polyline points="20,65 60,65 60,40 130,40 130,65 190,65 190,40 260,40 260,65 320,65 320,40 380,40 380,65" fill="none" stroke="#845EC2" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="380" y1="65" x2="380" y2="90" stroke="#845EC2" stroke-width="4.5"/>
+        <line x1="20" y1="65" x2="20" y2="90" stroke="#845EC2" stroke-width="4.5"/>
+        <line x1="20" y1="90" x2="380" y2="90" stroke="#845EC2" stroke-width="4.5" stroke-linecap="round"/>
+        <!-- Battery -->
+        <rect x="5" y="55" width="30" height="22" rx="5" fill="#FF4757" stroke="white" stroke-width="2"/>
+        <text x="20" y="70" text-anchor="middle" fill="white" font-size="14">🔋</text>
+        <!-- Bulbs on series -->
+        <circle cx="95" cy="40" r="16" fill="#FFD93D" stroke="#FF6B35" stroke-width="2.5"/>
+        <text x="95" y="47" text-anchor="middle" font-size="15">💡</text>
+        <circle cx="225" cy="40" r="16" fill="#FFD93D" stroke="#FF6B35" stroke-width="2.5"/>
+        <text x="225" y="47" text-anchor="middle" font-size="15">💡</text>
+        <circle cx="355" cy="40" r="16" fill="#FFD93D" stroke="#FF6B35" stroke-width="2.5"/>
+        <text x="355" y="47" text-anchor="middle" font-size="15">💡</text>
+        <!-- Arrow direction -->
+        <text x="200" y="110" text-anchor="middle" fill="#845EC2" font-size="12" font-weight="bold">→ Arus mengalir satu jalur → 1 putus, semua mati!</text>
+      </svg>
+
+      <div class="icon-row">
+        <div class="icon-card" style="border-color:var(--purple);">
+          <div class="emoji">🛤️</div>
+          <p>Satu jalur saja</p>
+        </div>
+        <div class="icon-card" style="border-color:var(--red);">
+          <div class="emoji">💥</div>
+          <p>Satu mati = semua mati</p>
+        </div>
+        <div class="icon-card" style="border-color:var(--orange);">
+          <div class="emoji">🔋</div>
+          <p>Baterai cepat hemat</p>
+        </div>
+        <div class="icon-card" style="border-color:var(--yellow);">
+          <div class="emoji">😔</div>
+          <p>Lampu lebih redup</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,#fffbe6,#fff8f0);border:3px solid var(--yellow);">
+      <p class="body-lg"><strong>🔑 Rumus Seri:</strong></p>
+      <p class="body-md" style="margin-top:8px;">
+        ▸ <strong>Hambatan Total:</strong> R<sub>total</sub> = R<sub>1</sub> + R<sub>2</sub> + R<sub>3</sub><br>
+        ▸ <strong>Arus:</strong> Sama di semua titik<br>
+        ▸ <strong>Tegangan:</strong> Dibagi-bagi
+      </p>
+    </div>
+
+    <div class="aslan-wrap right">
+      <div class="aslan-svg"><div style="font-size:2.8rem;">🧑‍🔬</div></div>
+      <div class="speech" style="border-color:var(--orange);">Nah, sekarang kita belajar sesuatu yang LEBIH KEREN! Rangkaian Paralel punya jalur banyak! 🛣️🛣️🛣️</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 4 – APA ITU RANGKAIAN PARALEL?
+════════════════════════════════════════ -->
+<div class="page" id="page-4">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--teal);text-align:center;margin-bottom:4px;">❓ Apa itu Rangkaian Paralel?</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:12px;">Yuk kenalan dengan konsep barunya!</p>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3.2rem;">🧑‍🔬</div></div>
+      <div class="speech">Bayangkan kamu di pusat perbelanjaan! Ada banyak pintu masuk yang berbeda-beda, tapi semua menuju ke dalam mall yang sama! Nah, itulah Rangkaian Paralel! 🏬</div>
+    </div>
+
+    <!-- Main definition -->
+    <div class="card" style="background:linear-gradient(135deg,#e0fff8,#f0fffd);border:4px solid var(--teal);text-align:center;">
+      <div style="font-size:3rem;margin-bottom:10px;">🛣️🛣️🛣️</div>
+      <h3 class="title-md" style="color:var(--teal);margin-bottom:10px;">Rangkaian Paralel</h3>
+      <p class="body-lg">adalah rangkaian listrik di mana <strong style="color:var(--teal)">komponen-komponennya dihubungkan secara bercabang</strong>, sehingga membentuk <strong style="color:var(--orange)">banyak jalur</strong> untuk arus listrik mengalir.</p>
+    </div>
+
+    <!-- Analogy cards -->
+    <h3 class="title-md" style="color:var(--orange);margin:12px 0 8px;text-align:center;">🌟 Analogi Seru Biar Mudah Diingat!</h3>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;">
+      <div class="card" style="border:3px solid var(--blue);text-align:center;padding:16px;">
+        <div style="font-size:2.5rem;margin-bottom:8px;">🚰</div>
+        <p class="body-md"><strong>Pipa Air Bercabang!</strong><br>
+        <span style="color:#666;font-size:.9rem;">Air mengalir di banyak pipa sekaligus. Kalau 1 pipa tersumbat, air tetap mengalir di pipa lain!</span></p>
+      </div>
+      <div class="card" style="border:3px solid var(--green);text-align:center;padding:16px;">
+        <div style="font-size:2.5rem;margin-bottom:8px;">🛣️</div>
+        <p class="body-md"><strong>Jalan Tol Banyak Lajur!</strong><br>
+        <span style="color:#666;font-size:.9rem;">Mobil bisa pilih lajur kiri, tengah, atau kanan. Kalau 1 lajur macet, pilih lajur lain!</span></p>
+      </div>
+      <div class="card" style="border:3px solid var(--yellow);text-align:center;padding:16px;">
+        <div style="font-size:2.5rem;margin-bottom:8px;">🏬</div>
+        <p class="body-md"><strong>Pintu Masuk Mall!</strong><br>
+        <span style="color:#666;font-size:.9rem;">Kalau 1 pintu tutup, kamu masuk dari pintu yang lain. Mall tetap bisa dikunjungi!</span></p>
+      </div>
+      <div class="card" style="border:3px solid var(--pink);text-align:center;padding:16px;">
+        <div style="font-size:2.5rem;margin-bottom:8px;">🎮</div>
+        <p class="body-md"><strong>USB Hub!</strong><br>
+        <span style="color:#666;font-size:.9rem;">Banyak perangkat bisa colok bersamaan. Cabut 1, yang lain tetap menyala!</span></p>
+      </div>
+    </div>
+
+    <div class="aslan-wrap right">
+      <div class="aslan-svg"><div style="font-size:2.8rem;">🧑‍🔬</div></div>
+      <div class="speech" style="border-color:var(--orange);">Intinya: di rangkaian paralel, listrik punya PILIHAN JALUR! Keren kan? Makanya lampu di rumah kita pakai rangkaian paralel! 💡💡💡</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 5 – CIRI-CIRI RANGKAIAN PARALEL
+════════════════════════════════════════ -->
+<div class="page" id="page-5">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--teal);text-align:center;margin-bottom:14px;">🌟 Ciri-ciri Rangkaian Paralel</h2>
+
+    <!-- BIG parallel circuit illustration -->
+    <div class="circuit-container">
+      <p style="text-align:center;font-family:'Fredoka One',cursive;color:var(--teal);margin-bottom:10px;font-size:1.1rem;">Diagram Rangkaian Paralel</p>
+      <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+        <!-- Top & bottom rail -->
+        <line x1="60" y1="40" x2="460" y2="40" stroke="#00C9A7" stroke-width="5" stroke-linecap="round"/>
+        <line x1="60" y1="180" x2="460" y2="180" stroke="#00C9A7" stroke-width="5" stroke-linecap="round"/>
+        <!-- Left connection -->
+        <line x1="60" y1="40" x2="60" y2="180" stroke="#00C9A7" stroke-width="5" stroke-linecap="round"/>
+        <!-- Right connection -->
+        <line x1="460" y1="40" x2="460" y2="180" stroke="#00C9A7" stroke-width="5" stroke-linecap="round"/>
+
+        <!-- Battery on left -->
+        <rect x="38" y="95" width="44" height="30" rx="8" fill="#FF4757"/>
+        <text x="60" y="114" text-anchor="middle" fill="white" font-size="13" font-weight="bold">🔋</text>
+        <text x="60" y="134" text-anchor="middle" fill="#FF4757" font-size="10" font-weight="bold">Baterai</text>
+
+        <!-- Branch 1: x=170 -->
+        <line x1="170" y1="40" x2="170" y2="85" stroke="#FF9671" stroke-width="4" stroke-dasharray="none"/>
+        <line x1="170" y1="135" x2="170" y2="180" stroke="#FF9671" stroke-width="4"/>
+        <circle cx="170" cy="110" r="24" fill="#FFF9C4" stroke="#FF6B35" stroke-width="3.5"/>
+        <text x="170" y="118" text-anchor="middle" font-size="22">💡</text>
+        <text x="170" y="200" text-anchor="middle" fill="#FF6B35" font-size="11" font-weight="bold">Lampu 1</text>
+        <!-- Voltage label -->
+        <rect x="120" y="48" width="48" height="18" rx="8" fill="#FF9671"/>
+        <text x="144" y="61" text-anchor="middle" fill="white" font-size="10" font-weight="bold">6V ✓</text>
+
+        <!-- Branch 2: x=280 -->
+        <line x1="280" y1="40" x2="280" y2="85" stroke="#845EC2" stroke-width="4"/>
+        <line x1="280" y1="135" x2="280" y2="180" stroke="#845EC2" stroke-width="4"/>
+        <circle cx="280" cy="110" r="24" fill="#F3E5F5" stroke="#845EC2" stroke-width="3.5"/>
+        <text x="280" y="118" text-anchor="middle" font-size="22">💡</text>
+        <text x="280" y="200" text-anchor="middle" fill="#845EC2" font-size="11" font-weight="bold">Lampu 2</text>
+        <rect x="230" y="48" width="48" height="18" rx="8" fill="#845EC2"/>
+        <text x="254" y="61" text-anchor="middle" fill="white" font-size="10" font-weight="bold">6V ✓</text>
+
+        <!-- Branch 3: x=390 -->
+        <line x1="390" y1="40" x2="390" y2="85" stroke="#0081CF" stroke-width="4"/>
+        <line x1="390" y1="135" x2="390" y2="180" stroke="#0081CF" stroke-width="4"/>
+        <circle cx="390" cy="110" r="24" fill="#E3F2FD" stroke="#0081CF" stroke-width="3.5"/>
+        <text x="390" y="118" text-anchor="middle" font-size="22">💡</text>
+        <text x="390" y="200" text-anchor="middle" fill="#0081CF" font-size="11" font-weight="bold">Lampu 3</text>
+        <rect x="340" y="48" width="48" height="18" rx="8" fill="#0081CF"/>
+        <text x="364" y="61" text-anchor="middle" fill="white" font-size="10" font-weight="bold">6V ✓</text>
+
+        <!-- Current arrows on top rail -->
+        <text x="115" y="33" text-anchor="middle" fill="#FFD93D" font-size="14" font-weight="bold">→</text>
+        <text x="225" y="33" text-anchor="middle" fill="#FFD93D" font-size="14" font-weight="bold">→</text>
+        <text x="335" y="33" text-anchor="middle" fill="#FFD93D" font-size="14" font-weight="bold">→</text>
+        <text x="430" y="33" text-anchor="middle" fill="#FFD93D" font-size="14" font-weight="bold">→</text>
+      </svg>
+    </div>
+
+    <!-- Feature cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+      <div class="card" style="border-left:5px solid var(--teal);padding:14px 16px;">
+        <p style="font-size:1.8rem;text-align:center;">🔀</p>
+        <h4 class="title-md" style="color:var(--teal);font-size:1rem;text-align:center;">Banyak Jalur</h4>
+        <p class="body-md" style="font-size:.9rem;text-align:center;">Arus listrik bisa lewat jalur 1, 2, atau 3</p>
+      </div>
+      <div class="card" style="border-left:5px solid var(--green);padding:14px 16px;">
+        <p style="font-size:1.8rem;text-align:center;">⚡=⚡</p>
+        <h4 class="title-md" style="color:var(--green);font-size:1rem;text-align:center;">Tegangan Sama</h4>
+        <p class="body-md" style="font-size:.9rem;text-align:center;">Setiap cabang mendapat tegangan yang SAMA!</p>
+      </div>
+      <div class="card" style="border-left:5px solid var(--orange);padding:14px 16px;">
+        <p style="font-size:1.8rem;text-align:center;">➕➕</p>
+        <h4 class="title-md" style="color:var(--orange);font-size:1rem;text-align:center;">Arus Berbeda-beda</h4>
+        <p class="body-md" style="font-size:.9rem;text-align:center;">Arus total = jumlah semua arus di tiap cabang</p>
+      </div>
+      <div class="card" style="border-left:5px solid var(--purple);padding:14px 16px;">
+        <p style="font-size:1.8rem;text-align:center;">💪💡</p>
+        <h4 class="title-md" style="color:var(--purple);font-size:1rem;text-align:center;">Tetap Nyala!</h4>
+        <p class="body-md" style="font-size:.9rem;text-align:center;">Kalau 1 lampu mati, lampu lain TETAP nyala!</p>
+      </div>
+    </div>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3rem;">🧑‍🔬</div></div>
+      <div class="speech">Perhatikan diagram di atas! Tiap lampu punya jalurnya sendiri dari baterai. Makanya mereka semua mendapat tegangan yang sama dan bisa hidup mandiri! 🌟</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 6 – PERBANDINGAN SERI vs PARALEL
+════════════════════════════════════════ -->
+<div class="page" id="page-6">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--purple);text-align:center;margin-bottom:4px;">⚖️ Seri vs Paralel</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:14px;">Mana yang lebih cocok? Yuk bandingkan!</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th class="th-label" style="width:38%;">Hal yang Dibandingkan</th>
+          <th class="th-seri"  style="width:31%;">🔗 Rangkaian Seri</th>
+          <th class="th-par"   style="width:31%;">🔀 Rangkaian Paralel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Jumlah Jalur Arus</strong></td>
+          <td style="color:var(--purple);">1 jalur saja 🛤️</td>
+          <td style="color:var(--teal);">Banyak jalur 🛣️🛣️</td>
+        </tr>
+        <tr>
+          <td><strong>Kalau 1 Komponen Mati</strong></td>
+          <td style="color:var(--red);">Semua mati 💥</td>
+          <td style="color:var(--green);">Yang lain tetap nyala ✅</td>
+        </tr>
+        <tr>
+          <td><strong>Tegangan Tiap Komponen</strong></td>
+          <td style="color:var(--purple);">Dibagi-bagi 📉</td>
+          <td style="color:var(--teal);">Sama semua ⚡=⚡</td>
+        </tr>
+        <tr>
+          <td><strong>Kecerahan Lampu</strong></td>
+          <td style="color:var(--orange);">Lebih redup 🕯️</td>
+          <td style="color:var(--green);">Sama terang! 💡💡</td>
+        </tr>
+        <tr>
+          <td><strong>Konsumsi Daya</strong></td>
+          <td style="color:var(--green);">Lebih hemat 🔋</td>
+          <td style="color:var(--orange);">Lebih boros 🔋🔋</td>
+        </tr>
+        <tr>
+          <td><strong>Kerumitan Kabel</strong></td>
+          <td style="color:var(--green);">Lebih sederhana 😊</td>
+          <td style="color:var(--orange);">Lebih rumit 🤔</td>
+        </tr>
+        <tr>
+          <td><strong>Dipakai di Mana</strong></td>
+          <td style="color:var(--purple);">Lampu natal 🎄</td>
+          <td style="color:var(--teal);">Listrik rumah 🏠</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Visual comparison -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+      <div style="background:linear-gradient(135deg,#f5f0ff,#ede0ff);border:3px solid var(--purple);border-radius:18px;padding:14px;text-align:center;">
+        <p class="fredoka" style="color:var(--purple);font-size:1rem;margin-bottom:8px;">🔗 SERI</p>
+        <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+          <line x1="10" y1="40" x2="190" y2="40" stroke="#845EC2" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="70" cy="40" r="16" fill="#FFF9C4" stroke="#845EC2" stroke-width="2.5"/>
+          <text x="70" y="47" text-anchor="middle" font-size="14">💡</text>
+          <circle cx="130" cy="40" r="16" fill="#FFF9C4" stroke="#845EC2" stroke-width="2.5"/>
+          <text x="130" y="47" text-anchor="middle" font-size="14">💡</text>
+          <rect x="5" y="32" width="22" height="16" rx="4" fill="#FF4757"/>
+          <text x="16" y="44" text-anchor="middle" fill="white" font-size="10">🔋</text>
+          <text x="100" y="70" text-anchor="middle" fill="#845EC2" font-size="10" font-weight="bold">1 putus → semua mati ❌</text>
+        </svg>
+      </div>
+      <div style="background:linear-gradient(135deg,#e0fff8,#ccf7ef);border:3px solid var(--teal);border-radius:18px;padding:14px;text-align:center;">
+        <p class="fredoka" style="color:var(--teal);font-size:1rem;margin-bottom:8px;">🔀 PARALEL</p>
+        <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+          <line x1="30" y1="15" x2="175" y2="15" stroke="#00C9A7" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="30" y1="65" x2="175" y2="65" stroke="#00C9A7" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="30" y1="15" x2="30" y2="65" stroke="#00C9A7" stroke-width="3.5"/>
+          <line x1="175" y1="15" x2="175" y2="65" stroke="#00C9A7" stroke-width="3.5"/>
+          <!-- branches -->
+          <line x1="90" y1="15" x2="90" y2="28" stroke="#FF9671" stroke-width="3"/>
+          <line x1="90" y1="52" x2="90" y2="65" stroke="#FF9671" stroke-width="3"/>
+          <circle cx="90" cy="40" r="13" fill="#FFF9C4" stroke="#FF6B35" stroke-width="2"/>
+          <text x="90" y="46" text-anchor="middle" font-size="12">💡</text>
+          <line x1="140" y1="15" x2="140" y2="28" stroke="#0081CF" stroke-width="3"/>
+          <line x1="140" y1="52" x2="140" y2="65" stroke="#0081CF" stroke-width="3"/>
+          <circle cx="140" cy="40" r="13" fill="#E3F2FD" stroke="#0081CF" stroke-width="2"/>
+          <text x="140" y="46" text-anchor="middle" font-size="12">💡</text>
+          <rect x="8" y="32" width="22" height="16" rx="4" fill="#FF4757"/>
+          <text x="19" y="44" text-anchor="middle" fill="white" font-size="10">🔋</text>
+          <text x="105" y="80" text-anchor="middle" fill="#00C9A7" font-size="10" font-weight="bold">1 putus → yang lain oke ✅</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3rem;">🧑‍🔬</div></div>
+      <div class="speech">Nah, sekarang sudah jelas kan perbedaannya? Di rumah kita pakai rangkaian paralel supaya kalau 1 lampu mati, lampu yang lain tidak ikut-ikutan mati! 😄</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 7 – CONTOH DI RUMAH
+════════════════════════════════════════ -->
+<div class="page" id="page-7">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--blue);text-align:center;margin-bottom:4px;">🏠 Contoh di Rumah Sehari-hari</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:12px;">Rangkaian paralel ada di sekelilingmu!</p>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3.2rem;">🧑‍🔬</div></div>
+      <div class="speech">Hei Aslan! Tahu nggak, rumahmu penuh dengan rangkaian paralel! Yuk kita kelilingi rumah dan temukan semuanya! 🔍</div>
+    </div>
+
+    <!-- House illustration -->
+    <div class="circuit-container" style="background:linear-gradient(180deg,#87CEEB 0%, #87CEEB 40%, #90EE90 40%,#90EE90 100%);">
+      <svg viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+        <!-- House structure -->
+        <polygon points="250,20 60,110 440,110" fill="#FF6B35" stroke="#c0392b" stroke-width="2"/>
+        <rect x="90" y="108" width="320" height="130" fill="#FFE0CC" stroke="#c0392b" stroke-width="2"/>
+        <!-- Door -->
+        <rect x="210" y="165" width="80" height="73" rx="5" fill="#8B4513"/>
+        <circle cx="275" cy="205" r="5" fill="#FFD700"/>
+        <!-- Windows -->
+        <rect x="110" y="130" width="60" height="50" rx="5" fill="#87CEEB" stroke="#555" stroke-width="2"/>
+        <rect x="330" y="130" width="60" height="50" rx="5" fill="#87CEEB" stroke="#555" stroke-width="2"/>
+        <!-- Lights in windows -->
+        <circle cx="140" cy="152" r="8" fill="#FFD93D" opacity="0.9"/>
+        <text x="140" y="157" text-anchor="middle" font-size="10">💡</text>
+        <circle cx="360" cy="152" r="8" fill="#FFD93D" opacity="0.9"/>
+        <text x="360" y="157" text-anchor="middle" font-size="10">💡</text>
+        <!-- Power line coming in -->
+        <line x1="0" y1="50" x2="90" y2="110" stroke="#333" stroke-width="3" stroke-dasharray="8,4"/>
+        <text x="30" y="45" fill="#FF4757" font-size="12" font-weight="bold">PLN ⚡</text>
+        <!-- Branch arrows inside house -->
+        <text x="155" y="123" text-anchor="middle" fill="#00C9A7" font-size="11" font-weight="bold">↓💡 Kamar 1</text>
+        <text x="250" y="160" text-anchor="middle" fill="#FF9671" font-size="10" font-weight="bold">🔌 Stop Kontak</text>
+        <text x="370" y="123" text-anchor="middle" fill="#845EC2" font-size="11" font-weight="bold">↓💡 Kamar 2</text>
+        <!-- TV outside -->
+        <rect x="400" y="170" width="55" height="38" rx="5" fill="#333"/>
+        <rect x="405" y="174" width="45" height="28" rx="3" fill="#4fc3f7"/>
+        <text x="427" y="195" text-anchor="middle" fill="white" font-size="12">📺</text>
+        <line x1="427" y1="208" x2="427" y2="218" stroke="#333" stroke-width="2"/>
+        <line x1="415" y1="218" x2="440" y2="218" stroke="#333" stroke-width="2"/>
+        <text x="427" y="232" text-anchor="middle" fill="#333" font-size="10">TV</text>
+        <!-- AC -->
+        <rect x="440" y="130" width="50" height="30" rx="6" fill="#e0e0e0" stroke="#888" stroke-width="1.5"/>
+        <text x="465" y="150" text-anchor="middle" font-size="12">❄️ AC</text>
+      </svg>
+    </div>
+
+    <!-- Item cards -->
+    <div class="icon-row">
+      <div class="icon-card" style="border-color:var(--yellow);" onclick="this.style.background='#fffbe6';this.querySelector('.desc').style.display='block'">
+        <div class="emoji">💡</div>
+        <p>Lampu Kamar</p>
+        <p class="desc" style="display:none;color:var(--teal);font-size:.75rem;margin-top:4px;">Tiap kamar punya sakelar sendiri!</p>
+      </div>
+      <div class="icon-card" style="border-color:var(--blue);" onclick="this.style.background='#e6f0ff';this.querySelector('.desc').style.display='block'">
+        <div class="emoji">📺</div>
+        <p>Televisi</p>
+        <p class="desc" style="display:none;color:var(--blue);font-size:.75rem;margin-top:4px;">TV mati, lampu tetap nyala!</p>
+      </div>
+      <div class="icon-card" style="border-color:var(--teal);" onclick="this.style.background='#e0fff8';this.querySelector('.desc').style.display='block'">
+        <div class="emoji">🔌</div>
+        <p>Stop Kontak</p>
+        <p class="desc" style="display:none;color:var(--teal);font-size:.75rem;margin-top:4px;">Banyak perangkat sekaligus!</p>
+      </div>
+      <div class="icon-card" style="border-color:var(--purple);" onclick="this.style.background='#f5f0ff';this.querySelector('.desc').style.display='block'">
+        <div class="emoji">❄️</div>
+        <p>AC</p>
+        <p class="desc" style="display:none;color:var(--purple);font-size:.75rem;margin-top:4px;">AC nyala, lampu tetap menyala!</p>
+      </div>
+      <div class="icon-card" style="border-color:var(--orange);" onclick="this.style.background='#fff8e6';this.querySelector('.desc').style.display='block'">
+        <div class="emoji">🍳</div>
+        <p>Kompor Listrik</p>
+        <p class="desc" style="display:none;color:var(--orange);font-size:.75rem;margin-top:4px;">Dapur punya jalur sendiri!</p>
+      </div>
+      <div class="icon-card" style="border-color:var(--green);" onclick="this.style.background='#e6ffe6';this.querySelector('.desc').style.display='block'">
+        <div class="emoji">🖥️</div>
+        <p>Komputer</p>
+        <p class="desc" style="display:none;color:var(--green);font-size:.75rem;margin-top:4px;">Masing-masing punya daya sendiri!</p>
+      </div>
+    </div>
+    <p style="text-align:center;color:#888;font-size:.85rem;margin-top:4px;">💡 Klik setiap ikon untuk lihat penjelasannya!</p>
+
+    <div style="background:linear-gradient(135deg,#e0fff8,#fff);border:3px solid var(--teal);border-radius:18px;padding:14px 18px;margin-top:10px;">
+      <p class="body-md"><strong>🔑 Mengapa rumah menggunakan rangkaian paralel?</strong></p>
+      <p class="body-md" style="margin-top:6px;">Karena dengan rangkaian paralel, setiap alat listrik mendapat tegangan penuh (220V), dan bila salah satu mati atau dimatikan, yang lain tidak terpengaruh! 🏠⚡</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 8 – RUMUS DASAR
+════════════════════════════════════════ -->
+<div class="page" id="page-8">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--orange);text-align:center;margin-bottom:4px;">📐 Rumus Dasar Rangkaian Paralel</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:12px;">Jangan takut rumus! Ini mudah banget! 😊</p>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3.2rem;">🧑‍🔬</div></div>
+      <div class="speech">Ayo kita belajar rumusnya pelan-pelan! Kalau kamu ngerti analoginya, pasti langsung paham! 💪</div>
+    </div>
+
+    <!-- Tegangan -->
+    <div class="formula-box" style="background:linear-gradient(135deg,var(--teal),#009d83);">
+      <p class="fredoka" style="font-size:1.1rem;margin-bottom:6px;">⚡ 1. TEGANGAN (Voltase)</p>
+      <div class="formula">V<sub>total</sub> = V<sub>1</sub> = V<sub>2</sub> = V<sub>3</sub></div>
+      <p style="font-size:.9rem;margin-top:8px;opacity:.9;">Tegangan di setiap cabang SAMA dengan tegangan sumber!</p>
+      <div style="background:rgba(255,255,255,.2);border-radius:12px;padding:8px 14px;margin-top:8px;">
+        <p style="font-size:.85rem;">🌊 Bayangkan ketinggian air di kolam renang. Setiap selang yang dicolokkan ke kolam mendapat tekanan air yang SAMA!</p>
+      </div>
+    </div>
+
+    <!-- Arus -->
+    <div class="formula-box" style="background:linear-gradient(135deg,var(--orange),#e05400);">
+      <p class="fredoka" style="font-size:1.1rem;margin-bottom:6px;">🌊 2. ARUS LISTRIK</p>
+      <div class="formula">I<sub>total</sub> = I<sub>1</sub> + I<sub>2</sub> + I<sub>3</sub></div>
+      <p style="font-size:.9rem;margin-top:8px;opacity:.9;">Arus total = JUMLAH semua arus di tiap cabang!</p>
+      <div style="background:rgba(255,255,255,.2);border-radius:12px;padding:8px 14px;margin-top:8px;">
+        <p style="font-size:.85rem;">🚰 Bayangkan pipa air bercabang 3. Total air yang mengalir = air di pipa 1 + pipa 2 + pipa 3!</p>
+      </div>
+    </div>
+
+    <!-- Hambatan -->
+    <div class="formula-box" style="background:linear-gradient(135deg,var(--purple),#6a3da0);">
+      <p class="fredoka" style="font-size:1.1rem;margin-bottom:6px;">🔩 3. HAMBATAN (Resistansi)</p>
+      <div class="formula">1/R<sub>total</sub> = 1/R<sub>1</sub> + 1/R<sub>2</sub> + 1/R<sub>3</sub></div>
+      <p style="font-size:.9rem;margin-top:8px;opacity:.9;">Hambatan total LEBIH KECIL dari hambatan terkecil!</p>
+      <div style="background:rgba(255,255,255,.2);border-radius:12px;padding:8px 14px;margin-top:8px;">
+        <p style="font-size:.85rem;">🛣️ Makin banyak jalur, makin mudah listrik mengalir, sehingga hambatan totalnya BERKURANG!</p>
+      </div>
+    </div>
+
+    <!-- Example calculation -->
+    <div class="card" style="border:3px solid var(--yellow);">
+      <h3 class="title-md" style="color:var(--orange);margin-bottom:10px;">🧮 Contoh Soal Mudah</h3>
+      <p class="body-md">Ada 2 lampu dengan hambatan <strong>masing-masing 6 Ω</strong> dihubungkan paralel. Berapa hambatan totalnya?</p>
+      <div style="background:#fffbe6;border-radius:14px;padding:12px 16px;margin-top:10px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;">
+        <p>1/R<sub>total</sub> = 1/6 + 1/6 = 2/6 = 1/3</p>
+        <p style="margin-top:6px;color:var(--teal);">✅ Jadi R<sub>total</sub> = 3 Ω</p>
+        <p style="margin-top:6px;color:#666;font-size:.9rem;">Lebih kecil dari 6 Ω! Terbukti makin banyak jalur = hambatan makin kecil! 🎉</p>
+      </div>
+    </div>
+
+    <div class="aslan-wrap right">
+      <div class="aslan-svg"><div style="font-size:2.8rem;">🧑‍🔬</div></div>
+      <div class="speech" style="border-color:var(--orange);">Ingat ya: di rangkaian paralel, tegangan sama, arus dijumlah, dan hambatan mengecil! Mudah kan? 😄</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 9 – KELEBIHAN
+════════════════════════════════════════ -->
+<div class="page" id="page-9">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--green);text-align:center;margin-bottom:4px;">👍 Kelebihan Rangkaian Paralel</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:14px;">Kenapa rangkaian paralel begitu populer?</p>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3.2rem;">🧑‍🔬</div></div>
+      <div class="speech">Rangkaian paralel punya banyak kelebihan keren! Ini yang membuat ia jadi pilihan utama di rumah-rumah kita! 🏠✨</div>
+    </div>
+
+    <!-- Advantage cards -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div class="card" style="border-left:6px solid var(--green);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">💡</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--green);font-size:1.1rem;">1. Lampu Tetap Terang</h4>
+          <p class="body-md">Setiap lampu mendapat tegangan penuh dari sumber. Jadi semua lampu menyala dengan kecerahan maksimal! Tidak seperti rangkaian seri yang tegangannya terbagi-bagi.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--teal);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">🛡️</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--teal);font-size:1.1rem;">2. Satu Mati, Lain Tetap Nyala</h4>
+          <p class="body-md">Ini kelebihan TERBESAR! Kalau lampu kamarmu mati, lampu ruang tamu tetap menyala. Tidak ada yang ikut-ikutan mati!</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--blue);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">🔌</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--blue);font-size:1.1rem;">3. Mudah Ditambah Perangkat</h4>
+          <p class="body-md">Mau tambah lampu atau alat baru? Tinggal sambungkan ke jalur paralel! Tidak perlu mengubah rangkaian yang sudah ada.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--purple);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">🎛️</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--purple);font-size:1.1rem;">4. Bisa Kontrol Sendiri-sendiri</h4>
+          <p class="body-md">Setiap cabang bisa punya sakelar sendiri. Kamu bisa matikan lampu kamar tanpa mematikan TV di ruang tamu!</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--orange);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">⚡</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--orange);font-size:1.1rem;">5. Tegangan Stabil</h4>
+          <p class="body-md">Mau ada 1 atau 10 alat yang nyala, tegangan di setiap cabang tetap sama. Alat listrikmu tidak kekurangan daya!</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,#e6ffe6,#f0fff0);border:3px solid var(--green);text-align:center;margin-top:4px;">
+      <p class="body-lg"><strong>🏆 Kesimpulan Kelebihan:</strong></p>
+      <p class="body-md" style="margin-top:6px;">Rangkaian paralel lebih <strong style="color:var(--green)">andal, fleksibel, dan aman</strong> untuk digunakan di rumah dan gedung!</p>
+      <div class="stars" style="margin-top:8px;">⭐⭐⭐⭐⭐</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 10 – KEKURANGAN
+════════════════════════════════════════ -->
+<div class="page" id="page-10">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--red);text-align:center;margin-bottom:4px;">👎 Kekurangan Rangkaian Paralel</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:14px;">Tidak ada yang sempurna! Yuk tahu kekurangannya juga.</p>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg"><div style="font-size:3.2rem;">🧑‍🔬</div></div>
+      <div class="speech">Walaupun keren, rangkaian paralel juga punya kekurangan. Penting banget kita tahu ini agar bisa menggunakannya dengan bijak! 🤔</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div class="card" style="border-left:6px solid var(--red);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">🔋🔋</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--red);font-size:1.1rem;">1. Lebih Boros Daya</h4>
+          <p class="body-md">Karena semua cabang mendapat tegangan penuh, arus total yang mengalir lebih besar. Ini berarti baterai atau sumber listrik lebih cepat habis/bekerja lebih keras.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--orange);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">🧵</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--orange);font-size:1.1rem;">2. Kabel Lebih Banyak dan Rumit</h4>
+          <p class="body-md">Setiap cabang membutuhkan kabel sendiri. Semakin banyak perangkat, semakin banyak kabel yang dibutuhkan, dan pemasangannya lebih rumit.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--purple);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">💸</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--purple);font-size:1.1rem;">3. Biaya Instalasi Lebih Mahal</h4>
+          <p class="body-md">Karena membutuhkan lebih banyak kabel, sakelar, dan komponen, biaya untuk memasang rangkaian paralel lebih mahal dari rangkaian seri.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--blue);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">🔍</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--blue);font-size:1.1rem;">4. Sulit Menemukan Kerusakan</h4>
+          <p class="body-md">Karena banyak jalur, kalau ada kerusakan tersembunyi di salah satu cabang, agak sulit untuk menemukannya karena cabang lain masih bekerja normal.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:6px solid var(--red);display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2.5rem;flex-shrink:0;">⚠️</div>
+        <div>
+          <h4 class="fredoka" style="color:var(--red);font-size:1.1rem;">5. Arus Total Besar = Bahaya Korsleting</h4>
+          <p class="body-md">Karena arus total besar, kalau terjadi korsleting (hubung singkat), arus yang mengalir bisa sangat besar dan berbahaya. Makanya perlu <strong>sekering/MCB</strong> sebagai pengaman!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safety reminder -->
+    <div style="background:linear-gradient(135deg,#ffe0e0,#fff);border:3px solid var(--red);border-radius:18px;padding:14px 18px;margin-top:8px;display:flex;gap:12px;align-items:flex-start;">
+      <div style="font-size:2rem;flex-shrink:0;">⚠️</div>
+      <div>
+        <h4 class="fredoka" style="color:var(--red);">Ingat Selalu Keselamatan!</h4>
+        <p class="body-md">Jangan pernah bermain-main dengan listrik di rumah tanpa pengawasan orang dewasa! Listrik itu berguna tapi bisa berbahaya jika tidak digunakan dengan benar! 🙏</p>
+      </div>
+    </div>
+
+    <div class="aslan-wrap right" style="margin-top:10px;">
+      <div class="aslan-svg"><div style="font-size:2.8rem;">🧑‍🔬</div></div>
+      <div class="speech" style="border-color:var(--orange);">Jadi ya, setiap hal ada untung-ruginya. Yang penting kita tahu cara memanfaatkannya dengan tepat! Sekarang siap latihan soal? 📝</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 11 – LATIHAN SOAL
+════════════════════════════════════════ -->
+<div class="page" id="page-11">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--blue);text-align:center;margin-bottom:4px;">✏️ Latihan Soal Seru!</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:12px;">Yuk buktikan kamu sudah paham! Klik jawabanmu! 🎯</p>
+
+    <div id="score-display" style="text-align:center;margin-bottom:12px;font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--teal);">
+      Jawaban Benar: <span id="score">0</span>/4 🏆
+    </div>
+
+    <!-- SOAL 1 -->
+    <div class="quiz-box">
+      <h3>🔢 Soal 1: Ciri Khas Paralel</h3>
+      <p class="body-md" style="margin-bottom:10px;">Apa ciri UTAMA rangkaian paralel yang membedakannya dari rangkaian seri?</p>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q1')">A. Listrik hanya punya satu jalur</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'correct','q1')">B. Listrik punya banyak jalur bercabang ✓</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q1')">C. Semua lampu mendapat arus yang sama</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q1')">D. Baterai tidak diperlukan</div>
+      <div class="quiz-feedback" id="q1-feedback"></div>
+    </div>
+
+    <!-- SOAL 2 -->
+    <div class="quiz-box">
+      <h3>💡 Soal 2: Lampu Paralel</h3>
+      <p class="body-md" style="margin-bottom:10px;">Di rangkaian paralel, kalau lampu nomor 2 putus, apa yang terjadi pada lampu nomor 1 dan 3?</p>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q2')">A. Lampu 1 dan 3 ikut mati</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q2')">B. Semua lampu jadi lebih terang</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'correct','q2')">C. Lampu 1 dan 3 tetap menyala seperti biasa ✓</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q2')">D. Baterai langsung habis</div>
+      <div class="quiz-feedback" id="q2-feedback"></div>
+    </div>
+
+    <!-- SOAL 3 -->
+    <div class="quiz-box">
+      <h3>🏠 Soal 3: Di Kehidupan Nyata</h3>
+      <p class="body-md" style="margin-bottom:10px;">Mengapa listrik di rumah menggunakan rangkaian paralel, bukan seri?</p>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q3')">A. Karena lebih murah biaya instalasinya</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q3')">B. Karena kabelnya lebih sedikit</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'correct','q3')">C. Agar tiap alat mendapat tegangan penuh dan saling tidak bergantung ✓</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q3')">D. Karena baterai jadi lebih hemat</div>
+      <div class="quiz-feedback" id="q3-feedback"></div>
+    </div>
+
+    <!-- SOAL 4 -->
+    <div class="quiz-box">
+      <h3>📐 Soal 4: Rumus Tegangan</h3>
+      <p class="body-md" style="margin-bottom:10px;">Di rangkaian paralel dengan sumber 9 Volt, berapa tegangan yang diterima masing-masing cabang?</p>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q4')">A. 3 Volt (9V dibagi 3 cabang)</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'correct','q4')">B. 9 Volt (tegangan sama di semua cabang) ✓</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q4')">C. 27 Volt (9V dikali 3)</div>
+      <div class="quiz-option" onclick="checkAnswer(this,'wrong','q4')">D. 0 Volt (tidak ada tegangan)</div>
+      <div class="quiz-feedback" id="q4-feedback"></div>
+    </div>
+
+    <!-- Final result -->
+    <div id="final-result" style="display:none;text-align:center;margin-top:12px;">
+      <div style="background:linear-gradient(135deg,var(--yellow),var(--orange));border-radius:20px;padding:20px;color:white;">
+        <div style="font-size:3rem;margin-bottom:8px;" id="result-emoji">🎉</div>
+        <p class="fredoka" style="font-size:1.5rem;" id="result-text">Luar Biasa!</p>
+        <p class="body-md" style="margin-top:6px;" id="result-sub">Aslan hebat sekali!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 12 – KESIMPULAN
+════════════════════════════════════════ -->
+<div class="page" id="page-12">
+  <div style="width:100%;max-width:720px;">
+    <h2 class="title-lg" style="color:var(--teal);text-align:center;margin-bottom:4px;">🎉 Kesimpulan Buku 2</h2>
+    <p class="body-md" style="text-align:center;color:#666;margin-bottom:14px;">Kamu sudah belajar banyak hari ini!</p>
+
+    <div class="aslan-wrap">
+      <div class="aslan-svg bounce"><div style="font-size:3.5rem;">🧑‍🔬</div></div>
+      <div class="speech">Selamat Aslan! Kamu sudah menyelesaikan seluruh Buku 2! Kamu luar biasa! 🏆 Yuk kita rangkum semua yang sudah kita pelajari!</div>
+    </div>
+
+    <!-- Summary mind-map style -->
+    <div class="card" style="background:linear-gradient(135deg,#e0fff8,#f0f9ff);border:3px solid var(--teal);">
+      <h3 class="title-md" style="color:var(--teal);text-align:center;margin-bottom:14px;">📊 Rangkuman Buku 2</h3>
+
+      <div style="background:var(--teal);color:white;border-radius:14px;padding:10px 16px;text-align:center;margin-bottom:10px;">
+        <p class="fredoka" style="font-size:1.1rem;">🔀 RANGKAIAN PARALEL</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--green);">
+          <p class="fredoka" style="color:var(--green);font-size:.9rem;">✅ Ciri Utama</p>
+          <p style="font-size:.85rem;margin-top:4px;">Banyak jalur bercabang untuk arus listrik</p>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--teal);">
+          <p class="fredoka" style="color:var(--teal);font-size:.9rem;">⚡ Tegangan</p>
+          <p style="font-size:.85rem;margin-top:4px;">V₁ = V₂ = V₃ (sama di semua cabang)</p>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--orange);">
+          <p class="fredoka" style="color:var(--orange);font-size:.9rem;">🌊 Arus</p>
+          <p style="font-size:.85rem;margin-top:4px;">I_total = I₁ + I₂ + I₃ (dijumlah)</p>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--purple);">
+          <p class="fredoka" style="color:var(--purple);font-size:.9rem;">🔩 Hambatan</p>
+          <p style="font-size:.85rem;margin-top:4px;">1/R_total = 1/R₁ + 1/R₂ + ... (mengecil)</p>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--blue);">
+          <p class="fredoka" style="color:var(--blue);font-size:.9rem;">👍 Kelebihan</p>
+          <p style="font-size:.85rem;margin-top:4px;">Satu mati, yang lain tetap nyala!</p>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--red);">
+          <p class="fredoka" style="color:var(--red);font-size:.9rem;">👎 Kekurangan</p>
+          <p style="font-size:.85rem;margin-top:4px;">Lebih boros daya & kabel lebih banyak</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message for Aslan -->
+    <div style="background:linear-gradient(135deg,#845EC2,#0081CF);border-radius:22px;padding:24px;text-align:center;color:white;margin:12px 0;box-shadow:0 8px 24px rgba(132,94,194,.35);">
+      <div style="font-size:3rem;margin-bottom:10px;">🌟</div>
+      <h3 class="fredoka" style="font-size:1.5rem;margin-bottom:10px;">Pesan Semangat untuk Aslan!</h3>
+      <p class="body-md" style="line-height:1.7;opacity:.95;">
+        Aslan yang hebat! Kamu sudah membuktikan bahwa <strong>belajar fisika bisa menyenangkan</strong>! 
+        Sekarang kamu tahu mengapa lampu di rumahmu bisa mati satu-satu tanpa mempengaruhi yang lain.<br><br>
+        Ilmu yang kamu pelajari hari ini bukan hanya untuk ujian — tapi benar-benar berguna dalam kehidupan sehari-hari! 
+        Terus semangat belajar ya, karena di Buku 3 ada hal yang lebih seru menunggumu! 🚀
+      </p>
+      <div style="margin-top:14px;font-size:2rem;">⭐ ⭐ ⭐ ⭐ ⭐</div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="card" style="border:3px solid var(--yellow);">
+      <h3 class="fredoka" style="color:var(--orange);margin-bottom:10px;">📋 Apa Saja yang Sudah Kamu Pelajari?</h3>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;" onclick="this.querySelector('span').textContent=this.querySelector('span').textContent==='☐'?'✅':'☐'">
+          <span>✅</span> Pengertian Rangkaian Paralel
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;" onclick="this.querySelector('span').textContent=this.querySelector('span').textContent==='☐'?'✅':'☐'">
+          <span>✅</span> Ciri-ciri dan Cara Kerja
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;" onclick="this.querySelector('span').textContent=this.querySelector('span').textContent==='☐'?'✅':'☐'">
+          <span>✅</span> Perbandingan Seri vs Paralel
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;" onclick="this.querySelector('span').textContent=this.querySelector('span').textContent==='☐'?'✅':'☐'">
+          <span>✅</span> Contoh di Kehidupan Sehari-hari
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;" onclick="this.querySelector('span').textContent=this.querySelector('span').textContent==='☐'?'✅':'☐'">
+          <span>✅</span> Rumus Tegangan, Arus, dan Hambatan
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;" onclick="this.querySelector('span').textContent=this.querySelector('span').textContent==='☐'?'✅':'☐'">
+          <span>✅</span> Kelebihan dan Kekurangan
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;" onclick="this.querySelector('span').textContent=this.querySelector('span').textContent==='☐'?'✅':'☐'">
+          <span>✅</span> Latihan Soal Sudah Dijawab
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HALAMAN 13 – PENUTUP
+════════════════════════════════════════ -->
+<div class="page" id="page-13">
+  <div style="width:100%;max-width:720px;text-align:center;">
+
+    <!-- Celebration header -->
+    <div style="font-size:2.5rem;margin-bottom:8px;" id="confetti-area">🎉🎊🎉</div>
+
+    <div style="background:linear-gradient(145deg,#00C9A7,#0081CF,#845EC2);border-radius:30px;padding:30px 24px;color:white;box-shadow:0 10px 35px rgba(0,0,0,.2);margin-bottom:16px;position:relative;overflow:hidden;">
+      <!-- Stars decoration -->
+      <div style="position:absolute;top:10px;left:10px;font-size:1.5rem;opacity:.5;">⭐</div>
+      <div style="position:absolute;top:20px;right:20px;font-size:2rem;opacity:.4;">⭐</div>
+      <div style="position:absolute;bottom:15px;left:25px;font-size:1.2rem;opacity:.5;">⭐</div>
+
+      <div class="bounce" style="font-size:5rem;margin-bottom:10px;">🏆</div>
+      <h1 class="title-xl" style="color:#FFD93D;text-shadow:2px 3px 0 rgba(0,0,0,.3);margin-bottom:12px;">
+        ASLAN HEBAT!
+      </h1>
+      <p class="body-lg" style="opacity:.95;line-height:1.7;">
+        Selamat! Kamu telah berhasil menyelesaikan<br>
+        <strong style="color:#FFD93D;">Buku 2: Rangkaian Paralel</strong><br>
+        dengan sempurna! 🌟
+      </p>
+
+      <!-- Badge earned -->
+      <div style="background:rgba(255,255,255,.2);border-radius:18px;padding:14px 20px;margin:16px 0;display:inline-block;">
+        <p style="font-size:1.5rem;margin-bottom:4px;">🎖️</p>
+        <p class="fredoka" style="font-size:1rem;">Badge: Master Paralel!</p>
+        <div class="stars" style="font-size:1.3rem;margin-top:4px;">⭐⭐⭐⭐⭐</div>
+      </div>
+    </div>
+
+    <!-- Book progress -->
+    <div class="card" style="border:3px solid var(--teal);">
+      <h3 class="fredoka" style="color:var(--teal);margin-bottom:12px;font-size:1.2rem;">📚 Perjalanan Belajarmu</h3>
+      <div style="display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div style="background:linear-gradient(135deg,var(--purple),#6a3da0);border-radius:14px;padding:12px 18px;color:white;text-align:center;min-width:90px;">
+          <div style="font-size:1.5rem;">✅</div>
+          <p class="fredoka" style="font-size:.85rem;margin-top:4px;">Buku 1<br>Seri</p>
+        </div>
+        <div style="font-size:1.5rem;color:var(--yellow);">→</div>
+        <div style="background:linear-gradient(135deg,var(--teal),var(--blue));border-radius:14px;padding:12px 18px;color:white;text-align:center;min-width:90px;">
+          <div style="font-size:1.5rem;">✅</div>
+          <p class="fredoka" style="font-size:.85rem;margin-top:4px;">Buku 2<br>Paralel</p>
+        </div>
+        <div style="font-size:1.5rem;color:var(--yellow);">→</div>
+        <div style="background:linear-gradient(135deg,var(--orange),var(--pink));border-radius:14px;padding:12px 18px;color:white;text-align:center;min-width:90px;opacity:.7;border:3px dashed rgba(255,255,255,.5);">
+          <div style="font-size:1.5rem;">🔒</div>
+          <p class="fredoka" style="font-size:.85rem;margin-top:4px;">Buku 3<br>Gabungan</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next book teaser -->
+    <div style="background:linear-gradient(135deg,#FF6B35,#FF9671,#FFD93D);border-radius:22px;padding:24px;margin:12px 0;box-shadow:0 8px 24px rgba(255,107,53,.3);">
+      <h3 class="fredoka" style="font-size:1.3rem;color:white;margin-bottom:10px;">🚀 Selanjutnya: Buku 3!</h3>
+      <p class="body-md" style="color:white;line-height:1.6;">
+        Di <strong>Buku 3: Rangkaian Gabungan + Hukum Kirchhoff</strong>, kamu akan belajar cara menggabungkan seri dan paralel sekaligus, dan mulai mengenal hukum-hukum listrik yang dipakai para insinyur profesional! Siap? 🔬⚡
+      </p>
+      <div style="background:rgba(255,255,255,.2);border-radius:14px;padding:10px 16px;margin-top:12px;">
+        <p style="color:white;font-size:.9rem;font-weight:700;">Preview Buku 3:</p>
+        <p style="color:#fff9c4;font-size:.85rem;margin-top:4px;">✦ Rangkaian Campuran (Seri + Paralel)<br>✦ Hukum Kirchhoff I (Arus)<br>✦ Hukum Kirchhoff II (Tegangan)<br>✦ Cara Analisis Rangkaian Kompleks</p>
+      </div>
+    </div>
+
+    <!-- Final message -->
+    <div class="aslan-wrap" style="margin-top:4px;">
+      <div class="aslan-svg pulse"><div style="font-size:3.5rem;">🧑‍🔬</div></div>
+      <div class="speech">Terima kasih sudah belajar bareng aku, Aslan! Kamu membuktikan bahwa tidak ada ilmu yang terlalu sulit kalau kita mau berusaha! Sampai jumpa di Buku 3! 👋🌟</div>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+      <button onclick="goToPage(1)" style="background:var(--teal);color:white;font-family:'Fredoka One',cursive;font-size:1rem;padding:12px 24px;border:none;border-radius:25px;cursor:pointer;box-shadow:0 4px 12px rgba(0,201,167,.4);transition:all .2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+        🔄 Ulangi Buku 2
+      </button>
+      <a href="../perpustakaan.html" style="background:var(--orange);color:white;font-family:'Fredoka One',cursive;font-size:1rem;padding:12px 24px;border-radius:25px;text-decoration:none;box-shadow:0 4px 12px rgba(255,107,53,.4);transition:all .2s;display:inline-block;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+        🏠 Ke Perpustakaan
+      </a>
+    </div>
+
+    <div style="margin-top:16px;color:#888;font-size:.8rem;">
+      © Petualangan Aslan dengan Listrik Ajaib | Buku 2 dari 3 📚
+    </div>
+  </div>
+</div>
+
+</div><!-- end .book -->
+
+<!-- NAV BAR -->
+<div class="nav">
+  <button class="nav-btn prev" id="prevBtn" onclick="changePage(-1)" disabled>← Sebelumnya</button>
+  <div>
+    <div class="dots" id="dots-container"></div>
+    <div class="page-indicator" id="pageIndicator">1 / 13</div>
+  </div>
+  <button class="nav-btn next" id="nextBtn" onclick="changePage(1)">Selanjutnya →</button>
+</div>
+
+<script>
+  let currentPage = 1;
+  const totalPages = 13;
+  let quizScore = 0;
+  let quizAnswered = {};
+
+  // Init dots
+  const dotsContainer = document.getElementById('dots-container');
+  for(let i=1;i<=totalPages;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===1?' active':'');
+    d.onclick=()=>goToPage(i);
+    d.style.cursor='pointer';
+    dotsContainer.appendChild(d);
+  }
+
+  function updateDots(){
+    const dots=dotsContainer.querySelectorAll('.dot');
+    dots.forEach((d,i)=>{
+      d.className='dot';
+      if(i+1<currentPage) d.classList.add('done');
+      else if(i+1===currentPage) d.classList.add('active');
+    });
+  }
+
+  function goToPage(n){
+    document.getElementById('page-'+currentPage).classList.remove('active');
+    currentPage=n;
+    document.getElementById('page-'+currentPage).classList.add('active');
+    document.getElementById('pageIndicator').textContent=currentPage+' / '+totalPages;
+    document.getElementById('prevBtn').disabled=currentPage===1;
+    document.getElementById('nextBtn').disabled=currentPage===totalPages;
+    updateDots();
+    window.scrollTo(0,0);
+  }
+
+  function changePage(dir){ goToPage(Math.min(Math.max(currentPage+dir,1),totalPages)); }
+
+  // Quiz logic
+  function checkAnswer(el, result, qId){
+    if(quizAnswered[qId]) return;
+    quizAnswered[qId]=true;
+    const opts=el.parentElement.querySelectorAll('.quiz-option');
+    opts.forEach(o=>o.classList.add('disabled'));
+    const fb=document.getElementById(qId+'-feedback');
+    fb.style.display='block';
+    if(result==='correct'){
+      el.classList.add('correct');
+      fb.style.background='#d4fce8'; fb.style.color='#218838';
+      fb.textContent='✅ Betul sekali! Kamu pintar! 🌟';
+      quizScore++;
+      document.getElementById('score').textContent=quizScore;
+    } else {
+      el.classList.add('wrong');
+      fb.style.background='#ffe0e0'; fb.style.color='#c0392b';
+      fb.textContent='❌ Belum tepat. Coba ingat-ingat lagi ya! 💪';
+      // show correct
+      opts.forEach(o=>{ if(o.onclick.toString().includes("'correct'")) o.classList.add('correct'); });
+    }
+    // Check if all 4 answered
+    if(Object.keys(quizAnswered).length===4){
+      const fr=document.getElementById('final-result');
+      fr.style.display='block';
+      const emoji=document.getElementById('result-emoji');
+      const txt=document.getElementById('result-text');
+      const sub=document.getElementById('result-sub');
+      if(quizScore===4){ emoji.textContent='🏆'; txt.textContent='SEMPURNA! 4/4!'; sub.textContent='Aslan adalah bintang fisika! ⭐⭐⭐⭐⭐'; }
+      else if(quizScore>=3){ emoji.textContent='🌟'; txt.textContent='Luar Biasa! '+quizScore+'/4!'; sub.textContent='Hampir sempurna! Aslan hebat! 🎉'; }
+      else if(quizScore>=2){ emoji.textContent='😊'; txt.textContent='Bagus! '+quizScore+'/4!'; sub.textContent='Terus berlatih ya! Kamu pasti bisa! 💪'; }
+      else { emoji.textContent='📚'; txt.textContent='Yuk Baca Lagi! '+quizScore+'/4'; sub.textContent='Jangan menyerah! Baca ulang dan coba lagi! 🔄'; }
+    }
+  }
+
+  // Keyboard nav
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'&&currentPage<totalPages) changePage(1);
+    if(e.key==='ArrowLeft'&&currentPage>1) changePage(-1);
+  });
+</script>
+</body>
+</html>

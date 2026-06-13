@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Simulasi Rangkaian Gabungan Listrik Rumah Aslan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --bg:        #0a0e1a;
+  --surface:   #111827;
+  --surface2:  #1c2536;
+  --surface3:  #253044;
+  --border:    #2d3a50;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --fase:      #ef4444;   /* merah – fase/plus */
+  --netral:    #3b82f6;   /* biru  – netral/minus */
+  --ground:    #22c55e;   /* hijau – ground */
+  --live:      #facc15;   /* kuning– arus hidup */
+  --warn:      #f97316;
+  --danger:    #dc2626;
+  --seri-clr:  #a855f7;   /* ungu – seri */
+  --par-clr:   #06b6d4;   /* cyan  – paralel */
+  --r1:        #0ea5e9;
+  --r2:        #8b5cf6;
+  --r3:        #10b981;
+  --radius:    12px;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ─── GRID BACKGROUND ────────────────────────────── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(59,130,246,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,.04) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────── */
+.page{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:16px 12px 40px;}
+
+/* ─── HEADER ─────────────────────────────────────── */
+.header{
+  text-align:center;
+  padding:28px 20px 20px;
+  position:relative;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(250,204,21,.12);
+  border:1px solid rgba(250,204,21,.3);
+  color:#facc15;
+  font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;margin-bottom:12px;
+}
+.header h1{
+  font-size:clamp(1.4rem,5vw,2.4rem);
+  font-weight:700;
+  line-height:1.15;
+  background:linear-gradient(135deg,#facc15 0%,#f97316 40%,#ef4444 70%,#a855f7 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.header p{
+  color:var(--muted);font-size:.85rem;margin-top:6px;
+}
+.header-pills{
+  display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px;
+}
+.pill{
+  font-size:.68rem;font-weight:700;
+  padding:3px 10px;border-radius:20px;
+  letter-spacing:.5px;
+}
+.pill-seri { background:rgba(168,85,247,.2);color:#c084fc;border:1px solid rgba(168,85,247,.4);}
+.pill-par  { background:rgba(6,182,212,.2); color:#22d3ee;border:1px solid rgba(6,182,212,.4);}
+.pill-comb { background:rgba(250,204,21,.15);color:#facc15;border:1px solid rgba(250,204,21,.3);}
+
+/* ─── LEGEND ─────────────────────────────────────── */
+.legend{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  padding:10px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:14px;
+}
+.leg{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:600;}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.leg-line{
+  width:28px;height:5px;border-radius:3px;flex-shrink:0;
+}
+
+/* ─── MCB UTAMA ──────────────────────────────────── */
+.mcb-main{
+  background:var(--surface);
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  margin-bottom:14px;
+  position:relative;
+  overflow:hidden;
+}
+.mcb-main::before{
+  content:'PLN → MCB UTAMA (RANGKAIAN SERI)';
+  position:absolute;top:0;left:0;right:0;
+  background:rgba(168,85,247,.15);
+  border-bottom:1px solid rgba(168,85,247,.3);
+  color:#c084fc;
+  font-size:.62rem;font-weight:700;letter-spacing:1.5px;
+  padding:4px 12px;text-align:center;
+}
+.mcb-inner{
+  margin-top:22px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+}
+.pln-src{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:var(--surface2);
+  border:1.5px solid rgba(250,204,21,.3);
+  border-radius:10px;padding:8px 12px;
+  min-width:110px;
+}
+.pln-icon{font-size:1.6rem;}
+.pln-label{font-size:.62rem;font-weight:700;color:#facc15;}
+.pln-sub{font-size:.58rem;color:var(--muted);}
+
+/* Seri wire visual */
+.seri-wire-wrap{
+  flex:1;display:flex;flex-direction:column;gap:6px;min-width:120px;
+}
+.wire-row{display:flex;align-items:center;gap:0;}
+.wire-seg{
+  height:6px;border-radius:3px;
+  position:relative;overflow:hidden;
+}
+.wire-fase { background:var(--fase); }
+.wire-net  { background:var(--netral); }
+.wire-grnd { background:var(--ground); }
+.wire-live { animation:flowAnim 1.2s linear infinite; }
+.wire-dead { opacity:.25; }
+.wire-seg-label{
+  font-size:.55rem;font-weight:700;
+  margin-right:5px;white-space:nowrap;
+}
+.lbl-fase { color:var(--fase); }
+.lbl-net  { color:var(--netral); }
+.lbl-grnd { color:var(--ground); }
+@keyframes flowAnim{
+  0%  {background-position:0 0}
+  100%{background-position:100px 0}
+}
+.wire-fase.wire-live{
+  background:repeating-linear-gradient(90deg,#ef4444 0px,#fca5a5 10px,#ef4444 20px);
+  background-size:100px 100%;
+}
+.wire-net.wire-live{
+  background:repeating-linear-gradient(90deg,#3b82f6 0px,#93c5fd 10px,#3b82f6 20px);
+  background-size:100px 100%;
+}
+.wire-grnd.wire-live{
+  background:repeating-linear-gradient(90deg,#22c55e 0px,#86efac 10px,#22c55e 20px);
+  background-size:100px 100%;
+}
+
+/* MCB component */
+.mcb-comp{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+}
+.mcb-body{
+  background:var(--surface3);
+  border:2px solid var(--border);
+  border-radius:8px;
+  padding:8px 14px;
+  text-align:center;
+  position:relative;
+  min-width:80px;
+}
+.mcb-body.tripped{
+  border-color:var(--danger);
+  background:rgba(220,38,38,.15);
+  animation:tripShake .3s ease-out 3;
+}
+@keyframes tripShake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-4px)}
+  75%{transform:translateX(4px)}
+}
+.mcb-title{font-size:.62rem;font-weight:700;color:var(--muted);letter-spacing:1px;}
+.mcb-status{
+  font-size:1rem;font-weight:900;
+  font-family:var(--font-mono);
+  margin:2px 0;
+}
+.mcb-status.ok    { color:#22c55e; }
+.mcb-status.trip  { color:var(--danger); animation:blink .4s step-end infinite; }
+@keyframes blink{50%{opacity:0}}
+.mcb-amp{font-size:.58rem;color:var(--muted);}
+.mcb-btn{
+  padding:6px 14px;border-radius:8px;border:none;
+  font-family:var(--font-body);font-size:.72rem;font-weight:700;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.mcb-btn:hover{transform:scale(1.05);}
+
+/* Busbar */
+.busbar-box{
+  background:var(--surface2);
+  border:2px solid rgba(6,182,212,.35);
+  border-radius:10px;
+  padding:8px 12px;
+  text-align:center;
+  min-width:90px;
+}
+.busbar-label{font-size:.6rem;font-weight:700;color:#22d3ee;letter-spacing:1px;}
+.busbar-lines{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
+.bb-line{height:4px;border-radius:2px;}
+
+/* ─── ROOMS ROW ──────────────────────────────────── */
+.rooms-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:12px;
+  margin-bottom:14px;
+}
+
+/* ─── ROOM CARD ──────────────────────────────────── */
+.room-card{
+  background:var(--surface);
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  transition:border-color .3s;
+}
+.room-card.room-live{ border-color:rgba(250,204,21,.35); }
+
+.room-header{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.room-color-bar{
+  position:absolute;left:0;top:0;bottom:0;
+  width:4px;border-radius:2px 0 0 2px;
+}
+.room-icon{font-size:1.3rem;margin-left:6px;}
+.room-name{font-size:.85rem;font-weight:700;}
+.room-sub{font-size:.62rem;color:var(--muted);}
+.room-type-badge{
+  margin-left:auto;
+  font-size:.6rem;font-weight:700;
+  padding:2px 8px;border-radius:20px;
+}
+.badge-par { background:rgba(6,182,212,.2);color:#22d3ee;border:1px solid rgba(6,182,212,.4);}
+.badge-mix { background:rgba(250,204,21,.15);color:#facc15;border:1px solid rgba(250,204,21,.3);}
+
+/* Room switch row */
+.room-sw-row{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.room-sw-label{font-size:.68rem;font-weight:600;color:var(--muted);flex:1;}
+.toggle-switch{
+  width:44px;height:22px;background:#374151;border-radius:11px;
+  position:relative;cursor:pointer;border:none;outline:none;
+  transition:background .25s;flex-shrink:0;
+}
+.toggle-switch.on{background:#22c55e;}
+.toggle-switch::after{
+  content:'';
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;
+  background:white;border-radius:50%;
+  transition:transform .25s;
+  box-shadow:0 1px 3px rgba(0,0,0,.4);
+}
+.toggle-switch.on::after{transform:translateX(22px);}
+
+/* SVG Wiring */
+.wiring-svg-wrap{
+  padding:8px 12px 4px;
+  overflow-x:auto;
+}
+.wiring-svg-wrap svg{width:100%;height:auto;display:block;}
+
+/* Devices */
+.devices-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(115px,1fr));
+  gap:8px;
+  padding:10px 12px 12px;
+}
+
+/* Seri group */
+.seri-group{
+  grid-column:1/-1;
+  background:rgba(168,85,247,.07);
+  border:1.5px dashed rgba(168,85,247,.4);
+  border-radius:8px;
+  padding:8px;
+}
+.seri-group-label{
+  font-size:.6rem;font-weight:700;color:#c084fc;
+  letter-spacing:1px;margin-bottom:6px;text-align:center;
+}
+.seri-devices{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+}
+
+.device{
+  background:var(--surface2);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:8px 6px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .25s;
+  position:relative;
+  min-width:95px;
+}
+.device:hover{transform:translateY(-2px);border-color:var(--muted);}
+.device.on{
+  border-color:#facc15;
+  background:rgba(250,204,21,.08);
+  box-shadow:0 0 12px rgba(250,204,21,.2);
+}
+.device.off{opacity:.7;}
+.device-icon{
+  font-size:1.6rem;display:block;
+  filter:grayscale(1);
+  transition:filter .3s;
+}
+.device.on .device-icon{filter:grayscale(0);}
+.device-name{font-size:.63rem;font-weight:600;color:var(--text);margin-top:3px;line-height:1.2;}
+.device-watt{font-size:.58rem;color:var(--muted);font-family:var(--font-mono);}
+.device-status{
+  font-size:.58rem;font-weight:700;margin-top:3px;
+}
+.device-status.on { color:#22c55e; }
+.device-status.off{ color:var(--muted); }
+.device-btn{
+  margin-top:5px;
+  padding:3px 8px;
+  border-radius:6px;border:none;
+  font-family:var(--font-body);font-size:.6rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  width:100%;
+}
+.device-btn:hover{opacity:.85;}
+
+/* Glow lamp */
+.lamp-glow{
+  position:relative;
+  display:inline-block;
+}
+.lamp-glow::after{
+  content:'';
+  position:absolute;inset:-4px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(250,204,21,.6),transparent 70%);
+  opacity:0;
+  transition:opacity .4s;
+  pointer-events:none;
+}
+.device.on .lamp-glow::after{opacity:1;}
+
+/* Lamp dimmer (2 seri) */
+.dim-lamp .device-icon{font-size:1.2rem;}
+
+/* ─── STATS PANEL ────────────────────────────────── */
+.stats-panel{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:8px;
+  margin-bottom:14px;
+}
+.stat{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.stat::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+}
+.stat.s-voltage::before{background:var(--fase);}
+.stat.s-current::before{background:var(--netral);}
+.stat.s-power::before  {background:var(--live);}
+.stat.s-type::before   {background:var(--seri-clr);}
+.stat.s-status::before {background:var(--ground);}
+.stat-label{font-size:.62rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.stat-val{
+  font-size:1.5rem;font-weight:700;
+  font-family:var(--font-mono);
+  color:var(--text);margin:4px 0 2px;
+}
+.stat-unit{font-size:.65rem;color:var(--muted);}
+
+/* Power bar */
+.power-bar-wrap{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  margin-bottom:14px;
+}
+.power-bar-label{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:.72rem;font-weight:700;margin-bottom:8px;
+}
+.power-bar-track{
+  background:var(--surface2);
+  border-radius:6px;height:16px;overflow:hidden;
+  border:1px solid var(--border);
+}
+.power-bar-fill{
+  height:100%;border-radius:4px;
+  transition:width .4s,background .4s;
+  background:var(--ground);
+  position:relative;overflow:hidden;
+}
+.power-bar-fill::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.25) 50%,transparent 100%);
+  animation:shimmer 2s linear infinite;
+}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.power-bar-fill.warn   {background:var(--warn);}
+.power-bar-fill.danger {background:var(--danger);}
+.power-bar-hint{font-size:.65rem;color:var(--muted);margin-top:6px;text-align:right;}
+
+/* ─── EDUKASI BOX ────────────────────────────────── */
+.edu-section{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:14px;
+  overflow:hidden;
+}
+.edu-header{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  user-select:none;
+}
+.edu-header-icon{font-size:1.1rem;}
+.edu-header-title{font-size:.82rem;font-weight:700;flex:1;}
+.edu-toggle-icon{color:var(--muted);font-size:.8rem;transition:transform .3s;}
+.edu-toggle-icon.open{transform:rotate(180deg);}
+.edu-body{
+  padding:12px 14px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:10px;
+}
+.edu-card{
+  border-radius:8px;padding:10px;
+  border-left:3px solid transparent;
+}
+.edu-card.seri  {background:rgba(168,85,247,.08);border-color:var(--seri-clr);}
+.edu-card.par   {background:rgba(6,182,212,.08);  border-color:var(--par-clr);}
+.edu-card.comb  {background:rgba(250,204,21,.07); border-color:var(--live);}
+.edu-card.safe  {background:rgba(34,197,94,.07);  border-color:var(--ground);}
+.edu-card h4{font-size:.72rem;font-weight:700;margin-bottom:4px;}
+.edu-card.seri h4 { color:#c084fc; }
+.edu-card.par  h4 { color:#22d3ee; }
+.edu-card.comb h4 { color:#facc15; }
+.edu-card.safe h4 { color:#86efac; }
+.edu-card p{font-size:.68rem;color:var(--muted);line-height:1.5;}
+
+/* ─── LOG ────────────────────────────────────────── */
+.log-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:10px 12px;
+  margin-bottom:14px;
+  max-height:140px;
+  overflow-y:auto;
+  font-family:var(--font-mono);
+  font-size:.68rem;
+}
+.log-entry{padding:2px 0;border-bottom:1px solid rgba(45,58,80,.5);}
+.log-entry.info  {color:#94a3b8;}
+.log-entry.warn  {color:var(--warn);}
+.log-entry.danger{color:#f87171;}
+.log-entry.ok    {color:#86efac;}
+.log-entry.event {color:#c084fc;}
+
+/* ─── BOTTOM BTN ROW ─────────────────────────────── */
+.btn-row{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  margin-bottom:14px;
+}
+.btn{
+  padding:9px 20px;border-radius:9px;border:none;
+  font-family:var(--font-body);font-size:.78rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.btn:hover{transform:translateY(-2px);}
+.btn:active{transform:translateY(0);}
+.btn-green  {background:rgba(34,197,94,.2); color:#86efac;border:1px solid rgba(34,197,94,.4);}
+.btn-red    {background:rgba(239,68,68,.2); color:#fca5a5;border:1px solid rgba(239,68,68,.4);}
+.btn-yellow {background:rgba(250,204,21,.15);color:#facc15;border:1px solid rgba(250,204,21,.35);}
+.btn-blue   {background:rgba(59,130,246,.2);color:#93c5fd;border:1px solid rgba(59,130,246,.4);}
+
+/* ─── TRIP MODAL ─────────────────────────────────── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.85);
+  z-index:1000;align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  background:#1a0a0a;
+  border:3px solid var(--danger);
+  border-radius:16px;
+  padding:32px 28px;
+  max-width:380px;width:90%;
+  text-align:center;
+  box-shadow:0 0 60px rgba(220,38,38,.4);
+  animation:modalPop .35s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes modalPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-zap{font-size:3.5rem;animation:zapBounce .5s ease-out 4;}
+@keyframes zapBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.35) rotate(8deg)}}
+.modal-title{font-size:1.5rem;font-weight:700;color:#f87171;margin:8px 0;}
+.modal-msg{font-size:.8rem;color:#fca5a5;line-height:1.55;}
+.modal-detail{
+  font-family:var(--font-mono);font-size:.72rem;
+  color:#f87171;margin-top:10px;
+  background:rgba(220,38,38,.1);
+  border:1px solid rgba(220,38,38,.3);
+  border-radius:8px;padding:8px;
+}
+.modal-reset{
+  margin-top:18px;padding:10px 28px;
+  background:#15803d;color:white;
+  border:none;border-radius:10px;
+  font-family:var(--font-body);font-size:.82rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.modal-reset:hover{background:#166534;transform:scale(1.05);}
+
+/* Screen flash */
+.flash{
+  display:none;position:fixed;inset:0;
+  background:white;z-index:999;pointer-events:none;
+  animation:flashOut .3s ease-out forwards;
+}
+.flash.show{display:block;}
+@keyframes flashOut{from{opacity:1}to{opacity:0}}
+
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media(max-width:640px){
+  .mcb-inner{flex-direction:column;}
+  .seri-wire-wrap{width:100%;}
+  .devices-grid{grid-template-columns:repeat(2,1fr);}
+  .stats-panel{grid-template-columns:repeat(2,1fr);}
+  .room-card{min-width:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- MODAL TRIP -->
+<div class="modal-overlay" id="tripModal">
+  <div class="modal">
+    <div class="modal-zap">⚡</div>
+    <div class="modal-title">MCB JEPRET! 🔴</div>
+    <div class="modal-msg" id="modalMsg">Daya total melebihi batas MCB 2200W! Pemutus arus otomatis aktif untuk mencegah kabel terbakar!</div>
+    <div class="modal-detail" id="modalDetail"></div>
+    <button class="modal-reset" onclick="resetAll()">🔄 Reset &amp; Matikan Semua</button>
+  </div>
+</div>
+<div class="flash" id="flashOverlay"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">⚡ Fisika SMP/SMA · Rangkaian Listrik</div>
+  <h1>Simulasi Rangkaian Gabungan<br>Listrik Rumah Aslan</h1>
+  <p>Klik peralatan untuk menyalakan/mematikan. Perhatikan perbedaan rangkaian seri vs paralel!</p>
+  <div class="header-pills">
+    <span class="pill pill-seri">🔗 Seri: MCB → Busbar &amp; Lampu Kamar (2 seri)</span>
+    <span class="pill pill-par">⬡ Paralel: Semua ruangan &amp; peralatan dalam ruangan</span>
+    <span class="pill pill-comb">★ Gabungan: Keduanya ada dalam satu instalasi!</span>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:var(--fase)"></div><span>Kabel FASE (+) Merah</span></div>
+  <div class="leg"><div class="leg-dot" style="background:var(--netral)"></div><span>Kabel NETRAL (−) Biru</span></div>
+  <div class="leg"><div class="leg-dot" style="background:var(--ground)"></div><span>Grounding Hijau</span></div>
+  <div class="leg"><div class="leg-dot" style="background:var(--seri-clr)"></div><span>Rangkaian SERI 🔗</span></div>
+  <div class="leg"><div class="leg-dot" style="background:var(--par-clr)"></div><span>Rangkaian PARALEL ⬡</span></div>
+  <div class="leg">
+    <svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#facc15" stroke-width="4" stroke-dasharray="5,3"/></svg>
+    <span>Arus mengalir</span>
+  </div>
+</div>
+
+<!-- ─── MCB UTAMA ─────────────────────────────────── -->
+<div class="mcb-main">
+  <div class="mcb-inner">
+
+    <!-- PLN Source -->
+    <div class="pln-src">
+      <div class="pln-icon">🏗️</div>
+      <div class="pln-label">TIANG PLN</div>
+      <div class="pln-sub">220V AC · 50Hz</div>
+      <div class="pln-sub">→ masuk meteran</div>
+    </div>
+
+    <!-- wire PLN → MCB -->
+    <div class="seri-wire-wrap" style="max-width:160px;">
+      <div class="wire-row">
+        <span class="wire-seg-label lbl-fase">Fase+</span>
+        <div class="wire-seg wire-fase wire-live" id="wire-pln-fase" style="flex:1;height:6px;"></div>
+      </div>
+      <div class="wire-row" style="margin-top:3px">
+        <span class="wire-seg-label lbl-net">Netral−</span>
+        <div class="wire-seg wire-net wire-live" id="wire-pln-net" style="flex:1;height:6px;"></div>
+      </div>
+      <div class="wire-row" style="margin-top:3px">
+        <span class="wire-seg-label lbl-grnd">Ground</span>
+        <div class="wire-seg wire-grnd" id="wire-pln-grnd" style="flex:1;height:4px;"></div>
+      </div>
+      <div style="font-size:.55rem;color:var(--seri-clr);margin-top:4px;font-weight:700;letter-spacing:.8px;">▶ SERI: PLN → MCB → Busbar</div>
+    </div>
+
+    <!-- MCB -->
+    <div class="mcb-comp">
+      <div class="mcb-body" id="mcbBody">
+        <div class="mcb-title">MCB UTAMA</div>
+        <div class="mcb-status ok" id="mcbStatus">✅ ON</div>
+        <div class="mcb-amp">Batas: 2200W</div>
+      </div>
+      <button class="mcb-btn" id="mcbBtn"
+        style="background:rgba(220,38,38,.2);color:#fca5a5;border:1px solid rgba(220,38,38,.4);margin-top:4px;"
+        onclick="toggleMCB()">⚡ Test Trip</button>
+    </div>
+
+    <!-- wire MCB → Busbar -->
+    <div class="seri-wire-wrap" style="max-width:120px;">
+      <div class="wire-row">
+        <div class="wire-seg wire-fase wire-live" id="wire-mcb-fase" style="flex:1;height:6px;"></div>
+      </div>
+      <div class="wire-row" style="margin-top:3px">
+        <div class="wire-seg wire-net wire-live" id="wire-mcb-net" style="flex:1;height:6px;"></div>
+      </div>
+    </div>
+
+    <!-- Busbar -->
+    <div class="busbar-box">
+      <div class="busbar-label">📌 BUSBAR</div>
+      <div class="busbar-label" style="font-size:.55rem;color:var(--muted);">→ ke 3 ruang paralel</div>
+      <div class="busbar-lines">
+        <div class="bb-line" style="background:var(--fase);" id="bb-fase"></div>
+        <div class="bb-line" style="background:var(--netral);margin-top:2px;" id="bb-net"></div>
+        <div class="bb-line" style="background:var(--ground);margin-top:2px;height:3px;"></div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /mcb-main -->
+
+<!-- ─── ROOMS ──────────────────────────────────────── -->
+<div class="rooms-row">
+
+  <!-- ══ RUANG TAMU ══ -->
+  <div class="room-card" id="room-rt">
+    <div class="room-header">
+      <div class="room-color-bar" style="background:var(--r1);"></div>
+      <div class="room-icon">🛋️</div>
+      <div>
+        <div class="room-name">Ruang Tamu</div>
+        <div class="room-sub">Paralel: Lampu + Kipas</div>
+      </div>
+      <span class="room-type-badge badge-par">⬡ PARALEL</span>
+    </div>
+    <div class="room-sw-row">
+      <span class="room-sw-label">⚡ Saklar Ruangan</span>
+      <button class="toggle-switch on" id="sw-rt" onclick="toggleRoom('rt')"></button>
+    </div>
+
+    <!-- SVG Wiring Paralel -->
+    <div class="wiring-svg-wrap">
+      <svg viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg" id="svg-rt">
+        <!-- Busbar lines -->
+        <line x1="10" y1="20" x2="290" y2="20" stroke="#ef4444" stroke-width="4" id="svgL-rt-fase"/>
+        <line x1="10" y1="60" x2="290" y2="60" stroke="#3b82f6" stroke-width="4" id="svgL-rt-net"/>
+        <!-- Lamp branch -->
+        <line x1="80" y1="20" x2="80" y2="35" stroke="#ef4444" stroke-width="3" id="svgL-rt-l1-t"/>
+        <circle cx="80" cy="40" r="8" fill="#374151" stroke="#6b7280" stroke-width="1.5" id="svgC-rt-lamp"/>
+        <line x1="80" y1="48" x2="80" y2="60" stroke="#3b82f6" stroke-width="3" id="svgL-rt-l1-b"/>
+        <text x="80" y="75" text-anchor="middle" font-size="8" fill="#94a3b8">Lampu</text>
+        <!-- Fan branch -->
+        <line x1="200" y1="20" x2="200" y2="30" stroke="#ef4444" stroke-width="3" id="svgL-rt-f1-t"/>
+        <rect x="184" y="30" width="32" height="18" rx="4" fill="#374151" stroke="#6b7280" stroke-width="1.5" id="svgR-rt-fan"/>
+        <text x="200" y="43" text-anchor="middle" font-size="8" fill="#94a3b8" id="svgTxt-rt-fan">≈</text>
+        <line x1="200" y1="48" x2="200" y2="60" stroke="#3b82f6" stroke-width="3" id="svgL-rt-f1-b"/>
+        <text x="200" y="75" text-anchor="middle" font-size="8" fill="#94a3b8">Kipas</text>
+        <!-- Paralel label -->
+        <text x="150" y="12" text-anchor="middle" font-size="7" fill="#22d3ee" font-weight="bold">⬡ PARALEL — tegangan sama tiap alat</text>
+      </svg>
+    </div>
+
+    <div class="devices-grid">
+      <!-- Lamp -->
+      <div class="device on" id="dev-rt-lamp" onclick="toggleDevice('rt','lamp')">
+        <span class="device-icon lamp-glow">💡</span>
+        <div class="device-name">Lampu RT</div>
+        <div class="device-watt">25W</div>
+        <div class="device-status on">● MENYALA</div>
+        <button class="device-btn" style="background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);">ON</button>
+      </div>
+      <!-- Fan -->
+      <div class="device on" id="dev-rt-fan" onclick="toggleDevice('rt','fan')">
+        <span class="device-icon">🌀</span>
+        <div class="device-name">Kipas Angin</div>
+        <div class="device-watt">55W</div>
+        <div class="device-status on">● MENYALA</div>
+        <button class="device-btn" style="background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);">ON</button>
+      </div>
+    </div>
+  </div><!-- /ruang tamu -->
+
+  <!-- ══ KAMAR UTAMA ══ -->
+  <div class="room-card" id="room-ku">
+    <div class="room-header">
+      <div class="room-color-bar" style="background:var(--r2);"></div>
+      <div class="room-icon">🛏️</div>
+      <div>
+        <div class="room-name">Kamar Utama</div>
+        <div class="room-sub">Paralel: Lampu+AC · Seri: 2 Lampu Meja</div>
+      </div>
+      <span class="room-type-badge badge-mix">★ GABUNGAN</span>
+    </div>
+    <div class="room-sw-row">
+      <span class="room-sw-label">⚡ Saklar Ruangan</span>
+      <button class="toggle-switch on" id="sw-ku" onclick="toggleRoom('ku')"></button>
+    </div>
+
+    <!-- SVG Wiring Gabungan -->
+    <div class="wiring-svg-wrap">
+      <svg viewBox="0 0 340 90" xmlns="http://www.w3.org/2000/svg" id="svg-ku">
+        <line x1="10" y1="18" x2="330" y2="18" stroke="#ef4444" stroke-width="4" id="svgL-ku-fase"/>
+        <line x1="10" y1="72" x2="330" y2="72" stroke="#3b82f6" stroke-width="4" id="svgL-ku-net"/>
+        <!-- Lamp1 branch (paralel) -->
+        <line x1="60" y1="18" x2="60" y2="32" stroke="#ef4444" stroke-width="3" id="svgL-ku-l1-t"/>
+        <circle cx="60" cy="38" r="8" fill="#374151" stroke="#6b7280" stroke-width="1.5" id="svgC-ku-lamp"/>
+        <line x1="60" y1="46" x2="60" y2="72" stroke="#3b82f6" stroke-width="3" id="svgL-ku-l1-b"/>
+        <text x="60" y="85" text-anchor="middle" font-size="7" fill="#94a3b8">Lampu</text>
+        <!-- AC branch (paralel) -->
+        <line x1="150" y1="18" x2="150" y2="30" stroke="#ef4444" stroke-width="3" id="svgL-ku-ac-t"/>
+        <rect x="130" y="30" width="40" height="20" rx="4" fill="#374151" stroke="#6b7280" stroke-width="1.5" id="svgR-ku-ac"/>
+        <text x="150" y="44" text-anchor="middle" font-size="8" fill="#94a3b8">AC</text>
+        <line x1="150" y1="50" x2="150" y2="72" stroke="#3b82f6" stroke-width="3" id="svgL-ku-ac-b"/>
+        <text x="150" y="85" text-anchor="middle" font-size="7" fill="#94a3b8">AC 1PK</text>
+        <!-- SERI group: 2 lampu meja -->
+        <line x1="240" y1="18" x2="240" y2="28" stroke="#a855f7" stroke-width="3" id="svgL-ku-sm-t"/>
+        <circle cx="240" cy="34" r="6" fill="#374151" stroke="#a855f7" stroke-width="2" id="svgC-ku-lm1"/>
+        <line x1="240" y1="40" x2="240" y2="50" stroke="#a855f7" stroke-width="3" id="svgL-ku-sm-mid"/>
+        <circle cx="240" cy="56" r="6" fill="#374151" stroke="#a855f7" stroke-width="2" id="svgC-ku-lm2"/>
+        <line x1="240" y1="62" x2="240" y2="72" stroke="#a855f7" stroke-width="3" id="svgL-ku-sm-b"/>
+        <text x="240" y="85" text-anchor="middle" font-size="7" fill="#a855f7">🔗SERI</text>
+        <!-- labels -->
+        <text x="170" y="11" text-anchor="middle" font-size="7" fill="#22d3ee" font-weight="bold">⬡ PARALEL</text>
+        <text x="240" y="11" text-anchor="middle" font-size="7" fill="#c084fc" font-weight="bold">🔗 SERI</text>
+      </svg>
+    </div>
+
+    <div class="devices-grid">
+      <div class="device on" id="dev-ku-lamp" onclick="toggleDevice('ku','lamp')">
+        <span class="device-icon lamp-glow">💡</span>
+        <div class="device-name">Lampu Utama</div>
+        <div class="device-watt">25W</div>
+        <div class="device-status on">● MENYALA</div>
+        <button class="device-btn" style="background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);">ON</button>
+      </div>
+      <div class="device off" id="dev-ku-ac" onclick="toggleDevice('ku','ac')">
+        <span class="device-icon">❄️</span>
+        <div class="device-name">AC 1 PK</div>
+        <div class="device-watt">900W</div>
+        <div class="device-status off">○ MATI</div>
+        <button class="device-btn" style="background:rgba(100,116,139,.2);color:#94a3b8;border:1px solid rgba(100,116,139,.3);">OFF</button>
+      </div>
+      <!-- SERI group -->
+      <div class="seri-group">
+        <div class="seri-group-label">🔗 RANGKAIAN SERI — 2 Lampu Meja (jika 1 mati, keduanya mati!)</div>
+        <div class="seri-devices">
+          <div class="device dim-lamp on" id="dev-ku-lm1" onclick="toggleDevice('ku','lm1')">
+            <span class="device-icon lamp-glow">🕯️</span>
+            <div class="device-name">Lampu Meja 1</div>
+            <div class="device-watt">15W (redup)</div>
+            <div class="device-status on">● MENYALA</div>
+            <button class="device-btn" style="background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);">ON</button>
+          </div>
+          <div class="device dim-lamp on" id="dev-ku-lm2" onclick="toggleDevice('ku','lm2')">
+            <span class="device-icon lamp-glow">🕯️</span>
+            <div class="device-name">Lampu Meja 2</div>
+            <div class="device-watt">15W (redup)</div>
+            <div class="device-status on">● MENYALA</div>
+            <button class="device-btn" style="background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);">ON</button>
+          </div>
+        </div>
+        <div id="seri-edu-msg" style="font-size:.62rem;color:#c084fc;text-align:center;margin-top:5px;padding:4px;background:rgba(168,85,247,.08);border-radius:5px;">
+          💡 Coba matikan salah satu → yang lain ikut mati! Ini ciri khas RANGKAIAN SERI.
+        </div>
+      </div>
+    </div>
+  </div><!-- /kamar utama -->
+
+  <!-- ══ DAPUR ══ -->
+  <div class="room-card" id="room-dp">
+    <div class="room-header">
+      <div class="room-color-bar" style="background:var(--r3);"></div>
+      <div class="room-icon">🍳</div>
+      <div>
+        <div class="room-name">Dapur</div>
+        <div class="room-sub">Paralel: Lampu + Rice Cooker + Kulkas</div>
+      </div>
+      <span class="room-type-badge badge-par">⬡ PARALEL</span>
+    </div>
+    <div class="room-sw-row">
+      <span class="room-sw-label">⚡ Saklar Ruangan</span>
+      <button class="toggle-switch on" id="sw-dp" onclick="toggleRoom('dp')"></button>
+    </div>
+
+    <!-- SVG Wiring Paralel 3 cabang -->
+    <div class="wiring-svg-wrap">
+      <svg viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" id="svg-dp">
+        <line x1="10" y1="18" x2="310" y2="18" stroke="#ef4444" stroke-width="4" id="svgL-dp-fase"/>
+        <line x1="10" y1="65" x2="310" y2="65" stroke="#3b82f6" stroke-width="4" id="svgL-dp-net"/>
+        <!-- Lamp -->
+        <line x1="70" y1="18" x2="70" y2="30" stroke="#ef4444" stroke-width="3" id="svgL-dp-l1-t"/>
+        <circle cx="70" cy="36" r="8" fill="#374151" stroke="#6b7280" stroke-width="1.5" id="svgC-dp-lamp"/>
+        <line x1="70" y1="44" x2="70" y2="65" stroke="#3b82f6" stroke-width="3" id="svgL-dp-l1-b"/>
+        <text x="70" y="77" text-anchor="middle" font-size="7" fill="#94a3b8">Lampu</text>
+        <!-- Rice Cooker -->
+        <line x1="170" y1="18" x2="170" y2="28" stroke="#ef4444" stroke-width="3" id="svgL-dp-rc-t"/>
+        <rect x="152" y="28" width="36" height="20" rx="4" fill="#374151" stroke="#6b7280" stroke-width="1.5" id="svgR-dp-rc"/>
+        <text x="170" y="42" text-anchor="middle" font-size="7" fill="#94a3b8">RC</text>
+        <line x1="170" y1="48" x2="170" y2="65" stroke="#3b82f6" stroke-width="3" id="svgL-dp-rc-b"/>
+        <text x="170" y="77" text-anchor="middle" font-size="7" fill="#94a3b8">Rice Cooker</text>
+        <!-- Kulkas -->
+        <line x1="260" y1="18" x2="260" y2="28" stroke="#ef4444" stroke-width="3" id="svgL-dp-kl-t"/>
+        <rect x="244" y="28" width="32" height="20" rx="4" fill="#374151" stroke="#6b7280" stroke-width="1.5" id="svgR-dp-kl"/>
+        <text x="260" y="42" text-anchor="middle" font-size="7" fill="#94a3b8">🧊</text>
+        <line x1="260" y1="48" x2="260" y2="65" stroke="#3b82f6" stroke-width="3" id="svgL-dp-kl-b"/>
+        <text x="260" y="77" text-anchor="middle" font-size="7" fill="#94a3b8">Kulkas</text>
+        <text x="160" y="10" text-anchor="middle" font-size="7" fill="#22d3ee" font-weight="bold">⬡ PARALEL — 3 cabang, masing-masing 220V penuh</text>
+      </svg>
+    </div>
+
+    <div class="devices-grid">
+      <div class="device on" id="dev-dp-lamp" onclick="toggleDevice('dp','lamp')">
+        <span class="device-icon lamp-glow">💡</span>
+        <div class="device-name">Lampu Dapur</div>
+        <div class="device-watt">25W</div>
+        <div class="device-status on">● MENYALA</div>
+        <button class="device-btn" style="background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);">ON</button>
+      </div>
+      <div class="device off" id="dev-dp-rc" onclick="toggleDevice('dp','rc')">
+        <span class="device-icon">🍚</span>
+        <div class="device-name">Rice Cooker</div>
+        <div class="device-watt">400W</div>
+        <div class="device-status off">○ MATI</div>
+        <button class="device-btn" style="background:rgba(100,116,139,.2);color:#94a3b8;border:1px solid rgba(100,116,139,.3);">OFF</button>
+      </div>
+      <div class="device on" id="dev-dp-kl" onclick="toggleDevice('dp','kl')">
+        <span class="device-icon">🧊</span>
+        <div class="device-name">Kulkas</div>
+        <div class="device-watt">150W</div>
+        <div class="device-status on">● MENYALA</div>
+        <button class="device-btn" style="background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);">ON</button>
+      </div>
+    </div>
+  </div><!-- /dapur -->
+
+</div><!-- /rooms-row -->
+
+<!-- ─── STATS PANEL ─────────────────────────────── -->
+<div class="stats-panel">
+  <div class="stat s-voltage">
+    <div class="stat-label">Tegangan</div>
+    <div class="stat-val" id="st-volt">220</div>
+    <div class="stat-unit">Volt (AC)</div>
+  </div>
+  <div class="stat s-current">
+    <div class="stat-label">Arus Listrik</div>
+    <div class="stat-val" id="st-amp">0.0</div>
+    <div class="stat-unit">Ampere</div>
+  </div>
+  <div class="stat s-power">
+    <div class="stat-label">Daya Total</div>
+    <div class="stat-val" id="st-watt">0</div>
+    <div class="stat-unit">Watt</div>
+  </div>
+  <div class="stat s-type">
+    <div class="stat-label">Jenis Rangkaian</div>
+    <div class="stat-val" id="st-type" style="font-size:1rem;">GABUNGAN</div>
+    <div class="stat-unit">Seri + Paralel</div>
+  </div>
+  <div class="stat s-status">
+    <div class="stat-label">Status MCB</div>
+    <div class="stat-val" id="st-mcb" style="font-size:1rem;color:#22c55e;">✅ ON</div>
+    <div class="stat-unit" id="st-mcb-sub">Listrik mengalir</div>
+  </div>
+</div>
+
+<!-- ─── POWER BAR ───────────────────────────────── -->
+<div class="power-bar-wrap">
+  <div class="power-bar-label">
+    <span>⚡ Penggunaan Daya</span>
+    <span id="pb-label" style="font-family:var(--font-mono)">0 W / 2200 W</span>
+  </div>
+  <div class="power-bar-track">
+    <div class="power-bar-fill" id="powerBar" style="width:0%"></div>
+  </div>
+  <div class="power-bar-hint" id="pb-hint">✅ Aman — daya masih jauh dari batas MCB</div>
+</div>
+
+<!-- ─── LOG ─────────────────────────────────────── -->
+<div class="log-box" id="logBox">
+  <div class="log-entry info">[sistem] Simulasi dimulai. MCB ON. Beberapa peralatan awal sudah menyala.</div>
+</div>
+
+<!-- ─── EDUKASI ──────────────────────────────────── -->
+<div class="edu-section">
+  <div class="edu-header" onclick="toggleEdu()">
+    <div class="edu-header-icon">📚</div>
+    <div class="edu-header-title">📖 Panel Edukasi — Rangkaian Gabungan Listrik</div>
+    <div class="edu-toggle-icon open" id="eduIcon">▲</div>
+  </div>
+  <div class="edu-body" id="eduBody">
+    <div class="edu-card seri">
+      <h4>🔗 Rangkaian SERI</h4>
+      <p>Komponen dirangkai dalam satu jalur. Arus listrik melewati satu per satu. Contoh: Lampu Meja 1 → Lampu Meja 2 dalam satu alur. <strong>Jika salah satu mati → semuanya mati!</strong> Tegangan dibagi-bagi antar komponen.</p>
+    </div>
+    <div class="edu-card par">
+      <h4>⬡ Rangkaian PARALEL</h4>
+      <p>Komponen punya jalur masing-masing ke busbar. Setiap peralatan mendapat <strong>220V penuh</strong>. Jika satu mati, yang lain tetap menyala. Inilah yang dipakai di instalasi rumah nyata!</p>
+    </div>
+    <div class="edu-card comb">
+      <h4>★ Rangkaian GABUNGAN</h4>
+      <p>Kombinasi seri dan paralel dalam satu sistem. Di rumah ini: MCB→Busbar = SERI (titik kritis). Busbar→Ruangan = PARALEL. Dalam Kamar Utama ada rangkaian SERI kecil pada 2 lampu meja.</p>
+    </div>
+    <div class="edu-card safe">
+      <h4>🔒 Fungsi MCB (Circuit Breaker)</h4>
+      <p>MCB adalah komponen SERI utama. Jika daya total melebihi <strong>2200W</strong>, MCB otomatis memutus aliran → semua mati. Ini mencegah kabel menjadi panas dan terbakar. Selalu di-reset setelah mengurangi beban!</p>
+    </div>
+    <div class="edu-card seri" style="border-color:#facc15;">
+      <h4 style="color:#facc15;">⚡ Kabel Fase & Netral</h4>
+      <p><span style="color:var(--fase)">■ Merah = FASE (+)</span> membawa tegangan 220V.<br><span style="color:var(--netral)">■ Biru = NETRAL (−)</span> adalah kabel balik ke PLN.<br><span style="color:var(--ground)">■ Hijau = GROUND</span> untuk keamanan, disalurkan ke tanah.</p>
+    </div>
+    <div class="edu-card par" style="border-color:var(--r2);">
+      <h4 style="color:#c084fc;">🧪 Coba Eksperimen!</h4>
+      <p>1. Matikan Lampu Meja 1 → Lampu Meja 2 ikut mati (seri).<br>2. Matikan Lampu Dapur → Rice Cooker &amp; Kulkas tetap menyala (paralel).<br>3. Nyalakan semua → MCB akan JEPRET!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BUTTONS ──────────────────────────────────── -->
+<div class="btn-row">
+  <button class="btn btn-green" onclick="allOn()">💡 Semua Nyala</button>
+  <button class="btn btn-red"   onclick="allOff()">🌙 Semua Mati</button>
+  <button class="btn btn-yellow" onclick="resetAll()">🔄 Reset</button>
+  <button class="btn btn-blue"  onclick="testOverload()">⚡ Test Overload!</button>
+</div>
+
+</div><!-- /page -->
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ══════════════════════════════════════════════════════ -->
+<script>
+// ─── STATE ────────────────────────────────────────────
+const MAX_WATT = 2200;
+let mcbOn = true;
+
+const state = {
+  rooms: {
+    rt: { on: true  },
+    ku: { on: true  },
+    dp: { on: true  },
+  },
+  devices: {
+    'rt-lamp': { on: true,  watt: 25,  room: 'rt', seri: null },
+    'rt-fan':  { on: true,  watt: 55,  room: 'rt', seri: null },
+    'ku-lamp': { on: true,  watt: 25,  room: 'ku', seri: null },
+    'ku-ac':   { on: false, watt: 900, room: 'ku', seri: null },
+    'ku-lm1':  { on: true,  watt: 15,  room: 'ku', seri: 'ku-lm2' },
+    'ku-lm2':  { on: true,  watt: 15,  room: 'ku', seri: 'ku-lm1' },
+    'dp-lamp': { on: true,  watt: 25,  room: 'dp', seri: null },
+    'dp-rc':   { on: false, watt: 400, room: 'dp', seri: null },
+    'dp-kl':   { on: true,  watt: 150, room: 'dp', seri: null },
+  }
+};
+
+// ─── LOG ──────────────────────────────────────────────
+function log(msg, type='info') {
+  const box = document.getElementById('logBox');
+  const el = document.createElement('div');
+  el.className = 'log-entry ' + type;
+  const t = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  el.textContent = `[${t}] ${msg}`;
+  box.prepend(el);
+  while (box.children.length > 30) box.lastChild.remove();
+}
+
+// ─── CALC TOTAL WATT ──────────────────────────────────
+function calcWatt() {
+  if (!mcbOn) return 0;
+  let total = 0;
+  for (const [key, dev] of Object.entries(state.devices)) {
+    if (devicePowered(dev)) total += dev.watt;
+  }
+  return total;
+}
+
+// ─── UPDATE UI ────────────────────────────────────────
+function updateAll() {
+  const totalW = calcWatt();
+  const amp    = (totalW / 220).toFixed(1);
+  const pct    = Math.min(totalW / MAX_WATT * 100, 100);
+
+  document.getElementById('st-volt').textContent = mcbOn ? '220' : '0';
+  document.getElementById('st-amp').textContent  = amp;
+  document.getElementById('st-watt').textContent = totalW;
+  document.getElementById('pb-label').textContent = totalW.toLocaleString() + ' W / ' + MAX_WATT.toLocaleString() + ' W';
+
+  const bar = document.getElementById('powerBar');
+  bar.style.width = pct + '%';
+  bar.classList.remove('warn','danger');
+  if (pct > 90)      bar.classList.add('danger');
+  else if (pct > 70) bar.classList.add('warn');
+
+  const hint = document.getElementById('pb-hint');
+  if (!mcbOn) {
+    hint.textContent = '❌ MCB Trip! Semua listrik terputus.';
+    hint.style.color = '#f87171';
+  } else if (pct > 90) {
+    hint.textContent = '🚨 BAHAYA! Hampir overload — segera matikan peralatan!';
+    hint.style.color = '#f87171';
+  } else if (pct > 70) {
+    hint.textContent = '⚠️ Peringatan: Daya ' + Math.round(pct) + '% dari batas, agak boros!';
+    hint.style.color = '#f97316';
+  } else {
+    hint.textContent = '✅ Aman — daya ' + Math.round(pct) + '% dari batas MCB';
+    hint.style.color = '#64748b';
+  }
+
+  // MCB status
+  const mcbStat = document.getElementById('st-mcb');
+  const mcbSub  = document.getElementById('st-mcb-sub');
+  if (mcbOn) {
+    mcbStat.textContent = '✅ ON'; mcbStat.style.color = '#22c55e';
+    mcbSub.textContent  = 'Listrik mengalir';
+  } else {
+    mcbStat.textContent = '❌ TRIP'; mcbStat.style.color = '#f87171';
+    mcbSub.textContent  = 'Listrik TERPUTUS!';
+  }
+
+  // Wire animation
+  const live = mcbOn;
+  ['wire-pln-fase','wire-pln-net','wire-mcb-fase','wire-mcb-net'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (live) { el.classList.add('wire-live'); el.classList.remove('wire-dead'); }
+    else       { el.classList.remove('wire-live'); el.classList.add('wire-dead'); }
+  });
+  ['bb-fase','bb-net'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.opacity = live ? '1' : '.25';
+  });
+
+  // SVG wiring colour for each room
+  updateSVGs();
+
+  // Device card UI reflects actual power flow when MCB is off or room is switched off
+  Object.keys(state.devices).forEach(updateDeviceUI);
+
+  // Room cards live/dead
+  for (const [rId, room] of Object.entries(state.rooms)) {
+    const card = document.getElementById('room-' + rId);
+    if (!card) continue;
+    const isLive = mcbOn && room.on;
+    card.classList.toggle('room-live', isLive);
+    const sw = document.getElementById('sw-' + rId);
+    if (sw) sw.classList.toggle('on', room.on);
+  }
+
+  // seri edu msg
+  const lm1 = state.devices['ku-lm1'];
+  const lm2 = state.devices['ku-lm2'];
+  const seriMsg = document.getElementById('seri-edu-msg');
+  if (seriMsg) {
+    if (!lm1.on && !lm2.on)
+      seriMsg.textContent = '💡 Kedua lampu mati — coba nyalakan salah satu!';
+    else if (lm1.on && lm2.on)
+      seriMsg.textContent = '✅ Keduanya nyala! Coba matikan salah satu → kedua lampu ikut mati (seri)!';
+    else
+      seriMsg.textContent = '🔗 Dalam seri sesungguhnya: satu mati = keduanya mati. Di sini saklar tetap terpisah untuk eksperimen!';
+  }
+}
+
+function updateSVGs() {
+  // per room SVG: update stroke colors based on on/off
+  const rooms = ['rt','ku','dp'];
+  rooms.forEach(rId => {
+    const isLive = mcbOn && state.rooms[rId].on;
+    const svgEl  = document.getElementById('svg-' + rId);
+    if (!svgEl) return;
+    const faseLines = svgEl.querySelectorAll('[id^="svgL-' + rId + '"][id*="fase"]');
+    const netLines  = svgEl.querySelectorAll('[id^="svgL-' + rId + '"][id*="net"]');
+    faseLines.forEach(l => { l.style.stroke = isLive ? '#ef4444' : '#4b2020'; l.style.strokeDasharray = isLive ? '6,3' : 'none'; });
+    netLines.forEach(l  => { l.style.stroke = isLive ? '#3b82f6' : '#1e2d4b'; });
+
+    // Device circles/rects
+    const devMap = {
+      'rt': ['rt-lamp','rt-fan'],
+      'ku': ['ku-lamp','ku-ac'],
+      'dp': ['dp-lamp','dp-rc','dp-kl'],
+    };
+    const devSVGIds = {
+      'rt-lamp': 'svgC-rt-lamp',
+      'rt-fan':  'svgR-rt-fan',
+      'ku-lamp': 'svgC-ku-lamp',
+      'ku-ac':   'svgR-ku-ac',
+      'dp-lamp': 'svgC-dp-lamp',
+      'dp-rc':   'svgR-dp-rc',
+      'dp-kl':   'svgR-dp-kl',
+      'ku-lm1':  'svgC-ku-lm1',
+      'ku-lm2':  'svgC-ku-lm2',
+    };
+    (devMap[rId] || []).forEach(devId => {
+      const svgId = devSVGIds[devId];
+      const svgComp = document.getElementById(svgId);
+      if (!svgComp) return;
+      const devOn = isLive && state.devices[devId] && state.devices[devId].on;
+      svgComp.style.fill   = devOn ? 'rgba(250,204,21,.25)' : '#374151';
+      svgComp.style.stroke = devOn ? '#facc15' : '#6b7280';
+    });
+
+    // Seri lamps (ku)
+    if (rId === 'ku') {
+      ['ku-lm1','ku-lm2'].forEach(devId => {
+        const svgId = devSVGIds[devId];
+        const svgComp = document.getElementById(svgId);
+        if (!svgComp) return;
+        const bothOn = isLive && state.devices['ku-lm1'].on && state.devices['ku-lm2'].on;
+        svgComp.style.fill   = bothOn ? 'rgba(168,85,247,.35)' : '#374151';
+        svgComp.style.stroke = bothOn ? '#c084fc' : '#6b7280';
+      });
+      // seri wire lines
+      ['svgL-ku-sm-t','svgL-ku-sm-mid','svgL-ku-sm-b'].forEach(svgId => {
+        const l = document.getElementById(svgId);
+        if (!l) return;
+        const bothOn = isLive && state.devices['ku-lm1'].on && state.devices['ku-lm2'].on;
+        l.style.stroke = bothOn ? '#c084fc' : '#4b2466';
+        l.style.strokeDasharray = bothOn ? '5,3' : 'none';
+      });
+    }
+  });
+}
+
+// ─── TOGGLE DEVICE ────────────────────────────────────
+function toggleDevice(room, devKey) {
+  const key = room + '-' + devKey;
+  const dev = state.devices[key];
+  if (!dev) return;
+  if (!mcbOn) { log('MCB sedang trip — nyalakan MCB dulu!', 'warn'); return; }
+  if (!state.rooms[room].on) { log('Saklar ruangan ' + room + ' mati!', 'warn'); return; }
+
+  // Seri logic: toggling one also affects partner
+  const partner = dev.seri;
+  const willBeOn = !dev.on;
+
+  dev.on = willBeOn;
+  updateDeviceUI(key);
+  log((willBeOn ? '🔌 ON' : '⭕ OFF') + ' — ' + key + ' (' + dev.watt + 'W)', willBeOn ? 'ok' : 'info');
+
+  // If this device is in a seri pair AND it's being turned off, partner also goes off
+  if (partner && !willBeOn) {
+    const partDev = state.devices[partner];
+    if (partDev && partDev.on) {
+      partDev.on = false;
+      updateDeviceUI(partner);
+      log('🔗 SERI: ' + partner + ' ikut mati karena partner-nya mati!', 'event');
+    }
+  }
+
+  updateAll();
+  if (mcbOn) checkOverload();
+}
+
+function devicePowered(dev) {
+  if (!mcbOn || !state.rooms[dev.room].on || !dev.on) return false;
+  if (dev.seri) {
+    const partner = state.devices[dev.seri];
+    return partner && partner.on;
+  }
+  return true;
+}
+
+function updateDeviceUI(key) {
+  const dev = state.devices[key];
+  if (!dev) return;
+  const el = document.getElementById('dev-' + key);
+  if (!el) return;
+  const stat = el.querySelector('.device-status');
+  const btn  = el.querySelector('.device-btn');
+  const powered = devicePowered(dev);
+
+  el.classList.toggle('on', powered);
+  el.classList.toggle('off', !powered);
+
+  if (stat) {
+    if (powered) {
+      stat.textContent = '● MENYALA';
+      stat.className = 'device-status on';
+    } else if (!dev.on) {
+      stat.textContent = '○ MATI';
+      stat.className = 'device-status off';
+    } else {
+      stat.textContent = '○ TERPUTUS';
+      stat.className = 'device-status off';
+    }
+  }
+
+  if (btn) {
+    btn.textContent = powered ? 'ON' : 'OFF';
+    btn.style.cssText = powered
+      ? 'background:rgba(250,204,21,.2);color:#facc15;border:1px solid rgba(250,204,21,.3);'
+      : 'background:rgba(100,116,139,.2);color:#94a3b8;border:1px solid rgba(100,116,139,.3);';
+  }
+}
+
+// ─── TOGGLE ROOM ──────────────────────────────────────
+function toggleRoom(rId) {
+  if (!mcbOn) { log('MCB trip — nyalakan MCB dulu!','warn'); return; }
+  state.rooms[rId].on = !state.rooms[rId].on;
+  const isOn = state.rooms[rId].on;
+  log((isOn ? '💡 Saklar ON' : '🌙 Saklar OFF') + ' — Ruangan ' + rId.toUpperCase(), isOn ? 'ok' : 'info');
+  updateAll();
+}
+
+// ─── TOGGLE MCB ───────────────────────────────────────
+function toggleMCB() {
+  if (mcbOn) {
+    mcbOn = false;
+    document.getElementById('mcbBody').classList.add('tripped');
+    document.getElementById('mcbStatus').textContent = '❌ TRIP';
+    document.getElementById('mcbStatus').className = 'mcb-status trip';
+    document.getElementById('mcbBtn').textContent = '🔄 Reset MCB';
+    log('⚡ MCB di-trip manual!', 'danger');
+    Object.keys(state.devices).forEach(updateDeviceUI);
+    updateAll();
+  } else {
+    mcbOn = true;
+    document.getElementById('mcbBody').classList.remove('tripped');
+    document.getElementById('mcbStatus').textContent = '✅ ON';
+    document.getElementById('mcbStatus').className = 'mcb-status ok';
+    document.getElementById('mcbBtn').textContent = '⚡ Test Trip';
+    log('✅ MCB di-reset. Listrik kembali mengalir.', 'ok');
+    Object.keys(state.devices).forEach(updateDeviceUI);
+    updateAll();
+    checkOverload();
+  }
+}
+
+// ─── OVERLOAD CHECK ───────────────────────────────────
+function checkOverload() {
+  const total = calcWatt();
+  if (total > MAX_WATT && mcbOn) {
+    triggerTrip(total);
+  }
+}
+
+function triggerTrip(totalW) {
+  mcbOn = false;
+  // Flash screen
+  const fl = document.getElementById('flashOverlay');
+  fl.classList.add('show');
+  setTimeout(() => fl.classList.remove('show'), 400);
+  // Update MCB UI
+  document.getElementById('mcbBody').classList.add('tripped');
+  document.getElementById('mcbStatus').textContent = '❌ TRIP';
+  document.getElementById('mcbStatus').className = 'mcb-status trip';
+  document.getElementById('mcbBtn').textContent = '🔄 Reset MCB';
+  document.getElementById('mcbBtn').onclick = toggleMCB;
+  // Show modal
+  setTimeout(() => {
+    const amp = (totalW / 220).toFixed(1);
+    document.getElementById('modalMsg').innerHTML =
+      `Total daya <strong>${totalW.toLocaleString()}W</strong> melebihi batas MCB <strong>2200W</strong>!<br>MCB otomatis memutus arus untuk mencegah kabel terbakar!`;
+    document.getElementById('modalDetail').innerHTML =
+      `Arus terukur: ${amp}A &nbsp;|&nbsp; Batas: ${(MAX_WATT/220).toFixed(1)}A<br>Matikan beberapa peralatan berat sebelum reset!`;
+    document.getElementById('tripModal').classList.add('show');
+  }, 350);
+  log(`🚨 MCB TRIP! Total daya ${totalW}W melebihi batas ${MAX_WATT}W!`, 'danger');
+  Object.keys(state.devices).forEach(updateDeviceUI);
+  updateAll();
+}
+
+// ─── ALL ON / ALL OFF / RESET ─────────────────────────
+function allOn() {
+  if (!mcbOn) { log('MCB trip — reset dulu!','warn'); return; }
+  Object.keys(state.rooms).forEach(r   => { state.rooms[r].on = true; });
+  Object.keys(state.devices).forEach(k => { state.devices[k].on = true; updateDeviceUI(k); });
+  Object.keys(state.rooms).forEach(r => {
+    const sw = document.getElementById('sw-' + r);
+    if (sw) sw.classList.add('on');
+  });
+  updateAll(); checkOverload();
+  log('💡 Semua peralatan dinyalakan!', 'warn');
+}
+
+function allOff() {
+  Object.keys(state.devices).forEach(k => { state.devices[k].on = false; updateDeviceUI(k); });
+  updateAll();
+  log('🌙 Semua peralatan dimatikan.', 'info');
+}
+
+function resetAll() {
+  document.getElementById('tripModal').classList.remove('show');
+  mcbOn = true;
+  Object.keys(state.devices).forEach(k => { state.devices[k].on = false; updateDeviceUI(k); });
+  Object.keys(state.rooms).forEach(r => {
+    state.rooms[r].on = true;
+    const sw = document.getElementById('sw-' + r);
+    if (sw) sw.classList.add('on');
+  });
+  document.getElementById('mcbBody').classList.remove('tripped');
+  document.getElementById('mcbStatus').textContent = '✅ ON';
+  document.getElementById('mcbStatus').className = 'mcb-status ok';
+  document.getElementById('mcbBtn').textContent = '⚡ Test Trip';
+  document.getElementById('mcbBtn').onclick = toggleMCB;
+  updateAll();
+  log('🔄 Reset dilakukan — semua peralatan mati, MCB kembali ON.', 'ok');
+}
+
+function testOverload() {
+  if (!mcbOn) { toggleMCB(); return; }
+  Object.keys(state.rooms).forEach(r => { state.rooms[r].on = true; });
+  Object.keys(state.devices).forEach(k => { state.devices[k].on = true; updateDeviceUI(k); });
+  updateAll();
+  log('⚡ Test overload: semua dinyalakan paksa!', 'warn');
+  checkOverload();
+}
+
+// ─── EDU TOGGLE ───────────────────────────────────────
+function toggleEdu() {
+  const body = document.getElementById('eduBody');
+  const icon = document.getElementById('eduIcon');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : '';
+  icon.textContent = open ? '▼' : '▲';
+  icon.classList.toggle('open', !open);
+}
+
+// ─── INIT ─────────────────────────────────────────────
+updateAll();
+log('🏠 Simulasi Rumah Aslan siap! Lampu Meja 1 & 2 dalam rangkaian SERI — coba matikan salah satu!', 'event');
+</script>
+</body>
+</html>

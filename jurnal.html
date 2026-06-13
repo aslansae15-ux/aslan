@@ -207,7 +207,8 @@ body {
 .history-stickers{padding:8px 12px 0;display:flex;gap:4px;flex-wrap:wrap;}
 .history-sticker{font-size:20px;}
 .history-body{padding:12px 14px;}
-.history-text{font-family:'Patrick Hand',cursive;font-size:14px;color:#333;line-height:1.8;white-space:pre-wrap;margin-bottom:10px;}
+.history-text{font-family:'Patrick Hand',cursive;font-size:14px !important;color:#333;line-height:1.8;white-space:pre-wrap;margin-bottom:10px;}
+.history-text, .history-text * { font-size:14px !important; line-height:1.8 !important; }
 .history-sub-item{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;}
 .history-sub-item:last-child{margin-bottom:0;}
 .history-sub-bullet{font-size:16px;flex-shrink:0;margin-top:1px;}
@@ -773,8 +774,8 @@ function renderJurnalHistory(){
     const ps=key.split('-');const d=new Date(+ps[0],+ps[1]-1,+ps[2]);
     const card=document.createElement('div');card.className='history-entry';
     const stickersHtml=(j.stickers&&j.stickers.length)?`<div class="history-stickers">${j.stickers.map(s=>`<span class="history-sticker">${s}</span>`).join('')}</div>`:'';
-    const cleanText=j.text?j.text.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,120)+(j.text.replace(/<[^>]*>/g,'').trim().length>120?'...':''):'';
-    card.innerHTML=`<div class="history-header"><div class="history-date">📅 ${fmtDateLong(d)} ${j.mood?`<span class="history-mood">${j.mood}</span>`:''}</div><div class="history-actions"><button class="hist-edit-btn" onclick="openJurnalEdit('${key}')">✏️ Edit</button><button class="hist-del-btn" onclick="deleteJurnal('${key}')">🗑️</button></div></div>${stickersHtml}<div class="history-body">${cleanText?`<div class="history-text">${cleanText}</div>`:''}${j.baik?`<div class="history-sub-item"><div class="history-sub-bullet">🌟</div><div><div class="history-sub-label">Hal Baik</div><div class="history-sub-text">${j.baik}</div></div></div>`:''}${j.syukur?`<div class="history-sub-item"><div class="history-sub-bullet">🙏</div><div><div class="history-sub-label">Syukur</div><div class="history-sub-text">${j.syukur}</div></div></div>`:''}${j.target?`<div class="history-sub-item"><div class="history-sub-bullet">🎯</div><div><div class="history-sub-label">Target</div><div class="history-sub-text">${j.target}</div></div></div>`:''}</div>`;
+    const fullText=j.text?j.text.trim():'';
+    card.innerHTML=`<div class="history-header"><div class="history-date">📅 ${fmtDateLong(d)} ${j.mood?`<span class="history-mood">${j.mood}</span>`:''}</div><div class="history-actions"><button class="hist-edit-btn" onclick="openJurnalEdit('${key}')">✏️ Edit</button><button class="hist-del-btn" onclick="deleteJurnal('${key}')">🗑️</button></div></div>${stickersHtml}<div class="history-body">${fullText?`<div class="history-text">${fullText}</div>`:''}${j.baik?`<div class="history-sub-item"><div class="history-sub-bullet">🌟</div><div><div class="history-sub-label">Hal Baik</div><div class="history-sub-text">${j.baik}</div></div></div>`:''}${j.syukur?`<div class="history-sub-item"><div class="history-sub-bullet">🙏</div><div><div class="history-sub-label">Syukur</div><div class="history-sub-text">${j.syukur}</div></div></div>`:''}${j.target?`<div class="history-sub-item"><div class="history-sub-bullet">🎯</div><div><div class="history-sub-label">Target</div><div class="history-sub-text">${j.target}</div></div></div>`:''}</div>`;
     hist.appendChild(card);
   });
 }

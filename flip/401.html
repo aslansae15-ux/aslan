@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Aslan dengan Listrik Ajaib - Buku 1: Rangkaian Seri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #3B82F6;
+    --blue-light: #DBEAFE;
+    --blue-dark: #1D4ED8;
+    --yellow: #FCD34D;
+    --yellow-light: #FEF9C3;
+    --yellow-dark: #D97706;
+    --green: #34D399;
+    --green-light: #D1FAE5;
+    --green-dark: #059669;
+    --orange: #FB923C;
+    --orange-light: #FFEDD5;
+    --orange-dark: #EA580C;
+    --red: #F87171;
+    --purple: #A78BFA;
+    --purple-light: #EDE9FE;
+    --pink: #F472B6;
+    --white: #FFFFFF;
+    --bg: #F0F9FF;
+    --text: #1E293B;
+    --text-soft: #475569;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ====== BOOK CONTAINER ====== */
+  #book {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ====== TOP BAR ====== */
+  #topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--blue-dark);
+    color: white;
+    flex-shrink: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  #btn-back-library {
+    background: var(--yellow);
+    color: var(--text);
+    border: none;
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    text-decoration: none;
+    box-shadow: 0 3px 0 var(--yellow-dark);
+  }
+  #btn-back-library:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--yellow-dark); }
+  #btn-back-library:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--yellow-dark); }
+
+  #book-title-bar {
+    font-family: 'Fredoka One', cursive;
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    flex: 1;
+    padding: 0 16px;
+  }
+
+  #page-indicator {
+    background: rgba(255,255,255,0.2);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  /* ====== PAGES AREA ====== */
+  #pages-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page {
+    position: absolute;
+    inset: 0;
+    padding: 20px 28px 80px;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateX(60px);
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    scroll-behavior: smooth;
+  }
+  .page.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .page.exit-left {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* ====== NAV BUTTONS ====== */
+  #nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: white;
+    border-top: 3px solid var(--blue-light);
+    z-index: 200;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
+  }
+
+  .nav-btn {
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 0 var(--blue-dark);
+  }
+  .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--blue-dark); }
+  .nav-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue-dark); }
+  .nav-btn:disabled { background: #CBD5E1; box-shadow: 0 4px 0 #94A3B8; cursor: not-allowed; transform: none; }
+  .nav-btn.next { background: var(--orange); box-shadow: 0 4px 0 var(--orange-dark); }
+  .nav-btn.next:hover { box-shadow: 0 6px 0 var(--orange-dark); }
+  .nav-btn.next:active { box-shadow: 0 1px 0 var(--orange-dark); }
+
+  #progress-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #CBD5E1;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .dot.active { background: var(--blue); transform: scale(1.4); }
+  .dot.done { background: var(--green); }
+
+  /* ====== COMMON COMPONENTS ====== */
+  .page-header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .page-number-tag {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--text);
+    font-family: 'Fredoka One', cursive;
+    font-size: 13px;
+    padding: 3px 14px;
+    border-radius: 50px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 0 var(--yellow-dark);
+  }
+  .page-main-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(22px, 4vw, 32px);
+    color: var(--blue-dark);
+    line-height: 1.2;
+  }
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    border: 2px solid var(--blue-light);
+  }
+  .card.yellow { border-color: var(--yellow); background: var(--yellow-light); }
+  .card.green { border-color: var(--green); background: var(--green-light); }
+  .card.orange { border-color: var(--orange); background: var(--orange-light); }
+  .card.purple { border-color: var(--purple); background: var(--purple-light); }
+  .card.blue { border-color: var(--blue); background: var(--blue-light); }
+
+  .aslan-bubble {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: white;
+    border-radius: 20px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    border: 2px solid var(--blue-light);
+  }
+  .aslan-avatar {
+    font-size: 42px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  }
+  .aslan-text {
+    flex: 1;
+  }
+  .aslan-text strong {
+    display: block;
+    color: var(--blue-dark);
+    font-size: 13px;
+    margin-bottom: 4px;
+    font-weight: 900;
+  }
+  .aslan-text p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    color: var(--blue-dark);
+    margin-bottom: 8px;
+  }
+  p { font-size: 16px; line-height: 1.7; }
+  ul, ol { padding-left: 22px; }
+  li { font-size: 16px; line-height: 1.8; }
+
+  .highlight {
+    background: var(--yellow);
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-weight: 800;
+  }
+  .hl-blue { background: var(--blue-light); color: var(--blue-dark); padding: 1px 6px; border-radius: 6px; font-weight: 800; }
+  .hl-green { background: var(--green-light); color: var(--green-dark); padding: 1px 6px; border-radius: 6px; font-weight: 800; }
+  .hl-orange { background: var(--orange-light); color: var(--orange-dark); padding: 1px 6px; border-radius: 6px; font-weight: 800; }
+
+  /* ====== COVER (P1) ====== */
+  #page-1 {
+    background: linear-gradient(135deg, #1D4ED8 0%, #3B82F6 40%, #06B6D4 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 80px;
+  }
+  .cover-inner { max-width: 600px; padding: 20px; }
+  .cover-book-series {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    padding: 6px 20px;
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-block;
+    margin-bottom: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+  }
+  .cover-main-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(28px, 6vw, 48px);
+    line-height: 1.15;
+    margin-bottom: 8px;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .cover-subtitle {
+    background: var(--yellow);
+    color: var(--text);
+    border-radius: 50px;
+    padding: 8px 24px;
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(16px, 3vw, 22px);
+    display: inline-block;
+    margin: 14px 0;
+    box-shadow: 0 4px 0 var(--yellow-dark);
+  }
+  .cover-hero { font-size: clamp(80px, 18vw, 130px); margin: 10px 0; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .cover-sparks {
+    position: absolute;
+    font-size: 28px;
+    animation: sparkle 2s ease-in-out infinite;
+  }
+  @keyframes sparkle { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+  .cover-for {
+    font-size: 16px;
+    opacity: 0.85;
+    margin-top: 14px;
+  }
+  .cover-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(22px, 5vw, 36px);
+    color: var(--yellow);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  .cover-lightning-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-size: 22px;
+    margin-top: 18px;
+    opacity: 0.7;
+  }
+  .cover-lightning-row span { animation: sparkle 2s ease-in-out infinite; }
+  .cover-lightning-row span:nth-child(2) { animation-delay: 0.3s; }
+  .cover-lightning-row span:nth-child(3) { animation-delay: 0.6s; }
+
+  /* ====== TABLE OF CONTENTS (P2) ====== */
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 8px;
+    background: white;
+    border: 2px solid var(--blue-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .toc-item:hover { transform: translateX(6px); border-color: var(--blue); background: var(--blue-light); }
+  .toc-num {
+    background: var(--blue);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .toc-page { margin-left: auto; color: var(--text-soft); font-size: 13px; font-weight: 700; }
+
+  /* ====== CIRCUIT ANIMATION ====== */
+  .circuit-container {
+    background: #0F172A;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 14px 0;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .circuit-container:hover .electron { animation-play-state: running; }
+  .circuit-label {
+    text-align: center;
+    color: #94A3B8;
+    font-size: 12px;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  /* ====== FORMULA BOX ====== */
+  .formula-box {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+    color: white;
+    border-radius: 20px;
+    padding: 20px 24px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .formula-box .formula-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 15px;
+    opacity: 0.8;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+  .formula-main {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(18px, 4vw, 28px);
+    background: rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+  .formula-desc {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 8px;
+  }
+
+  /* ====== QUIZ ====== */
+  .quiz-question {
+    background: white;
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    border: 2px solid var(--blue-light);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .quiz-q-text {
+    font-weight: 800;
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--blue-dark);
+  }
+  .quiz-q-num {
+    background: var(--orange);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 13px;
+    padding: 2px 10px;
+    border-radius: 50px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    background: var(--bg);
+    border: 2px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--blue); background: var(--blue-light); transform: translateX(4px); }
+  .quiz-opt.correct { background: var(--green-light); border-color: var(--green-dark); color: var(--green-dark); }
+  .quiz-opt.wrong { background: #FEE2E2; border-color: #EF4444; color: #DC2626; }
+  .quiz-opt.disabled { cursor: not-allowed; }
+  .quiz-feedback {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 800;
+    display: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--green-light); color: var(--green-dark); }
+  .quiz-feedback.nope { background: #FEE2E2; color: #DC2626; }
+
+  /* ====== CERTIFICATE (P13) ====== */
+  #page-13 {
+    background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 50%, #DDD6FE 100%);
+    padding-bottom: 80px;
+  }
+  .cert-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 160px);
+    padding: 10px;
+  }
+  .cert-card {
+    background: white;
+    border-radius: 28px;
+    padding: 30px 28px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    border: 4px solid var(--yellow);
+    position: relative;
+    overflow: hidden;
+  }
+  .cert-card::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 3px dashed var(--yellow);
+    border-radius: 22px;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+  .cert-top-emoji { font-size: 50px; margin-bottom: 6px; }
+  .cert-badge { font-size: 60px; animation: float 3s ease-in-out infinite; display: block; }
+  .cert-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--text-soft);
+    margin: 8px 0;
+  }
+  .cert-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(28px, 6vw, 42px);
+    color: var(--blue-dark);
+    margin: 6px 0;
+  }
+  .cert-desc { font-size: 15px; color: var(--text-soft); margin: 10px 0 16px; line-height: 1.6; }
+  .cert-stamp {
+    background: var(--orange);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 16px;
+    padding: 10px 28px;
+    border-radius: 50px;
+    display: inline-block;
+    box-shadow: 0 4px 0 var(--orange-dark);
+    transform: rotate(-2deg);
+  }
+  .cert-stars { font-size: 28px; margin-top: 16px; letter-spacing: 4px; }
+  .cert-date { font-size: 12px; color: #94A3B8; margin-top: 10px; }
+
+  /* ====== PRO/CON LIST ====== */
+  .procon-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed #E2E8F0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .procon-item:last-child { border-bottom: none; }
+  .procon-icon { font-size: 22px; flex-shrink: 0; }
+
+  /* ====== ANALOGY BOX ====== */
+  .analogy-box {
+    border-radius: 20px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .analogy-icon { font-size: 44px; flex-shrink: 0; }
+  .analogy-text h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+  .analogy-text p { font-size: 14px; line-height: 1.6; }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 480px) {
+    #topbar { padding: 8px 12px; }
+    #book-title-bar { font-size: 13px; }
+    .page { padding: 14px 14px 80px; }
+    .aslan-avatar { font-size: 32px; }
+    .cover-hero { font-size: 80px; }
+  }
+
+  /* Scroll bar styling */
+  .page::-webkit-scrollbar { width: 6px; }
+  .page::-webkit-scrollbar-track { background: transparent; }
+  .page::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 10px; }
+
+  /* Bounce animation */
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .bounce { animation: bounce 1.5s ease-in-out infinite; }
+
+  /* Glow effect */
+  @keyframes glow {
+    0%,100% { text-shadow: 0 0 8px rgba(251,191,36,0.5); }
+    50% { text-shadow: 0 0 20px rgba(251,191,36,0.9), 0 0 40px rgba(251,191,36,0.4); }
+  }
+
+  .score-display {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    color: white;
+    border-radius: 20px;
+    padding: 14px 20px;
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    margin-top: 16px;
+    display: none;
+  }
+  .score-display.show { display: block; }
+</style>
+</head>
+<body>
+
+<div id="book">
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <a href="../perpustakaan.html" id="btn-back-library">🏠 Perpustakaan</a>
+    <div id="book-title-bar">⚡ Listrik Ajaib - Buku 1</div>
+    <div id="page-indicator">Hal. 1 / 13</div>
+  </div>
+
+  <!-- PAGES -->
+  <div id="pages-wrapper">
+
+    <!-- PAGE 1: COVER -->
+    <div class="page active" id="page-1">
+      <div class="cover-inner">
+        <div class="cover-book-series">📚 PETUALANGAN ASLAN SERI SAINS</div>
+        <div class="cover-main-title">Petualangan Aslan<br>dengan Listrik Ajaib</div>
+        <div class="cover-subtitle">⚡ Buku 1: Rangkaian Seri ⚡</div>
+        <div class="cover-hero">⚡</div>
+        <div style="font-size:22px; margin-bottom:8px; opacity:0.9;">🔦 💡 🔋 🔌</div>
+        <div class="cover-for">Buku Pintar Spesial untuk</div>
+        <div class="cover-name">✨ Aslan ✨</div>
+        <div class="cover-lightning-row">
+          <span>⚡</span><span>⚡</span><span>⚡</span><span>⚡</span><span>⚡</span>
+        </div>
+        <div style="margin-top:18px; font-size:13px; opacity:0.65; font-weight:700;">Kelas 4 SD • IPA • Kelistrikan</div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: DAFTAR ISI -->
+    <div class="page" id="page-2">
+      <div class="page-header">
+        <div class="page-number-tag">📋 Daftar Isi</div>
+        <div class="page-main-title">Apa Saja yang Akan Kita Pelajari?</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan bilang:</strong>
+          <p>Halo teman-teman! Aku Aslan, dan hari ini kita akan berpetualangan bersama mengenal <span class="highlight">Listrik Ajaib</span>! Yuk, lihat dulu apa saja yang akan kita pelajari! 🎉</p>
+        </div>
+      </div>
+
+      <div class="toc-item" onclick="goToPage(3)"><div class="toc-num" style="background:var(--orange)">3</div> ⚡ Apa itu Listrik? <div class="toc-page">Hal. 3</div></div>
+      <div class="toc-item" onclick="goToPage(4)"><div class="toc-num" style="background:var(--blue)">4</div> 🌊 Mengenal Arus Listrik <div class="toc-page">Hal. 4</div></div>
+      <div class="toc-item" onclick="goToPage(5)"><div class="toc-num" style="background:var(--green-dark)">5</div> 🔗 Apa itu Rangkaian Seri? <div class="toc-page">Hal. 5</div></div>
+      <div class="toc-item" onclick="goToPage(6)"><div class="toc-num" style="background:var(--purple)">6</div> 🔍 Ciri-ciri Rangkaian Seri <div class="toc-page">Hal. 6</div></div>
+      <div class="toc-item" onclick="goToPage(7)"><div class="toc-num" style="background:var(--red)">7</div> 🎄 Contoh di Kehidupan Nyata <div class="toc-page">Hal. 7</div></div>
+      <div class="toc-item" onclick="goToPage(8)"><div class="toc-num" style="background:var(--blue-dark)">8</div> 📐 Rumus Dasar <div class="toc-page">Hal. 8</div></div>
+      <div class="toc-item" onclick="goToPage(9)"><div class="toc-num" style="background:var(--green-dark)">9</div> 👍 Kelebihan Rangkaian Seri <div class="toc-page">Hal. 9</div></div>
+      <div class="toc-item" onclick="goToPage(10)"><div class="toc-num" style="background:var(--red)">10</div> 👎 Kekurangan Rangkaian Seri <div class="toc-page">Hal. 10</div></div>
+      <div class="toc-item" onclick="goToPage(11)"><div class="toc-num" style="background:var(--orange)">11</div> ✏️ Latihan Soal <div class="toc-page">Hal. 11</div></div>
+      <div class="toc-item" onclick="goToPage(12)"><div class="toc-num" style="background:var(--blue)">12</div> 📝 Kesimpulan <div class="toc-page">Hal. 12</div></div>
+      <div class="toc-item" onclick="goToPage(13)"><div class="toc-num" style="background:var(--yellow-dark)">13</div> 🏆 Sertifikat Aslan Hebat! <div class="toc-page">Hal. 13</div></div>
+    </div>
+
+    <!-- PAGE 3: APA ITU LISTRIK -->
+    <div class="page" id="page-3">
+      <div class="page-header">
+        <div class="page-number-tag">⚡ Halaman 3</div>
+        <div class="page-main-title">Apa itu Listrik?</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan bertanya:</strong>
+          <p>Hmmm… pernah nggak kamu pegang pintu mobil terus tangan kamu kesetrum dikit? Atau rambut kamu berdiri waktu pakai baju wol? Nah, itu semua karena <span class="highlight">listrik</span>! 😮</p>
+        </div>
+      </div>
+
+      <div class="card yellow">
+        <h3>⚡ Listrik Itu Apa Sih?</h3>
+        <p>Listrik adalah <strong>aliran partikel-partikel kecil</strong> yang namanya <span class="highlight">elektron</span>. Elektron ini sangat kecil, bahkan nggak bisa dilihat mata!</p>
+      </div>
+
+      <div class="analogy-box" style="background: var(--orange-light); border: 2px solid var(--orange);">
+        <div class="analogy-icon">🐜</div>
+        <div class="analogy-text">
+          <h4>Bayangkan Barisan Semut!</h4>
+          <p>Listrik seperti barisan semut yang berjalan bersama. Setiap semut (elektron) bergerak dari satu tempat ke tempat lain, dan bersama-sama mereka menciptakan <strong>energi listrik</strong>!</p>
+        </div>
+      </div>
+
+      <div class="card green">
+        <h3>💡 Dari Mana Listrik Berasal?</h3>
+        <ul>
+          <li>🔋 <strong>Baterai</strong> — menyimpan listrik kimia</li>
+          <li>🔌 <strong>Stop kontak</strong> — listrik dari PLN</li>
+          <li>☀️ <strong>Panel surya</strong> — listrik dari matahari</li>
+          <li>🌬️ <strong>Kincir angin</strong> — listrik dari angin</li>
+        </ul>
+      </div>
+
+      <div class="card blue">
+        <h3>🎯 Untuk Apa Listrik?</h3>
+        <p>Listrik membuat <strong>lampu menyala</strong>, <strong>TV hidup</strong>, <strong>kulkas dingin</strong>, dan <strong>HP bisa dipakai</strong>. Tanpa listrik, dunia akan gelap gulita! 🌙</p>
+      </div>
+
+      <div class="aslan-bubble" style="border-color: var(--green);">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan tahu!</strong>
+          <p>Listrik itu ajaib banget ya! Tapi supaya listrik bisa bekerja, dia butuh sebuah <span class="highlight">jalur/jalan</span> untuk mengalir. Jalur itu namanya <strong>RANGKAIAN LISTRIK</strong>! Yuk lanjut! 🚀</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: ARUS LISTRIK -->
+    <div class="page" id="page-4">
+      <div class="page-header">
+        <div class="page-number-tag">🌊 Halaman 4</div>
+        <div class="page-main-title">Mengenal Arus Listrik</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan berimajinasi:</strong>
+          <p>Arus listrik itu seperti air yang mengalir di sungai! Bayangkan selokan yang panjang — air terus mengalir dari hulu ke hilir tanpa berhenti. <span class="highlight">Arus listrik juga begitu!</span> 💧</p>
+        </div>
+      </div>
+
+      <div class="analogy-box" style="background: var(--blue-light); border: 2px solid var(--blue);">
+        <div class="analogy-icon">🚂</div>
+        <div class="analogy-text">
+          <h4>Analogi Kereta Api!</h4>
+          <p>Bayangkan <strong>elektron</strong> adalah gerbong-gerbong kereta. Mereka bergerak di atas rel (kabel) dari <strong>kutub negatif baterai</strong> menuju <strong>kutub positif baterai</strong>. Kereta nggak bisa jalan kalau relnya putus!</p>
+        </div>
+      </div>
+
+      <div class="card yellow">
+        <h3>📏 Satuan Arus Listrik</h3>
+        <p>Arus listrik diukur dengan satuan yang namanya <span class="highlight">Ampere (A)</span>. Semakin besar Ampere-nya, semakin deras arus listriknya — seperti sungai yang airnya deras!</p>
+      </div>
+
+      <div class="card orange">
+        <h3>🔄 Syarat Listrik Bisa Mengalir</h3>
+        <ul>
+          <li>✅ Ada <strong>sumber listrik</strong> (baterai/PLN)</li>
+          <li>✅ Ada <strong>kabel</strong> sebagai jalur aliran</li>
+          <li>✅ Rangkaian harus <strong>tertutup</strong> (tidak putus)</li>
+          <li>✅ Ada <strong>beban</strong> (lampu, kipas, dll)</li>
+        </ul>
+      </div>
+
+      <div style="background: #0F172A; border-radius: 20px; padding: 20px; margin: 14px 0; text-align: center; cursor: pointer;" onclick="animateCircuit()" id="simple-circuit">
+        <svg width="100%" height="100" viewBox="0 0 400 100">
+          <!-- Wire -->
+          <path d="M 60 50 L 340 50" stroke="#3B82F6" stroke-width="4" stroke-dasharray="8 4" fill="none" stroke-linecap="round"/>
+          <!-- Battery -->
+          <rect x="20" y="30" width="40" height="40" rx="8" fill="#FCD34D" stroke="#D97706" stroke-width="2"/>
+          <text x="40" y="55" text-anchor="middle" font-size="18">🔋</text>
+          <!-- Lamp -->
+          <circle cx="200" cy="50" r="20" fill="#FEF9C3" stroke="#FCD34D" stroke-width="3"/>
+          <text x="200" y="57" text-anchor="middle" font-size="18" id="lamp-icon">💡</text>
+          <!-- Arrow electron -->
+          <g id="electron-group">
+            <circle cx="120" cy="50" r="8" fill="#F59E0B" opacity="0.9"/>
+            <text x="120" y="54" text-anchor="middle" font-size="9" fill="white">e⁻</text>
+          </g>
+          <text x="40" y="88" text-anchor="middle" font-size="10" fill="#64748B">Baterai</text>
+          <text x="200" y="88" text-anchor="middle" font-size="10" fill="#64748B">Lampu</text>
+          <text x="340" y="65" text-anchor="middle" font-size="10" fill="#64748B">Kabel</text>
+        </svg>
+        <div style="color:#64748B; font-size:12px; font-weight:700; margin-top:4px;">👆 Klik untuk animasi aliran elektron!</div>
+      </div>
+
+      <div class="aslan-bubble" style="border-color: var(--purple);">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan mengingatkan:</strong>
+          <p>Ingat ya! Kalau kabel listriknya <strong>putus</strong>, arus nggak bisa mengalir dan lampu akan <strong>mati</strong>. Persis seperti rel kereta yang rusak — keretanya nggak bisa lewat! 🚂❌</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: APA ITU RANGKAIAN SERI -->
+    <div class="page" id="page-5">
+      <div class="page-header">
+        <div class="page-number-tag">🔗 Halaman 5</div>
+        <div class="page-main-title">Apa itu Rangkaian Seri?</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan penasaran:</strong>
+          <p>Nah sekarang kita masuk ke inti petualangan kita! Rangkaian Seri itu apa sih? Kok namanya seri? Kayak drama Korea? 😄</p>
+        </div>
+      </div>
+
+      <div class="card yellow">
+        <h3>📖 Pengertian Rangkaian Seri</h3>
+        <p>Rangkaian Seri adalah rangkaian listrik di mana semua komponen (lampu, baterai, dll) disambungkan <span class="highlight">secara berurutan</span> — satu demi satu, seperti antrian!</p>
+      </div>
+
+      <div class="analogy-box" style="background: linear-gradient(135deg, #FEF9C3, #FFEDD5); border: 2px solid var(--orange);">
+        <div class="analogy-icon">🚂</div>
+        <div class="analogy-text">
+          <h4>Seperti Gerbong Kereta!</h4>
+          <p>Bayangkan kereta dengan banyak gerbong yang tersambung satu persatu. Jika satu gerbong lepas, seluruh kereta berhenti! Begitu juga rangkaian seri — jika satu komponen putus, semua mati!</p>
+        </div>
+      </div>
+
+      <!-- Series Circuit SVG -->
+      <div style="background: #0F172A; border-radius: 20px; padding: 16px; margin: 14px 0; overflow-x: auto;">
+        <svg width="100%" height="130" viewBox="0 0 480 130" style="min-width:320px">
+          <!-- Top wire -->
+          <path d="M 40 40 L 440 40" stroke="#34D399" stroke-width="3" fill="none"/>
+          <!-- Bottom wire -->
+          <path d="M 40 90 L 440 90" stroke="#34D399" stroke-width="3" fill="none"/>
+          <!-- Left vertical -->
+          <path d="M 40 40 L 40 90" stroke="#34D399" stroke-width="3"/>
+          <!-- Right vertical -->
+          <path d="M 440 40 L 440 90" stroke="#34D399" stroke-width="3"/>
+
+          <!-- Battery -->
+          <rect x="28" y="55" width="24" height="22" rx="4" fill="#FCD34D" stroke="#D97706" stroke-width="1.5"/>
+          <text x="40" y="70" text-anchor="middle" font-size="13">🔋</text>
+
+          <!-- Lampu 1 -->
+          <circle cx="160" cy="40" r="18" fill="#FEF9C3" stroke="#FCD34D" stroke-width="2.5"/>
+          <text x="160" y="46" text-anchor="middle" font-size="14">💡</text>
+          <text x="160" y="76" text-anchor="middle" font-size="9" fill="#94A3B8">Lampu 1</text>
+
+          <!-- Lampu 2 -->
+          <circle cx="280" cy="40" r="18" fill="#FEF9C3" stroke="#FCD34D" stroke-width="2.5"/>
+          <text x="280" y="46" text-anchor="middle" font-size="14">💡</text>
+          <text x="280" y="76" text-anchor="middle" font-size="9" fill="#94A3B8">Lampu 2</text>
+
+          <!-- Lampu 3 -->
+          <circle cx="400" cy="40" r="18" fill="#FEF9C3" stroke="#FCD34D" stroke-width="2.5"/>
+          <text x="400" y="46" text-anchor="middle" font-size="14">💡</text>
+          <text x="400" y="76" text-anchor="middle" font-size="9" fill="#94A3B8">Lampu 3</text>
+
+          <!-- Arrows -->
+          <text x="100" y="35" text-anchor="middle" font-size="12" fill="#F59E0B">→</text>
+          <text x="220" y="35" text-anchor="middle" font-size="12" fill="#F59E0B">→</text>
+          <text x="340" y="35" text-anchor="middle" font-size="12" fill="#F59E0B">→</text>
+
+          <text x="240" y="118" text-anchor="middle" font-size="11" fill="#64748B" font-weight="bold">Rangkaian Seri: Semua Tersambung Berurutan!</text>
+        </svg>
+      </div>
+
+      <div class="card green">
+        <h3>🔑 Kata Kunci Rangkaian Seri</h3>
+        <p>Semua komponen dipasang dalam <span class="highlight">SATU jalur tunggal</span>. Arus listrik hanya punya <strong>satu jalan</strong> untuk mengalir — tidak ada percabangan!</p>
+      </div>
+
+      <div class="aslan-bubble" style="border-color: var(--orange);">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan bilang:</strong>
+          <p>Jadi rangkaian seri itu seperti antrian di kantin sekolah — semua orang harus antri berurutan, tidak boleh ada yang nyalip ke jalur lain! 😂🍛</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 6: CIRI-CIRI -->
+    <div class="page" id="page-6">
+      <div class="page-header">
+        <div class="page-number-tag">🔍 Halaman 6</div>
+        <div class="page-main-title">Ciri-ciri Rangkaian Seri</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan mengajak:</strong>
+          <p>Yuk kita kenali ciri-ciri rangkaian seri supaya kamu bisa langsung mengenalinya di kehidupan nyata! Ada 4 ciri utama nih! 👀</p>
+        </div>
+      </div>
+
+      <div class="card yellow" style="cursor:pointer" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='scale(1)',200)">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+          <span style="font-size:32px">1️⃣</span>
+          <h3 style="margin:0">Satu Jalur Tunggal</h3>
+        </div>
+        <p>Arus listrik hanya <span class="highlight">punya satu jalan</span> untuk mengalir. Tidak ada percabangan sama sekali!</p>
+        <div style="margin-top:10px; background:#0F172A; border-radius:12px; padding:10px; text-align:center;">
+          <svg width="100%" height="50" viewBox="0 0 300 50">
+            <path d="M10 25 L290 25" stroke="#3B82F6" stroke-width="4" stroke-dasharray="8 3" fill="none"/>
+            <text x="150" y="20" text-anchor="middle" font-size="10" fill="#64748B">→ arus mengalir satu arah →</text>
+            <text x="10" y="44" font-size="9" fill="#64748B">🔋</text>
+            <text x="140" y="44" font-size="9" fill="#64748B">💡</text>
+            <text x="280" y="44" font-size="9" fill="#64748B">💡</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card blue" style="cursor:pointer" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='scale(1)',200)">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+          <span style="font-size:32px">2️⃣</span>
+          <h3 style="margin:0">Arus Sama di Semua Titik</h3>
+        </div>
+        <p>Besar arus listrik yang mengalir di <span class="highlight">setiap komponen SAMA</span> besar. Semua dapat jatah arus yang sama!</p>
+      </div>
+
+      <div class="card orange" style="cursor:pointer" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='scale(1)',200)">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+          <span style="font-size:32px">3️⃣</span>
+          <h3 style="margin:0">Tegangan Dibagi Rata</h3>
+        </div>
+        <p>Tegangan (voltase) dari baterai <span class="highlight">dibagi-bagi</span> ke semua komponen. Kalau ada 2 lampu, masing-masing dapat setengah tegangan!</p>
+      </div>
+
+      <div class="card purple" style="cursor:pointer" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='scale(1)',200)">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+          <span style="font-size:32px">4️⃣</span>
+          <h3 style="margin:0">Satu Putus, Semua Mati!</h3>
+        </div>
+        <p>Kalau <span class="highlight">satu komponen rusak/putus</span>, arus terhenti dan seluruh rangkaian tidak berfungsi. Ini ciri paling khas!</p>
+      </div>
+
+      <div class="aslan-bubble" style="border-color:var(--green)">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Tip Aslan:</strong>
+          <p>Klik setiap kotak di atas untuk animasi kecil! 😄 Nah, ciri nomor 4 itu yang paling penting — satu putus, semua mati! Kamu pasti ingat terus deh!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 7: CONTOH KEHIDUPAN SEHARI-HARI -->
+    <div class="page" id="page-7">
+      <div class="page-header">
+        <div class="page-number-tag">🌍 Halaman 7</div>
+        <div class="page-main-title">Contoh di Kehidupan Nyata</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan menemukan:</strong>
+          <p>Ternyata rangkaian seri ada banyak di sekitar kita lho! Yuk kita cari sama-sama! 🔍</p>
+        </div>
+      </div>
+
+      <div class="analogy-box" style="background:var(--yellow-light); border:2px solid var(--yellow-dark);">
+        <div class="analogy-icon">🎄</div>
+        <div class="analogy-text">
+          <h4>Lampu Natal / Lampu Tumblr</h4>
+          <p>Lampu hias yang dijual di toko — lampu-lampunya <strong>tersambung seri</strong>. Kalau satu lampu mati, semuanya mati! Pernah lihat ini terjadi? 😅</p>
+        </div>
+      </div>
+
+      <div class="analogy-box" style="background:var(--orange-light); border:2px solid var(--orange);">
+        <div class="analogy-icon">🔦</div>
+        <div class="analogy-text">
+          <h4>Senter dengan Banyak Baterai</h4>
+          <p>Senter yang pakai 3 baterai — baterai-baterainya dipasang <strong>secara seri</strong> (kepala-ekor, kepala-ekor). Kalau satu baterai habis, senter mati!</p>
+        </div>
+      </div>
+
+      <div class="analogy-box" style="background:var(--blue-light); border:2px solid var(--blue);">
+        <div class="analogy-icon">🚨</div>
+        <div class="analogy-text">
+          <h4>Alarm Pintu</h4>
+          <p>Beberapa alarm sederhana menggunakan rangkaian seri. Ketika pintu dibuka (rangkaian putus), alarm berbunyi karena <strong>aliran arus terputus</strong>!</p>
+        </div>
+      </div>
+
+      <div class="analogy-box" style="background:var(--purple-light); border:2px solid var(--purple);">
+        <div class="analogy-icon">🔋</div>
+        <div class="analogy-text">
+          <h4>Remot TV Baterai</h4>
+          <p>Baterai di remote TV-mu dipasang <strong>secara seri</strong>! Makanya kalau salah satu baterai habis, remote nggak bisa dipakai lagi!</p>
+        </div>
+      </div>
+
+      <div class="card green">
+        <h3>🏫 Contoh di Laboratorium Sekolah</h3>
+        <p>Di pelajaran IPA, kamu mungkin pernah membuat rangkaian seri sederhana: <strong>baterai → kabel → lampu → kabel → kembali ke baterai</strong>. Satu lingkaran tertutup!</p>
+      </div>
+
+      <div class="aslan-bubble" style="border-color:var(--orange)">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Tantangan Aslan:</strong>
+          <p>Coba sekarang lihat di rumahmu — benda apa yang menggunakan rangkaian seri? Coba tebak! Tuliskan di buku catatan IPA-mu ya! 📝</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 8: RUMUS -->
+    <div class="page" id="page-8">
+      <div class="page-header">
+        <div class="page-number-tag">📐 Halaman 8</div>
+        <div class="page-main-title">Rumus Dasar Rangkaian Seri</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan semangat belajar:</strong>
+          <p>Jangan takut dengan rumus! Rumus rangkaian seri itu sebenarnya <span class="highlight">sangat mudah</span>! Aku akan jelaskan dengan cara yang seru! 💪</p>
+        </div>
+      </div>
+
+      <!-- Rumus 1: Arus -->
+      <div class="formula-box">
+        <div class="formula-title">⚡ RUMUS ARUS LISTRIK (I)</div>
+        <div class="formula-main">I<sub>total</sub> = I<sub>1</sub> = I<sub>2</sub> = I<sub>3</sub></div>
+        <div class="formula-desc">Arus di semua bagian SAMA BESAR! Tidak ada yang berbeda.</div>
+      </div>
+
+      <div class="card yellow">
+        <h3>🧠 Artinya Apa?</h3>
+        <p>Kuat arus (I) di setiap lampu dalam rangkaian seri <span class="highlight">SAMA SEMUA</span>. Seperti antrian di jembatan sempit — semua orang melewati jalur yang sama dengan kecepatan yang sama!</p>
+      </div>
+
+      <!-- Rumus 2: Tegangan -->
+      <div class="formula-box" style="background: linear-gradient(135deg, var(--orange-dark), var(--orange));">
+        <div class="formula-title">🔌 RUMUS TEGANGAN (V)</div>
+        <div class="formula-main">V<sub>total</sub> = V<sub>1</sub> + V<sub>2</sub> + V<sub>3</sub></div>
+        <div class="formula-desc">Tegangan total = Jumlah semua tegangan komponen!</div>
+      </div>
+
+      <div class="card orange">
+        <h3>🍕 Analogi Kue Pizza!</h3>
+        <p>Bayangkan baterai 9V itu seperti pizza 9 potong. Kalau ada 3 lampu, masing-masing lampu dapat <span class="highlight">3 potong (3V)</span>. Totalnya tetap 9 potong! 🍕🍕🍕</p>
+      </div>
+
+      <!-- Rumus 3: Hambatan -->
+      <div class="formula-box" style="background: linear-gradient(135deg, var(--green-dark), var(--green));">
+        <div class="formula-title">🛑 RUMUS HAMBATAN (R)</div>
+        <div class="formula-main">R<sub>total</sub> = R<sub>1</sub> + R<sub>2</sub> + R<sub>3</sub></div>
+        <div class="formula-desc">Hambatan total = Penjumlahan semua hambatan!</div>
+      </div>
+
+      <div class="card green">
+        <h3>🚧 Analogi Hambatan</h3>
+        <p>Hambatan (R) itu seperti polisi tidur di jalan. Makin banyak polisi tidur, makin lambat kendaraan. Dalam seri, <span class="highlight">hambatannya dijumlahkan</span> — makin banyak lampu, makin besar hambatan total!</p>
+      </div>
+
+      <div class="card blue">
+        <h3>📊 Contoh Soal</h3>
+        <p>Baterai 6V, 3 lampu masing-masing hambatan 2Ω. Hitung!</p>
+        <ul>
+          <li>R total = 2 + 2 + 2 = <strong>6 Ω</strong></li>
+          <li>I = V/R = 6/6 = <strong>1 Ampere</strong></li>
+          <li>Tegangan tiap lampu = 6/3 = <strong>2 Volt</strong></li>
+        </ul>
+      </div>
+
+      <div class="aslan-bubble" style="border-color:var(--green)">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan berhasil!</strong>
+          <p>Nah, mudah kan rumusnya? Pokoknya ingat: <span class="highlight">Arus SAMA</span>, <span class="hl-orange">Tegangan DIJUMLAH</span>, <span class="hl-green">Hambatan DIJUMLAH</span>! ✅</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 9: KELEBIHAN -->
+    <div class="page" id="page-9">
+      <div class="page-header">
+        <div class="page-number-tag">👍 Halaman 9</div>
+        <div class="page-main-title">Kelebihan Rangkaian Seri</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan bercerita:</strong>
+          <p>Setiap hal pasti punya kelebihan dan kekurangan. Yuk kita lihat dulu sisi baiknya dari rangkaian seri! 👍</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">💰</div>
+        <div>
+          <strong>Lebih Hemat Biaya</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Membutuhkan lebih sedikit kabel dan komponen karena hanya ada satu jalur. Ini membuat rangkaian seri <span class="highlight">lebih murah</span> untuk dibuat!</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">🔧</div>
+        <div>
+          <strong>Lebih Sederhana dan Mudah Dibuat</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Karena jalurnya hanya satu, <span class="highlight">lebih mudah dirangkai</span>. Cocok untuk percobaan sains sederhana di sekolah!</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">🔍</div>
+        <div>
+          <strong>Mudah Mendeteksi Kerusakan</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Kalau ada komponen yang rusak, seluruh rangkaian mati — jadi kita langsung tahu ada masalah dan bisa <span class="highlight">cepat menemukan</span> bagian yang rusak!</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">📉</div>
+        <div>
+          <strong>Arus Lebih Terkontrol</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Karena hambatan total lebih besar, arus yang mengalir lebih kecil. Ini berguna untuk <span class="highlight">melindungi komponen</span> yang sensitif dari arus berlebih!</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">🎓</div>
+        <div>
+          <strong>Bagus untuk Pembelajaran</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Rangkaian seri sangat bagus untuk <span class="highlight">belajar konsep dasar listrik</span> karena sederhana dan mudah dipahami!</p>
+        </div>
+      </div>
+
+      <div class="card green" style="margin-top:14px">
+        <h3>✅ Kesimpulan Kelebihan</h3>
+        <p>Rangkaian seri unggul dalam hal <strong>kesederhanaan, hemat biaya, dan kemudahan perakitan</strong>. Itulah kenapa untuk percobaan lab sekolah, kita sering pakai rangkaian seri!</p>
+      </div>
+
+      <div class="aslan-bubble" style="border-color:var(--green)">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan punya pengalaman:</strong>
+          <p>Di pelajaran IPA kelas 4, aku pernah bikin rangkaian seri pakai baterai dan 2 lampu. Mudah banget dan <span class="highlight">ternyata kedua lampu menyala</span> (tapi agak redup). Keren! 💡💡</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 10: KEKURANGAN -->
+    <div class="page" id="page-10">
+      <div class="page-header">
+        <div class="page-number-tag">👎 Halaman 10</div>
+        <div class="page-main-title">Kekurangan Rangkaian Seri</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan jujur:</strong>
+          <p>Nah sekarang kita lihat sisi kurang oke-nya dari rangkaian seri. Jangan sedih ya — mengetahui kekurangan itu penting supaya kita bisa pakai rangkaian yang tepat! 🤔</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">💀</div>
+        <div>
+          <strong>Satu Mati, Semua Mati!</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Ini kekurangan terbesar! Kalau <span class="highlight" style="background:#FEE2E2">satu komponen rusak</span>, seluruh rangkaian berhenti bekerja. Coba bayangkan kalau lampu kamarmu tiba-tiba mati semua! 😱</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">🔆</div>
+        <div>
+          <strong>Cahaya Lampu Lebih Redup</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Karena tegangan dibagi-bagi ke semua lampu, masing-masing lampu <span class="highlight" style="background:#FEE2E2">hanya mendapat sebagian voltase</span>. Makin banyak lampu, makin redup!</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">🔋</div>
+        <div>
+          <strong>Boros Baterai</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Baterai dalam rangkaian seri akan <span class="highlight" style="background:#FEE2E2">lebih cepat habis</span> karena harus mensuplai semua komponen sekaligus!</p>
+        </div>
+      </div>
+
+      <div class="procon-item">
+        <div class="procon-icon">📏</div>
+        <div>
+          <strong>Tidak Fleksibel</strong>
+          <p style="font-size:14px; color:var(--text-soft); margin-top:2px;">Kamu <span class="highlight" style="background:#FEE2E2">tidak bisa mematikan satu lampu</span> tanpa mematikan semuanya. Tidak ada kendali individual!</p>
+        </div>
+      </div>
+
+      <div style="background: #FEF2F2; border: 2px solid #FCA5A5; border-radius:20px; padding:16px 20px; margin:14px 0;">
+        <h3 style="color: #DC2626;">❌ Perbandingan: Lampu Seri vs Paralel</h3>
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:14px; margin-top:10px;">
+            <tr style="background:#DC2626; color:white;">
+              <th style="padding:8px; border-radius:8px 0 0 0; text-align:left">Hal</th>
+              <th style="padding:8px; text-align:center">Seri</th>
+              <th style="padding:8px; border-radius:0 8px 0 0; text-align:center">Paralel</th>
+            </tr>
+            <tr style="background:#FEE2E2;">
+              <td style="padding:8px;">Satu mati</td>
+              <td style="padding:8px; text-align:center;">😱 Semua mati</td>
+              <td style="padding:8px; text-align:center;">😊 Lainnya hidup</td>
+            </tr>
+            <tr>
+              <td style="padding:8px;">Kecerahan</td>
+              <td style="padding:8px; text-align:center;">Redup</td>
+              <td style="padding:8px; text-align:center;">Terang</td>
+            </tr>
+            <tr style="background:#FEE2E2;">
+              <td style="padding:8px;">Biaya kabel</td>
+              <td style="padding:8px; text-align:center;">Hemat</td>
+              <td style="padding:8px; text-align:center;">Lebih mahal</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="aslan-bubble" style="border-color:var(--orange)">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan menyimpulkan:</strong>
+          <p>Makanya listrik di rumah kita pakai <strong>rangkaian paralel</strong>, bukan seri! Supaya kalau satu lampu mati, lampu lain tetap nyala. Tapi untuk percobaan dan belajar, rangkaian seri itu tetap penting! 😊</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 11: LATIHAN SOAL -->
+    <div class="page" id="page-11">
+      <div class="page-header">
+        <div class="page-number-tag">✏️ Halaman 11</div>
+        <div class="page-main-title">Latihan Soal</div>
+      </div>
+
+      <div class="aslan-bubble">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan menantang:</strong>
+          <p>Yuk uji pemahamanmu! Jawab 4 soal ini dengan klik pada jawaban yang kamu anggap benar. Kalau salah, coba lagi ya! 😄 Kamu pasti bisa!</p>
+        </div>
+      </div>
+
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <div class="quiz-q-num">Soal 1</div>
+        <div class="quiz-q-text">Dalam rangkaian seri, jika satu lampu padam, apa yang terjadi pada lampu lainnya?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',1,'💡 Ingat ciri utama seri: satu putus, semua mati!')">A. Lampu lain menyala lebih terang</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'correct',1,'🎉 Betul! Inilah ciri utama rangkaian seri!')">B. Lampu lain ikut padam</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',1,'Tidak, tidak ada efek seperti itu!')">C. Tidak berpengaruh sama sekali</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',1,'Itu bukan ciri rangkaian seri!')">D. Lampu lain berkedip-kedip</button>
+        </div>
+        <div class="quiz-feedback" id="fb1"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <div class="quiz-q-num">Soal 2</div>
+        <div class="quiz-q-text">Baterai 9V dirangkai seri dengan 3 lampu identik. Berapa tegangan yang diterima masing-masing lampu?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',2,'Bukan! Tegangan dibagi rata ke semua lampu.')">A. 9 Volt</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',2,'Hampir! Tapi coba hitung lagi: 9 ÷ 3 = ?')">B. 4,5 Volt</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'correct',2,'🎉 Benar! 9V ÷ 3 lampu = 3V per lampu! Kamu hebat!')">C. 3 Volt</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',2,'Bukan! Ingat rumus: V total dibagi jumlah komponen.')">D. 1 Volt</button>
+        </div>
+        <div class="quiz-feedback" id="fb2"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <div class="quiz-q-num">Soal 3</div>
+        <div class="quiz-q-text">Manakah yang BUKAN contoh penerapan rangkaian seri?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',3,'Lampu natal umumnya menggunakan rangkaian seri!')">A. Lampu natal/Tumblr lights</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',3,'Senter menggunakan baterai seri!')">B. Senter dengan 3 baterai</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'correct',3,'🎉 Tepat! Listrik rumah pakai rangkaian PARALEL, bukan seri!')">C. Listrik di dalam rumah</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',3,'Baterai remote memang dipasang seri!')">D. Baterai dalam remote TV</button>
+        </div>
+        <div class="quiz-feedback" id="fb3"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <div class="quiz-q-num">Soal 4</div>
+        <div class="quiz-q-text">3 hambatan masing-masing 4Ω, 6Ω, dan 2Ω dirangkai seri. Berapakah hambatan totalnya?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',4,'Bukan! Dalam seri, hambatan DIJUMLAHKAN.')">A. 4 Ω</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'correct',4,'🎉 Luar biasa! 4 + 6 + 2 = 12Ω. Kamu jenius!')">B. 12 Ω</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',4,'Kurang tepat! Coba jumlahkan semua: 4+6+2.')">C. 6 Ω</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,'wrong',4,'Bukan! Itu untuk rangkaian paralel.')">D. 2 Ω</button>
+        </div>
+        <div class="quiz-feedback" id="fb4"></div>
+      </div>
+
+      <div id="score-display" class="score-display">
+        🏆 Skormu: <span id="score-text">0/4</span> — <span id="score-emoji"></span>
+      </div>
+    </div>
+
+    <!-- PAGE 12: KESIMPULAN -->
+    <div class="page" id="page-12">
+      <div class="page-header">
+        <div class="page-number-tag">📝 Halaman 12</div>
+        <div class="page-main-title">Kesimpulan & Pesan untuk Aslan</div>
+      </div>
+
+      <div class="card yellow">
+        <h3>📚 Apa yang Sudah Kita Pelajari?</h3>
+        <ul>
+          <li>⚡ <strong>Listrik</strong> adalah aliran elektron yang mengalir melalui penghantar</li>
+          <li>🌊 <strong>Arus listrik</strong> seperti air yang mengalir — membutuhkan jalur tertutup</li>
+          <li>🔗 <strong>Rangkaian Seri</strong> = semua komponen tersambung dalam SATU jalur</li>
+          <li>🔑 <strong>Ciri utama</strong>: satu mati = semua mati!</li>
+          <li>📐 <strong>Rumus</strong>: I sama, V dijumlah, R dijumlah</li>
+          <li>👍 <strong>Kelebihan</strong>: murah, sederhana, mudah dibuat</li>
+          <li>👎 <strong>Kekurangan</strong>: tidak andal, lampu redup, tidak fleksibel</li>
+        </ul>
+      </div>
+
+      <div class="formula-box" style="margin:14px 0">
+        <div class="formula-title">🏆 RUMUS PENTING RANGKAIAN SERI</div>
+        <div class="formula-main" style="font-size:16px;">I₁ = I₂ = I₃ &nbsp;|&nbsp; V = V₁+V₂+V₃ &nbsp;|&nbsp; R = R₁+R₂+R₃</div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #7C3AED, #A78BFA); border-radius: 20px; padding: 20px 22px; color:white; margin-bottom:14px;">
+        <h3 style="color:white; margin-bottom:10px; font-size:22px;">💌 Pesan Spesial untuk Aslan</h3>
+        <p style="font-size:16px; line-height:1.8; opacity:0.95;">
+          Aslan yang hebat, kamu sudah berhasil menyelesaikan <strong>Buku 1 Listrik Ajaib</strong>! 🎉<br><br>
+          Ingat ya, belajar sains itu seperti menjadi <strong>detektif alam semesta</strong>. Setiap konsep yang kamu pelajari adalah kunci untuk membuka misteri dunia yang lebih besar!<br><br>
+          Teruslah <strong>penasaran, teruslah bertanya</strong>, dan jangan pernah berhenti belajar. Karena otak yang terus diasah akan menjadi senjata paling hebat yang pernah ada! 🧠⚡<br><br>
+          <strong>Kamu LUAR BIASA, Aslan! 🌟</strong>
+        </p>
+      </div>
+
+      <div class="card orange">
+        <h3>🚀 Mau Belajar Lebih Lanjut?</h3>
+        <ul>
+          <li>📖 Buku 2: <strong>Rangkaian Paralel</strong> — rangkaian yang dipakai di rumah!</li>
+          <li>📖 Buku 3: <strong>Rangkaian Campuran</strong> — gabungan seri dan paralel!</li>
+          <li>🔬 Coba buat percobaan sendiri dengan baterai dan LED!</li>
+        </ul>
+      </div>
+
+      <div class="aslan-bubble" style="border-color:var(--yellow-dark)">
+        <div class="aslan-avatar">🧒</div>
+        <div class="aslan-text">
+          <strong>Aslan berterima kasih:</strong>
+          <p>Terima kasih sudah belajar bareng aku! Kamu hebat banget sudah sampai halaman terakhir! Sekarang kita ambil sertifikatnya yuk! 🏆 ➡️</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 13: SERTIFIKAT -->
+    <div class="page" id="page-13">
+      <div class="cert-wrapper">
+        <div>
+          <div style="text-align:center; margin-bottom:20px;">
+            <span style="font-size:40px; animation: float 3s ease-in-out infinite; display:inline-block;">🎊</span>
+            <span style="font-size:40px; animation: float 3s ease-in-out infinite 0.5s; display:inline-block; margin:0 10px;">🎉</span>
+            <span style="font-size:40px; animation: float 3s ease-in-out infinite 1s; display:inline-block;">🎊</span>
+          </div>
+          <div class="cert-card">
+            <div class="cert-top-emoji">🏅</div>
+            <div class="cert-title">— SERTIFIKAT PENCAPAIAN —</div>
+            <div style="font-size:14px; color:var(--text-soft); margin:6px 0;">Dengan bangga diberikan kepada</div>
+            <div class="cert-name">✨ Aslan ✨</div>
+            <div class="cert-desc">
+              Telah berhasil menyelesaikan<br>
+              <strong>"Petualangan Aslan dengan Listrik Ajaib"</strong><br>
+              <em>Buku 1: Rangkaian Seri</em><br><br>
+              dan menguasai konsep:<br>
+              ⚡ Listrik &amp; Arus Listrik<br>
+              🔗 Rangkaian Seri<br>
+              📐 Rumus-rumus Dasar<br>
+              🔍 Ciri, Kelebihan &amp; Kekurangan
+            </div>
+            <div class="cert-stamp">🏆 Aslan Hebat!</div>
+            <div class="cert-stars">⭐⭐⭐⭐⭐</div>
+            <div class="cert-date" id="cert-date">Hari ini, tahun 2025 — Tetap Semangat Belajar!</div>
+          </div>
+          <div style="text-align:center; margin-top:16px;">
+            <button onclick="celebrateCert()" style="background: var(--yellow); color: var(--text); border:none; border-radius:50px; padding:12px 28px; font-family:'Fredoka One',cursive; font-size:18px; cursor:pointer; box-shadow:0 4px 0 var(--yellow-dark); transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+              🎉 Rayakan! Klik Aku!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end pages-wrapper -->
+
+  <!-- NAV BAR -->
+  <div id="nav-bar">
+    <button class="nav-btn prev" id="btn-prev" onclick="changePage(-1)" disabled>
+      ← Sebelumnya
+    </button>
+    <div id="progress-dots"></div>
+    <button class="nav-btn next" id="btn-next" onclick="changePage(1)">
+      Selanjutnya →
+    </button>
+  </div>
+</div><!-- end book -->
+
+<!-- CONFETTI CANVAS -->
+<canvas id="confetti-canvas" style="position:fixed; inset:0; pointer-events:none; z-index:9999; display:none;"></canvas>
+
+<script>
+  // =========== STATE ===========
+  let currentPage = 1;
+  const TOTAL_PAGES = 13;
+  let quizScore = 0;
+  let quizAnswered = {};
+
+  // =========== NAVIGATION ===========
+  function goToPage(n) {
+    if (n < 1 || n > TOTAL_PAGES) return;
+    const oldPage = document.getElementById('page-' + currentPage);
+    oldPage.classList.remove('active');
+    oldPage.classList.add('exit-left');
+    setTimeout(() => oldPage.classList.remove('exit-left'), 400);
+
+    currentPage = n;
+    const newPage = document.getElementById('page-' + currentPage);
+    newPage.classList.add('active');
+    newPage.scrollTop = 0;
+
+    updateUI();
+  }
+
+  function changePage(dir) {
+    goToPage(currentPage + dir);
+  }
+
+  function updateUI() {
+    document.getElementById('page-indicator').textContent = `Hal. ${currentPage} / ${TOTAL_PAGES}`;
+    document.getElementById('btn-prev').disabled = currentPage === 1;
+    document.getElementById('btn-next').disabled = currentPage === TOTAL_PAGES;
+    renderDots();
+    if (currentPage === 13) setCertDate();
+  }
+
+  function renderDots() {
+    const container = document.getElementById('progress-dots');
+    container.innerHTML = '';
+    // Show max 9 dots on mobile
+    const max = window.innerWidth < 480 ? 9 : TOTAL_PAGES;
+    const start = Math.max(1, Math.min(currentPage - Math.floor(max/2), TOTAL_PAGES - max + 1));
+    const end = Math.min(start + max - 1, TOTAL_PAGES);
+    for (let i = start; i <= end; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === currentPage ? ' active' : i < currentPage ? ' done' : '');
+      dot.onclick = () => goToPage(i);
+      dot.title = 'Halaman ' + i;
+      container.appendChild(dot);
+    }
+  }
+
+  // =========== QUIZ ===========
+  function checkAnswer(btn, result, qNum, feedback) {
+    if (quizAnswered[qNum]) return;
+    quizAnswered[qNum] = true;
+
+    const parent = btn.closest('.quiz-question');
+    const allOpts = parent.querySelectorAll('.quiz-opt');
+    allOpts.forEach(o => o.classList.add('disabled'));
+
+    const fbEl = document.getElementById('fb' + qNum);
+    fbEl.textContent = feedback;
+    fbEl.classList.add('show');
+
+    if (result === 'correct') {
+      btn.classList.add('correct');
+      quizScore++;
+      fbEl.classList.add('ok');
+    } else {
+      btn.classList.add('wrong');
+      fbEl.classList.add('nope');
+    }
+
+    // Check if all answered
+    if (Object.keys(quizAnswered).length === 4) {
+      const scoreEl = document.getElementById('score-display');
+      scoreEl.classList.add('show');
+      const emojis = ['😢 Coba lagi ya!', '🙂 Lumayan!', '😊 Bagus!', '🤩 Keren!', '🏆 SEMPURNA!'];
+      document.getElementById('score-text').textContent = quizScore + '/4';
+      document.getElementById('score-emoji').textContent = emojis[quizScore];
+    }
+  }
+
+  // =========== CERT ===========
+  function setCertDate() {
+    const d = new Date();
+    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    document.getElementById('cert-date').textContent = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  // =========== CONFETTI ===========
+  function celebrateCert() {
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.style.display = 'block';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+    const pieces = [];
+    const colors = ['#FCD34D','#3B82F6','#34D399','#FB923C','#A78BFA','#F472B6','#F87171'];
+    for (let i = 0; i < 120; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        w: Math.random() * 12 + 6,
+        h: Math.random() * 6 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: Math.random() * 4 + 2,
+        vx: (Math.random() - 0.5) * 3,
+        rot: Math.random() * 360,
+        rotV: (Math.random() - 0.5) * 6
+      });
+    }
+    let frame = 0;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.y += p.vy; p.x += p.vx; p.rot += p.rotV;
+        ctx.save();
+        ctx.translate(p.x + p.w/2, p.y + p.h/2);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      });
+      frame++;
+      if (frame < 200) requestAnimationFrame(draw);
+      else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+    }
+    draw();
+  }
+
+  // =========== CIRCUIT ANIMATION ===========
+  function animateCircuit() {
+    const el = document.getElementById('electron-group');
+    const lamp = document.getElementById('lamp-icon');
+    if (!el) return;
+    let x = 120;
+    let lit = false;
+    const interval = setInterval(() => {
+      x += 5;
+      if (x > 340) x = 60;
+      el.setAttribute('transform', `translate(${x - 120}, 0)`);
+      if (x > 180 && x < 225) { lamp.textContent = '💡'; lit = true; }
+      else if (lit && (x < 180 || x > 225)) { lamp.textContent = '💡'; }
+    }, 30);
+    setTimeout(() => clearInterval(interval), 5000);
+  }
+
+  // =========== KEYBOARD NAV ===========
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changePage(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changePage(-1);
+  });
+
+  // =========== TOUCH SWIPE ===========
+  let touchStartX = 0;
+  document.getElementById('pages-wrapper').addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, {passive: true});
+  document.getElementById('pages-wrapper').addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 60) changePage(diff > 0 ? 1 : -1);
+  }, {passive: true});
+
+  // =========== INIT ===========
+  updateUI();
+</script>
+</body>
+</html>
