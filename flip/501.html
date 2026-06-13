@@ -4,6 +4,22 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Latihan Perkalian – Harian</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
+    authDomain: "aslan-sae.firebaseapp.com",
+    databaseURL: "https://aslan-sae-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "aslan-sae",
+    storageBucket: "aslan-sae.appspot.com",
+    messagingSenderId: "938084212857",
+    appId: "1:938084212857:web:54257ad8a0b2714510b4a8"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const FB_501_REF = db.ref('flip_501_records');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,6 +29,8 @@
     --lv1-dk: #C2410C;
     --lv2:    #8B5CF6;
     --lv2-dk: #6D28D9;
+    --lv3:    #0EA5E9;
+    --lv3-dk: #0369A1;
     --green:  #22C55E;
     --red:    #EF4444;
     --yellow: #FBBF24;
@@ -44,10 +62,27 @@
     border-radius: 999px; padding: 5px 14px;
     font-size: .82rem; font-weight: 700;
   }
+  .btn-back {
+    background: rgba(255,255,255,.15);
+    border: 2px solid rgba(255,255,255,.3);
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-family: inherit;
+    font-size: .85rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .15s;
+  }
+  .btn-back:hover { background: rgba(255,255,255,.25); }
 
   /* ── TIMER DISPLAY in header ── */
   #timer-display {
-    display: flex;
+    display: none;
     align-items: center; gap: 8px;
     background: rgba(255,255,255,.1);
     border: 2px solid rgba(255,255,255,.25);
@@ -68,7 +103,7 @@
   #timer-clock.urgent  { color: #FCA5A5; }
 
   /* ── LEVEL PICKER ── */
-  #level-picker { max-width: 760px; margin: 48px auto; padding: 0 16px; text-align: center; }
+  #level-picker { max-width: 860px; margin: 48px auto; padding: 0 16px; text-align: center; }
   #level-picker h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 6px; }
   #level-picker > p { color: var(--muted); font-size: 1rem; font-weight: 600; margin-bottom: 36px; }
 
@@ -76,7 +111,7 @@
 
   .level-card {
     background: var(--card); border: 3px solid var(--border);
-    border-radius: 22px; padding: 26px 22px; width: 230px;
+    border-radius: 22px; padding: 26px 22px; width: 215px;
     cursor: pointer;
     transition: transform .15s, box-shadow .15s, border-color .15s;
     text-align: left; position: relative; overflow: hidden;
@@ -87,13 +122,16 @@
   }
   .level-card.lv1::before { background: var(--lv1); }
   .level-card.lv2::before { background: var(--lv2); }
+  .level-card.lv3::before { background: var(--lv3); }
   .level-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,.13); }
   .level-card.lv1 { border-color: #FED7AA; } .level-card.lv1:hover { border-color: var(--lv1); }
   .level-card.lv2 { border-color: #DDD6FE; } .level-card.lv2:hover { border-color: var(--lv2); }
+  .level-card.lv3 { border-color: #BAE6FD; } .level-card.lv3:hover { border-color: var(--lv3); }
 
   .lv-badge { display: inline-block; border-radius: 8px; padding: 3px 11px; font-size: .75rem; font-weight: 800; color: #fff; margin-bottom: 12px; margin-top: 6px; }
   .lv1 .lv-badge { background: var(--lv1); }
   .lv2 .lv-badge { background: var(--lv2); }
+  .lv3 .lv-badge { background: var(--lv3); }
   .level-card .emoji { font-size: 2.4rem; display: block; margin-bottom: 8px; }
   .level-card h2 { font-size: 1.1rem; font-weight: 900; margin-bottom: 5px; }
   .level-card .desc { font-size: .82rem; color: var(--muted); font-weight: 600; line-height: 1.5; }
@@ -142,6 +180,7 @@
   .level-tag { display: inline-block; border-radius: 999px; padding: 3px 14px; font-size: .78rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
   .tag-lv1 { background: var(--lv1); }
   .tag-lv2 { background: var(--lv2); }
+  .tag-lv3 { background: var(--lv3); }
   .ws-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
   /* ── BUTTONS ── */
@@ -264,8 +303,6 @@
   .correct-answer { font-size: .72rem; font-weight: 800; color: var(--green); display: none; }
   .problem-card.wrong .correct-answer { display: block; }
 
-  .lock-icon { font-size: .8rem; color: var(--muted); }
-
   /* ── ANIMATIONS ── */
   @keyframes pop-in {
     from { transform: scale(.82); opacity: 0; }
@@ -279,14 +316,145 @@
   @media (prefers-reduced-motion: reduce) { .pop-in, .timer-ticking { animation: none; } }
 
   footer { text-align: center; padding: 24px 16px; font-size: .8rem; color: var(--muted); font-weight: 700; }
+
+  /* ── SAVE BUTTON ── */
+  .btn-save {
+    background: #1E293B; color: #fff; border: none;
+    border-radius: 999px; padding: 10px 26px;
+    font-family: inherit; font-size: .95rem; font-weight: 800;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+    margin-top: 14px; transition: background .15s, transform .1s;
+  }
+  .btn-save:hover  { background: #0F172A; }
+  .btn-save:active { transform: scale(.96); }
+  .btn-save:disabled { background: var(--green); cursor: default; opacity: 1; }
+
+  /* ── RECORDS SECTION ── */
+  #records-section { max-width: 860px; margin: 0 auto 48px; padding: 0 16px; }
+  .records-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 10px;
+  }
+  .records-header h2 { font-size: 1.2rem; font-weight: 900; }
+  .btn-clear-records {
+    background: none; border: 2px solid var(--border); border-radius: 999px;
+    padding: 5px 14px; font-family: inherit; font-size: .78rem; font-weight: 800;
+    color: var(--muted); cursor: pointer; transition: border-color .15s, color .15s;
+  }
+  .btn-clear-records:hover { border-color: var(--red); color: var(--red); }
+  .records-table-wrap {
+    background: var(--card); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07); border: 2px solid var(--border);
+    max-height: 450px; overflow-y: auto;
+  }
+  .records-table-wrap::-webkit-scrollbar { width: 8px; }
+  .records-table-wrap::-webkit-scrollbar-track { background: #F1F5F9; }
+  .records-table-wrap::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+  .records-table-wrap::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+  .records-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .records-table thead tr { background: #1E293B; color: #fff; }
+  .records-table thead th {
+    padding: 11px 14px; text-align: left; font-weight: 800;
+    font-size: .76rem; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap;
+  }
+  .records-table tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+  .records-table tbody tr:last-child { border-bottom: none; }
+  .records-table tbody tr:hover { background: #F8FAFF; }
+  .records-table tbody td { padding: 10px 14px; font-weight: 700; vertical-align: middle; }
+  .rec-level-badge {
+    display: inline-block; border-radius: 6px; padding: 2px 10px;
+    font-size: .75rem; font-weight: 800; color: #fff; white-space: nowrap;
+  }
+  .rec-lv1 { background: var(--lv1); }
+  .rec-lv2 { background: var(--lv2); }
+  .rec-lv3 { background: var(--lv3); }
+  .rec-score { font-size: 1rem; font-weight: 900; }
+  .rec-score.perfect { color: var(--green); }
+  .rec-score.good    { color: #D97706; }
+  .rec-score.low     { color: var(--red); }
+  .rec-pct {
+    display: inline-block; background: var(--bg); border-radius: 6px;
+    padding: 2px 8px; font-size: .76rem; font-weight: 800; color: var(--muted);
+  }
+  .rec-time { color: var(--muted); font-size: .85rem; font-weight: 700; }
+  .rec-date { color: var(--muted); font-size: .82rem; font-weight: 700; white-space: nowrap; }
+  .rec-btn-del {
+    background: none; border: none; cursor: pointer; font-size: 1rem;
+    color: var(--border); padding: 2px 6px; border-radius: 6px;
+    transition: color .15s, background .15s;
+  }
+  .rec-btn-del:hover { color: var(--red); background: #FEF2F2; }
+  .records-empty {
+    text-align: center; padding: 32px 20px;
+    color: var(--muted); font-weight: 700; font-size: .9rem;
+  }
+  .records-empty .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+  .records-table tbody tr.best-row { background: #FEFCE8; }
+  .best-tag {
+    display: inline-block; background: var(--yellow); color: #78350F;
+    border-radius: 6px; padding: 1px 7px; font-size: .68rem; font-weight: 900;
+    margin-left: 4px; vertical-align: middle;
+  }
+
+  /* ── PASSWORD MODAL ── */
+  #pwd-modal-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,.55);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+  }
+  #pwd-modal-card {
+    background: var(--card);
+    border-radius: 22px;
+    padding: 32px 28px 28px;
+    width: 100%; max-width: 360px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  }
+  .pwd-icon { font-size: 2.8rem; margin-bottom: 10px; }
+  #pwd-modal-card h3 { font-size: 1.2rem; font-weight: 900; margin-bottom: 6px; }
+  #pwd-modal-card p  { font-size: .88rem; color: var(--muted); font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+  #pwd-input {
+    width: 100%; border: 2px solid var(--border); border-radius: 12px;
+    padding: 12px 16px; font-family: inherit; font-size: 1.1rem; font-weight: 800;
+    text-align: center; outline: none; letter-spacing: 4px;
+    transition: border-color .15s;
+    margin-bottom: 8px;
+  }
+  #pwd-input:focus { border-color: var(--lv2); }
+  #pwd-error {
+    display: none;
+    color: var(--red); font-size: .82rem; font-weight: 800;
+    margin-bottom: 14px;
+  }
+  .pwd-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .pwd-btn {
+    flex: 1; border: none; border-radius: 999px;
+    padding: 12px; font-family: inherit; font-size: .9rem; font-weight: 800;
+    cursor: pointer; transition: filter .15s, transform .1s;
+  }
+  .pwd-btn:active { transform: scale(.96); }
+  .pwd-btn-cancel  { background: var(--bg); color: var(--muted); border: 2px solid var(--border); }
+  .pwd-btn-cancel:hover  { background: #E2E8F0; }
+  .pwd-btn-confirm { background: var(--red); color: #fff; }
+  .pwd-btn-confirm:hover { filter: brightness(.9); }
+
+  @keyframes shake-modal {
+    0%,100% { transform: translateX(0); }
+    20%,60%  { transform: translateX(-8px); }
+    40%,80%  { transform: translateX( 8px); }
+  }
+  .shake-modal { animation: shake-modal .35s ease; }
 </style>
 </head>
 <body>
 
+<!-- ── HEADER ── -->
 <header>
+  <a class="btn-back" href="../berlatih.html">← Kembali</a>
   <div class="brand">✖️ Latihan <span>Perkalian</span></div>
   <div class="header-right">
-    <!-- Timer -->
     <div id="timer-display">
       <span class="timer-icon">⏱️</span>
       <span id="timer-clock">00:00</span>
@@ -297,23 +465,58 @@
 
 <!-- ── LEVEL PICKER ── -->
 <section id="level-picker">
-  <h1>🔢 Pilih Level Kamu</h1>
+  <h1>✖️ Pilih Level Kamu</h1>
   <p>Naik level satu-satu — dari yang mudah sampai yang menantang!</p>
   <div class="level-cards">
     <div class="level-card lv1" onclick="startLevel(1)">
       <span class="emoji">🌱</span>
       <span class="lv-badge">Level 1</span>
-      <h2>Perkalian Menengah</h2>
-      <p class="desc">Perkalian angka 2 sampai 6<br/>Hafalan dasar yang sering dipakai</p>
-      <span class="range-tag">2 × 2 &nbsp;→&nbsp; 6 × 6</span>
+      <h2>Perkalian Dasar</h2>
+      <p class="desc">Perkalian angka 2 sampai 5<br/>Hafalan tabel awal</p>
+      <span class="range-tag">2 × 2 &nbsp;→&nbsp; 5 × 5</span>
     </div>
     <div class="level-card lv2" onclick="startLevel(2)">
-      <span class="emoji">🚀</span>
+      <span class="emoji">⭐</span>
       <span class="lv-badge">Level 2</span>
+      <h2>Perkalian Menengah</h2>
+      <p class="desc">Perkalian angka 4 sampai 7<br/>Latihan tabel perkalian sedang</p>
+      <span class="range-tag">4 × 4 &nbsp;→&nbsp; 7 × 7</span>
+    </div>
+    <div class="level-card lv3" onclick="startLevel(3)">
+      <span class="emoji">🚀</span>
+      <span class="lv-badge">Level 3</span>
       <h2>Tantangan Lanjutan</h2>
-      <p class="desc">Perkalian angka 6 sampai 10<br/>Latihan tabel perkalian besar</p>
+      <p class="desc">Perkalian angka 6 sampai 10<br/>Tabel perkalian besar</p>
       <span class="range-tag">6 × 6 &nbsp;→&nbsp; 10 × 10</span>
     </div>
+  </div>
+</section>
+
+<!-- ── RECORDS SECTION (halaman depan saja) ── -->
+<section id="records-section">
+  <div class="records-header">
+    <h2>📊 Riwayat Nilai</h2>
+    <button class="btn-clear-records" onclick="clearAllRecords()">🗑️ Hapus Semua</button>
+  </div>
+  <div class="records-table-wrap">
+    <div id="records-empty" class="records-empty">
+      <span class="empty-icon">📋</span>
+      Belum ada nilai tersimpan.<br/>Selesaikan latihan lalu klik <strong>Simpan Nilai</strong>!
+    </div>
+    <table class="records-table" id="records-table" style="display:none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tanggal</th>
+          <th>Level</th>
+          <th>Nilai</th>
+          <th>%</th>
+          <th>Waktu</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="records-tbody"></tbody>
+    </table>
   </div>
 </section>
 
@@ -346,6 +549,8 @@
     <div class="score-msg" id="score-msg">—</div>
     <div class="score-sub" id="score-sub">—</div>
     <div class="score-time" id="score-time"><span>⏱️</span><span id="score-time-val">—</span></div>
+    <br/>
+    <button class="btn-save" id="btn-save" onclick="saveRecord()">💾 Simpan Nilai</button>
   </div>
 
   <!-- Missing alert -->
@@ -371,6 +576,28 @@
   </div>
 </main>
 
+<!-- ── PASSWORD MODAL ── -->
+<div id="pwd-modal-overlay" style="display:none;" onclick="if(event.target===this)closePasswordModal()">
+  <div id="pwd-modal-card">
+    <div class="pwd-icon">🔐</div>
+    <h3 id="pwd-modal-title">Konfirmasi Hapus</h3>
+    <p id="pwd-modal-desc">Masukkan kata sandi untuk melanjutkan.</p>
+    <input
+      id="pwd-input"
+      type="password"
+      inputmode="numeric"
+      maxlength="10"
+      placeholder="Masukkan kata sandi"
+      onkeydown="if(event.key==='Enter')confirmDeleteWithPassword()"
+    />
+    <div id="pwd-error">❌ Kata sandi salah, coba lagi.</div>
+    <div class="pwd-actions">
+      <button class="pwd-btn pwd-btn-cancel" onclick="closePasswordModal()">Batal</button>
+      <button class="pwd-btn pwd-btn-confirm" onclick="confirmDeleteWithPassword()">Hapus</button>
+    </div>
+  </div>
+</div>
+
 <footer>Pelan-pelan tapi pasti — setiap hari pasti makin pintar! 💪</footer>
 
 <script>
@@ -382,10 +609,12 @@
   let timerInterval = null;
   let elapsedSec    = 0;
   let timerRunning  = false;
-  let timerDone     = false;   // true after Cek Jawaban stops it
-  let checked       = false;   // have we checked answers?
+  let timerDone     = false;
+  let checked       = false;
+  let lastResult    = null;
 
-  const LEVEL_COLOR = { 1: '#F97316', 2: '#8B5CF6' };
+  const LEVEL_COLOR = { 1: '#F97316', 2: '#8B5CF6', 3: '#0EA5E9' };
+  const STORAGE_KEY = 'latihan_perkalian_records';
 
   /* ────────────────────────────────────────────
      DATE
@@ -397,6 +626,9 @@
     document.getElementById('header-date').textContent =
       `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   })();
+
+  // Load saved records on page open
+  loadRecordsFromFirebase();
 
   /* ────────────────────────────────────────────
      UTILS
@@ -414,13 +646,15 @@
   ──────────────────────────────────────────── */
   function startLevel(level) {
     currentLevel = level;
-    document.getElementById('level-picker').style.display = 'none';
-    document.getElementById('worksheet').style.display = 'block';
+    document.getElementById('level-picker').style.display    = 'none';
+    document.getElementById('records-section').style.display = 'none';
+    document.getElementById('worksheet').style.display       = 'block';
     document.documentElement.style.setProperty('--active', LEVEL_COLOR[level]);
 
     const cfg = {
-      1: { label: 'Level 1 – Menengah', cls: 'tag-lv1', title: 'Perkalian 2 s/d 6' },
-      2: { label: 'Level 2 – Lanjutan',  cls: 'tag-lv2', title: 'Perkalian 6 s/d 10' },
+      1: { label: 'Level 1 – Dasar',     cls: 'tag-lv1', title: 'Perkalian 2×2 s/d 5×5' },
+      2: { label: 'Level 2 – Menengah',  cls: 'tag-lv2', title: 'Perkalian 4×4 s/d 7×7' },
+      3: { label: 'Level 3 – Lanjutan',  cls: 'tag-lv3', title: 'Perkalian 6×6 s/d 10×10' },
     };
     document.getElementById('level-tag').textContent = cfg[level].label;
     document.getElementById('level-tag').className   = `level-tag ${cfg[level].cls}`;
@@ -439,13 +673,19 @@
     resetTimerDisplay();
     hideBanner();
     hideMissingAlert();
-    checked = false;
-    problems = [];
+    checked    = false;
+    lastResult = null;
+    problems   = [];
+    const btnSave = document.getElementById('btn-save');
+    if (btnSave) { btnSave.disabled = false; btnSave.innerHTML = '💾 Simpan Nilai'; }
 
     const pool = [];
     if (currentLevel === 1) {
-      for (let a = 2; a <= 6; a++)
-        for (let b = 2; b <= 6; b++) pool.push({ a, b });
+      for (let a = 2; a <= 5; a++)
+        for (let b = 2; b <= 5; b++) pool.push({ a, b });
+    } else if (currentLevel === 2) {
+      for (let a = 4; a <= 7; a++)
+        for (let b = 4; b <= 7; b++) pool.push({ a, b });
     } else {
       for (let a = 6; a <= 10; a++)
         for (let b = 6; b <= 10; b++) pool.push({ a, b });
@@ -459,15 +699,13 @@
     result = result.sort(() => Math.random() - .5).slice(0, 100);
     problems = result.map(p => ({ ...p, answer: p.a * p.b }));
 
-    renderGrid(true); // locked = true, timer not started
+    renderGrid(true);
     updateProgress();
 
-    // Re-show start banner
     document.getElementById('start-banner').style.display = 'block';
     document.getElementById('btn-start').disabled = false;
     document.getElementById('btn-start').textContent = '▶ START';
 
-    // Disable Cek Jawaban until timer runs
     setCheckEnabled(false);
   }
 
@@ -512,7 +750,6 @@
     });
   }
 
-  /* Unlock all inputs after timer starts */
   function unlockInputs() {
     problems.forEach((_, i) => {
       const card  = document.getElementById(`card-${i}`);
@@ -532,29 +769,24 @@
     timerDone    = false;
     elapsedSec   = 0;
 
-    // Hide start banner
     document.getElementById('start-banner').style.display = 'none';
 
-    // Show timer in header
-    const disp = document.getElementById('timer-display');
-    disp.style.display = 'flex';
+    const disp  = document.getElementById('timer-display');
     const clock = document.getElementById('timer-clock');
+    disp.style.display = 'flex';
     clock.className = 'running';
     clock.classList.add('timer-ticking');
     clock.textContent = '00:00';
 
-    // Enable Cek Jawaban & unlock inputs
     setCheckEnabled(true);
     unlockInputs();
 
-    // Focus first input
     const firstInput = document.getElementById('ans-0');
     if (firstInput) firstInput.focus();
 
     timerInterval = setInterval(() => {
       elapsedSec++;
       clock.textContent = formatTime(elapsedSec);
-      // After 10 min change color to orange-ish urgency hint
       if (elapsedSec > 600) clock.classList.add('urgent');
     }, 1000);
   }
@@ -622,31 +854,25 @@
      CHECK ANSWERS
   ──────────────────────────────────────────── */
   function checkAnswers() {
-    // Find empty soal
     const empty = [];
     problems.forEach((_, i) => {
       const v = document.getElementById(`ans-${i}`)?.value?.trim();
-      if (!v) empty.push(i + 1); // 1-indexed display
+      if (!v) empty.push(i + 1);
     });
 
-    // If any empty → show alert, highlight cards, keep timer running
     if (empty.length > 0) {
       showMissingAlert(empty);
-      // Highlight missing cards
       problems.forEach((_, i) => {
-        const card = document.getElementById(`card-${i}`);
-        card.classList.remove('missing');
+        document.getElementById(`card-${i}`).classList.remove('missing');
       });
       empty.forEach(n => {
         const card = document.getElementById(`card-${n - 1}`);
         card.classList.add('missing');
-        // Remove class after animation so it can re-trigger
         setTimeout(() => card.classList.remove('missing'), 1600);
       });
       return;
     }
 
-    // All filled — stop timer!
     hideMissingAlert();
     finalizeTimer();
     checked = true;
@@ -665,7 +891,6 @@
       }
     });
 
-    // Disable inputs after check
     problems.forEach((_, i) => { document.getElementById(`ans-${i}`).disabled = true; });
     setCheckEnabled(false);
 
@@ -682,7 +907,6 @@
     alert.style.display = 'block';
     numsEl.innerHTML = '';
 
-    // Show max 30 chips to avoid overflow
     const show = emptyNums.slice(0, 30);
     show.forEach(n => {
       const chip = document.createElement('span');
@@ -728,11 +952,15 @@
     document.getElementById('score-msg').textContent = msg;
     document.getElementById('score-sub').textContent = `Nilai: ${pct}% · ${total - correct} soal kurang tepat`;
 
-    // Time display
     const timeLabel = sec < 60
       ? `${sec} detik`
       : `${Math.floor(sec/60)} menit ${sec%60} detik`;
     document.getElementById('score-time-val').textContent = `Waktu: ${timeLabel}`;
+
+    lastResult = { level: currentLevel, correct, total, sec, pct };
+    const btnSave = document.getElementById('btn-save');
+    btnSave.disabled = false;
+    btnSave.innerHTML = '💾 Simpan Nilai';
 
     banner.style.display = 'block';
     banner.classList.remove('pop-in');
@@ -755,6 +983,193 @@
   }
 
   /* ────────────────────────────────────────────
+     RECORDS — SAVE / LOAD / RENDER / DELETE
+  ──────────────────────────────────────────── */
+  function loadRecords() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveRecords(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  function loadRecordsFromFirebase() {
+    if (typeof FB_501_REF !== 'undefined' && FB_501_REF) {
+      FB_501_REF.once('value', snap => {
+        const fbData = snap.val() || {};
+        const fbRecords = Object.values(fbData).filter(r => r && typeof r === 'object');
+        
+        const localRecords = loadRecords();
+        const merged = [...fbRecords, ...localRecords];
+        
+        const unique = {};
+        merged.forEach(r => {
+          if (r.id) {
+            unique[r.id] = r;
+          }
+        });
+        
+        const combined = Object.values(unique);
+        combined.sort((a, b) => (b.id || 0) - (a.id || 0));
+        
+        renderRecords(combined);
+      }).catch(() => {
+        renderRecords();
+      });
+    } else {
+      renderRecords();
+    }
+  }
+
+  function saveRecord() {
+    if (!lastResult) return;
+
+    const d = new Date();
+    const days   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    const dateStr = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    const timeStr = `${String(d.getHours()).padStart(2,'0')}.${String(d.getMinutes()).padStart(2,'0')}`;
+
+    const record = {
+      id:      Date.now(),
+      date:    dateStr,
+      time:    timeStr,
+      level:   lastResult.level,
+      correct: lastResult.correct,
+      total:   lastResult.total,
+      pct:     lastResult.pct,
+      sec:     lastResult.sec,
+    };
+
+    const records = loadRecords();
+    records.unshift(record);
+    saveRecords(records);
+    renderRecords();
+
+    const btn = document.getElementById('btn-save');
+    btn.disabled = true;
+    btn.innerHTML = '✅ Nilai Tersimpan!';
+
+    // Save to Firebase
+    if (typeof FB_501_REF !== 'undefined' && FB_501_REF) {
+      FB_501_REF.push(record, err => {
+        if (err) console.error('Firebase save failed:', err);
+      });
+    }
+
+    // Kembali ke halaman depan untuk lihat riwayat
+    resetAll();
+  }
+
+  let pendingDeleteId = null;
+
+  function deleteRecord(id) {
+    pendingDeleteId = id;
+    showPasswordModal('Hapus baris ini?', 'Masukkan kata sandi untuk menghapus satu baris nilai ini.');
+  }
+
+  function clearAllRecords() {
+    pendingDeleteId = null;
+    showPasswordModal('Konfirmasi Hapus Semua', 'Masukkan kata sandi untuk menghapus seluruh riwayat nilai.');
+  }
+
+  function showPasswordModal(title, desc) {
+    document.getElementById('pwd-modal-title').textContent = title || 'Konfirmasi Hapus';
+    document.getElementById('pwd-modal-desc').textContent  = desc  || 'Masukkan kata sandi untuk melanjutkan.';
+    document.getElementById('pwd-modal-overlay').style.display = 'flex';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-error').style.display = 'none';
+    setTimeout(() => document.getElementById('pwd-input').focus(), 100);
+  }
+
+  function closePasswordModal() {
+    document.getElementById('pwd-modal-overlay').style.display = 'none';
+    pendingDeleteId = null;
+  }
+
+  function confirmDeleteWithPassword() {
+    const val = document.getElementById('pwd-input').value.trim();
+    if (val === '9380') {
+      closePasswordModal();
+      if (pendingDeleteId !== null) {
+        const records = loadRecords().filter(r => r.id !== pendingDeleteId);
+        saveRecords(records);
+      } else {
+        saveRecords([]);
+      }
+      pendingDeleteId = null;
+      renderRecords();
+    } else {
+      const err = document.getElementById('pwd-error');
+      err.style.display = 'block';
+      document.getElementById('pwd-input').value = '';
+      document.getElementById('pwd-input').focus();
+      const card = document.getElementById('pwd-modal-card');
+      card.classList.remove('shake-modal');
+      void card.offsetWidth;
+      card.classList.add('shake-modal');
+    }
+  }
+
+  function formatTimeSec(sec) {
+    if (sec < 60) return `${sec} dtk`;
+    return `${Math.floor(sec/60)} mnt ${sec%60} dtk`;
+  }
+
+  function renderRecords(fbRecords = null) {
+    const records = fbRecords || loadRecords();
+    const emptyEl = document.getElementById('records-empty');
+    const tableEl = document.getElementById('records-table');
+    const tbody   = document.getElementById('records-tbody');
+
+    if (records.length === 0) {
+      emptyEl.style.display = 'block';
+      tableEl.style.display = 'none';
+      return;
+    }
+
+    emptyEl.style.display = 'none';
+    tableEl.style.display = 'table';
+    tbody.innerHTML = '';
+
+    const bestByLevel = {};
+    records.forEach(r => {
+      const key = r.level;
+      if (!bestByLevel[key] ||
+          r.pct > bestByLevel[key].pct ||
+          (r.pct === bestByLevel[key].pct && r.sec < bestByLevel[key].sec)) {
+        bestByLevel[key] = r;
+      }
+    });
+
+    records.forEach((r, idx) => {
+      const isBest = bestByLevel[r.level] && bestByLevel[r.level].id === r.id;
+      const scoreClass = r.pct === 100 ? 'perfect' : r.pct >= 75 ? 'good' : 'low';
+      const levelLabel = { 1: 'Level 1', 2: 'Level 2', 3: 'Level 3' }[r.level];
+
+      const tr = document.createElement('tr');
+      if (isBest) tr.classList.add('best-row');
+
+      tr.innerHTML = `
+        <td style="color:var(--muted);font-size:.8rem;">${idx + 1}</td>
+        <td class="rec-date">${r.date}<br/><span style="font-size:.75rem;opacity:.7;">${r.time}</span></td>
+        <td><span class="rec-level-badge rec-lv${r.level}">${levelLabel}</span></td>
+        <td>
+          <span class="rec-score ${scoreClass}">${r.correct}/${r.total}</span>
+          ${isBest ? '<span class="best-tag">⭐ Terbaik</span>' : ''}
+        </td>
+        <td><span class="rec-pct">${r.pct}%</span></td>
+        <td class="rec-time">⏱️ ${formatTimeSec(r.sec)}</td>
+        <td>
+          <button class="rec-btn-del" title="Hapus baris ini" onclick="deleteRecord(${r.id})">🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ────────────────────────────────────────────
      RESET / HOME
   ──────────────────────────────────────────── */
   function resetAll() {
@@ -769,12 +1184,12 @@
     document.getElementById('progress-fill').style.width = '0%';
     document.getElementById('progress-text').textContent = 'Tekan START untuk mulai mengerjakan soal!';
     document.getElementById('start-banner').style.display = 'none';
-    document.getElementById('worksheet').style.display = 'none';
+    document.getElementById('worksheet').style.display    = 'none';
     document.getElementById('level-picker').style.display = 'block';
+    document.getElementById('records-section').style.display = 'block';
     setCheckEnabled(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
 </body>
 </html>
-```

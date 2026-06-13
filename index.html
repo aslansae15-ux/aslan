@@ -424,10 +424,10 @@
       <div class="tab-icon-wrap">🌟</div>
       <span class="tab-label">Karakter</span>
     </div>
-    <div class="tab tab-ide" onclick="switchTab('ideas')">
-      <div class="tab-icon-wrap">💭</div>
-      <span class="tab-label">Ide</span>
-    </div>
+    <a class="tab tab-berlatih" href="berlatih.html">
+      <div class="tab-icon-wrap">🎯</div>
+      <span class="tab-label">Berlatih</span>
+    </a>
     <div class="tab tab-game" onclick="switchTab('games')">
       <div class="tab-icon-wrap">🎮</div>
       <span class="tab-label">Game</span>
@@ -602,23 +602,7 @@
     <div class="karakter-motivation"><div class="karakter-motivation-text" id="karakterMotivation">Terus tunjukkan karakter terbaikmu setiap hari, Aslan! 💪<br>Ayah &amp; Bunda selalu bangga sama kamu! ❤️</div></div>
   </div>
 
-  <!-- IDEAS -->
-  <div class="tab-content" id="tab-ideas">
-    <div class="ideas-hero">
-      <div class="ideas-hero-label">💭 Ide, Mimpi &amp; Karyaku</div>
-      <div class="ideas-hero-count" id="ideasCount">0</div>
-      <div class="ideas-hero-sub" id="ideasSub">ide tersimpan</div>
-    </div>
-    <button class="idea-add-btn" onclick="openIdeaModal()">✨ TULIS IDE / MIMPI BARU</button>
-    <div class="idea-cat-filter">
-      <button class="idea-cat-btn active" onclick="filterIdeas('all')" id="filter-all">🌈 Semua</button>
-      <button class="idea-cat-btn" onclick="filterIdeas('ide')" id="filter-ide">💡 Ide</button>
-      <button class="idea-cat-btn" onclick="filterIdeas('mimpi')" id="filter-mimpi">🌟 Mimpi</button>
-      <button class="idea-cat-btn" onclick="filterIdeas('karya')" id="filter-karya">🎨 Karya</button>
-      <button class="idea-cat-btn" onclick="filterIdeas('keinginan')" id="filter-keinginan">✨ Keinginan</button>
-    </div>
-    <div id="ideasList"></div>
-  </div>
+  <!-- Berlatih is available from the main tabs -->
 
   <!-- GAMES -->
   <div class="tab-content" id="tab-games">
@@ -803,29 +787,7 @@
   </div>
 </div>
 
-<!-- IDEA MODAL -->
-<div class="idea-overlay" id="ideaOverlay">
-  <div class="idea-modal">
-    <div class="idea-modal-title" id="ideaModalTitle">✨ TULIS IDE BARU</div>
-    <label class="idea-modal-label">🎭 Pilih Emoji</label>
-    <div class="idea-emoji-select" id="ideaEmojiSelect"></div>
-    <label class="idea-modal-label">📝 Judul Ide / Mimpi</label>
-    <input type="text" id="ideaTitleInput" class="idea-modal-input" placeholder="Contoh: Bikin game sendiri" maxlength="50">
-    <label class="idea-modal-label">📋 Ceritakan lebih lengkap</label>
-    <textarea id="ideaDescInput" class="idea-modal-textarea" rows="3" placeholder="Ceritakan idemu di sini..."></textarea>
-    <label class="idea-modal-label">🏷️ Kategori</label>
-    <div class="idea-cat-select">
-      <div class="idea-cat-opt" id="catopt-ide" onclick="selectIdeaCat('ide')">💡<br>Ide</div>
-      <div class="idea-cat-opt" id="catopt-mimpi" onclick="selectIdeaCat('mimpi')">🌟<br>Mimpi</div>
-      <div class="idea-cat-opt" id="catopt-karya" onclick="selectIdeaCat('karya')">🎨<br>Karya</div>
-      <div class="idea-cat-opt" id="catopt-keinginan" onclick="selectIdeaCat('keinginan')">✨<br>Keinginan</div>
-    </div>
-    <div class="idea-modal-row">
-      <button class="idea-modal-cancel" onclick="closeIdeaModal()">Batal</button>
-      <button class="idea-modal-save" onclick="saveIdea()">💾 Simpan!</button>
-    </div>
-  </div>
-</div>
+<!-- Ideas feature removed -->
 
 <!-- ═══════════════════════════════════════════════════════════
      ADMIN PANEL v2 — REDESIGNED

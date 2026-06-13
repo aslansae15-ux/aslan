@@ -35,7 +35,7 @@ const KARAKTER_LIST=[
   {id:'mandiri',emoji:'⚡',name:'Mandiri'},{id:'penyayang',emoji:'❤️',name:'Penyayang'},
   {id:'kreatif',emoji:'🎨',name:'Kreatif'},{id:'teladan',emoji:'🌟',name:'Teladan'},
 ];
-const IDEA_EMOJIS=['💡','🌟','🎨','✨','🚀','🎮','🏆','🎸','📚','🎭','🌈','🦁','🎯','🛸','🌸','🔬','🎪','⚽','🎵','🏗️','✈️','🌊'];
+// IDEA feature removed - emojis previously used for idea modal
 const DEFAULT_QUESTS=[
   {id:'english',emoji:'🌍',name:'Bahasa Inggris',dur:30,bg:'#E3F2FD',bc:'#90CAF9'},
   {id:'guitar',emoji:'🎸',name:'Belajar Gitar',dur:30,bg:'#FFF8E1',bc:'#FFD54F'},
@@ -61,7 +61,7 @@ let state={
   savings:{transactions:[],goal:null},
   karakterAwarded:[],jurnal:{},
   karakterMotivation:DEFAULT_KARAKTER_MOTIVATION,
-  ideas:[],
+  // ideas removed
   weeklyMissions:[],monthlyMissions:[],
   weeklyProgress:{},monthlyProgress:{},
   manualStreak:0,
@@ -151,7 +151,6 @@ function renderMissionLockBanner(){
 let adminUnlocked=false,savingsUnlocked=false,savingsLoginVal='';
 let fbListenerAttached=false,tempPhotoData=null,editingTxnId=null;
 let currentSavingsType='credit',selectedKarakter=null;
-let editingIdeaId=null,selectedIdeaCat='ide',selectedIdeaEmoji='💡',currentIdeaFilter='all';
 
 function formatRp(n){if(isNaN(n))return 'Rp 0';return 'Rp '+Math.abs(n).toLocaleString('id-ID');}
 
@@ -184,7 +183,7 @@ function mergeState(p){
   if(!p.karakterAwarded)state.karakterAwarded=[];
   if(!p.jurnal)state.jurnal={};
   if(!p.karakterMotivation)state.karakterMotivation=DEFAULT_KARAKTER_MOTIVATION;
-  if(!p.ideas)state.ideas=[];
+  // ideas removed
   if(!p.weeklyMissions)state.weeklyMissions=[];
   if(!p.monthlyMissions)state.monthlyMissions=[];
   if(!p.weeklyProgress)state.weeklyProgress={};
@@ -198,12 +197,24 @@ function load(){
     const raw=localStorage.getItem('aslan_v8')||localStorage.getItem('aslan_v7')||localStorage.getItem('aslan_v6');
     if(raw){mergeState(JSON.parse(raw));}
   }catch(e){}
-  renderAll();
+    renderAll();
+    // Cleanup any leftover ideas data (remove from local state and remote DB)
+    if(state.ideas){
+      delete state.ideas;
+      try{localStorage.setItem('aslan_v8',JSON.stringify(state));}catch(e){}
+      if(typeof FB_REF!=='undefined' && FB_REF && FB_REF.set){
+        FB_REF.set(state).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
+      }
+    }
   if(!fbListenerAttached){
     fbListenerAttached=true;setSyncStatus('syncing');
     FB_REF.on('value',(snap)=>{
       const data=snap.val();
-      if(data){mergeState(data);try{localStorage.setItem('aslan_v8',JSON.stringify(state));}catch(e){}setSyncStatus('ok');}
+        if(data){
+          // remove ideas from remote payload if present
+          if(data.ideas){ delete data.ideas; FB_REF.set(data).catch(()=>{}); }
+          mergeState(data);try{localStorage.setItem('aslan_v8',JSON.stringify(state));}catch(e){}setSyncStatus('ok');
+        }
       else{FB_REF.set(state).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));}
       renderAll();
       if(savingsUnlocked&&document.getElementById('savingsParentOverlay').classList.contains('open'))renderParentLedger();
@@ -525,7 +536,7 @@ function renderAll(){
   renderStatus();renderXPBar();
   renderStreak();renderBadges();renderMessages();render30DayTables();
   renderProfile();renderCustomBadges();renderSavings();
-  renderKarakter();renderIdeas();renderLevel();
+  renderKarakter();renderLevel();
   renderDailyMotivation();renderWeeklyStats();renderTankGame();
   renderWeeklyMissionBox();renderMonthlyMissionBox();
 }
@@ -691,73 +702,7 @@ function renderKarakter(){
   display.innerHTML+='<div style="margin-bottom:16px;"></div>';
 }
 
-const CAT_INFO={
-  ide:{label:'💡 Ide',color:'#1565C0',bg:'#E3F2FD'},
-  mimpi:{label:'🌟 Mimpi',color:'#E65100',bg:'#FFF8E1'},
-  karya:{label:'🎨 Karya',color:'#2E7D32',bg:'#E8F5E9'},
-  keinginan:{label:'✨ Keinginan',color:'#C2185B',bg:'#FCE4EC'},
-};
-function openIdeaModal(ideaId){
-  editingIdeaId=ideaId||null;selectedIdeaCat='ide';selectedIdeaEmoji='💡';
-  document.getElementById('ideaTitleInput').value='';document.getElementById('ideaDescInput').value='';
-  document.getElementById('ideaModalTitle').textContent=ideaId?'✏️ EDIT IDE / MIMPI':'✨ TULIS IDE BARU';
-  if(ideaId){const idea=(state.ideas||[]).find(i=>i.id===ideaId);if(idea){selectedIdeaCat=idea.cat;selectedIdeaEmoji=idea.emoji;document.getElementById('ideaTitleInput').value=idea.title;document.getElementById('ideaDescInput').value=idea.desc||'';}}
-  const eg=document.getElementById('ideaEmojiSelect');eg.innerHTML='';
-  IDEA_EMOJIS.forEach(e=>{
-    const btn=document.createElement('div');btn.className='idea-emoji-opt'+(e===selectedIdeaEmoji?' selected':'');
-    btn.textContent=e;btn.onclick=()=>{selectedIdeaEmoji=e;document.querySelectorAll('.idea-emoji-opt').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');};
-    eg.appendChild(btn);
-  });
-  ['ide','mimpi','karya','keinginan'].forEach(cat=>{const opt=document.getElementById('catopt-'+cat);if(opt)opt.className='idea-cat-opt'+(cat===selectedIdeaCat?' sel-'+cat:'');});
-  document.getElementById('ideaOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('ideaTitleInput').focus(),100);
-}
-function closeIdeaModal(){document.getElementById('ideaOverlay').classList.remove('open');editingIdeaId=null;}
-function selectIdeaCat(cat){
-  selectedIdeaCat=cat;
-  ['ide','mimpi','karya','keinginan'].forEach(c=>{const opt=document.getElementById('catopt-'+c);if(opt)opt.className='idea-cat-opt'+(c===cat?' sel-'+c:'');});
-}
-function saveIdea(){
-  const title=document.getElementById('ideaTitleInput').value.trim();
-  const desc=document.getElementById('ideaDescInput').value.trim();
-  if(!title){showToast('Tulis judul idenya dulu! 💡',true);return;}
-  if(!state.ideas)state.ideas=[];
-  if(editingIdeaId){
-    const idx=state.ideas.findIndex(i=>i.id===editingIdeaId);
-    if(idx>=0)state.ideas[idx]={...state.ideas[idx],emoji:selectedIdeaEmoji,title,desc,cat:selectedIdeaCat,updatedAt:Date.now()};
-    showToast('✏️ Ide berhasil diedit!');
-  }else{
-    state.ideas.push({id:'idea_'+Date.now(),emoji:selectedIdeaEmoji,title,desc,cat:selectedIdeaCat,timestamp:Date.now()});
-    showToast('💡 Ide baru tersimpan! Keren!');
-  }
-  closeIdeaModal();save();renderIdeas();
-}
-function deleteIdea(id){
-  if(!confirm('Hapus ide ini?'))return;
-  state.ideas=(state.ideas||[]).filter(i=>i.id!==id);save();renderIdeas();showToast('🗑️ Ide dihapus',true);
-}
-function filterIdeas(cat){
-  currentIdeaFilter=cat;
-  document.querySelectorAll('.idea-cat-btn').forEach(b=>b.classList.remove('active'));
-  const btn=document.getElementById('filter-'+cat);if(btn)btn.classList.add('active');renderIdeas();
-}
-function renderIdeas(){
-  const ideas=(state.ideas||[]);
-  document.getElementById('ideasCount').textContent=ideas.length;
-  document.getElementById('ideasSub').textContent='ide tersimpan';
-  const filtered=currentIdeaFilter==='all'?ideas:ideas.filter(i=>i.cat===currentIdeaFilter);
-  const list=document.getElementById('ideasList');
-  if(!filtered.length){list.innerHTML=`<div class="idea-empty"><div class="idea-empty-emoji">${currentIdeaFilter==='all'?'🌈':'💭'}</div><div class="idea-empty-text">${currentIdeaFilter==='all'?'Belum ada ide tersimpan.<br>Klik tombol di atas untuk mulai nulis!':'Belum ada '+CAT_INFO[currentIdeaFilter]?.label+' tersimpan.'}</div></div>`;return;}
-  list.innerHTML='';
-  [...filtered].reverse().forEach(idea=>{
-    const ci=CAT_INFO[idea.cat]||CAT_INFO.ide;
-    const card=document.createElement('div');card.className='idea-card cat-'+idea.cat;
-    const d=new Date(idea.updatedAt||idea.timestamp);
-    const dateStr=d.getDate()+' '+MONTHS_ID[d.getMonth()]+' '+d.getFullYear();
-    card.innerHTML=`<div class="idea-card-header"><div class="idea-card-emoji">${idea.emoji||'💡'}</div><div class="idea-card-title-wrap"><div class="idea-card-title">${idea.title}</div><span class="idea-card-cat" style="background:${ci.bg};color:${ci.color};">${ci.label}</span></div></div>${idea.desc?`<div class="idea-card-desc">${idea.desc}</div>`:''}<div class="idea-card-footer"><span class="idea-card-date">📅 ${dateStr}${idea.updatedAt?' · Diedit':''}</span><div class="idea-card-actions"><button class="idea-edit-btn" onclick="openIdeaModal('${idea.id}')">✏️ Edit</button><button class="idea-del-btn" onclick="deleteIdea('${idea.id}')">🗑️</button></div></div>`;
-    list.appendChild(card);
-  });
-}
+// Ideas feature removed
 
 function calcAge(birthdate){
   if(!birthdate)return null;
@@ -884,7 +829,7 @@ function render30DayTables(){
   });
 }
 
-const TAB_ORDER=['today','streak','badges','progress','profile','savings','karakter','ideas','games'];
+const TAB_ORDER=['today','streak','badges','progress','profile','savings','karakter','games'];
 function switchTab(tab){
   const allTabs=document.querySelectorAll('.tab');
   const allContents=document.querySelectorAll('.tab-content');
@@ -897,7 +842,6 @@ function switchTab(tab){
     else if(tab==='profile')el.classList.toggle('active',el.classList.contains('tab-profil'));
     else if(tab==='savings')el.classList.toggle('active',el.classList.contains('tab-nabung'));
     else if(tab==='karakter')el.classList.toggle('active',el.classList.contains('tab-karakter'));
-    else if(tab==='ideas')el.classList.toggle('active',el.classList.contains('tab-ide'));
     else if(tab==='games')el.classList.toggle('active',el.classList.contains('tab-game'));
     else el.classList.remove('active');
   });
@@ -906,7 +850,6 @@ function switchTab(tab){
   if(tab==='profile')renderProfile();
   if(tab==='savings')renderSavings();
   if(tab==='karakter')renderKarakter();
-  if(tab==='ideas')renderIdeas();
   if(tab==='streak'){renderStreak();renderWeeklyStats();renderLevel();}
   if(tab==='games')renderTankGame();
 }
