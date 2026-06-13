@@ -1,0 +1,566 @@
+{
+  "ayahMsg": "Kerennn!!! Lanjut terus sampai sebulannn...Anak ayah terbaik !!",
+  "badges": {
+    "cb_1777162772874": true,
+    "cb_1777166798473": true,
+    "cb_1777343823526": true,
+    "cb_1777463763971": true,
+    "cb_1778401815059": true,
+    "cb_1778571388416": true,
+    "cb_1778571743036": true,
+    "first": true,
+    "quest10": true,
+    "quest20": true,
+    "quest3": true,
+    "quest5": true,
+    "quest50": true,
+    "xp100": true,
+    "xp1000": true,
+    "xp1500": true,
+    "xp2500": true,
+    "xp300": true,
+    "xp500": true
+  },
+  "buku1": {
+    "judul": "Komputer Ajaib",
+    "status": "sudah dibaca"
+  },
+  "bundaMsg": "Terima kasih sudah berjuang dan berusaha!!!",
+  "customBadges": [
+    {
+      "emoji": "🌟",
+      "id": "cb_1777162772874",
+      "name": "Nonton Bioskop",
+      "xpRequired": 4000
+    },
+    {
+      "emoji": "🌮",
+      "id": "cb_1777166798473",
+      "name": "Kebab",
+      "xpRequired": 1000
+    },
+    {
+      "emoji": "🙆",
+      "id": "cb_1777343823526",
+      "name": "Potong rambut di ko andi",
+      "xpRequired": 230
+    },
+    {
+      "emoji": "🚂",
+      "id": "cb_1777463763971",
+      "name": "Tank",
+      "xpRequired": 400
+    },
+    {
+      "emoji": "🧧",
+      "id": "cb_1778401815059",
+      "name": "Tabungan Rp 100.000",
+      "xpRequired": 1500
+    },
+    {
+      "emoji": "🏢",
+      "id": "cb_1778571388416",
+      "name": "City di Minecraft",
+      "xpRequired": 3000
+    },
+    {
+      "emoji": "💰",
+      "id": "cb_1778571743036",
+      "name": "Tabungan Rp 150.000",
+      "xpRequired": 4500
+    },
+    {
+      "emoji": "🌟",
+      "id": "cb_1781369407483",
+      "name": "Berenang ke Karang Setra",
+      "xpRequired": 6000
+    }
+  ],
+  "history": {
+    "2026-4-25": {
+      "q_1777124996247": true,
+      "submitted": false
+    },
+    "2026-4-26": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "submitted": true
+    },
+    "2026-4-27": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "submitted": true
+    },
+    "2026-4-28": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "submitted": true
+    },
+    "2026-4-29": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "submitted": true
+    },
+    "2026-4-30": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "submitted": true
+    },
+    "2026-5-1": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "submitted": true
+    },
+    "2026-5-10": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-11": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-12": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-13": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true
+    },
+    "2026-5-14": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-15": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-16": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-17": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-18": {
+      "english": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true
+    },
+    "2026-5-19": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-2": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "submitted": true
+    },
+    "2026-5-20": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-21": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-22": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-23": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-24": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-25": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    },
+    "2026-5-3": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-4": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-5": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-6": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-7": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-8": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-5-9": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777167605272": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "submitted": true
+    },
+    "2026-6-13": {
+      "english": true,
+      "q_1777131123324": true,
+      "q_1777159259917": true,
+      "q_1777343779395": true,
+      "q_1777747446517": true,
+      "q_1778957658216": true,
+      "submitted": true
+    }
+  },
+  "jurnal": {
+    "2026-4-27": {
+      "baik": "Ngajak main ade",
+      "mood": "😄",
+      "syukur": "Jadi imam di sekolah",
+      "target": "Menamatkan 3 unit bahasa inggris",
+      "timestamp": 1777300342383
+    },
+    "2026-4-28": {
+      "baik": "Ngasih teman kertas buat nulis",
+      "mood": "😊",
+      "syukur": "Main sama temen",
+      "target": "3 unit 5 vidio bahasa inggris",
+      "timestamp": 1777389416223
+    },
+    "2026-4-29": {
+      "baik": "Bantuin temen belajar",
+      "mood": "😄",
+      "syukur": "Dapat infinity di Duolingo Spanish a",
+      "target": "Peringkat 1 di Duolingo",
+      "timestamp": 1777459535216
+    },
+    "2026-4-30": {
+      "baik": "Minjemin pensil ke temen",
+      "mood": "😊",
+      "syukur": "Bisa main sama temen",
+      "target": "Ummi 2 halaman",
+      "timestamp": 1777550920159
+    }
+  },
+  "karakterAwarded": [
+    {
+      "emoji": "😌",
+      "id": "kar_1777271839810",
+      "karakterId": "sabar",
+      "name": "Sabar",
+      "note": "Terima kasih sudah sabar sama Alana 🤩",
+      "timestamp": 1777271839810
+    },
+    {
+      "emoji": "🦁",
+      "id": "kar_1777714650898",
+      "karakterId": "berani",
+      "name": "Berani",
+      "note": "Keren sudah berani 1 Minggu Konsisten",
+      "timestamp": 1777714650898
+    }
+  ],
+  "karakterMotivation": "Jangan takut bergerak perlahan, tetapi takutlah bila kita hanya berdiam saja",
+  "manualStreak": 19,
+  "monthlyMissions": [
+    {
+      "emoji": "🎯",
+      "id": "mm_1781369666742",
+      "name": "Baca Buku Sains 1-30",
+      "xp": 20
+    }
+  ],
+  "monthlyProgress": {
+    "2026-6": {
+      "mm_1781369666742": true
+    }
+  },
+  "profile": {
+    "birthdate": "2016-07-08",
+    "class": "Kelas 3 SD di Ibnu Taimiyah",
+    "height": 132,
+    "name": "Aslan Adika Prada",
+    "photo": "data:image/jpeg;base64,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",
+    "weight": 23
+  },
+  "quests": [
+    {
+      "bc": "#90CAF9",
+      "bg": "#E3F2FD",
+      "dur": 30,
+      "emoji": "🌍",
+      "id": "english",
+      "name": "Bahasa Inggris"
+    },
+    {
+      "bc": "#4DD0E1",
+      "bg": "#E0F7FA",
+      "dur": 30,
+      "emoji": "📝",
+      "id": "q_1777159259917",
+      "name": "Baca Ummi"
+    },
+    {
+      "bc": "#B39DDB",
+      "bg": "#EDE7F6",
+      "dur": 15,
+      "emoji": "🎯",
+      "id": "q_1777343779395",
+      "name": "Plg sklh cuci kaki/ganti baju"
+    },
+    {
+      "bc": "#DCE775",
+      "bg": "#F9FBE7",
+      "dur": 20,
+      "emoji": "📖",
+      "id": "q_1777747446517",
+      "name": "Membaca Flipbook Coding"
+    },
+    {
+      "bc": "#90CAF9",
+      "bg": "#E3F2FD",
+      "dur": 20,
+      "emoji": "🎯",
+      "id": "q_1778957658216",
+      "name": "Membaca Flipbook B.Inggris"
+    },
+    {
+      "bc": "#DCE775",
+      "bg": "#F9FBE7",
+      "dur": 15,
+      "emoji": "🎯",
+      "id": "q_1781370131879",
+      "name": "Berlatih Matematika"
+    }
+  ],
+  "savings": {
+    "goal": {
+      "amount": 10000000,
+      "name": "Ingin Punya Tabungan 10 Juta"
+    },
+    "transactions": [
+      {
+        "amount": 3850000,
+        "desc": "Tabungan 2025 sd maret 2026",
+        "id": "txn_1777218367367",
+        "timestamp": 1777218367367,
+        "type": "credit"
+      },
+      {
+        "amount": 720000,
+        "desc": "THR Lebaran Aslan",
+        "id": "txn_1777218428162",
+        "timestamp": 1777218428162,
+        "type": "credit"
+      },
+      {
+        "amount": 75000,
+        "desc": "Sisa bekal sekolah 3 Minggu",
+        "id": "txn_1777218597521",
+        "timestamp": 1777218597521,
+        "type": "credit"
+      },
+      {
+        "amount": 25000,
+        "desc": "27sd1 sisa bekal",
+        "id": "txn_1777344012169",
+        "timestamp": 1777344012169,
+        "type": "credit"
+      },
+      {
+        "amount": 100000,
+        "desc": "Piala 1500xp",
+        "id": "txn_1778431333529",
+        "timestamp": 1778431333529,
+        "type": "credit"
+      },
+      {
+        "amount": 166500,
+        "desc": "Beli Saham Ultra Milk 90 Lot",
+        "id": "txn_1778570651916",
+        "timestamp": 1778570651916,
+        "type": "debit"
+      },
+      {
+        "amount": 289000,
+        "desc": "Beli Saham Mayora 1 Lembar",
+        "id": "txn_1778570685383",
+        "timestamp": 1778570685383,
+        "type": "debit"
+      },
+      {
+        "amount": 2839000,
+        "desc": "Emas 1 Gram",
+        "id": "txn_1778749506924",
+        "timestamp": 1778749506924,
+        "type": "debit"
+      }
+    ]
+  },
+  "streak": 7,
+  "test1": {
+    "judul": "Tes Buku Pertama",
+    "status": "read"
+  },
+  "test2": {
+    "judul": "Tes Buku Kedua",
+    "status": "unread"
+  },
+  "totalXP": 4720,
+  "weeklyMissions": [
+    {
+      "emoji": "📌",
+      "id": "wm_1777600636372",
+      "name": "Chat ke Saudara",
+      "xp": 30
+    }
+  ],
+  "weeklyProgress": {
+    "2026-W18": {
+      "wm_1777600636372": true
+    },
+    "2026-W19": {
+      "wm_1777600636372": true
+    },
+    "2026-W20": {
+      "wm_1777600636372": true
+    }
+  }
+}

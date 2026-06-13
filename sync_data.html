@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sync Firebase Data</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    textarea { width: 100%; height: 300px; }
+    button { padding: 10px 20px; font-size: 16px; }
+    .status { margin-top: 10px; padding: 10px; border-radius: 5px; }
+    .success { background: #4caf50; color: white; }
+    .error { background: #f44336; color: white; }
+    .info { background: #2196f3; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Sinkronisasi Data Firebase ke Aplikasi</h1>
+  
+  <div>
+    <label>Paste Firebase Data JSON:</label><br>
+    <textarea id="fbData" placeholder="Paste JSON data dari Firebase export"></textarea>
+  </div>
+  
+  <div style="margin: 10px 0;">
+    <button onclick="syncData()">Sync Data Sekarang</button>
+    <button onclick="clearData()">Clear Local Data</button>
+    <button onclick="showCurrentData()">Lihat Data Lokal Saat Ini</button>
+  </div>
+  
+  <div id="status"></div>
+  
+  <hr>
+  
+  <div id="preview" style="margin-top: 20px; display: none;">
+    <h3>Preview Data yang Akan Di-sync:</h3>
+    <textarea id="previewData" readonly style="height: 200px;"></textarea>
+  </div>
+
+  <script>
+    function showStatus(msg, type = 'info') {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status ' + type;
+    }
+
+    function syncData() {
+      try {
+        const fbText = document.getElementById('fbData').value.trim();
+        if (!fbText) {
+          showStatus('❌ Silakan paste data Firebase JSON terlebih dahulu', 'error');
+          return;
+        }
+
+        let fbData;
+        try {
+          fbData = JSON.parse(fbText);
+        } catch (e) {
+          showStatus('❌ JSON tidak valid: ' + e.message, 'error');
+          return;
+        }
+
+        // Ekstrak aslan_data jika ada nested structure
+        const data = fbData.aslan_data || fbData;
+
+        // Deep merge dengan data lokal
+        const localStr = localStorage.getItem('aslan_v8');
+        let localState = localStr ? JSON.parse(localStr) : {};
+
+        // Deep merge history
+        if (data.history) {
+          localState.history = localState.history || {};
+          for (let key in data.history) {
+            if (!localState.history[key]) {
+              localState.history[key] = {};
+            }
+            // Keep whichever has more data for each day
+            const localDayData = Object.keys(localState.history[key]).length;
+            const fbDayData = Object.keys(data.history[key]).length;
+            if (fbDayData > localDayData) {
+              localState.history[key] = Object.assign({}, localState.history[key], data.history[key]);
+            }
+          }
+        }
+
+        // Copy other properties
+        const keysToSync = ['totalXP', 'badges', 'quests', 'ayahMsg', 'bundaMsg', 'customBadges', 
+                           'profile', 'savings', 'karakterAwarded', 'jurnal', 'karakterMotivation',
+                           'weeklyMissions', 'monthlyMissions', 'weeklyProgress', 'monthlyProgress', 
+                           'manualStreak', 'buku1', 'test1', 'test2'];
+        
+        for (let key of keysToSync) {
+          if (data[key] !== undefined) {
+            localState[key] = data[key];
+          }
+        }
+
+        // Ensure defaults
+        if (!localState.quests || !Array.isArray(localState.quests) || localState.quests.length === 0) {
+          localState.quests = [
+            {id:'english',emoji:'🌍',name:'Bahasa Inggris',dur:30,bg:'#E3F2FD',bc:'#90CAF9'},
+            {id:'guitar',emoji:'🎸',name:'Belajar Gitar',dur:30,bg:'#FFF8E1',bc:'#FFD54F'},
+            {id:'mengaji',emoji:'📖',name:'Mengaji',dur:30,bg:'#F3E5F5',bc:'#CE93D8'}
+          ];
+        }
+
+        // Save
+        localStorage.setItem('aslan_v8', JSON.stringify(localState));
+        
+        showStatus('✅ Data berhasil di-sync! Sekarang refresh aplikasi untuk melihat perubahan.', 'success');
+        
+        // Show preview
+        document.getElementById('previewData').value = JSON.stringify(localState, null, 2);
+        document.getElementById('preview').style.display = 'block';
+        
+      } catch (err) {
+        showStatus('❌ Error: ' + err.message, 'error');
+      }
+    }
+
+    function clearData() {
+      if (confirm('Apakah Anda yakin ingin menghapus semua data lokal? Ini tidak bisa dibatalkan!')) {
+        localStorage.removeItem('aslan_v8');
+        localStorage.removeItem('aslan_v7');
+        localStorage.removeItem('aslan_v6');
+        showStatus('✅ Semua data lokal telah dihapus', 'success');
+      }
+    }
+
+    function showCurrentData() {
+      const data = localStorage.getItem('aslan_v8');
+      if (data) {
+        try {
+          const parsed = JSON.parse(data);
+          document.getElementById('previewData').value = JSON.stringify(parsed, null, 2);
+          document.getElementById('preview').style.display = 'block';
+          showStatus('Data lokal ditampilkan di bawah', 'info');
+        } catch (e) {
+          showStatus('Error parsing local data: ' + e.message, 'error');
+        }
+      } else {
+        showStatus('Tidak ada data lokal yang tersimpan', 'error');
+      }
+    }
+
+    // Auto-load Firebase data jika ada di query string
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      const fbData = params.get('data');
+      if (fbData) {
+        try {
+          document.getElementById('fbData').value = atob(fbData);
+          showStatus('Data berhasil dimuat dari URL', 'info');
+        } catch (e) {
+          console.log('Could not decode data from URL');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

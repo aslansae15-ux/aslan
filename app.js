@@ -51,7 +51,7 @@ const DEFAULT_MSG='"Hei Aslan! Ayah bangga sama kamu. Selesaikan semua misi hari
 const DEFAULT_BUNDA_MSG='"Aslan sayang Bunda! Jangan lupa makan, minum air yang cukup, dan tetap semangat belajar ya, nak! Bunda selalu sayang kamu! ❤️🤗"';
 const DEFAULT_KARAKTER_MOTIVATION='Terus tunjukkan karakter terbaikmu setiap hari, Aslan! 💪\nAyah & Bunda selalu bangga sama kamu! ❤️';
 const TANK_UNLOCK_XP=400;
-const AUTO_BADGE_IDS=['first','perfect','streak3','streak7','streak14','streak15','streak30','xp100','xp300','xp1000','xp1500','xp2500','quest3','quest20','quest50','hero'];
+const AUTO_BADGE_IDS=['first','perfect','streak3','streak7','streak14','streak15','streak30','streak40','streak50','streak60','xp100','xp300','xp1000','xp1500','xp2500','xp4000','xp5000','xp6000','quest3','quest20','quest50','hero'];
 
 let state={
   history:{},totalXP:0,badges:{},
@@ -164,7 +164,17 @@ function save(){
   FB_REF.set(state).then(()=>setSyncStatus('ok')).catch(()=>setSyncStatus('error'));
 }
 function mergeState(p){
+  // ✅ DEEP MERGE: Preserve history to prevent streak reset
+  const oldHistory=state.history||{};
   state=Object.assign({},state,p);
+  // Merge history day by day - keep whichever has more data for each day
+  if(p.history){
+    state.history=Object.assign({},oldHistory,p.history);
+    for(let key in oldHistory){
+      if(!state.history[key])state.history[key]={};
+      state.history[key]=Object.assign({},oldHistory[key],p.history[key]||{});
+    }
+  }
   if(!p.quests||!Array.isArray(p.quests)||p.quests.length===0)state.quests=DEFAULT_QUESTS;
   if(!p.ayahMsg)state.ayahMsg=DEFAULT_MSG;
   if(!p.bundaMsg)state.bundaMsg=DEFAULT_BUNDA_MSG;
@@ -178,9 +188,22 @@ function mergeState(p){
     });
   }
   if(!p.profile)state.profile={name:'Aslan Adika Prada',birthdate:'',class:'Kelas 3 SD',photo:null};
-  if(!p.savings)state.savings={transactions:[],goal:null};
-  if(!p.savings||!p.savings.transactions)state.savings.transactions=[];
-  if(!p.karakterAwarded)state.karakterAwarded=[];
+  const oldSavings = state.savings||{transactions:[],goal:null};
+  if(p.savings===undefined||p.savings===null){
+    state.savings=oldSavings;
+  } else {
+    state.savings = Object.assign({}, oldSavings, p.savings);
+    const localTxns = Array.isArray(oldSavings.transactions) ? oldSavings.transactions : [];
+    const remoteTxns = Array.isArray(p.savings.transactions) ? p.savings.transactions : [];
+    const mergedTxns = {};
+    localTxns.concat(remoteTxns).forEach(tx => {
+      if(tx && tx.id) mergedTxns[tx.id] = tx;
+    });
+    state.savings.transactions = Object.values(mergedTxns);
+    if(!Array.isArray(state.savings.transactions)) state.savings.transactions=[];
+  }
+  if(!state.savings)state.savings={transactions:[],goal:null};
+  if(!state.karakterAwarded)state.karakterAwarded=[];
   if(!p.jurnal)state.jurnal={};
   if(!p.karakterMotivation)state.karakterMotivation=DEFAULT_KARAKTER_MOTIVATION;
   // ideas removed
@@ -188,9 +211,13 @@ function mergeState(p){
   if(!p.monthlyMissions)state.monthlyMissions=[];
   if(!p.weeklyProgress)state.weeklyProgress={};
   if(!p.monthlyProgress)state.monthlyProgress={};
-  // ✅ PATCH: baca manualStreak dari Firebase
-  if(p.manualStreak===undefined||p.manualStreak===null)state.manualStreak=0;
-  else state.manualStreak=p.manualStreak;
+  // ✅ PATCH: baca manualStreak dari Firebase, tapi jangan turunkan nilai jika lokal lebih tinggi
+  const localManual = state.manualStreak || 0;
+  if(p.manualStreak===undefined||p.manualStreak===null){
+    state.manualStreak = localManual;
+  } else {
+    state.manualStreak = Math.max(localManual, p.manualStreak || 0);
+  }
 }
 function load(){
   try{
@@ -331,7 +358,7 @@ function computeStreak(){
     const k=dateKey(d);
     if(isDayComplete(k)) {streak++;} else {break;}
   }
-  return streak;
+  return Math.max(streak, state.manualStreak||0);
 }
 
 // ✅ PATCH: fungsi untuk set manualStreak dari admin panel
@@ -638,6 +665,7 @@ function totalDone(){
 }
 
 function checkBadges(){
+  state.badges = state.badges || {};
   const st=computeStreak();const xp=state.totalXP;const td=totalDone();
   const d=todayData();const total=state.quests.length;const count=state.quests.filter(q=>d[q.id]).length;
   AUTO_BADGE_IDS.forEach(id=>delete state.badges[id]);
@@ -646,8 +674,10 @@ function checkBadges(){
   if(count===total&&total>0&&d.submitted)unlock('perfect');
   if(st>=3)unlock('streak3');if(st>=7)unlock('streak7');
   if(st>=14)unlock('streak14');if(st>=15)unlock('streak15');if(st>=30)unlock('streak30');
+  if(st>=40)unlock('streak40');if(st>=50)unlock('streak50');
   if(xp>=100)unlock('xp100');if(xp>=300)unlock('xp300');
   if(xp>=1000)unlock('xp1000');if(xp>=1500)unlock('xp1500');if(xp>=2500)unlock('xp2500');
+  if(xp>=4000)unlock('xp4000');if(xp>=5000)unlock('xp5000');if(xp>=6000)unlock('xp6000');
   if(td>=3)unlock('quest3');if(td>=20)unlock('quest20');if(td>=50)unlock('quest50');
   if(st>=60)unlock('hero');
   (state.customBadges||[]).forEach(cb=>{if(xp>=cb.xpRequired)state.badges[cb.id]=true;});

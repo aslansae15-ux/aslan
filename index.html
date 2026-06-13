@@ -1003,6 +1003,11 @@
               <div class="adm2-xp-val" id="adminXpDisplay2">0 XP</div>
             </div>
           </div>
+          <label class="adm2-label">Streak Manual</label>
+          <div class="adm2-inline">
+            <input type="number" id="manualStreakInput" class="adm2-input adm2-num-input" placeholder="46" min="0" value="0">
+            <button class="adm2-btn adm2-btn-primary" style="flex:1;justify-content:center;" onclick="setManualStreak(document.getElementById('manualStreakInput').value)">💾 Simpan Streak</button>
+          </div>
           <label class="adm2-label">Jumlah XP</label>
           <input type="number" id="xpAdjustInput" class="adm2-input" placeholder="100" min="1" value="100">
           <div class="adm2-xp-btns">

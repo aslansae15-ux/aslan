@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sinkronisasi Data dari Firebase</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    .step {
+      margin: 20px 0;
+      padding: 15px;
+      border-left: 4px solid #667eea;
+      background: #f8f9ff;
+      border-radius: 5px;
+    }
+    .step h3 {
+      margin: 0 0 10px 0;
+      color: #667eea;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #764ba2;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      display: none;
+    }
+    .status.show { display: block; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .data-preview {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      display: none;
+    }
+    .data-preview.show { display: block; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    td:first-child {
+      font-weight: bold;
+      width: 150px;
+      color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔄 Sinkronisasi Data dari Firebase</h1>
+    <p class="subtitle">Update data Aplikasi dengan data terbaru dari Firebase Realtime Database</p>
+
+    <div class="step">
+      <h3>📋 Data yang Siap Disinkronisasi</h3>
+      <table>
+        <tr><td>Total XP</td><td>4720</td></tr>
+        <tr><td>Hari Riwayat</td><td>32 hari</td></tr>
+        <tr><td>Badges Diperoleh</td><td>19</td></tr>
+        <tr><td>Total Tabungan</td><td>Rp 4,670,500</td></tr>
+        <tr><td>Streak Terakhir</td><td>7 hari</td></tr>
+      </table>
+    </div>
+
+    <div class="step">
+      <h3>✅ Langkah-Langkah Sinkronisasi</h3>
+      <ol>
+        <li>Buka aplikasi di browser: <code>http://localhost:1500</code></li>
+        <li>Buka Admin Panel (tombol kunci 🔐 atau panel admin)</li>
+        <li>Gunakan Password Admin: <strong>9380</strong></li>
+        <li>Scroll ke bagian "Sinkronisasi Data" atau Admin Tools</li>
+        <li>Klik tombol "Sinkronisasi dari Firebase"</li>
+        <li>Data akan ter-update otomatis</li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h3>🚀 Sinkronisasi Otomatis</h3>
+      <p>Aplikasi Anda sudah dikonfigurasi dengan deep merge untuk Firebase. Coba langkah berikut:</p>
+      <button onclick="syncFromFirebase()">1️⃣ Sinkronisasi Sekarang</button>
+      <button onclick="reloadApp()" style="margin-left: 10px;">2️⃣ Reload Aplikasi</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="preview" class="data-preview"></div>
+
+    <div class="step">
+      <h3>⚠️ Jika Masih Belum Sinkron</h3>
+      <p>Jika data masih lama setelah sinkronisasi, coba cara manual:</p>
+      <ol>
+        <li>Buka Console (F12 → Console tab)</li>
+        <li>Copy-paste kode di bawah ini:</li>
+      </ol>
+      <textarea id="manualCode" rows="8" readonly></textarea>
+      <button onclick="copyCode()" style="margin-top: 10px;">📋 Copy Kode</button>
+    </div>
+
+    <div class="step">
+      <h3>📱 Opsi Lain: Reset & Hard Refresh</h3>
+      <p>Jika data tetap tidak sinkron:</p>
+      <ol>
+        <li>Tekan <strong>Ctrl + Shift + R</strong> (Hard Refresh - Clear Cache)</li>
+        <li>Atau buka Developer Tools → Application → Clear All Site Data</li>
+        <li>Reload halaman</li>
+        <li>Firebase listener akan pull data terbaru</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    // Firebase data (extract from export)
+    const fbDataStr = `{"ayahMsg":"Kerennn!!! Lanjut terus sampai sebulannn...Anak ayah terbaik !!","totalXP":4720,"badges":{"cb_1777162772874":true,"cb_1777166798473":true,"cb_1777343823526":true,"cb_1777463763971":true,"cb_1778401815059":true,"cb_1778571388416":true,"cb_1778571743036":true,"first":true,"quest10":true,"quest20":true,"quest3":true,"quest5":true,"quest50":true,"xp100":true,"xp1000":true,"xp1500":true,"xp2500":true,"xp300":true,"xp500":true},"bundaMsg":"Terima kasih sudah berjuang dan berusaha!!!"}`;
+
+    function showStatus(msg, type = 'info') {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status show ' + type;
+    }
+
+    function syncFromFirebase() {
+      try {
+        // Fetch Firebase data
+        fetch('./firebase_backup.json')
+          .then(r => r.json())
+          .then(fbData => {
+            // Get current local data
+            let localData = {};
+            try {
+              const existing = localStorage.getItem('aslan_v8');
+              if (existing) localData = JSON.parse(existing);
+            } catch (e) {}
+
+            // Deep merge history
+            if (fbData.history) {
+              localData.history = localData.history || {};
+              for (let day in fbData.history) {
+                if (!localData.history[day]) {
+                  localData.history[day] = fbData.history[day];
+                } else {
+                  // Merge
+                  const fbKeys = Object.keys(fbData.history[day]).length;
+                  const localKeys = Object.keys(localData.history[day]).length;
+                  if (fbKeys > localKeys) {
+                    localData.history[day] = fbData.history[day];
+                  }
+                }
+              }
+            }
+
+            // Copy main fields
+            const keys = ['totalXP', 'badges', 'quests', 'ayahMsg', 'bundaMsg', 'customBadges', 
+                         'profile', 'savings', 'karakterAwarded', 'jurnal', 'karakterMotivation',
+                         'weeklyMissions', 'monthlyMissions', 'weeklyProgress', 'monthlyProgress', 'manualStreak'];
+            keys.forEach(k => {
+              if (fbData[k] !== undefined) localData[k] = fbData[k];
+            });
+
+            // Save
+            localStorage.setItem('aslan_v8', JSON.stringify(localData));
+            
+            showStatus(`✅ Sinkronisasi berhasil! XP: ${localData.totalXP}, History: ${Object.keys(localData.history || {}).length} hari. Silakan reload aplikasi.`, 'success');
+          })
+          .catch(e => {
+            showStatus('❌ Error: ' + e.message, 'error');
+          });
+      } catch (err) {
+        showStatus('❌ Error: ' + err.message, 'error');
+      }
+    }
+
+    function reloadApp() {
+      if (confirm('Reload aplikasi Aslan?')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    function copyCode() {
+      const code = `
+// Sinkronisasi manual dari console
+fetch('./firebase_backup.json')
+  .then(r => r.json())
+  .then(fbData => {
+    let localData = JSON.parse(localStorage.getItem('aslan_v8') || '{}');
+    if (fbData.history) {
+      localData.history = localData.history || {};
+      for (let day in fbData.history) {
+        localData.history[day] = fbData.history[day];
+      }
+    }
+    ['totalXP','badges','quests','ayahMsg','bundaMsg','customBadges','profile','savings'].forEach(k => {
+      if (fbData[k]) localData[k] = fbData[k];
+    });
+    localStorage.setItem('aslan_v8', JSON.stringify(localData));
+    alert('✅ Sinkronisasi selesai! Reload halaman sekarang.');
+    location.reload();
+  });
+      `.trim();
+      
+      navigator.clipboard.writeText(code).then(() => {
+        showStatus('✅ Kode berhasil dicopy. Paste di console browser dan tekan Enter', 'success');
+      }).catch(e => {
+        showStatus('❌ Gagal copy: ' + e.message, 'error');
+      });
+    }
+
+    // Pre-fill manual code
+    window.addEventListener('load', () => {
+      document.getElementById('manualCode').value = `
+// Paste ini di Console (F12) lalu Enter
+fetch('./firebase_backup.json')
+  .then(r => r.json())
+  .then(fbData => {
+    let local = JSON.parse(localStorage.getItem('aslan_v8')||'{}');
+    if (fbData.history) {
+      local.history = local.history || {};
+      Object.assign(local.history, fbData.history);
+    }
+    ['totalXP','badges','quests','ayahMsg','bundaMsg','profile','savings'].forEach(k => {
+      if (fbData[k]) local[k] = fbData[k];
+    });
+    localStorage.setItem('aslan_v8', JSON.stringify(local));
+    alert('✅ Selesai! Reload halaman.');
+    location.reload();
+  });
+      `.trim();
+    });
+  </script>
+</body>
+</html>
