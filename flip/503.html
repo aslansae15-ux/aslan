@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Latihan Pertambahan – Harian</title>
+<title>Latihan Pembagian – Harian</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
@@ -18,19 +18,19 @@
   };
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  const FB_502_REF = db.ref('flip_502_records');
+  const FB_DIV_REF = db.ref('flip_div_records');
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --lv1:    #F97316;
-    --lv1-dk: #C2410C;
-    --lv2:    #8B5CF6;
-    --lv2-dk: #6D28D9;
-    --lv3:    #0EA5E9;
-    --lv3-dk: #0369A1;
+    --lv1:    #10B981;
+    --lv1-dk: #059669;
+    --lv2:    #F59E0B;
+    --lv2-dk: #D97706;
+    --lv3:    #EF4444;
+    --lv3-dk: #DC2626;
     --green:  #22C55E;
     --red:    #EF4444;
     --yellow: #FBBF24;
@@ -40,7 +40,7 @@
     --text:   #1E293B;
     --muted:  #64748B;
     --border: #CBD5E1;
-    --active: #F97316;
+    --active: #10B981;
   }
 
   body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -124,9 +124,9 @@
   .level-card.lv2::before { background: var(--lv2); }
   .level-card.lv3::before { background: var(--lv3); }
   .level-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,.13); }
-  .level-card.lv1 { border-color: #FED7AA; } .level-card.lv1:hover { border-color: var(--lv1); }
-  .level-card.lv2 { border-color: #DDD6FE; } .level-card.lv2:hover { border-color: var(--lv2); }
-  .level-card.lv3 { border-color: #BAE6FD; } .level-card.lv3:hover { border-color: var(--lv3); }
+  .level-card.lv1 { border-color: #A7F3D0; } .level-card.lv1:hover { border-color: var(--lv1); }
+  .level-card.lv2 { border-color: #FDE68A; } .level-card.lv2:hover { border-color: var(--lv2); }
+  .level-card.lv3 { border-color: #FECACA; } .level-card.lv3:hover { border-color: var(--lv3); }
 
   .lv-badge { display: inline-block; border-radius: 8px; padding: 3px 11px; font-size: .75rem; font-weight: 800; color: #fff; margin-bottom: 12px; margin-top: 6px; }
   .lv1 .lv-badge { background: var(--lv1); }
@@ -151,7 +151,7 @@
   }
   #start-banner h3 { font-size: 1.2rem; font-weight: 900; margin-bottom: 6px; }
   #start-banner p  { font-size: .9rem; color: var(--muted); font-weight: 600; margin-bottom: 18px; }
-  #start-banner.ready { border-color: var(--active); background: #FFFBEB; }
+  #start-banner.ready { border-color: var(--active); background: #ECFDF5; }
 
   .btn-start {
     background: var(--green);
@@ -280,6 +280,8 @@
   }
 
   .prob-num { font-size: .67rem; font-weight: 800; color: var(--muted); align-self: flex-start; padding-left: 2px; }
+
+  /* Division layout — dividend on top, divisor + operator on row below */
   .prob-body { width: 100%; display: flex; flex-direction: column; align-items: flex-end; gap: 0; padding-right: 4px; }
   .prob-top  { font-size: 1.05rem; font-weight: 900; line-height: 1.3; }
   .prob-op-row { display: flex; width: 100%; align-items: center; gap: 4px; }
@@ -608,7 +610,7 @@
 <!-- ── HEADER ── -->
 <header>
   <a class="btn-back" href="../berlatih.html">← Kembali</a>
-  <div class="brand">➕ Latihan <span>Pertambahan</span></div>
+  <div class="brand">➗ Latihan <span>Pembagian</span></div>
   <div class="header-right">
     <!-- Timer -->
     <div id="timer-display">
@@ -622,28 +624,28 @@
 <!-- ── LEVEL PICKER ── -->
 <section id="level-picker">
   <h1>🔢 Pilih Level Kamu</h1>
-  <p>Naik level satu-satu — dari yang mudah sampai yang menantang!</p>
+  <p>Mulai dari yang mudah — kuasai pembagian satu level demi satu level!</p>
   <div class="level-cards">
     <div class="level-card lv1" onclick="startLevel(1)">
       <span class="emoji">🌱</span>
       <span class="lv-badge">Level 1</span>
       <h2>Mulai dari Sini</h2>
-      <p class="desc">Penjumlahan angka 4 sampai 9<br/>Hasilnya 8 sampai 18</p>
-      <span class="range-tag">4 + 4 &nbsp;→&nbsp; 9 + 9</span>
+      <p class="desc">Pembagian hasil 1–5<br/>Pembagi 1 sampai 5</p>
+      <span class="range-tag">2÷1 &nbsp;→&nbsp; 25÷5</span>
     </div>
     <div class="level-card lv2" onclick="startLevel(2)">
       <span class="emoji">⭐</span>
       <span class="lv-badge">Level 2</span>
       <h2>Naik Satu Tangga</h2>
-      <p class="desc">Satu angka belasan, satu angka satuan<br/>Hasilnya 11 sampai 28</p>
-      <span class="range-tag">10 + 1 &nbsp;→&nbsp; 19 + 9</span>
+      <p class="desc">Pembagian hasil 1–7<br/>Pembagi 1 sampai 7</p>
+      <span class="range-tag">2÷1 &nbsp;→&nbsp; 49÷7</span>
     </div>
     <div class="level-card lv3" onclick="startLevel(3)">
       <span class="emoji">🚀</span>
       <span class="lv-badge">Level 3</span>
-      <h2>Tantangan Puluhan</h2>
-      <p class="desc">Angka belasan ditambah belasan<br/>Hasilnya 20 sampai 38</p>
-      <span class="range-tag">10 + 10 &nbsp;→&nbsp; 29 + 9</span>
+      <h2>Tantangan 50</h2>
+      <p class="desc">Pembagi 1–10, hasil bulat<br/>Angka sampai 50</p>
+      <span class="range-tag">6÷2 &nbsp;→&nbsp; 50÷5</span>
     </div>
   </div>
 </section>
@@ -683,7 +685,7 @@
   <div class="ws-top">
     <div class="ws-top-left">
       <span class="level-tag" id="level-tag">—</span>
-      <h2 id="ws-title">Latihan Pertambahan</h2>
+      <h2 id="ws-title">Latihan Pembagian</h2>
     </div>
     <div class="ws-actions">
       <button class="btn btn-yellow" id="btn-new" onclick="generateProblems()">🔄 Soal Baru</button>
@@ -722,7 +724,7 @@
     <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
   </div>
 
-  <div class="grid-label">📋 100 Soal Pertambahan</div>
+  <div class="grid-label">📋 100 Soal Pembagian</div>
   <div class="problem-grid" id="problem-grid"></div>
 
   <div style="margin-top:24px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -769,8 +771,8 @@
   let checked       = false;
   let lastResult    = null;
 
-  const LEVEL_COLOR = { 1: '#F97316', 2: '#8B5CF6', 3: '#0EA5E9' };
-  const STORAGE_KEY = 'latihan_pertambahan_records';
+  const LEVEL_COLOR = { 1: '#10B981', 2: '#F59E0B', 3: '#EF4444' };
+  const STORAGE_KEY = 'latihan_pembagian_records';
 
   /* ────────────────────────────────────────────
      DATE
@@ -789,12 +791,43 @@
   /* ────────────────────────────────────────────
      UTILS
   ──────────────────────────────────────────── */
-  function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-
   function formatTime(sec) {
     const m = String(Math.floor(sec / 60)).padStart(2, '0');
     const s = String(sec % 60).padStart(2, '0');
     return `${m}:${s}`;
+  }
+
+  /* ────────────────────────────────────────────
+     GENERATE DIVISION PAIRS PER LEVEL
+     Hanya soal yang hasil bagi-nya adalah bilangan bulat!
+  ──────────────────────────────────────────── */
+  function buildPool(level) {
+    const pool = [];
+
+    if (level === 1) {
+      // Hasil 1–5, pembagi 1–5  →  dividend = hasil × pembagi
+      for (let hasil = 1; hasil <= 5; hasil++) {
+        for (let pembagi = 1; pembagi <= 5; pembagi++) {
+          pool.push({ dividend: hasil * pembagi, divisor: pembagi, answer: hasil });
+        }
+      }
+    } else if (level === 2) {
+      // Hasil 1–7, pembagi 1–7  (naik tipis dari level 1)
+      for (let hasil = 1; hasil <= 7; hasil++) {
+        for (let pembagi = 1; pembagi <= 7; pembagi++) {
+          pool.push({ dividend: hasil * pembagi, divisor: pembagi, answer: hasil });
+        }
+      }
+    } else {
+      // Level 3: semua pasangan pembagian bulat dengan dividend ≤ 50
+      for (let pembagi = 1; pembagi <= 10; pembagi++) {
+        for (let hasil = 1; hasil * pembagi <= 50; hasil++) {
+          pool.push({ dividend: hasil * pembagi, divisor: pembagi, answer: hasil });
+        }
+      }
+    }
+
+    return pool;
   }
 
   /* ────────────────────────────────────────────
@@ -808,9 +841,9 @@
     document.documentElement.style.setProperty('--active', LEVEL_COLOR[level]);
 
     const cfg = {
-      1: { label: 'Level 1 – Dasar',        cls: 'tag-lv1', title: 'Pertambahan 4+4 s/d 9+9' },
-      2: { label: 'Level 2 – Belasan Awal',  cls: 'tag-lv2', title: 'Pertambahan 10+1 s/d 19+9' },
-      3: { label: 'Level 3 – Puluhan',       cls: 'tag-lv3', title: 'Pertambahan 10+10 s/d 29+9' },
+      1: { label: 'Level 1 – Dasar',        cls: 'tag-lv1', title: 'Pembagian hasil 1–5 (pembagi 1–5)' },
+      2: { label: 'Level 2 – Menengah',      cls: 'tag-lv2', title: 'Pembagian hasil 1–7 (pembagi 1–7)' },
+      3: { label: 'Level 3 – Tantangan',     cls: 'tag-lv3', title: 'Pembagian angka sampai 50 (pembagi 1–10)' },
     };
     document.getElementById('level-tag').textContent = cfg[level].label;
     document.getElementById('level-tag').className   = `level-tag ${cfg[level].cls}`;
@@ -835,17 +868,7 @@
     const btnSave = document.getElementById('btn-save');
     if (btnSave) { btnSave.disabled = false; btnSave.innerHTML = '💾 Simpan Nilai'; }
 
-    const pool = [];
-    if (currentLevel === 1) {
-      for (let a = 4; a <= 9; a++)
-        for (let b = 4; b <= 9; b++) pool.push({ a, b });
-    } else if (currentLevel === 2) {
-      for (let a = 10; a <= 19; a++)
-        for (let b = 1;  b <= 9;  b++) pool.push({ a, b });
-    } else {
-      for (let a = 10; a <= 29; a++)
-        for (let b = 1;  b <= 9;  b++) pool.push({ a, b });
-    }
+    const pool = buildPool(currentLevel);
 
     let result = [];
     while (result.length < 100) {
@@ -853,7 +876,7 @@
       result = result.concat(shuffled);
     }
     result = result.sort(() => Math.random() - .5).slice(0, 100);
-    problems = result.map(p => ({ ...p, answer: p.a + p.b }));
+    problems = result;
 
     renderGrid(true);
     updateProgress();
@@ -881,10 +904,10 @@
       card.innerHTML = `
         <span class="prob-num">${i + 1}</span>
         <div class="prob-body">
-          <span class="prob-top">${p.a}</span>
+          <span class="prob-top">${p.dividend}</span>
           <div class="prob-op-row">
-            <span class="prob-op">+</span>
-            <span class="prob-bottom">${p.b}</span>
+            <span class="prob-op">÷</span>
+            <span class="prob-bottom">${p.divisor}</span>
           </div>
         </div>
         <div class="prob-line"></div>
@@ -1088,6 +1111,7 @@
     document.getElementById('missing-alert').style.display = 'none';
     document.getElementById('missing-nums').innerHTML = '';
   }
+
   /* ────────────────────────────────────────────
      SCORE BANNER
   ──────────────────────────────────────────── */
@@ -1151,24 +1175,22 @@
   }
 
   function loadRecordsFromFirebase() {
-    if (typeof FB_502_REF !== 'undefined' && FB_502_REF) {
-      FB_502_REF.once('value', snap => {
+    if (typeof FB_DIV_REF !== 'undefined' && FB_DIV_REF) {
+      FB_DIV_REF.once('value', snap => {
         const fbData = snap.val() || {};
         const fbRecords = Object.values(fbData).filter(r => r && typeof r === 'object');
-        
+
         const localRecords = loadRecords();
         const merged = [...fbRecords, ...localRecords];
-        
+
         const unique = {};
         merged.forEach(r => {
-          if (r.id) {
-            unique[r.id] = r;
-          }
+          if (r.id) unique[r.id] = r;
         });
-        
+
         const combined = Object.values(unique);
         combined.sort((a, b) => (b.id || 0) - (a.id || 0));
-        
+
         renderRecords(combined);
       }).catch(() => {
         renderRecords();
@@ -1207,19 +1229,16 @@
     btn.disabled = true;
     btn.innerHTML = '✅ Nilai Tersimpan!';
 
-    if (typeof FB_502_REF !== 'undefined' && FB_502_REF) {
-      FB_502_REF.child(String(record.id)).set(record, err => {
-        if (err) {
-          console.error('Firebase save failed:', err);
-        }
+    if (typeof FB_DIV_REF !== 'undefined' && FB_DIV_REF) {
+      FB_DIV_REF.child(String(record.id)).set(record, err => {
+        if (err) console.error('Firebase save failed:', err);
       });
     }
 
-    // Kembali ke halaman depan untuk lihat riwayat
     resetAll();
   }
 
-  let pendingDeleteId = null; // null = hapus semua, angka = hapus satu baris
+  let pendingDeleteId = null;
 
   function deleteRecord(id) {
     pendingDeleteId = id;
@@ -1252,8 +1271,8 @@
       if (pendingDeleteId !== null) {
         const records = loadRecords().filter(r => r.id !== pendingDeleteId);
         saveRecords(records);
-        if (typeof FB_502_REF !== 'undefined' && FB_502_REF) {
-          FB_502_REF.orderByChild('id').equalTo(pendingDeleteId).once('value', snap => {
+        if (typeof FB_DIV_REF !== 'undefined' && FB_DIV_REF) {
+          FB_DIV_REF.orderByChild('id').equalTo(pendingDeleteId).once('value', snap => {
             snap.forEach(child => child.ref.remove().catch(err => {
               console.error('Firebase delete failed:', err);
             }));
@@ -1263,8 +1282,8 @@
         }
       } else {
         saveRecords([]);
-        if (typeof FB_502_REF !== 'undefined' && FB_502_REF) {
-          FB_502_REF.remove(err => {
+        if (typeof FB_DIV_REF !== 'undefined' && FB_DIV_REF) {
+          FB_DIV_REF.remove(err => {
             if (err) console.error('Firebase delete all failed:', err);
           });
         }

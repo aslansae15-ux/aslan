@@ -1203,9 +1203,9 @@
     btn.disabled = true;
     btn.innerHTML = '✅ Nilai Tersimpan!';
 
-    // Save to Firebase
+    // Save to Firebase under the record id so delete can remove the same key.
     if (typeof FB_501_REF !== 'undefined' && FB_501_REF) {
-      FB_501_REF.push(record, err => {
+      FB_501_REF.child(String(record.id)).set(record, err => {
         if (err) console.error('Firebase save failed:', err);
       });
     }
@@ -1247,8 +1247,22 @@
       if (pendingDeleteId !== null) {
         const records = loadRecords().filter(r => r.id !== pendingDeleteId);
         saveRecords(records);
+        if (typeof FB_501_REF !== 'undefined' && FB_501_REF) {
+          FB_501_REF.orderByChild('id').equalTo(pendingDeleteId).once('value', snap => {
+            snap.forEach(child => child.ref.remove().catch(err => {
+              console.error('Firebase delete failed:', err);
+            }));
+          }).catch(err => {
+            console.error('Firebase delete query failed:', err);
+          });
+        }
       } else {
         saveRecords([]);
+        if (typeof FB_501_REF !== 'undefined' && FB_501_REF) {
+          FB_501_REF.remove(err => {
+            if (err) console.error('Firebase delete all failed:', err);
+          });
+        }
       }
       pendingDeleteId = null;
       renderRecords();
