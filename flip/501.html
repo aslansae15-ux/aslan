@@ -446,6 +446,159 @@
     40%,80%  { transform: translateX( 8px); }
   }
   .shake-modal { animation: shake-modal .35s ease; }
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 768px) {
+    header { padding: 12px 14px; }
+    .brand { font-size: 1.1rem; }
+    .date-badge { font-size: .75rem; padding: 4px 12px; }
+    .btn-back { padding: 5px 12px; font-size: .78rem; }
+
+    #level-picker { margin: 32px auto; padding: 0 12px; }
+    #level-picker h1 { font-size: 1.6rem; }
+    #level-picker > p { font-size: .9rem; margin-bottom: 24px; }
+
+    .level-card { width: 180px; padding: 20px 16px; }
+    .level-card .emoji { font-size: 2rem; }
+    .level-card h2 { font-size: 1rem; }
+    .level-card .desc { font-size: .75rem; }
+
+    #worksheet { padding: 16px 12px 40px; }
+    .ws-top { gap: 8px; margin-bottom: 16px; }
+    .ws-top-left h2 { font-size: 1.15rem; }
+    .ws-actions { gap: 6px; }
+
+    .btn { padding: 8px 16px; font-size: .8rem; }
+    .btn-start { padding: 12px 32px; font-size: 1rem; }
+    .btn-sm { padding: 6px 12px; font-size: .75rem; }
+
+    #start-banner { padding: 20px 18px; margin-bottom: 16px; }
+    #start-banner h3 { font-size: 1rem; }
+    #start-banner p { font-size: .8rem; margin-bottom: 14px; }
+
+    .problem-card { padding: 8px 6px 6px; }
+    .prob-num { font-size: .6rem; }
+    .prob-top { font-size: .95rem; }
+    .prob-bottom { font-size: .95rem; }
+    .prob-answer { font-size: .9rem; padding: 4px 3px; }
+
+    #score-banner { padding: 18px 20px; }
+    .score-num { font-size: 2.4rem; }
+    .score-msg { font-size: .95rem; }
+
+    .level-tag { padding: 2px 10px; font-size: .7rem; }
+    .lv-badge { font-size: .7rem; padding: 2px 9px; }
+
+    .records-header h2 { font-size: 1.05rem; }
+    .btn-clear-records { padding: 4px 12px; font-size: .72rem; }
+    .records-table { font-size: .8rem; }
+    .records-table thead th { padding: 9px 10px; font-size: .7rem; }
+    .records-table tbody td { padding: 8px 10px; }
+    .rec-level-badge { font-size: .68rem; padding: 1px 8px; }
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 10px 10px; gap: 6px; }
+    .brand { font-size: .95rem; }
+    .date-badge { font-size: .7rem; padding: 3px 10px; }
+    .btn-back { padding: 4px 10px; font-size: .72rem; }
+    .header-right { gap: 6px; }
+
+    #timer-clock { font-size: 1.2rem; min-width: 70px; }
+    #timer-display { padding: 4px 10px; gap: 5px; }
+
+    #level-picker { margin: 24px auto; padding: 0 10px; }
+    #level-picker h1 { font-size: 1.3rem; margin-bottom: 4px; }
+    #level-picker > p { font-size: .8rem; margin-bottom: 20px; }
+
+    .level-cards { gap: 12px; }
+    .level-card { width: calc(50% - 6px); padding: 16px 12px; }
+    .level-card .emoji { font-size: 1.8rem; margin-bottom: 6px; }
+    .level-card h2 { font-size: .9rem; margin-bottom: 4px; }
+    .level-card .desc { font-size: .7rem; line-height: 1.4; }
+    .level-card .range-tag { font-size: .65rem; padding: 3px 8px; margin-top: 8px; }
+
+    .problem-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+
+    #worksheet { padding: 12px 10px 30px; max-width: 100%; }
+    .ws-top { gap: 6px; margin-bottom: 12px; flex-direction: column; align-items: flex-start; }
+    .ws-top-left h2 { font-size: 1rem; }
+    .ws-actions { width: 100%; gap: 5px; }
+
+    .btn { padding: 7px 14px; font-size: .75rem; gap: 4px; }
+    .btn-start { padding: 10px 28px; font-size: .95rem; }
+
+    #start-banner { padding: 16px 14px; margin-bottom: 14px; }
+    #start-banner h3 { font-size: .95rem; }
+    #start-banner p { font-size: .75rem; margin-bottom: 12px; }
+
+    .problem-card { padding: 6px 4px 4px; border-radius: 8px; }
+    .prob-num { font-size: .55rem; }
+    .prob-top { font-size: .85rem; }
+    .prob-op { font-size: .75rem; }
+    .prob-bottom { font-size: .85rem; }
+    .prob-answer { font-size: .8rem; padding: 3px 2px; border-radius: 6px; }
+    .prob-line { height: 1px; margin: 2px 0 4px; }
+
+    #score-banner { padding: 14px 16px; margin-bottom: 16px; }
+    .score-num { font-size: 2rem; }
+    .score-msg { font-size: .88rem; }
+    .score-sub { font-size: .78rem; }
+    .score-time { font-size: .8rem; padding: 6px 12px; gap: 4px; margin-top: 10px; }
+
+    .grid-label { font-size: .7rem; margin-bottom: 8px; }
+    .level-tag { padding: 2px 8px; font-size: .65rem; }
+    .lv-badge { font-size: .65rem; padding: 2px 8px; }
+
+    #missing-alert { padding: 12px 14px; font-size: .8rem; margin-bottom: 12px; }
+    #missing-alert .miss-title { font-size: .9rem; margin-bottom: 4px; }
+    .miss-chip { font-size: .7rem; padding: 2px 8px; }
+
+    .records-header { margin-bottom: 10px; }
+    .records-header h2 { font-size: .95rem; }
+    .btn-clear-records { padding: 3px 10px; font-size: .65rem; }
+    .records-table-wrap { max-height: 300px; }
+    .records-table { font-size: .75rem; }
+    .records-table thead th { padding: 8px 8px; font-size: .65rem; }
+    .records-table tbody td { padding: 6px 8px; font-size: .7rem; }
+    .rec-level-badge { font-size: .6rem; padding: 1px 6px; }
+    .rec-score { font-size: .85rem; }
+    .rec-pct { font-size: .65rem; padding: 1px 6px; }
+    .best-tag { font-size: .6rem; padding: 1px 5px; margin-left: 3px; }
+
+    #pwd-modal-card { padding: 24px 20px 20px; }
+    .pwd-icon { font-size: 2.2rem; }
+    #pwd-modal-card h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    #pwd-modal-card p { font-size: .78rem; margin-bottom: 16px; }
+    #pwd-input { font-size: 1rem; padding: 10px 14px; letter-spacing: 3px; }
+    .pwd-btn { padding: 10px; font-size: .8rem; }
+
+    footer { padding: 18px 12px; font-size: .75rem; }
+  }
+
+  @media (max-width: 360px) {
+    header { padding: 8px 8px; }
+    .brand { font-size: .85rem; }
+    .date-badge { display: none; }
+    .btn-back { padding: 3px 8px; font-size: .65rem; }
+
+    #level-picker { margin: 16px auto; padding: 0 8px; }
+    #level-picker h1 { font-size: 1.1rem; }
+    #level-picker > p { font-size: .75rem; margin-bottom: 16px; }
+
+    .level-cards { gap: 10px; }
+    .level-card { width: calc(50% - 5px); padding: 12px 10px; border-radius: 16px; }
+    .level-card .emoji { font-size: 1.6rem; }
+    .level-card h2 { font-size: .8rem; }
+    .level-card .desc { font-size: .65rem; }
+
+    .problem-grid { gap: 5px; }
+    .problem-card { padding: 5px 3px 3px; }
+
+    #worksheet { padding: 10px 8px 20px; }
+    .btn { padding: 6px 12px; font-size: .7rem; }
+    .btn-start { padding: 8px 24px; font-size: .88rem; }
+  }
 </style>
 </head>
 <body>
