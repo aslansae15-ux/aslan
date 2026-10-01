@@ -477,7 +477,7 @@ function addWeeklyMission(){
   if(!state.weeklyMissions)state.weeklyMissions=[];
   state.weeklyMissions.push({id:'wm_'+Date.now(),emoji,name,xp});
   document.getElementById('wmEmojiInput').value='';document.getElementById('wmNameInput').value='';document.getElementById('wmXpInput').value='50';
-  save();renderAll();renderWMAdminList();showToast('✅ Misi mingguan ditambahkan!');
+  save();renderAll();renderWeeklyV2();showToast('✅ Misi mingguan ditambahkan!');
 }
 function addMonthlyMission(){
   const emoji=document.getElementById('mmEmojiInput').value.trim()||'🎯';
@@ -487,23 +487,15 @@ function addMonthlyMission(){
   if(!state.monthlyMissions)state.monthlyMissions=[];
   state.monthlyMissions.push({id:'mm_'+Date.now(),emoji,name,xp});
   document.getElementById('mmEmojiInput').value='';document.getElementById('mmNameInput').value='';document.getElementById('mmXpInput').value='100';
-  save();renderAll();renderMMAdminList();showToast('✅ Misi bulanan ditambahkan!');
+  save();renderAll();renderMonthlyV2();showToast('✅ Misi bulanan ditambahkan!');
 }
-function deleteWeeklyMission(id){state.weeklyMissions=(state.weeklyMissions||[]).filter(m=>m.id!==id);save();renderAll();renderWMAdminList();showToast('🗑️ Misi mingguan dihapus',true);}
-function deleteMonthlyMission(id){state.monthlyMissions=(state.monthlyMissions||[]).filter(m=>m.id!==id);save();renderAll();renderMMAdminList();showToast('🗑️ Misi bulanan dihapus',true);}
-function renderWMAdminList(){
-  const list=document.getElementById('wmListAdmin');if(!list)return;
-  const missions=state.weeklyMissions||[];
-  if(!missions.length){list.innerHTML='<p style="font-size:12px;color:#90A4AE;font-weight:700;padding:8px;">Belum ada misi mingguan.</p>';return;}
-  list.innerHTML='';
-  missions.forEach(m=>{const row=document.createElement('div');row.className='wm-admin-row';row.innerHTML=`<span>${m.emoji||'📌'}</span><span class="wm-admin-name">${m.name}</span><span class="wm-admin-xp">+${m.xp} XP</span><button class="wm-del-btn" onclick="deleteWeeklyMission('${m.id}')">🗑️</button>`;list.appendChild(row);});
+function deleteWeeklyMission(id){
+  if(!confirm('Hapus misi mingguan ini?'))return;
+  state.weeklyMissions=(state.weeklyMissions||[]).filter(m=>m.id!==id);save();renderAll();renderWeeklyV2();showToast('🗑️ Misi mingguan dihapus',true);
 }
-function renderMMAdminList(){
-  const list=document.getElementById('mmListAdmin');if(!list)return;
-  const missions=state.monthlyMissions||[];
-  if(!missions.length){list.innerHTML='<p style="font-size:12px;color:#90A4AE;font-weight:700;padding:8px;">Belum ada misi bulanan.</p>';return;}
-  list.innerHTML='';
-  missions.forEach(m=>{const row=document.createElement('div');row.className='mm-admin-row';row.innerHTML=`<span>${m.emoji||'🎯'}</span><span class="mm-admin-name">${m.name}</span><span class="mm-admin-xp">+${m.xp} XP</span><button class="mm-del-btn" onclick="deleteMonthlyMission('${m.id}')">🗑️</button>`;list.appendChild(row);});
+function deleteMonthlyMission(id){
+  if(!confirm('Hapus misi bulanan ini?'))return;
+  state.monthlyMissions=(state.monthlyMissions||[]).filter(m=>m.id!==id);save();renderAll();renderMonthlyV2();showToast('🗑️ Misi bulanan dihapus',true);
 }
 
 function isTankUnlocked(){return state.totalXP>=TANK_UNLOCK_XP;}
@@ -943,7 +935,6 @@ function openAdmin(){
   document.getElementById('adminOverlay').classList.add('open');
   if(!adminUnlocked){
     document.getElementById('adminLogin').style.display='block';
-    document.getElementById('adminPanel').classList.remove('visible');
     admPinVal = '';
     const pinDisplay = document.getElementById('adminPinDisplay');
     if(pinDisplay) pinDisplay.textContent = '—';
@@ -979,8 +970,8 @@ function doAdminLogin(){
   if (disp) disp.textContent = '—';
   if(pw===ADMIN_PW){
     adminUnlocked=true;document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminPanel').style.display='block';renderAdminPanel();loadInvestPricesForAdmin();
-    setTimeout(()=>{ if(typeof adm2Tab==='function') adm2Tab('profil'); },100);
+    document.getElementById('adminPanel').style.display='block';renderAdminPanel();
+    adm2Tab('profil');
   }else{
     const hint = document.getElementById('adminPwHint');
     if(hint) hint.textContent='❌ Password salah!';
@@ -1004,41 +995,27 @@ function renderAdminPanel(){
   setVal('ayahEditor', state.ayahMsg||DEFAULT_MSG);
   setVal('bundaEditor', state.bundaMsg||DEFAULT_BUNDA_MSG);
   setVal('karakterMotivationEditor', state.karakterMotivation||DEFAULT_KARAKTER_MOTIVATION);
-  // ✅ PATCH: tampilkan nilai manualStreak di admin
   const msEl=document.getElementById('manualStreakInput');
   if(msEl)msEl.value=state.manualStreak||0;
-  const qml=document.getElementById('questManagerList');if(qml)renderQuestManager();
-  const aql=document.getElementById('adminQuestList');if(aql)renderAdminQuests();
-  const cbl=document.getElementById('customBadgeList');if(cbl)renderCustomBadgeList();
-  const xpd=document.getElementById('adminXpDisplay');if(xpd)xpd.textContent=state.totalXP+' XP';
-  const xpd2=document.getElementById('adminXpDisplay2');if(xpd2)xpd2.textContent=state.totalXP+' XP';
-  const ksg=document.getElementById('karakterSelectGrid');if(ksg)renderKarakterSelectGrid();
-  const kal=document.getElementById('karakterAwardedList');if(kal)renderKarakterAwardedList();
-  const wml=document.getElementById('wmListAdmin');if(wml)renderWMAdminList();
-  const mml=document.getElementById('mmListAdmin');if(mml)renderMMAdminList();
+  document.getElementById('adminXpDisplay2').textContent=state.totalXP+' XP';
 }
 
 // ===== INVEST PRICE MANAGER =====
+const STOCK_IDS=['ultra','indomie','goto','mayora','nintendo','bca'];
 function saveInvestPrices() {
   const goldPrice = parseFloat(document.getElementById('adminGoldPrice').value);
-  const prices = {
-    ultra:    parseFloat(document.getElementById('sp-ultra').value)    || null,
-    indomie:  parseFloat(document.getElementById('sp-indomie').value)  || null,
-    goto:     parseFloat(document.getElementById('sp-goto').value)     || null,
-    mayora:   parseFloat(document.getElementById('sp-mayora').value)   || null,
-    nintendo: parseFloat(document.getElementById('sp-nintendo').value) || null,
-    bca:      parseFloat(document.getElementById('sp-bca').value)      || null,
-  };
-  Object.keys(prices).forEach(k => { if (!prices[k]) delete prices[k]; });
-  const payload = {
-    updatedAt: new Date().toISOString(),
-    updatedBy: 'Ayah'
-  };
+  // Only send filled-in fields: update() on a nested path keeps prices the parent left blank.
+  const payload = { updatedAt: new Date().toISOString(), updatedBy: 'Ayah' };
   if (goldPrice > 0) payload.goldPrice = goldPrice;
-  if (Object.keys(prices).length > 0) payload.stockPrices = prices;
+  let filled = goldPrice > 0;
+  STOCK_IDS.forEach(id => {
+    const v = parseFloat(document.getElementById('sp-' + id).value);
+    if (v > 0) { payload['stockPrices/' + id] = v; filled = true; }
+  });
+  if (!filled) { showToast('⚠️ Isi minimal satu harga!'); return; }
   firebase.database().ref('aslan_investasi/manualPrices').update(payload, err => {
     if (!err) {
-      showToast('✅ Harga berhasil diupdate!');
+      showToast('✅ Harga investasi tersimpan!');
       loadInvestPricesForAdmin();
     } else {
       showToast('❌ Gagal simpan, cek koneksi');
@@ -1065,10 +1042,7 @@ function loadInvestPricesForAdmin() {
       const str = '🕐 Terakhir update: ' + dt.toLocaleDateString('id-ID', {
         day: 'numeric', month: 'short', year: 'numeric'
       }) + ' ' + dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-      const el1 = document.getElementById('adminPriceLastUpdate');
-      const el2 = document.getElementById('adminPriceLastUpdate2');
-      if (el1) el1.textContent = str;
-      if (el2) el2.textContent = str;
+      document.getElementById('adminPriceLastUpdate2').textContent = str;
     }
   });
 }
@@ -1099,17 +1073,6 @@ function saveKarakterMotivation(){
   state.karakterMotivation=txt;save();renderKarakter();showToast('💾 Motivasi berhasil disimpan!');
 }
 
-function renderKarakterSelectGrid(){
-  const grid=document.getElementById('karakterSelectGrid');grid.innerHTML='';
-  KARAKTER_LIST.forEach(k=>{
-    const btn=document.createElement('button');
-    btn.className='karakter-select-btn'+(selectedKarakter===k.id?' selected':'');
-    btn.title=k.name;
-    btn.innerHTML=k.emoji+'<div style="font-size:8px;font-weight:800;color:#6A1B9A;margin-top:3px;">'+k.name+'</div>';
-    btn.onclick=()=>{selectedKarakter=k.id;renderKarakterSelectGrid();};
-    grid.appendChild(btn);
-  });
-}
 function awardKarakter(){
   if(!selectedKarakter){showToast('Pilih lencana dulu ya!',true);return;}
   const k=KARAKTER_LIST.find(x=>x.id===selectedKarakter);if(!k)return;
@@ -1117,41 +1080,19 @@ function awardKarakter(){
   if(!state.karakterAwarded)state.karakterAwarded=[];
   state.karakterAwarded.push({id:'kar_'+Date.now(),karakterId:k.id,emoji:k.emoji,name:k.name,note,timestamp:Date.now()});
   document.getElementById('karakterNoteInput').value='';selectedKarakter=null;
-  save();renderAll();renderKarakterSelectGrid();renderKarakterAwardedList();
+  save();renderAll();syncKarakterGrid2();syncKarakterAwarded2();
   showToast('🌟 Lencana '+k.name+' diberikan ke Aslan!');
-}
-function renderKarakterAwardedList(){
-  const list=document.getElementById('karakterAwardedList');
-  const awarded=(state.karakterAwarded||[]).slice().reverse().slice(0,8);
-  if(!awarded.length){list.innerHTML='<p style="font-size:12px;color:#90A4AE;font-weight:700;text-align:center;padding:8px;">Belum ada lencana yang diberikan.</p>';return;}
-  list.innerHTML='';
-  awarded.forEach(a=>{
-    const dd=new Date(a.timestamp);
-    const dateStr=dd.getDate()+' '+MONTHS_ID[dd.getMonth()]+' '+dd.getFullYear();
-    const row=document.createElement('div');row.className='ka-row';
-    row.innerHTML=`<div class="ka-icon">${a.emoji}</div><div class="ka-info"><div class="ka-name">${a.name}</div><div class="ka-note">"${a.note||'—'}"</div><div class="ka-date">📅 ${dateStr}</div></div><button class="ka-del-btn" onclick="deleteKarakter('${a.id}')">🗑️</button>`;
-    list.appendChild(row);
-  });
 }
 function deleteKarakter(id){
   if(!confirm('Hapus lencana ini?'))return;
   state.karakterAwarded=(state.karakterAwarded||[]).filter(a=>a.id!==id);
-  save();renderAll();renderKarakterAwardedList();showToast('🗑️ Lencana dihapus',true);
+  save();renderAll();syncKarakterAwarded2();showToast('🗑️ Lencana dihapus',true);
 }
 
-function renderQuestManager(){
-  const list=document.getElementById('questManagerList');list.innerHTML='';
-  if(!state.quests.length){list.innerHTML='<p style="font-size:12px;color:#90A4AE;font-weight:700;text-align:center;padding:12px;">Belum ada latihan.</p>';return;}
-  state.quests.forEach(q=>{
-    const row=document.createElement('div');row.className='qm-row';
-    row.innerHTML=`<span class="qm-icon">${q.emoji}</span><span class="qm-name">${q.name}</span><span class="qm-dur">⏱${q.dur}mnt</span><button class="qm-del-btn" onclick="deleteQuest('${q.id}')">🗑️</button>`;
-    list.appendChild(row);
-  });
-}
 function deleteQuest(questId){
   if(!confirm('Hapus latihan ini?'))return;
   state.quests=state.quests.filter(q=>q.id!==questId);
-  save();renderAll();renderQuestManager();renderAdminQuests();showToast('🗑️ Latihan dihapus',true);
+  save();renderAll();renderQuestManagerV2();syncAdminQuestList2();showToast('🗑️ Latihan dihapus',true);
 }
 function addQuest(){
   const emoji=(document.getElementById('aqEmoji').value.trim()||'🎯');
@@ -1162,42 +1103,29 @@ function addQuest(){
   const id='q_'+Date.now();const {bg,bc}=COLOR_POOL[state.quests.length%COLOR_POOL.length];
   state.quests.push({id,emoji,name,dur,bg,bc});
   document.getElementById('aqEmoji').value='';document.getElementById('aqName').value='';document.getElementById('aqDur').value='30';
-  save();renderAll();renderQuestManager();renderAdminQuests();showToast('✅ Latihan "'+name+'" ditambahkan!');
+  save();renderAll();renderQuestManagerV2();syncAdminQuestList2();showToast('✅ Latihan "'+name+'" ditambahkan!');
 }
-function renderAdminQuests(){
+function adminPickedDateKey(){
   const dateVal=document.getElementById('adminDatePicker').value;
-  let k;
-  if(dateVal){const p=dateVal.split('-');const d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));k=dateKey(d);}
-  else k=todayKey();
-  const d=getDataForKey(k);
-  const list=document.getElementById('adminQuestList');list.innerHTML='';
-  if(!state.quests.length){list.innerHTML='<p style="font-size:12px;color:#90A4AE;font-weight:700;text-align:center;padding:12px;">Belum ada latihan.</p>';return;}
-  state.quests.forEach(q=>{
-    const row=document.createElement('div');row.className='admin-quest-row';
-    const isDone=!!d[q.id];
-    row.innerHTML=`<span class="q-icon">${q.emoji}</span><span class="q-name">${q.name}</span><span class="q-status ${isDone?'done-status':'pending-status'}">${isDone?'✓ Selesai':'– Belum'}</span><button class="cancel-btn" ${!isDone?'disabled':''} onclick="adminCancelQuest('${k}','${q.id}')">${isDone?'↩ Batal':'–'}</button>`;
-    list.appendChild(row);
-  });
-  document.getElementById('adminXpDisplay').textContent=state.totalXP+' XP';
+  if(!dateVal)return todayKey();
+  const p=dateVal.split('-');
+  return dateKey(new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])));
 }
 function adminCancelQuest(k,questId){
   const d=getDataForKey(k);if(!d[questId])return;
   const wasSubmitted=!!d.submitted;delete d[questId];
   if(wasSubmitted){d.submitted=false;state.totalXP=Math.max(0,state.totalXP-XP_PER-XP_BONUS);showToast('↩ Dibatalkan & XP dikurangi',true);}
   else showToast('↩ Misi dibatalkan');
-  save();renderAll();renderAdminQuests();
+  save();renderAll();syncAdminQuestList2();
 }
 function cancelWholeDay(){
-  const dateVal=document.getElementById('adminDatePicker').value;
-  let k;
-  if(dateVal){const p=dateVal.split('-');const d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));k=dateKey(d);}
-  else k=todayKey();
+  const k=adminPickedDateKey();
   const d=getDataForKey(k);
   const wasSubmitted=!!d.submitted;const doneCount=state.quests.filter(q=>d[q.id]).length;
   if(doneCount===0&&!wasSubmitted){showToast('Tidak ada misi selesai di tanggal ini');return;}
   let xpDeduct=doneCount*XP_PER;if(wasSubmitted)xpDeduct+=XP_BONUS;
   state.history[k]={};state.totalXP=Math.max(0,state.totalXP-xpDeduct);
-  save();renderAll();renderAdminQuests();showToast('🗑️ Seluruh hari dibatalkan! -'+xpDeduct+' XP',true);
+  save();renderAll();syncAdminQuestList2();showToast('🗑️ Seluruh hari dibatalkan! -'+xpDeduct+' XP',true);
 }
 function adjustXP(sign){
   const val=parseInt(document.getElementById('xpAdjustInput').value)||0;
@@ -1206,17 +1134,6 @@ function adjustXP(sign){
   save();renderAll();renderAdminPanel();showToast((sign>0?'⚡ +':'🔻 -')+val+' XP berhasil diubah');
 }
 
-function renderCustomBadgeList(){
-  const list=document.getElementById('customBadgeList');list.innerHTML='';
-  const cbs=state.customBadges||[];
-  if(!cbs.length){list.innerHTML='<p style="font-size:12px;color:#90A4AE;font-weight:700;text-align:center;padding:8px;">Belum ada piala spesial.</p>';return;}
-  cbs.forEach(cb=>{
-    const row=document.createElement('div');row.className='cb-row';
-    const unlocked=!!state.badges[cb.id];
-    row.innerHTML=`<span class="cb-icon">${cb.emoji}</span><div class="cb-info"><div class="cb-name">${cb.name}</div><div class="cb-xp">🔓 Unlock di ${cb.xpRequired} XP ${unlocked?'· ✅ Sudah dibuka!':''}</div></div><button class="cb-del-btn" onclick="deleteCustomBadge('${cb.id}')">🗑️</button>`;
-    list.appendChild(row);
-  });
-}
 function addCustomBadge(){
   const emoji=(document.getElementById('abEmoji').value.trim()||'🌟');
   const name=document.getElementById('abName').value.trim();
@@ -1227,12 +1144,12 @@ function addCustomBadge(){
   const id='cb_'+Date.now();
   state.customBadges.push({id,emoji,name,xpRequired:xpReq});
   document.getElementById('abEmoji').value='';document.getElementById('abName').value='';document.getElementById('abXP').value='500';
-  checkBadges();save();renderAll();renderCustomBadgeList();showToast('✨ Piala "'+name+'" ditambahkan!');
+  checkBadges();save();renderAll();syncCustomBadges2();showToast('✨ Piala "'+name+'" ditambahkan!');
 }
 function deleteCustomBadge(id){
   if(!confirm('Hapus piala ini?'))return;
   state.customBadges=(state.customBadges||[]).filter(cb=>cb.id!==id);
-  delete state.badges[id];save();renderAll();renderCustomBadgeList();showToast('🗑️ Piala dihapus',true);
+  delete state.badges[id];save();renderAll();syncCustomBadges2();showToast('🗑️ Piala dihapus',true);
 }
 
 let toastTimeout;
@@ -1243,6 +1160,173 @@ function showToast(msg,red=false){
   t.classList.add('show');clearTimeout(toastTimeout);
   toastTimeout=setTimeout(()=>t.classList.remove('show'),2800);
 }
+
+// ===== ADMIN PANEL (tabs & lists) =====
+const EMPTY_ADMIN_LIST=msg=>'<div style="text-align:center;color:#90A4AE;font-size:12px;padding:16px;">'+msg+'</div>';
+
+function clearBirthdate(){
+  document.getElementById('editBirthdate').value='';
+  if(!state.profile)state.profile={};
+  state.profile.birthdate=null;
+  save();renderAll();
+  showToast('✅ Tanggal lahir dihapus!');
+}
+
+function adm2Tab(name){
+  document.querySelectorAll('.adm2-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.adm2-section').forEach(s=>s.classList.toggle('active',s.id==='adm2-'+name));
+  if(name==='misi-harian'){renderQuestManagerV2();syncAdminQuestList2();}
+  if(name==='misi-mingguan')renderWeeklyV2();
+  if(name==='misi-bulanan')renderMonthlyV2();
+  if(name==='piala')syncCustomBadges2();
+  if(name==='karakter'){syncKarakterGrid2();syncKarakterAwarded2();}
+  if(name==='xp')document.getElementById('adminXpDisplay2').textContent=(state.totalXP||0)+' XP';
+  if(name==='investasi')loadInvestPricesForAdmin();
+}
+
+function adminListItem(icon,name,meta,actions,extraStyle){
+  return `<div class="adm2-list-item"${extraStyle?` style="${extraStyle}"`:''}>
+    <div class="adm2-list-item-icon">${icon}</div>
+    <div class="adm2-list-item-info">
+      <div class="adm2-list-item-name">${name}</div>
+      <div class="adm2-list-item-meta">${meta}</div>
+    </div>
+    <div class="adm2-list-item-actions">${actions}</div>
+  </div>`;
+}
+const editBtn=(type,id)=>`<button class="adm2-btn adm2-btn-sm" style="background:#E3F2FD;color:#1565C0;" onclick="openMisiEdit('${type}','${id}')">✏️</button>`;
+const delBtn=onclick=>`<button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="${onclick}">🗑️</button>`;
+
+function renderQuestManagerV2(){
+  const dest=document.getElementById('questManagerList2');
+  const quests=state.quests||[];
+  if(!quests.length){dest.innerHTML=EMPTY_ADMIN_LIST('Belum ada latihan');return;}
+  dest.innerHTML=quests.map(q=>adminListItem(q.emoji||'📌',q.name||'?','⏱ '+(q.dur||30)+' menit',
+    editBtn('harian',q.id)+delBtn(`deleteQuest('${q.id}')`))).join('');
+}
+
+function syncAdminQuestList2(){
+  const dp=document.getElementById('adminDatePicker');
+  if(!dp.value){
+    const t=new Date();
+    dp.value=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  }
+  const k=adminPickedDateKey();
+  const d=state.history[k]||{};
+  const dest=document.getElementById('adminQuestList2');
+  if(!state.quests.length){dest.innerHTML=EMPTY_ADMIN_LIST('Belum ada latihan');return;}
+  dest.innerHTML=state.quests.map(q=>{
+    const isDone=!!d[q.id];
+    const action=isDone
+      ?`<button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="adminCancelQuest('${k}','${q.id}')">↩ Batal</button>`
+      :'';
+    return adminListItem(q.emoji,q.name,isDone?'✓ Selesai':'– Belum',action);
+  }).join('');
+  document.getElementById('adminXpDisplay2').textContent=state.totalXP+' XP';
+}
+
+function renderWeeklyV2(){
+  const dest=document.getElementById('wmListAdmin2');
+  const missions=state.weeklyMissions||[];
+  if(!missions.length){dest.innerHTML=EMPTY_ADMIN_LIST('Belum ada misi mingguan');return;}
+  dest.innerHTML=missions.map(m=>adminListItem(m.emoji||'📅',m.name||'?','+'+(m.xp||50)+' XP',
+    editBtn('mingguan',m.id)+delBtn(`deleteWeeklyMission('${m.id}')`))).join('');
+}
+
+function renderMonthlyV2(){
+  const dest=document.getElementById('mmListAdmin2');
+  const missions=state.monthlyMissions||[];
+  if(!missions.length){dest.innerHTML=EMPTY_ADMIN_LIST('Belum ada misi bulanan');return;}
+  dest.innerHTML=missions.map(m=>adminListItem(m.emoji||'🗓️',m.name||'?','+'+(m.xp||100)+' XP',
+    editBtn('bulanan',m.id)+delBtn(`deleteMonthlyMission('${m.id}')`))).join('');
+}
+
+function syncCustomBadges2(){
+  const dest=document.getElementById('customBadgeList2');
+  const cbs=state.customBadges||[];
+  if(!cbs.length){dest.innerHTML=EMPTY_ADMIN_LIST('Belum ada piala spesial');return;}
+  dest.innerHTML=cbs.map(cb=>adminListItem(cb.emoji,cb.name,
+    '🔓 '+cb.xpRequired+' XP'+(state.badges[cb.id]?' · ✅ Sudah dibuka!':''),
+    delBtn(`deleteCustomBadge('${cb.id}')`))).join('');
+}
+
+function syncKarakterGrid2(){
+  document.getElementById('karakterSelectGrid2').innerHTML=KARAKTER_LIST.map(k=>`
+    <div class="adm2-kar-opt${selectedKarakter===k.id?' selected':''}" onclick="selectKarakter2('${k.id}')">
+      <div class="adm2-kar-emoji">${k.emoji}</div>
+      <div class="adm2-kar-name">${k.name}</div>
+    </div>`).join('');
+}
+function selectKarakter2(id){selectedKarakter=id;syncKarakterGrid2();}
+
+function syncKarakterAwarded2(){
+  const dest=document.getElementById('karakterAwardedList2');
+  const awarded=(state.karakterAwarded||[]).slice().reverse().slice(0,8);
+  if(!awarded.length){dest.innerHTML=EMPTY_ADMIN_LIST('Belum ada lencana.');return;}
+  dest.innerHTML=awarded.map(a=>{
+    const dd=new Date(a.timestamp);
+    const dateStr=dd.getDate()+' '+MONTHS_ID[dd.getMonth()]+' '+dd.getFullYear();
+    return adminListItem(a.emoji,a.name,'"'+(a.note||'—')+'" · '+dateStr,
+      delBtn(`deleteKarakter('${a.id}')`),'background:#F3E5F5;border-color:#CE93D8;');
+  }).join('');
+}
+
+// ===== EDIT MISI MODAL =====
+const MISI_EDIT_CFG={
+  harian:  {list:()=>state.quests,         metaKey:'dur',title:'⚔️ Edit Misi Harian',   metaLabel:'Durasi (menit)'},
+  mingguan:{list:()=>state.weeklyMissions, metaKey:'xp', title:'📅 Edit Misi Mingguan', metaLabel:'XP Reward'},
+  bulanan: {list:()=>state.monthlyMissions,metaKey:'xp', title:'🗓️ Edit Misi Bulanan', metaLabel:'XP Reward'},
+};
+function openMisiEdit(type,id){
+  const cfg=MISI_EDIT_CFG[type];
+  const item=(cfg.list()||[]).find(x=>x.id===id);if(!item)return;
+  document.getElementById('misiEditKey').value=id;
+  document.getElementById('misiEditType').value=type;
+  document.getElementById('misiEditEmoji').value=item.emoji||'';
+  document.getElementById('misiEditName').value=item.name||'';
+  document.getElementById('misiEditMeta').value=item[cfg.metaKey]||'';
+  document.getElementById('misiEditTitle').textContent=cfg.title;
+  document.getElementById('misiEditMetaLabel').textContent=cfg.metaLabel;
+  document.getElementById('misiEditOverlay').classList.add('open');
+}
+function closeMisiEdit(){document.getElementById('misiEditOverlay').classList.remove('open');}
+function saveMisiEdit(){
+  const id=document.getElementById('misiEditKey').value;
+  const type=document.getElementById('misiEditType').value;
+  const emoji=document.getElementById('misiEditEmoji').value.trim()||'📌';
+  const name=document.getElementById('misiEditName').value.trim();
+  const meta=parseInt(document.getElementById('misiEditMeta').value)||0;
+  if(!name){showToast('⚠️ Nama tidak boleh kosong!');return;}
+  if(meta<=0){showToast('⚠️ Nilai harus lebih dari 0!');return;}
+  const cfg=MISI_EDIT_CFG[type];
+  const item=(cfg.list()||[]).find(x=>x.id===id);
+  if(item){item.emoji=emoji;item.name=name;item[cfg.metaKey]=meta;}
+  save();renderAll();
+  if(type==='harian'){renderQuestManagerV2();syncAdminQuestList2();}
+  if(type==='mingguan')renderWeeklyV2();
+  if(type==='bulanan')renderMonthlyV2();
+  showToast('✅ Misi diupdate!');closeMisiEdit();
+}
+
+// ===== APP UPDATE NOTICE & SERVICE WORKER =====
+const APP_VERSION='2.0.1';
+function setupUpdateNotice(){
+  const bar=document.getElementById('notif-update');
+  db.ref('aslan_data/app_version').on('value',snap=>{
+    const latest=snap.val();
+    bar.style.display=latest&&latest!==APP_VERSION?'block':'none';
+  });
+  bar.onclick=()=>{
+    if('serviceWorker' in navigator)navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
+    if('caches' in window)caches.keys().then(names=>names.forEach(n=>caches.delete(n)));
+    setTimeout(()=>{location.href=location.origin+location.pathname+'?v='+Date.now();},500);
+  };
+}
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+
 // INIT
 setSyncStatus('syncing');
+setupUpdateNotice();
 load();
