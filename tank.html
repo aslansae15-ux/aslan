@@ -4,80 +4,100 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Tank Baja Aslan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:monospace;}
+html,body{width:100%;height:100%;overflow:hidden;background:#05060F;font-family:'Plus Jakarta Sans',system-ui,sans-serif;}
 canvas{display:block;position:fixed;top:0;left:0;}
 
-/* ===== TOMBOL HOME (MERAH) — GANTI href DI BAWAH ===== */
+/* Tombol kembali ke beranda */
 #homeBtn{
-  position:fixed;top:10px;right:10px;
-  width:46px;height:46px;border-radius:50%;
-  background:#cc0000;border:3px solid #ff6666;
-  color:#fff;font-size:22px;font-weight:bold;
-  cursor:pointer;z-index:50;
+  position:fixed;top:calc(10px + env(safe-area-inset-top));right:10px;z-index:50;
+  width:44px;height:44px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 16px rgba(255,0,0,0.7);
-  text-decoration:none;
+  color:#fff;font-size:17px;font-weight:800;text-decoration:none;
+  background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.28);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.35);
+  transition:background .2s,transform .15s;
 }
-#homeBtn:hover{background:#ee2222;}
+#homeBtn:hover{background:rgba(255,255,255,0.24);}
+#homeBtn:active{transform:scale(.92);}
 
 #controls{
-  position:fixed;bottom:0;left:0;right:0;
+  position:fixed;bottom:0;left:0;right:0;z-index:10;
   display:flex;justify-content:space-between;align-items:flex-end;
-  padding:10px 14px 16px;pointer-events:none;z-index:10;
+  padding:10px 16px calc(16px + env(safe-area-inset-bottom));pointer-events:none;
 }
-.move-group{display:flex;gap:10px;align-items:center;}
+.move-group{display:flex;gap:12px;align-items:center;}
 .mid-group{display:flex;flex-direction:column;align-items:center;gap:6px;}
 
 .btn{pointer-events:all;border:none;border-radius:50%;cursor:pointer;
-  user-select:none;-webkit-tap-highlight-color:transparent;
-  display:flex;align-items:center;justify-content:center;flex-direction:column;outline:none;}
+  user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;outline:none;
+  transition:transform .12s;}
 .move-btn{
-  width:68px;height:68px;font-size:26px;color:#fff;
-  background:radial-gradient(circle at 35% 35%,#66ccff,#114488);
-  box-shadow:0 0 16px rgba(0,150,255,0.5),0 4px 0 #012;
+  width:68px;height:68px;font-size:24px;color:#fff;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,0.38),rgba(255,255,255,0.08) 70%);
+  border:1px solid rgba(255,255,255,0.32);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 10px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.35);
 }
-.move-btn:active{transform:scale(0.87);}
+.move-btn:active{transform:scale(0.88);}
 
 #weaponBtn{
   pointer-events:all;cursor:pointer;outline:none;
   -webkit-tap-highlight-color:transparent;
-  background:rgba(20,20,70,0.92);border:2px solid #8888ff;
-  border-radius:14px;color:#fff;font-size:11px;font-weight:bold;
-  padding:7px 14px;white-space:nowrap;font-family:monospace;
-  box-shadow:0 0 12px rgba(100,100,255,0.45);
+  padding:9px 16px;border-radius:999px;white-space:nowrap;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:800;color:#fff;letter-spacing:.3px;
+  background:rgba(122,90,248,0.35);border:1px solid rgba(190,175,255,0.55);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.35);
+  transition:transform .12s;
 }
-#weaponBtn:active{transform:scale(0.9);}
+#weaponBtn:active{transform:scale(0.92);}
 
 #fireBtn{
-  width:90px;height:90px;font-size:12px;font-weight:bold;
-  color:#fff;line-height:1.7;
-  background:radial-gradient(circle at 35% 35%,#ff9955,#aa2200);
-  box-shadow:0 0 25px rgba(255,100,0,0.5),0 4px 0 #600;
-  animation:pulseBtn 1.2s ease-in-out infinite;
+  width:92px;height:92px;
+  font-family:Fredoka,sans-serif;font-size:15px;font-weight:600;line-height:1.35;color:#fff;
+  background:radial-gradient(circle at 35% 30%,#FFB27A,#EF5B4C 55%,#B12C1F);
+  border:1px solid rgba(255,255,255,0.35);
+  box-shadow:0 0 26px rgba(239,91,76,0.55),inset 0 2px 0 rgba(255,255,255,0.35);
+  animation:pulseBtn 1.4s ease-in-out infinite;
 }
-#fireBtn:active{animation:none;transform:scale(0.87);}
+#fireBtn:active{animation:none;transform:scale(0.88);}
 @keyframes pulseBtn{
-  0%,100%{box-shadow:0 0 20px rgba(255,100,0,0.5),0 4px 0 #600;}
-  50%    {box-shadow:0 0 42px rgba(255,150,0,0.85),0 4px 0 #600;}
+  0%,100%{box-shadow:0 0 18px rgba(239,91,76,0.45),inset 0 2px 0 rgba(255,255,255,0.35);}
+  50%    {box-shadow:0 0 40px rgba(255,140,90,0.85),inset 0 2px 0 rgba(255,255,255,0.35);}
 }
 
 #lvlBanner{
-  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-  font-family:monospace;font-size:36px;font-weight:bold;
-  color:#ffe600;text-shadow:0 0 30px #ffaa00,3px 3px 0 #000;
-  pointer-events:none;z-index:20;opacity:0;
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;
+  font-family:Fredoka,sans-serif;font-size:40px;font-weight:700;
+  color:#FFE38F;text-shadow:0 0 30px rgba(244,174,22,0.9),0 4px 0 rgba(0,0,0,0.6);
+  pointer-events:none;opacity:0;
   transition:opacity 0.4s;text-align:center;white-space:nowrap;
 }
 #lvlBanner.show{opacity:1;}
+
+/* Tablet: tombol lebih besar supaya mudah disentuh */
+@media (min-width:768px){
+  #homeBtn{width:54px;height:54px;font-size:20px;top:calc(14px + env(safe-area-inset-top));right:14px;}
+  #controls{padding:14px 24px calc(22px + env(safe-area-inset-bottom));}
+  .move-group{gap:16px;}
+  .move-btn{width:88px;height:88px;font-size:30px;}
+  #weaponBtn{font-size:15px;padding:12px 22px;}
+  #fireBtn{width:118px;height:118px;font-size:19px;}
+  #lvlBanner{font-size:54px;}
+}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
 <!-- ===== GANTI href DI SINI UNTUK TOMBOL HOME MERAH ===== -->
-<a id="homeBtn" href="index.html" title="Kembali">&#10005;</a>
+<a id="homeBtn" href="index.html" title="Kembali ke beranda" aria-label="Kembali ke beranda">&#10005;</a>
 
 <div id="controls">
   <div class="move-group">
@@ -87,7 +107,7 @@ canvas{display:block;position:fixed;top:0;left:0;}
   <div class="mid-group">
     <button id="weaponBtn">&#9733; BIASA (W)</button>
   </div>
-  <button class="btn" id="fireBtn">&#128293;<br>TEMBAK<br>&#128293;</button>
+  <button class="btn" id="fireBtn">&#128293;<br>TEMBAK</button>
 </div>
 <div id="lvlBanner"></div>
 
@@ -96,6 +116,8 @@ canvas{display:block;position:fixed;top:0;left:0;}
    TANK BAJA ASLAN  —  Full Game v3
    ============================================================ */
 
+// Canvas only uses a web font once it has loaded, so request both up front.
+if(document.fonts){document.fonts.load('bold 34px Fredoka');document.fonts.load('bold 15px "Plus Jakarta Sans"');document.fonts.load('600 12px "Plus Jakarta Sans"');}
 var C   = document.getElementById('c');
 var ctx = C.getContext('2d');
 function resize(){ C.width=window.innerWidth; C.height=window.innerHeight; }
@@ -396,7 +418,7 @@ function drawTank(tx,ty,al){
     ctx.globalAlpha=alpha;
   }
   if(tier>=4){
-    ctx.fillStyle=T.acc;ctx.font='bold 9px monospace';ctx.textAlign='center';
+    ctx.fillStyle=T.acc;ctx.font='bold 9px "Plus Jakarta Sans",sans-serif';ctx.textAlign='center';
     ctx.fillText('*',-20,-30);ctx.fillText('*',20,-30);
   }
   if(tier>=6){
@@ -462,7 +484,7 @@ function drawTank(tx,ty,al){
   }
 
   /* name label */
-  ctx.font='bold 11px monospace';ctx.textAlign='center';
+  ctx.font='bold 11px "Plus Jakarta Sans",sans-serif';ctx.textAlign='center';
   ctx.fillStyle=T.acc;ctx.shadowBlur=6;ctx.shadowColor=T.acc;
   ctx.fillText(T.lbl,0,13);ctx.shadowBlur=0;
   ctx.textAlign='left';
@@ -505,7 +527,7 @@ function drawPlane(p){
   ctx.globalAlpha=1;ctx.restore();
   /* name label — drawn outside flip transform */
   ctx.save();ctx.translate(p.x,p.y-50);
-  ctx.font='bold 13px monospace';ctx.textAlign='center';
+  ctx.font='bold 13px "Plus Jakarta Sans",sans-serif';ctx.textAlign='center';
   ctx.strokeStyle='#000';ctx.lineWidth=3;ctx.strokeText(p.name,0,0);
   ctx.fillStyle='#fff';ctx.fillText(p.name,0,0);
   ctx.restore();
@@ -557,7 +579,7 @@ function drawMessenger(){
   ctx.fillStyle='rgba(200,30,30,0.92)';ctx.fill();
   ctx.strokeStyle='rgba(160,10,10,0.7)';ctx.lineWidth=1;ctx.stroke();
   /* flag text */
-  ctx.font='bold 13px monospace';ctx.textAlign='center';
+  ctx.font='bold 13px "Plus Jakarta Sans",sans-serif';ctx.textAlign='center';
   var tx=mx-40-fLen/2,ty=my+5;
   ctx.strokeStyle='#000';ctx.lineWidth=3;ctx.strokeText(messenger.msg,tx,ty);
   ctx.fillStyle='#fff';ctx.fillText(messenger.msg,tx,ty);
@@ -645,7 +667,7 @@ function drawPops(){
   for(var i=pops.length-1;i>=0;i--){
     var s=pops[i];var a=s.life/60;
     ctx.globalAlpha=a;ctx.fillStyle=s.col;
-    ctx.font='bold 18px monospace';ctx.fillText(s.txt,s.x,s.y);
+    ctx.font='bold 18px "Plus Jakarta Sans",sans-serif';ctx.fillText(s.txt,s.x,s.y);
     s.y+=s.vy;s.life--;if(s.life<=0) pops.splice(i,1);
   }
   ctx.globalAlpha=1;ctx.textAlign='left';
@@ -670,22 +692,22 @@ function drawHUD(){
   /* score */
   ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(8,8,220,30);
   ctx.strokeStyle='#ffee00';ctx.lineWidth=2;ctx.strokeRect(8,8,220,30);
-  ctx.fillStyle='#ffee00';ctx.font='bold 15px monospace';ctx.fillText('SKOR: '+score,16,28);
+  ctx.fillStyle='#ffee00';ctx.font='bold 15px "Plus Jakarta Sans",sans-serif';ctx.fillText('SKOR: '+score,16,28);
   /* level */
   ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(8,44,185,28);
   ctx.strokeStyle='#88ffcc';ctx.strokeRect(8,44,185,28);
-  ctx.fillStyle='#88ffcc';ctx.font='bold 14px monospace';ctx.fillText('LEVEL: '+level,16,62);
+  ctx.fillStyle='#88ffcc';ctx.font='bold 14px "Plus Jakarta Sans",sans-serif';ctx.fillText('LEVEL: '+level,16,62);
   /* lives */
   ctx.textAlign='right';
-  ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(C.width-175,8,168,30);
-  ctx.strokeStyle='#ff6688';ctx.strokeRect(C.width-175,8,168,30);
+  ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(C.width-231,8,168,30);
+  ctx.strokeStyle='#ff6688';ctx.strokeRect(C.width-231,8,168,30);
   var hearts='';for(var i=0;i<maxLives;i++) hearts+=(i<lives)?'\u2764':'\u25A1';
-  ctx.fillStyle='#ff6688';ctx.font='bold 17px monospace';ctx.fillText(hearts,C.width-12,28);
+  ctx.fillStyle='#ff6688';ctx.font='bold 17px "Plus Jakarta Sans",sans-serif';ctx.fillText(hearts,C.width-68,28);
   /* weapon */
   ctx.textAlign='left';
   ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(8,78,200,26);
   ctx.strokeStyle='#aaaaff';ctx.strokeRect(8,78,200,26);
-  ctx.fillStyle='#aaaaff';ctx.font='bold 12px monospace';ctx.fillText('SENJATA: '+curWeapon().name,13,95);
+  ctx.fillStyle='#aaaaff';ctx.font='bold 12px "Plus Jakarta Sans",sans-serif';ctx.fillText('SENJATA: '+curWeapon().name,13,95);
   /* buffs */
   var iy=110;
   if(rapidFire>0){ctx.fillStyle='#ffee00';ctx.fillText('\u26A1RAPID '+Math.ceil(rapidFire/60)+'s',13,iy);iy+=18;}
@@ -697,7 +719,7 @@ function drawHUD(){
   if(combo>=2){
     var cp=Math.min(combo/10,1);
     ctx.textAlign='center';
-    ctx.font='bold '+(18+Math.min(combo,10))+'px monospace';
+    ctx.font='bold '+(18+Math.min(combo,10))+'px Fredoka,sans-serif';
     var cr=Math.floor(255*cp),cg=Math.floor(255*(1-cp));
     ctx.fillStyle='rgb('+cr+','+cg+',0)';
     ctx.shadowBlur=12;ctx.shadowColor='rgb('+cr+','+cg+',0)';
@@ -714,17 +736,17 @@ function drawStart(){
   ctx.save();ctx.textAlign='center';
   var sc=1+0.03*Math.sin(titleAnim);
   ctx.translate(cx,cy-120);ctx.scale(sc,sc);
-  ctx.font='bold 32px monospace';
+  ctx.font='bold 34px Fredoka,sans-serif';
   ctx.strokeStyle='#000';ctx.lineWidth=6;ctx.strokeText('TANK BAJA ASLAN',0,0);
   ctx.fillStyle='#ffee00';ctx.shadowBlur=20;ctx.shadowColor='#ffaa00';
   ctx.fillText('TANK BAJA ASLAN',0,0);ctx.shadowBlur=0;
   ctx.restore();
   ctx.textAlign='center';
-  ctx.fillStyle='#ffaaff';ctx.font='bold 13px monospace';
+  ctx.fillStyle='#ffaaff';ctx.font='bold 13px "Plus Jakarta Sans",sans-serif';
   ctx.fillText('\u2605 Dibuat Spesial untuk ASLAN \u2605',cx,cy-82);
   ctx.fillStyle='rgba(20,20,60,0.88)';ctx.strokeStyle='#445588';ctx.lineWidth=2;
-  ctx.roundRect(cx-225,cy-68,450,190,12);ctx.fill();ctx.stroke();
-  ctx.fillStyle='#aabbff';ctx.font='12px monospace';
+  ctx.roundRect(cx-225,cy-68,450,204,14);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#aabbff';ctx.font='600 12px "Plus Jakarta Sans",sans-serif';
   ctx.fillText('\u25C4 \u25BA     Gerak tank kiri / kanan',cx,cy-42);
   ctx.fillText('\uD83D\uDD25 TEMBAK = Tembakkan peluru',cx,cy-18);
   ctx.fillText('W / SENJATA = Ganti senjata',cx,cy+6);
@@ -732,8 +754,8 @@ function drawStart(){
   ctx.fillText('\uD83C\uDF6C Permen (lv5+) = Clone Tank!',cx,cy+54);
   ctx.fillText('\uD83D\uDCA3 BOM = Hancurkan semua! (lv10+)',cx,cy+78);
   var pa=0.55+0.45*Math.sin(titleAnim*2.2);
-  ctx.globalAlpha=pa;ctx.fillStyle='#fff';ctx.font='bold 16px monospace';
-  ctx.fillText('Tekan  TEMBAK  untuk mulai!',cx,cy+122);
+  ctx.globalAlpha=pa;ctx.fillStyle='#fff';ctx.font='bold 16px "Plus Jakarta Sans",sans-serif';
+  ctx.fillText('Tekan TEMBAK untuk mulai!',cx,cy+116);
   ctx.globalAlpha=1;ctx.textAlign='left';
 }
 
@@ -742,21 +764,21 @@ function drawGameOver(){
   ctx.fillStyle='rgba(0,0,0,0.82)';ctx.fillRect(0,0,C.width,C.height);
   var cx=C.width/2,cy=C.height/2;
   ctx.textAlign='center';
-  ctx.font='bold 46px monospace';
+  ctx.font='bold 48px Fredoka,sans-serif';
   ctx.strokeStyle='#660000';ctx.lineWidth=6;ctx.strokeText('GAME OVER',cx,cy-70);
   ctx.fillStyle='#ff4444';ctx.fillText('GAME OVER',cx,cy-70);
-  ctx.fillStyle='#ffee00';ctx.font='bold 20px monospace';ctx.fillText('Skor: '+score,cx,cy-18);
-  ctx.fillStyle='#aabbff';ctx.font='13px monospace';ctx.fillText('Level Tercapai: '+level,cx,cy+10);
+  ctx.fillStyle='#ffee00';ctx.font='bold 20px "Plus Jakarta Sans",sans-serif';ctx.fillText('Skor: '+score,cx,cy-18);
+  ctx.fillStyle='#aabbff';ctx.font='600 13px "Plus Jakarta Sans",sans-serif';ctx.fillText('Level Tercapai: '+level,cx,cy+10);
   /* retry */
   ctx.fillStyle='rgba(0,100,0,0.85)';ctx.strokeStyle='#44ff44';ctx.lineWidth=3;
   ctx.roundRect(cx-130,cy+36,260,48,14);ctx.fill();ctx.stroke();
   var pa=0.7+0.3*Math.sin(Date.now()/400);
-  ctx.globalAlpha=pa;ctx.fillStyle='#fff';ctx.font='bold 15px monospace';
+  ctx.globalAlpha=pa;ctx.fillStyle='#fff';ctx.font='bold 15px "Plus Jakarta Sans",sans-serif';
   ctx.fillText('\u25B6 ULANGI GAME',cx,cy+65);ctx.globalAlpha=1;
   /* home */
   ctx.fillStyle='rgba(100,0,0,0.8)';ctx.strokeStyle='#ff4444';ctx.lineWidth=2;
   ctx.roundRect(cx-130,cy+95,260,40,12);ctx.fill();ctx.stroke();
-  ctx.fillStyle='#ffaaaa';ctx.font='bold 13px monospace';
+  ctx.fillStyle='#ffaaaa';ctx.font='bold 13px "Plus Jakarta Sans",sans-serif';
   ctx.fillText('\u2302 KEMBALI HOME',cx,cy+119);
   ctx.textAlign='left';
 }
@@ -776,13 +798,13 @@ function drawVictory(){
   ctx.fillText('\uD83C\uDFC6',0,0);ctx.shadowBlur=0;ctx.restore();
   /* text */
   ctx.textAlign='center';
-  ctx.font='bold 38px monospace';
+  ctx.font='bold 38px "Plus Jakarta Sans",sans-serif';
   ctx.strokeStyle='#000';ctx.lineWidth=6;ctx.strokeText('ASLAN JUARA!!',cx,cy-28);
   ctx.fillStyle='#ffee00';ctx.shadowBlur=22;ctx.shadowColor='#ffaa00';
   ctx.fillText('ASLAN JUARA!!',cx,cy-28);ctx.shadowBlur=0;
-  ctx.fillStyle='#fff';ctx.font='bold 20px monospace';ctx.fillText('Selamat Aslan! Kamu Hebat!',cx,cy+14);
-  ctx.fillStyle='#88ffcc';ctx.font='bold 16px monospace';ctx.fillText('Skor Akhir: '+score,cx,cy+46);
-  ctx.fillStyle='#ffaaff';ctx.font='14px monospace';ctx.fillText('Ayah Bunda Bangga! \u2764\u2764',cx,cy+72);
+  ctx.fillStyle='#fff';ctx.font='bold 20px "Plus Jakarta Sans",sans-serif';ctx.fillText('Selamat Aslan! Kamu Hebat!',cx,cy+14);
+  ctx.fillStyle='#88ffcc';ctx.font='bold 16px "Plus Jakarta Sans",sans-serif';ctx.fillText('Skor Akhir: '+score,cx,cy+46);
+  ctx.fillStyle='#ffaaff';ctx.font='600 14px "Plus Jakarta Sans",sans-serif';ctx.fillText('Ayah Bunda Bangga! \u2764\u2764',cx,cy+72);
   /* stars */
   for(var si=0;si<5;si++){
     var da=0.7+0.3*Math.sin(Date.now()/200+si);
@@ -796,7 +818,7 @@ function drawVictory(){
     doShake(4);
   }
   var pa=0.6+0.4*Math.sin(Date.now()/400);
-  ctx.globalAlpha=pa;ctx.fillStyle='#fff';ctx.font='bold 14px monospace';
+  ctx.globalAlpha=pa;ctx.fillStyle='#fff';ctx.font='bold 14px "Plus Jakarta Sans",sans-serif';
   ctx.fillText('Tekan TEMBAK untuk main lagi!',cx,cy+150);
   ctx.globalAlpha=1;ctx.textAlign='left';
 }

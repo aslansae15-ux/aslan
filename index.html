@@ -1,506 +1,568 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2E7D32">
-    <link rel="apple-touch-icon" href="icon.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="manifest" href="manifest.json">
-    <title>Aslan's Daily Quest — Keluarga Sejati</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0C8A4B">
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <title>Aslan's Daily Quest — Keluarga Sejati</title>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
-        authDomain: "aslan-sae.firebaseapp.com",
-        databaseURL: "https://aslan-sae-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "aslan-sae",
-        storageBucket: "aslan-sae.appspot.com",
-        messagingSenderId: "938084212857",
-        appId: "1:938084212857:web:54257ad8a0b2714510b4a8"
-      };
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-      const FB_REF = db.ref('aslan_data');
-    </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUaY5sPMLlw9Vhz6xj-pWPpzREea4gFLI",
+      authDomain: "aslan-sae.firebaseapp.com",
+      databaseURL: "https://aslan-sae-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "aslan-sae",
+      storageBucket: "aslan-sae.appspot.com",
+      messagingSenderId: "938084212857",
+      appId: "1:938084212857:web:54257ad8a0b2714510b4a8"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const FB_REF = db.ref('aslan_data');
+  </script>
 
-<link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="confetti-container" id="confettiContainer"></div>
-<div class="sync-dot" id="syncDot"></div>
 
-<div id="app-wrapper">
+<!-- ═════════ MENU SAMPING (TABLET) ═════════ -->
+<aside class="side-nav" aria-label="Menu utama">
+  <div class="side-brand">
+    <span class="side-brand-icon">⚔️</span>
+    <span class="side-brand-text">Aslan's Quest</span>
+  </div>
+  <button class="nav-item active" data-tab="today" onclick="switchTab('today')"><span class="nav-icon">⚔️</span><span class="nav-label">Misi</span></button>
+  <button class="nav-item" data-tab="streak" onclick="switchTab('streak')"><span class="nav-icon">🔥</span><span class="nav-label">Streak</span></button>
+  <button class="nav-item" data-tab="badges" onclick="switchTab('badges')"><span class="nav-icon">🏆</span><span class="nav-label">Piala</span></button>
+  <button class="nav-item" data-tab="progress" onclick="switchTab('progress')"><span class="nav-icon">📅</span><span class="nav-label">Log</span></button>
+  <button class="nav-item" data-tab="profile" onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
+  <button class="nav-item" data-tab="savings" onclick="switchTab('savings')"><span class="nav-icon">💰</span><span class="nav-label">Tabungan</span></button>
+  <button class="nav-item" data-tab="karakter" onclick="switchTab('karakter')"><span class="nav-icon">🌟</span><span class="nav-label">Karakter</span></button>
+  <button class="nav-item" data-tab="games" onclick="switchTab('games')"><span class="nav-icon">🎮</span><span class="nav-label">Game</span></button>
+  <div class="side-sep"></div>
+  <div class="side-label">Belajar</div>
+  <a class="nav-item" href="berlatih.html"><span class="nav-icon">🎯</span><span class="nav-label">Berlatih</span></a>
+  <a class="nav-item" href="perpustakaan.html"><span class="nav-icon">📚</span><span class="nav-label">Pustaka</span></a>
+  <a class="nav-item" href="jurnal.html"><span class="nav-icon">📔</span><span class="nav-label">Jurnal</span></a>
+  <a class="nav-item" href="investasi.html"><span class="nav-icon">📈</span><span class="nav-label">Investasi</span></a>
+  <a class="nav-item" href="english.html"><span class="nav-icon">🔤</span><span class="nav-label">English</span></a>
+  <div class="side-bottom">
+    <div class="side-sep"></div>
+    <div class="side-label">Orang Tua</div>
+    <button class="nav-item" onclick="openAdmin()"><span class="nav-icon">🔐</span><span class="nav-label">Panel Ortu</span></button>
+    <button class="nav-item" onclick="openSavingsLock()"><span class="nav-icon">🐷</span><span class="nav-label">Kelola Tabungan</span></button>
+  </div>
+</aside>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-brick-mortar"></div>
-  <span class="float-deco" style="top:10px;left:30%;animation:floatDeco 3s ease-in-out infinite;">🪙</span>
-  <span class="float-deco" style="top:14px;left:55%;animation:floatDeco 4s ease-in-out infinite 1s;">⭐</span>
-  <div class="header-top">
-    <span class="family-badge">🏠 Keluarga Sejati</span>
-    <span class="date-badge" id="dateDisplay">—</span>
-  </div>
-  <div class="hero-row">
-    <div class="avatar-wrap"><div class="avatar" id="headerAvatar">⚔️</div></div>
-    <div class="hero-info">
-      <h1 id="headerName">ASLAN ADIKA PRADA</h1>
-      <div class="subtitle" id="headerSubtitle">Pejuang Ilmu · Kelas 3 SD</div>
-      <div class="level-badge" id="headerLevel">⭐ Level 1</div>
-    </div>
-  </div>
-  <div class="xp-bar-wrap">
-    <div class="xp-label"><span>⚡ XP HARI INI</span><span id="xpText">0 / 70 XP</span></div>
-    <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
-  </div>
-</div>
+<div class="app shell" id="app-wrapper">
 
-<!-- MAIN -->
-<div class="main">
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tab tab-misi active" onclick="switchTab('today')">
-      <div class="tab-icon-wrap">⚔️</div>
-      <span class="tab-label">Misi</span>
-    </div>
-    <div class="tab tab-streak" onclick="switchTab('streak')">
-      <div class="tab-icon-wrap">🔥</div>
-      <span class="tab-label">Streak</span>
-    </div>
-    <div class="tab tab-piala" onclick="switchTab('badges')">
-      <div class="tab-icon-wrap">🏆</div>
-      <span class="tab-label">Piala</span>
-    </div>
-    <div class="tab tab-log" onclick="switchTab('progress')">
-      <div class="tab-icon-wrap">📅</div>
-      <span class="tab-label">Log</span>
-    </div>
-    <div class="tab tab-profil" onclick="switchTab('profile')">
-      <div class="tab-icon-wrap">👤</div>
-      <span class="tab-label">Profil</span>
-    </div>
-    <div class="tab tab-nabung" onclick="switchTab('savings')">
-      <div class="tab-icon-wrap">💰</div>
-      <span class="tab-label">Nabung</span>
-    </div>
-    <div class="tab tab-karakter" onclick="switchTab('karakter')">
-      <div class="tab-icon-wrap">🌟</div>
-      <span class="tab-label">Karakter</span>
-    </div>
-    <a class="tab tab-berlatih" href="berlatih.html">
-      <div class="tab-icon-wrap">🎯</div>
-      <span class="tab-label">Berlatih</span>
-    </a>
-    <div class="tab tab-game" onclick="switchTab('games')">
-      <div class="tab-icon-wrap">🎮</div>
-      <span class="tab-label">Game</span>
-    </div>
-    <a class="tab tab-perp" href="perpustakaan.html">
-      <div class="tab-icon-wrap">📝</div>
-      <span class="tab-label">Perpustakaan</span>
-    </a>
-    <a class="tab tab-jurnal" href="jurnal.html">
-      <div class="tab-icon-wrap">📔</div>
-      <span class="tab-label">Jurnal</span>
-    </a>
-    <a class="tab tab-investasi" href="investasi.html">
-      <div class="tab-icon-wrap">💰</div>
-      <span class="tab-label">Investasi</span>
-    </a>
-  </div>
-
-  <!-- TODAY -->
-  <div class="tab-content active" id="tab-today">
-    <div id="msgContainer"></div>
-    <div class="daily-motivation" id="dailyMotivationBox">
-      <div class="daily-motivation-text" id="dailyMotivationText"></div>
-    </div>
-    <div class="mission-lock-banner locked" id="missionLockBanner">
-      <div class="mission-lock-icon" id="missionLockIcon">🔒</div>
-      <div class="mission-lock-info">
-        <div class="mission-lock-title" id="missionLockTitle">MISI TERKUNCI</div>
-        <div class="mission-lock-desc" id="missionLockDesc">Masukkan PIN untuk mulai mengerjakan misi hari ini!</div>
-      </div>
-      <button class="mission-unlock-btn" id="missionUnlockBtn" onclick="openMissionPin()">🔓 BUKA</button>
-    </div>
-    <div class="section-title">🗡️ Misi Harian</div>
-    <div class="quest-grid" id="questGrid"></div>
-    <p style="text-align:center;font-size:11px;color:#90A4AE;font-weight:700;margin-bottom:10px;">Tap kartu misi untuk ceklis ✅</p>
-    <div class="submit-area">
-      <div class="status-text" id="statusText">0 dari 0 misi selesai</div>
-      <button class="submit-btn" id="submitBtn" onclick="confirmSubmit()" disabled>✅ SEMUA SELESAI!</button>
-    </div>
-    <div id="weeklyMissionBox"></div>
-    <div id="monthlyMissionBox"></div>
-  </div>
-
-  <!-- STREAK -->
-  <div class="tab-content" id="tab-streak">
-    <div class="section-title" style="font-size:7px;margin-bottom:10px;">Total XP Terkumpul</div>
-    <div class="xp-total-card">
-      <div class="xp-big" id="totalXpDisplay">0 XP</div>
-      <div class="xp-hint">Setiap misi selesai = +20 XP<br>Semua misi sehari = +10 XP Bonus! 🎉<br>Kumpulkan XP untuk naik Level! ⬆️</div>
-    </div>
-    <div class="streak-card">
-      <div class="streak-header">
-        <div><div class="streak-number" id="streakNum">0</div><div class="streak-label">Hari Berturut-turut 🔥</div></div>
-        <div class="streak-fire">🔥</div>
-      </div>
-      <div class="section-title" style="font-size:7px;margin-bottom:8px;">Minggu Ini</div>
-      <div class="week-row" id="weekRow"></div>
-    </div>
-    <div class="level-card">
-      <div class="section-title" style="font-size:7px;margin-bottom:10px;">🎯 Level Aslan</div>
-      <div class="level-row">
-        <div><div class="level-num" id="levelNum">Lv. 1</div><div class="level-name" id="levelName">Pejuang Pemula</div></div>
-        <div style="text-align:right;"><div class="level-next" id="levelNext">Butuh 100 XP lagi</div></div>
-      </div>
-      <div class="level-bar-track"><div class="level-bar-fill" id="levelBarFill" style="width:0%"></div></div>
-    </div>
-    <div style="background:var(--card);border-radius:14px;padding:18px;border:3px solid #C8E6C9;margin-bottom:16px;">
-      <div class="section-title" style="font-size:7px;margin-bottom:8px;">📈 XP 7 Hari Terakhir</div>
-      <div class="xp-chart" id="xpChart"></div>
-    </div>
-  </div>  
-  <!-- BADGES -->
-  <div class="tab-content" id="tab-badges">
-    <div class="badges-card">
-      <div class="section-title" style="font-size:7px;margin-bottom:14px;">🏆 Piala Aslan</div>
-      <div class="badges-grid">
-        <div class="badge-item"><div class="badge-icon" id="bicon-first">⭐</div><div class="badge-name">Misi Pertama</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-perfect">👑</div><div class="badge-name">Hari Sempurna</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak3">🔥</div><div class="badge-name">Streak 3 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak7">💎</div><div class="badge-name">Streak 7 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak14">🎈</div><div class="badge-name">Streak 14 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak15">🌭</div><div class="badge-name">Streak 15 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak30">🚀</div><div class="badge-name">Streak 30 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak40">🌟</div><div class="badge-name">Streak 40 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak50">🌟</div><div class="badge-name">Streak 50 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-streak60">🌟</div><div class="badge-name">Streak 60 Hari</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp100">⚡</div><div class="badge-name">100 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp300">🍓</div><div class="badge-name">300 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp1000">💰</div><div class="badge-name">1000 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp1500">🐯</div><div class="badge-name">1500 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp2500">🔥</div><div class="badge-name">2500 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp4000">🎯</div><div class="badge-name">4000 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp5000">🎯</div><div class="badge-name">5000 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-xp6000">🎯</div><div class="badge-name">6000 XP</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-quest3">🥉</div><div class="badge-name">3 Misi</div></div>
-        <div class="badge-item"><div class="badge-icon" id="bicon-hero">👪</div><div class="badge-name">Hero Keluarga</div></div>
+  <!-- ═════════ HEADER ═════════ -->
+  <header class="hero">
+    <div class="hero-top">
+      <span class="hero-chip">🏠 Keluarga Sejati</span>
+      <div class="hero-actions">
+        <span class="hero-chip"><span id="dateDisplay">—</span><span class="sync-dot" id="syncDot" title="Status sinkronisasi"></span></span>
+        <button class="hero-icon-btn" onclick="openAdmin()" title="Panel Orang Tua" aria-label="Panel Orang Tua">🔒</button>
       </div>
     </div>
-    <div class="badges-card custom-badges-section" id="customBadgesSection" style="display:none;">
-      <div class="section-title" style="font-size:7px;margin-bottom:14px;">🌟 Piala Spesial dari Ayah &amp; Bunda</div>
-      <div class="badges-grid custom-badges-grid" id="customBadgesGrid"></div>
-    </div>
-    <div class="badges-hint">Selesaikan misi setiap hari untuk membuka semua piala!<br>Terus semangat, Aslan Adika Prada! 💪🎮</div>
-  </div>
-
-  <!-- PROGRESS -->
-  <div class="tab-content" id="tab-progress">
-    <div class="section-title">📅 Progress 30 Hari</div>
-    <div class="tables-wrap" id="progressTables"></div>
-  </div>
-
-  <!-- PROFILE -->
-  <div class="tab-content" id="tab-profile">
-    <div class="section-title">👤 Profil Hero</div>
-    <div class="profile-card">
-      <div class="profile-photo-area"><div class="profile-photo" id="profilePhotoDisplay">⚔️</div></div>
-      <div class="profile-name-display" id="profileNameDisplay">ASLAN ADIKA PRADA</div>
-      <div class="profile-class-badge" id="profileClassBadge">Kelas 3 SD</div>
-      <div class="profile-details-grid">
-        <div class="profile-detail-box"><div class="profile-detail-label">🎂 Tanggal Lahir</div><div class="profile-detail-value" id="profileBirthdate">—</div></div>
-        <div class="profile-detail-box"><div class="profile-detail-label">🎈 Usia Saat Ini</div><div class="profile-detail-value" id="profileAge">— tahun</div></div>
-        <div class="profile-detail-box"><div class="profile-detail-label">⚖️ Berat Badan</div><div class="profile-detail-value" id="profileWeight">— kg</div></div>
-        <div class="profile-detail-box"><div class="profile-detail-label">📏 Tinggi Badan</div><div class="profile-detail-value" id="profileHeight">— cm</div></div>
+    <div class="hero-body">
+      <div class="hero-main">
+        <div class="avatar" id="headerAvatar">⚔️</div>
+        <div class="hero-info">
+          <h1 class="hero-name" id="headerName">Aslan Adika Prada</h1>
+          <div class="hero-sub" id="headerSubtitle">Pejuang Ilmu · Kelas 3 SD</div>
+          <div class="level-chip" id="headerLevel">⭐ Level 1</div>
+        </div>
       </div>
+      <div class="hero-xp">
+        <div class="hero-xp-row"><span>⚡ XP hari ini</span><span class="hero-xp-value" id="xpText">0 / 70 XP</span></div>
+        <div class="progress"><div class="progress-fill" id="xpFill"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ═════════ MISI (HARI INI) ═════════ -->
+    <!-- Di HP isi tampil satu kolom (urutan diatur lewat CSS order); di tablet mendatar jadi dua kolom. -->
+    <section class="tab-content active" id="tab-today">
+      <div class="today-layout">
+        <div class="today-main">
+          <div class="mission-lock-banner locked" id="missionLockBanner">
+            <div class="mission-lock-icon" id="missionLockIcon">🔒</div>
+            <div class="mission-lock-info">
+              <div class="mission-lock-title" id="missionLockTitle">Misi terkunci</div>
+              <div class="mission-lock-desc" id="missionLockDesc">Masukkan PIN untuk mulai mengerjakan misi hari ini!</div>
+            </div>
+            <button class="mission-unlock-btn" id="missionUnlockBtn" onclick="openMissionPin()">🔓 Buka</button>
+          </div>
+
+          <div class="section-head">
+            <h2 class="section-title">Misi Harian</h2>
+            <span class="section-meta">Tap kartu untuk ceklis</span>
+          </div>
+          <div class="quest-grid" id="questGrid"></div>
+
+          <div class="submit-card">
+            <div class="status-text" id="statusText">0 dari 0 misi selesai</div>
+            <button class="btn btn-primary btn-lg btn-block submit-btn" id="submitBtn" onclick="confirmSubmit()" disabled>✅ Semua Selesai!</button>
+          </div>
+        </div>
+
+        <div class="today-side">
+          <div id="msgContainer"></div>
+          <div class="daily-motivation"><div class="daily-motivation-text" id="dailyMotivationText"></div></div>
+          <div id="weeklyMissionBox"></div>
+          <div id="monthlyMissionBox"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════════ STREAK ═════════ -->
+    <section class="tab-content" id="tab-streak">
+      <div class="page-head">
+        <h2 class="page-title">Streak &amp; Level</h2>
+        <p class="page-sub">Semangat harianmu dalam angka</p>
+      </div>
+      <div class="split streak-top">
+        <div class="stat-grid">
+          <div class="stat-tile stat-streak">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="streakNum">0</div>
+            <div class="stat-label">Hari berturut-turut</div>
+          </div>
+          <div class="stat-tile stat-xp">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-value" id="totalXpDisplay">0 XP</div>
+            <div class="stat-label">Total XP terkumpul</div>
+          </div>
+        </div>
+        <div class="card level-card">
+          <div class="level-row">
+            <div class="level-badge-big" id="levelNum">Lv. 1</div>
+            <div class="level-text">
+              <div class="level-name" id="levelName">Pejuang Pemula</div>
+              <div class="level-next" id="levelNext">Butuh 100 XP lagi</div>
+            </div>
+          </div>
+          <div class="progress"><div class="progress-fill level-bar-fill" id="levelBarFill"></div></div>
+        </div>
+      </div>
+      <div class="split">
+        <div class="card">
+          <div class="card-head"><h3 class="card-title">📆 Bulan ini</h3></div>
+          <div class="week-row" id="weekRow"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3 class="card-title">📈 XP 7 hari terakhir</h3></div>
+          <div class="xp-chart" id="xpChart"></div>
+        </div>
+      </div>
+      <div class="info-card"><span>💡</span><span>Setiap misi selesai = <b>+20 XP</b>. Semua misi dalam sehari = <b>+10 XP bonus</b>. Kumpulkan XP untuk naik level!</span></div>
+    </section>
+
+    <!-- ═════════ PIALA ═════════ -->
+    <section class="tab-content" id="tab-badges">
+      <div class="page-head">
+        <h2 class="page-title">Piala Aslan</h2>
+        <p class="page-sub" id="badgeSummary">Selesaikan misi untuk membuka piala</p>
+      </div>
+      <div class="card">
+        <div class="badges-grid" id="autoBadgesGrid">
+          <div class="badge-item"><div class="badge-icon" id="bicon-first">⭐</div><div class="badge-name">Misi Pertama</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-perfect">👑</div><div class="badge-name">Hari Sempurna</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-quest3">🥉</div><div class="badge-name">3 Misi</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak3">🔥</div><div class="badge-name">Streak 3 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak7">💎</div><div class="badge-name">Streak 7 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak14">🎈</div><div class="badge-name">Streak 14 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak15">🌭</div><div class="badge-name">Streak 15 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak30">🚀</div><div class="badge-name">Streak 30 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak40">🌟</div><div class="badge-name">Streak 40 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak50">🏅</div><div class="badge-name">Streak 50 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-streak60">🌈</div><div class="badge-name">Streak 60 Hari</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp100">⚡</div><div class="badge-name">100 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp300">🍓</div><div class="badge-name">300 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp1000">💰</div><div class="badge-name">1000 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp1500">🐯</div><div class="badge-name">1500 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp2500">☄️</div><div class="badge-name">2500 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp4000">🎯</div><div class="badge-name">4000 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp5000">💫</div><div class="badge-name">5000 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-xp6000">🏆</div><div class="badge-name">6000 XP</div></div>
+          <div class="badge-item"><div class="badge-icon" id="bicon-hero">👪</div><div class="badge-name">Hero Keluarga</div></div>
+        </div>
+      </div>
+      <div class="card" id="customBadgesSection" style="display:none;">
+        <div class="card-head"><h3 class="card-title">🌟 Piala spesial dari Ayah &amp; Bunda</h3></div>
+        <div class="badges-grid" id="customBadgesGrid"></div>
+      </div>
+      <div class="info-card"><span>💪</span><span>Selesaikan misi setiap hari untuk membuka semua piala. Terus semangat, Aslan!</span></div>
+    </section>
+
+    <!-- ═════════ LOG 30 HARI ═════════ -->
+    <section class="tab-content" id="tab-progress">
+      <div class="page-head">
+        <h2 class="page-title">Log 30 Hari</h2>
+        <p class="page-sub">Riwayat setiap latihan selama sebulan terakhir</p>
+      </div>
+      <div class="tables-wrap" id="progressTables"></div>
+    </section>
+
+    <!-- ═════════ PROFIL ═════════ -->
+    <section class="tab-content" id="tab-profile">
+      <div class="profile-layout">
+      <div class="profile-col">
+      <div class="card profile-card">
+        <div class="profile-cover"></div>
+        <div class="profile-photo" id="profilePhotoDisplay">⚔️</div>
+        <div class="profile-name" id="profileNameDisplay">Aslan Adika Prada</div>
+        <div class="profile-class" id="profileClassBadge">Kelas 3 SD</div>
+        <div class="profile-stats">
+          <div class="profile-stat"><div class="profile-stat-value" id="pStatXP">0</div><div class="profile-stat-label">Total XP</div></div>
+          <div class="profile-stat"><div class="profile-stat-value" id="pStatStreak">0</div><div class="profile-stat-label">Streak</div></div>
+          <div class="profile-stat"><div class="profile-stat-value" id="pStatBadges">0</div><div class="profile-stat-label">Piala</div></div>
+        </div>
+      </div>
+      <button class="savings-mini" onclick="switchTab('savings')">
+        <span class="savings-mini-icon">🐷</span>
+        <span class="savings-mini-text">
+          <span class="savings-mini-label">Saldo tabungan</span>
+          <span class="savings-mini-value" id="profileSavingsBalance">Rp 0</span>
+        </span>
+        <span class="chevron">›</span>
+      </button>
+      </div>
+      <div class="profile-col">
       <div class="birthday-countdown" id="birthdayCountdown" style="display:none;">
-        <div class="birthday-countdown-label">🎂 Hitung Mundur Ulang Tahun</div>
-        <div class="birthday-countdown-value" id="birthdayCountdownVal">—</div>
+        <div class="birthday-icon">🎂</div>
+        <div>
+          <div class="birthday-label">Hitung mundur ulang tahun</div>
+          <div class="birthday-value" id="birthdayCountdownVal">—</div>
+        </div>
       </div>
-      <div class="profile-stats-row">
-        <div class="profile-stat"><div class="profile-stat-value" id="pStatXP">0</div><div class="profile-stat-label">Total XP</div></div>
-        <div class="profile-stat"><div class="profile-stat-value" id="pStatStreak">0</div><div class="profile-stat-label">🔥 Streak</div></div>
-        <div class="profile-stat"><div class="profile-stat-value" id="pStatBadges">0</div><div class="profile-stat-label">🏆 Piala</div></div>
+      <div class="detail-grid">
+        <div class="detail-tile"><div class="detail-label">🎂 Tanggal lahir</div><div class="detail-value" id="profileBirthdate">—</div></div>
+        <div class="detail-tile"><div class="detail-label">🎈 Usia</div><div class="detail-value" id="profileAge">— tahun</div></div>
+        <div class="detail-tile"><div class="detail-label">⚖️ Berat badan</div><div class="detail-value" id="profileWeight">— kg</div></div>
+        <div class="detail-tile"><div class="detail-label">📏 Tinggi badan</div><div class="detail-value" id="profileHeight">— cm</div></div>
       </div>
-      <div class="profile-savings-box">
-        <div class="profile-savings-label">🐷 Saldo Tabungan Aslan</div>
-        <div class="profile-savings-value" id="profileSavingsBalance">Rp 0</div>
       </div>
-    </div>
-    <div class="badges-hint" style="font-size:11px;">🧩 Semangat Berlatih Aslan!!!<br>Mainkan semua misi dan jadilah HERO terhebat! 🚀</div>
-  </div>
+      </div>
+    </section>
 
-  <!-- SAVINGS -->
-  <div class="tab-content" id="tab-savings">
-    <div class="savings-hero">
-      <div class="savings-hero-label">🐷 Total Saldo Tabungan</div>
-      <div class="savings-hero-amount" id="savingsBalanceDisplay">Rp 0</div>
-      <div class="savings-hero-sub" id="savingsCountDisplay">0 transaksi</div>
-    </div>
-    <div class="savings-goal-card" id="savingsGoalCard" style="display:none;">
-      <div class="savings-goal-label">🎯 Target Tabungan: <span id="savingsGoalName">—</span></div>
-      <div class="savings-goal-bar-track"><div class="savings-goal-bar-fill" id="savingsGoalFill" style="width:0%"></div></div>
-      <div class="savings-goal-info"><span id="savingsGoalCurrent">Rp 0</span><span id="savingsGoalTarget">Rp 0</span></div>
-    </div>
-    <div style="background:#E0F2F1;border-radius:12px;padding:11px 16px;margin-bottom:16px;border:2px solid #80CBC4;text-align:center;">
-      <span style="font-size:12px;font-weight:700;color:#00695C;">🔒 Dikelola oleh Ayah &amp; Bunda · Aslan bisa lihat saja ya 😊</span>
-    </div>
-    <div class="savings-ledger">
-      <div class="savings-ledger-header"><div class="savings-ledger-title">📋 Riwayat Transaksi</div></div>
-      <div id="savingsLedger"></div>
-    </div>
-  </div>
+    <!-- ═════════ TABUNGAN ═════════ -->
+    <section class="tab-content" id="tab-savings">
+      <div class="savings-layout">
+        <div class="savings-col">
+          <div class="savings-hero">
+            <div class="savings-hero-label">🐷 Total saldo tabungan</div>
+            <div class="savings-hero-amount" id="savingsBalanceDisplay">Rp 0</div>
+            <div class="savings-hero-sub" id="savingsCountDisplay">0 transaksi</div>
+          </div>
+          <div class="card savings-goal-card" id="savingsGoalCard" style="display:none;">
+            <div class="savings-goal-label">🎯 Target: <b id="savingsGoalName">—</b></div>
+            <div class="progress"><div class="progress-fill savings-goal-fill" id="savingsGoalFill"></div></div>
+            <div class="savings-goal-info"><span id="savingsGoalCurrent">Rp 0</span><span id="savingsGoalTarget">Rp 0</span></div>
+          </div>
+          <div class="notice">
+            <span class="notice-text">🔒 Dikelola Ayah &amp; Bunda. Aslan bisa lihat saja ya 😊</span>
+            <button class="btn btn-secondary btn-sm" onclick="openSavingsLock()">Kelola</button>
+          </div>
+        </div>
+        <div class="card list-card">
+          <div class="card-head"><h3 class="card-title">📋 Riwayat transaksi</h3></div>
+          <div id="savingsLedger"></div>
+        </div>
+      </div>
+    </section>
 
-  <!-- KARAKTER -->
-  <div class="tab-content" id="tab-karakter">
-    <div class="karakter-hero">
-      <div class="karakter-hero-label">🌟 Lencana Karakter</div>
-      <div class="karakter-hero-count" id="karakterCount">0</div>
-      <div class="karakter-hero-sub" id="karakterSub">lencana diterima</div>
+    <!-- ═════════ KARAKTER ═════════ -->
+    <section class="tab-content" id="tab-karakter">
+      <div class="karakter-hero">
+        <div class="karakter-hero-label">🌟 Lencana karakter</div>
+        <div class="karakter-hero-count" id="karakterCount">0</div>
+        <div class="karakter-hero-sub" id="karakterSub">lencana diterima</div>
+      </div>
+      <div class="section-head"><h3 class="section-title">Diberikan Ayah &amp; Bunda</h3></div>
+      <div id="karakterBadgesDisplay"></div>
+      <div class="karakter-motivation"><div class="karakter-motivation-text" id="karakterMotivation">Terus tunjukkan karakter terbaikmu setiap hari, Aslan! 💪<br>Ayah &amp; Bunda selalu bangga sama kamu! ❤️</div></div>
+    </section>
+
+    <!-- ═════════ GAME ═════════ -->
+    <section class="tab-content" id="tab-games">
+      <div class="games-hero">
+        <div class="games-hero-title">🕹️ Game Aslan</div>
+        <div class="games-hero-sub">Kumpulkan XP untuk membuka game baru!</div>
+      </div>
+      <div id="tankLockBanner"></div>
+      <div class="games-grid">
+        <div id="tankGameCard"></div>
+        <div class="game-card locked">
+          <span class="game-icon">🧩</span>
+          <div class="game-name">Puzzle</div>
+          <div class="game-desc">Susun potongan gambar dengan benar!</div>
+          <span class="game-badge badge-locked">🔒 Terkunci</span>
+        </div>
+        <div class="game-card soon">
+          <span class="game-icon">✨</span>
+          <div class="game-name">Game baru</div>
+          <div class="game-desc">Sedang disiapkan Ayah, tunggu ya!</div>
+          <span class="game-badge badge-soon">⏳ Segera hadir</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ═════════ NAVIGASI BAWAH ═════════ -->
+<nav class="bottom-nav" aria-label="Navigasi utama">
+  <button class="nav-item active" data-tab="today" onclick="switchTab('today')"><span class="nav-icon">⚔️</span><span class="nav-label">Misi</span></button>
+  <button class="nav-item" data-tab="streak" onclick="switchTab('streak')"><span class="nav-icon">🔥</span><span class="nav-label">Streak</span></button>
+  <button class="nav-item" data-tab="badges" onclick="switchTab('badges')"><span class="nav-icon">🏆</span><span class="nav-label">Piala</span></button>
+  <button class="nav-item" data-tab="profile" onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
+  <button class="nav-item" data-tab="more" onclick="openMoreSheet()"><span class="nav-icon">✨</span><span class="nav-label">Lainnya</span></button>
+</nav>
+
+<!-- ═════════ MENU LAINNYA ═════════ -->
+<div class="overlay" id="moreSheet">
+  <div class="modal more-sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">Menu lainnya</h2>
+    <div class="menu-grid">
+      <button class="menu-tile" onclick="switchTab('progress')"><span class="menu-icon tile-orange">📅</span><span class="menu-label">Log 30 Hari</span></button>
+      <button class="menu-tile" onclick="switchTab('savings')"><span class="menu-icon tile-teal">💰</span><span class="menu-label">Tabungan</span></button>
+      <button class="menu-tile" onclick="switchTab('karakter')"><span class="menu-icon tile-violet">🌟</span><span class="menu-label">Karakter</span></button>
+      <button class="menu-tile" onclick="switchTab('games')"><span class="menu-icon tile-coral">🎮</span><span class="menu-label">Game</span></button>
+      <a class="menu-tile" href="berlatih.html"><span class="menu-icon tile-sky">🎯</span><span class="menu-label">Berlatih</span></a>
+      <a class="menu-tile" href="perpustakaan.html"><span class="menu-icon tile-brand">📚</span><span class="menu-label">Perpustakaan</span></a>
+      <a class="menu-tile" href="jurnal.html"><span class="menu-icon tile-gold">📔</span><span class="menu-label">Jurnal</span></a>
+      <a class="menu-tile" href="investasi.html"><span class="menu-icon tile-pink">📈</span><span class="menu-label">Investasi</span></a>
     </div>
-    <div class="karakter-section-title">🏅 Lencana Diberikan Ayah &amp; Bunda</div>
-    <div id="karakterBadgesDisplay"></div>
-    <div class="karakter-motivation"><div class="karakter-motivation-text" id="karakterMotivation">Terus tunjukkan karakter terbaikmu setiap hari, Aslan! 💪<br>Ayah &amp; Bunda selalu bangga sama kamu! ❤️</div></div>
-  </div>
-
-  <!-- Berlatih is available from the main tabs -->
-
-  <!-- GAMES -->
-  <div class="tab-content" id="tab-games">
-    <div class="games-hero">
-      <div class="games-hero-title">🕹️ GAME ASLAN</div>
-      <div class="games-hero-sub">Pilih game yang mau dimainkan! 🎮</div>
+    <div class="menu-section-label">Untuk Orang Tua</div>
+    <div class="menu-list">
+      <button class="menu-row" onclick="closeMoreSheet();openAdmin()"><span class="menu-row-icon">🔐</span><span class="menu-row-text">Panel Orang Tua</span><span class="chevron">›</span></button>
+      <button class="menu-row" onclick="closeMoreSheet();openSavingsLock()"><span class="menu-row-icon">💰</span><span class="menu-row-text">Kelola Tabungan</span><span class="chevron">›</span></button>
     </div>
-    <div id="tankLockBanner"></div>
-    <div class="section-title">🎮 Daftar Game</div>
-    <div class="games-grid">
-      <div id="tankGameCard"></div>
-      <a class="game-card puzzle" href="javascript:void(0)" onclick="return false;" style="cursor:default;">
-        <span class="game-icon">🧩</span>
-        <div class="game-name">PUZZLE</div>
-        <div class="game-desc">Susun potongan gambar dengan benar!</div>
-        <span class="game-badge" style="background:#9e9e9e;color:white;">🔒 Terkunci</span>
-      </a>
-      <a class="game-card spare1" href="javascript:void(0)" onclick="return false;" style="cursor:default;opacity:0.8;">
-        <span class="game-icon">🌿</span><div class="game-name">GAME 3</div><div class="game-desc">Segera hadir...</div>
-        <span class="game-badge soon" style="background:#eee;color:#9e9e9e;">⏳ Belum Ada</span>
-      </a>
-      <a class="game-card spare2" href="javascript:void(0)" onclick="return false;" style="cursor:default;opacity:0.8;">
-        <span class="game-icon">🚀</span><div class="game-name">GAME 4</div><div class="game-desc">Segera hadir...</div>
-        <span class="game-badge soon" style="background:#eee;color:#9e9e9e;">⏳ Belum Ada</span>
-      </a>
-      <a class="game-card spare3" href="javascript:void(0)" onclick="return false;" style="cursor:default;opacity:0.8;">
-        <span class="game-icon">🌊</span><div class="game-name">GAME 5</div><div class="game-desc">Segera hadir...</div>
-        <span class="game-badge soon" style="background:#eee;color:#9e9e9e;">⏳ Belum Ada</span>
-      </a>
-      <a class="game-card spare4" href="javascript:void(0)" onclick="return false;" style="cursor:default;opacity:0.8;">
-        <span class="game-icon">🐊</span><div class="game-name">GAME 6</div><div class="game-desc">Segera hadir...</div>
-        <span class="game-badge soon" style="background:#eee;color:#9e9e9e;">⏳ Belum Ada</span>
-      </a>
-    </div>
-  </div>
-
-</div><!-- end .main -->
-</div><!-- end #app-wrapper -->
-
-<!-- ═══════════════════════════════════════════════════════════
-     OVERLAYS (ORIGINAL — untouched)
-     ═══════════════════════════════════════════════════════════ -->
-
-<!-- MISSION PIN OVERLAY -->
-<div class="mission-pin-overlay" id="missionPinOverlay">
-  <div class="mission-pin-box">
-    <div class="mission-pin-logo">🔑</div>
-    <div class="mission-pin-title">MASUKKAN PIN MISI</div>
-    <div class="mission-pin-sub">Masukkan PIN kamu untuk<br>mulai mengerjakan misi hari ini! 💪</div>
-    <div class="mission-pin-display" id="missionPinDisplay">—</div>
-    <div class="mission-pin-hint" id="missionPinHint"></div>
-    <div class="mission-numpad">
-      <button class="mp-btn" onclick="mpPress('1')">1</button>
-      <button class="mp-btn" onclick="mpPress('2')">2</button>
-      <button class="mp-btn" onclick="mpPress('3')">3</button>
-      <button class="mp-btn" onclick="mpPress('4')">4</button>
-      <button class="mp-btn" onclick="mpPress('5')">5</button>
-      <button class="mp-btn" onclick="mpPress('6')">6</button>
-      <button class="mp-btn" onclick="mpPress('7')">7</button>
-      <button class="mp-btn" onclick="mpPress('8')">8</button>
-      <button class="mp-btn" onclick="mpPress('9')">9</button>
-      <button class="mp-btn mp-del" onclick="mpDel()">⌫</button>
-      <button class="mp-btn" onclick="mpPress('0')">0</button>
-      <button class="mp-btn mp-ok" onclick="doMissionLogin()">✓ OK</button>
-    </div>
-    <button class="mission-pin-cancel" onclick="closeMissionPin()">✕ Batal</button>
   </div>
 </div>
 
-<!-- CONFIRM SUBMIT MODAL -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-modal">
-    <div class="confirm-emoji">🎉</div>
-    <div class="confirm-title">SEMUA MISI SELESAI!</div>
-    <div class="confirm-text">Kamu sudah menyelesaikan semua misi hari ini. Luar biasa Aslan!</div>
-    <div class="confirm-xp-preview">
+<!-- ═════════ PIN MISI ═════════ -->
+<div class="overlay" id="missionPinOverlay">
+  <div class="modal pin-modal">
+    <div class="sheet-handle"></div>
+    <div class="pin-icon">🔑</div>
+    <h2 class="modal-title">Masukkan PIN Misi</h2>
+    <p class="modal-sub">Masukkan PIN untuk mulai mengerjakan misi hari ini 💪</p>
+    <div class="pin-display" id="missionPinDisplay">—</div>
+    <div class="pin-hint" id="missionPinHint"></div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="mpPress('1')">1</button>
+      <button class="pin-key" onclick="mpPress('2')">2</button>
+      <button class="pin-key" onclick="mpPress('3')">3</button>
+      <button class="pin-key" onclick="mpPress('4')">4</button>
+      <button class="pin-key" onclick="mpPress('5')">5</button>
+      <button class="pin-key" onclick="mpPress('6')">6</button>
+      <button class="pin-key" onclick="mpPress('7')">7</button>
+      <button class="pin-key" onclick="mpPress('8')">8</button>
+      <button class="pin-key" onclick="mpPress('9')">9</button>
+      <button class="pin-key pin-key-muted" onclick="mpDel()" aria-label="Hapus">⌫</button>
+      <button class="pin-key" onclick="mpPress('0')">0</button>
+      <button class="pin-key pin-key-ok" onclick="doMissionLogin()">OK</button>
+    </div>
+    <button class="btn btn-ghost btn-block" onclick="closeMissionPin()">Batal</button>
+  </div>
+</div>
+
+<!-- ═════════ KONFIRMASI SELESAI ═════════ -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <div class="modal-emoji">🎉</div>
+    <h2 class="modal-title">Semua misi selesai!</h2>
+    <p class="modal-sub">Kamu sudah menyelesaikan semua misi hari ini. Luar biasa, Aslan!</p>
+    <div class="confirm-xp">
       <div class="confirm-xp-num" id="confirmXpNum">+70 XP</div>
       <div class="confirm-xp-label">XP yang akan kamu dapat</div>
     </div>
-    <div class="confirm-btns">
-      <button class="confirm-no" onclick="document.getElementById('confirmOverlay').classList.remove('open')">Nanti Dulu</button>
-      <button class="confirm-yes" onclick="submitDay()">✅ Kunci Hari Ini!</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeOverlay('confirmOverlay')">Nanti dulu</button>
+      <button class="btn btn-primary" onclick="submitDay()">✅ Kunci hari ini</button>
     </div>
   </div>
 </div>
 
-<!-- TIMER -->
-<div class="timer-overlay" id="timerOverlay">
-  <div class="timer-modal">
-    <div class="timer-emoji" id="timerEmoji">⚔️</div>
-    <div class="timer-title" id="timerTitle">LATIHAN</div>
-    <div class="timer-display" id="timerDisplay">30:00</div>
-    <div class="timer-controls">
-      <button class="timer-ctrl-btn start" id="timerToggle" onclick="toggleTimer()">▶ Mulai</button>
-      <button class="timer-ctrl-btn close-btn" onclick="closeTimer()">✕ Tutup</button>
+<!-- ═════════ TIMER ═════════ -->
+<div class="overlay" id="timerOverlay">
+  <div class="modal timer-modal">
+    <div class="timer-head">
+      <span class="timer-emoji" id="timerEmoji">⚔️</span>
+      <span class="timer-title" id="timerTitle">Latihan</span>
+    </div>
+    <div class="timer-ring" id="timerRing">
+      <div class="timer-display" id="timerDisplay">30:00</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeTimer()">Tutup</button>
+      <button class="btn btn-primary" id="timerToggle" onclick="toggleTimer()">▶ Mulai</button>
     </div>
   </div>
 </div>
 
-<!-- SAVINGS PARENT PANEL -->
-<div class="savings-parent-overlay" id="savingsParentOverlay">
-  <div class="savings-parent-modal">
+<!-- ═════════ PIN TABUNGAN ═════════ -->
+<div class="overlay" id="savingsLockOverlay">
+  <div class="modal pin-modal">
+    <div class="sheet-handle"></div>
+    <div class="pin-icon pin-icon-teal">💰</div>
+    <h2 class="modal-title">Kelola Tabungan</h2>
+    <p class="modal-sub">Masukkan password Ayah &amp; Bunda</p>
+    <div class="pin-display" id="savingsLockDisplay">—</div>
+    <div class="pin-hint" id="savingsLockHint"></div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="savNpPress('1')">1</button>
+      <button class="pin-key" onclick="savNpPress('2')">2</button>
+      <button class="pin-key" onclick="savNpPress('3')">3</button>
+      <button class="pin-key" onclick="savNpPress('4')">4</button>
+      <button class="pin-key" onclick="savNpPress('5')">5</button>
+      <button class="pin-key" onclick="savNpPress('6')">6</button>
+      <button class="pin-key" onclick="savNpPress('7')">7</button>
+      <button class="pin-key" onclick="savNpPress('8')">8</button>
+      <button class="pin-key" onclick="savNpPress('9')">9</button>
+      <button class="pin-key pin-key-muted" onclick="savNpDel()" aria-label="Hapus">⌫</button>
+      <button class="pin-key" onclick="savNpPress('0')">0</button>
+      <button class="pin-key pin-key-ok" onclick="doSavingsLogin()">OK</button>
+    </div>
+    <button class="btn btn-ghost btn-block" onclick="closeSavingsLock()">Batal</button>
+  </div>
+</div>
+
+<!-- ═════════ PANEL TABUNGAN (ORTU) ═════════ -->
+<div class="overlay" id="savingsParentOverlay">
+  <div class="modal modal-lg spm-modal">
     <div class="spm-header">
-      <div><div class="spm-title">💰 KELOLA TABUNGAN ASLAN</div><div class="spm-balance" id="spmBalanceDisplay">Rp 0</div></div>
-      <button class="spm-close" onclick="closeSavingsParent()">✕</button>
+      <div>
+        <div class="spm-title">Kelola tabungan Aslan</div>
+        <div class="spm-balance" id="spmBalanceDisplay">Rp 0</div>
+      </div>
+      <button class="icon-close" onclick="closeSavingsParent()" aria-label="Tutup">✕</button>
     </div>
     <div class="spm-actions">
-      <button class="spm-action-btn credit" onclick="openSavingsModal('credit')">➕ Tabung</button>
-      <button class="spm-action-btn debit" onclick="openSavingsModal('debit')">➖ Ambil</button>
-      <button class="spm-action-btn goal" onclick="openGoalModal()">🎯 Target</button>
+      <button class="spm-action credit" onclick="openSavingsModal('credit')"><span>➕</span>Tabung</button>
+      <button class="spm-action debit" onclick="openSavingsModal('debit')"><span>➖</span>Ambil</button>
+      <button class="spm-action goal" onclick="openGoalModal()"><span>🎯</span>Target</button>
     </div>
-    <div class="spm-ledger-wrap">
-      <div class="spm-ledger-header"><div class="spm-ledger-title">📋 Riwayat Transaksi</div></div>
-      <div id="spmLedger"></div>
+    <div class="spm-ledger-title">Riwayat transaksi</div>
+    <div class="spm-ledger" id="spmLedger"></div>
+  </div>
+</div>
+
+<!-- ═════════ TRANSAKSI BARU ═════════ -->
+<div class="overlay overlay-top" id="savingsOverlay">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title" id="savingsModalTitle">Tambah transaksi</h2>
+    <div class="modal-body">
+      <div class="segmented" id="savingsTypeRow">
+        <button class="savings-type-btn credit-sel" id="typeCredit" onclick="setSavingsType('credit')">➕ Tabung</button>
+        <button class="savings-type-btn" id="typeDebit" onclick="setSavingsType('debit')">➖ Ambil</button>
+      </div>
+      <label class="label" for="savingsAmountInput">Jumlah (Rp)</label>
+      <input type="number" id="savingsAmountInput" class="input input-money" placeholder="50000" min="1" inputmode="numeric">
+      <label class="label" for="savingsDescInput">Keterangan</label>
+      <input type="text" id="savingsDescInput" class="input" placeholder="Nabung dari uang jajan" maxlength="60">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeSavingsModal()">Batal</button>
+      <button class="btn btn-primary" onclick="confirmSavingsTransaction()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- SAVINGS TRANSACTION MODAL -->
-<div class="savings-overlay" id="savingsOverlay">
-  <div class="savings-modal">
-    <div class="savings-modal-title" id="savingsModalTitle">TAMBAH TRANSAKSI</div>
-    <div class="savings-modal-type-row" id="savingsTypeRow">
-      <button class="savings-type-btn credit-sel" id="typeCredit" onclick="setSavingsType('credit')">➕ Tabung</button>
-      <button class="savings-type-btn" id="typeDebit" onclick="setSavingsType('debit')">➖ Ambil</button>
+<!-- ═════════ EDIT TRANSAKSI ═════════ -->
+<div class="overlay overlay-top" id="savingsEditOverlay">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">Edit transaksi</h2>
+    <div class="modal-body">
+      <label class="label" for="editAmountInput">Jumlah (Rp)</label>
+      <input type="number" id="editAmountInput" class="input input-money" placeholder="50000" min="1" inputmode="numeric">
+      <label class="label" for="editDescInput">Keterangan</label>
+      <input type="text" id="editDescInput" class="input" placeholder="Keterangan" maxlength="60">
     </div>
-    <label class="savings-modal-label">💰 Jumlah (Rp)</label>
-    <input type="number" id="savingsAmountInput" class="savings-modal-input" placeholder="50000" min="1">
-    <label class="savings-modal-label">📝 Keterangan</label>
-    <input type="text" id="savingsDescInput" class="savings-modal-input" placeholder="Nabung dari uang jajan" maxlength="60">
-    <div class="savings-modal-row">
-      <button class="savings-modal-cancel" onclick="closeSavingsModal()">Batal</button>
-      <button class="savings-modal-confirm" onclick="confirmSavingsTransaction()">💾 Simpan</button>
-    </div>
-  </div>
-</div>
-
-<!-- SAVINGS EDIT MODAL -->
-<div class="savings-overlay" id="savingsEditOverlay">
-  <div class="savings-modal">
-    <div class="savings-modal-title">✏️ EDIT TRANSAKSI</div>
-    <label class="savings-modal-label">💰 Jumlah (Rp)</label>
-    <input type="number" id="editAmountInput" class="savings-modal-input" placeholder="50000" min="1">
-    <label class="savings-modal-label">📝 Keterangan</label>
-    <input type="text" id="editDescInput" class="savings-modal-input" placeholder="Keterangan" maxlength="60">
-    <div class="savings-modal-row">
-      <button class="savings-modal-cancel" onclick="document.getElementById('savingsEditOverlay').classList.remove('open')">Batal</button>
-      <button class="savings-modal-confirm" onclick="confirmEditTransaction()">💾 Simpan</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeOverlay('savingsEditOverlay')">Batal</button>
+      <button class="btn btn-primary" onclick="confirmEditTransaction()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- GOAL MODAL -->
-<div class="goal-overlay" id="goalOverlay">
-  <div class="goal-modal">
-    <div class="goal-modal-title">🎯 SET TARGET TABUNGAN</div>
-    <label class="savings-modal-label">🏷️ Nama Target</label>
-    <input type="text" id="goalNameInput" class="savings-modal-input" placeholder="Beli Lego" maxlength="40">
-    <label class="savings-modal-label">💰 Jumlah Target (Rp)</label>
-    <input type="number" id="goalAmountInput" class="savings-modal-input" placeholder="500000" min="1">
-    <div class="savings-modal-row">
-      <button class="savings-modal-cancel" onclick="document.getElementById('goalOverlay').classList.remove('open')">Batal</button>
-      <button class="savings-modal-confirm" onclick="saveGoal()">🎯 Set Target!</button>
+<!-- ═════════ TARGET TABUNGAN ═════════ -->
+<div class="overlay overlay-top" id="goalOverlay">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">🎯 Target tabungan</h2>
+    <div class="modal-body">
+      <label class="label" for="goalNameInput">Nama target</label>
+      <input type="text" id="goalNameInput" class="input" placeholder="Beli Lego" maxlength="40">
+      <label class="label" for="goalAmountInput">Jumlah target (Rp)</label>
+      <input type="number" id="goalAmountInput" class="input input-money" placeholder="500000" min="1" inputmode="numeric">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeOverlay('goalOverlay')">Batal</button>
+      <button class="btn btn-primary" onclick="saveGoal()">Simpan target</button>
     </div>
   </div>
 </div>
 
-<!-- SAVINGS LOCK -->
-<div class="savings-lock-overlay" id="savingsLockOverlay">
-  <div class="savings-lock-box">
-    <div class="savings-lock-title">💰 TABUNGAN ASLAN</div>
-    <div class="savings-lock-sub">Password Ayah &amp; Bunda untuk kelola tabungan</div>
-    <div class="savings-lock-display" id="savingsLockDisplay">—</div>
-    <div class="savings-lock-hint" id="savingsLockHint"></div>
-    <div class="savings-np">
-      <button class="np-btn" onclick="savNpPress('1')">1</button><button class="np-btn" onclick="savNpPress('2')">2</button><button class="np-btn" onclick="savNpPress('3')">3</button>
-      <button class="np-btn" onclick="savNpPress('4')">4</button><button class="np-btn" onclick="savNpPress('5')">5</button><button class="np-btn" onclick="savNpPress('6')">6</button>
-      <button class="np-btn" onclick="savNpPress('7')">7</button><button class="np-btn" onclick="savNpPress('8')">8</button><button class="np-btn" onclick="savNpPress('9')">9</button>
-      <button class="np-btn del" onclick="savNpDel()">⌫</button><button class="np-btn" onclick="savNpPress('0')">0</button><button class="np-btn ok" onclick="doSavingsLogin()">✓</button>
-    </div>
-    <button class="np-btn" style="width:100%;margin-top:8px;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;background:#F5F5F5;color:#546E7A;" onclick="closeSavingsLock()">✕ Batal</button>
-  </div>
-</div>
+<!-- ═════════ PANEL ORANG TUA ═════════ -->
+<div class="overlay" id="adminOverlay">
+  <div class="modal modal-lg adm2-modal">
 
-<!-- Ideas feature removed -->
-
-<!-- ═══════════════════════════════════════════════════════════
-     ADMIN PANEL v2 — REDESIGNED
-     ═══════════════════════════════════════════════════════════ -->
-<div class="adm2-overlay" id="adminOverlay">
-  <div class="adm2-modal">
-
-    <!-- HEADER -->
     <div class="adm2-header">
       <div class="adm2-header-left">
         <div class="adm2-header-icon">🔐</div>
         <div>
-          <div class="adm2-header-title">PANEL ORANG TUA</div>
+          <div class="adm2-header-title">Panel Orang Tua</div>
           <div class="adm2-header-sub">Kelola semua pengaturan Aslan</div>
         </div>
       </div>
-      <button class="adm2-header-close" onclick="closeAdmin()">✕</button>
+      <button class="icon-close icon-close-light" onclick="closeAdmin()" aria-label="Tutup">✕</button>
     </div>
 
-    <!-- LOGIN SCREEN -->
+    <!-- Login -->
     <div id="adminLogin" class="adm2-login">
-      <div class="adm2-login-title">🔑 Masukkan Password</div>
-      <div class="adm2-login-sub">Password orang tua untuk akses panel</div>
-      <div class="adm2-pin-display" id="adminPinDisplay">—</div>
-      <div class="adm2-pin-hint" id="adminPwHint"></div>
-      <div class="adm2-numpad">
-        <button class="adm2-np-btn" onclick="admNpPress('1')">1</button>
-        <button class="adm2-np-btn" onclick="admNpPress('2')">2</button>
-        <button class="adm2-np-btn" onclick="admNpPress('3')">3</button>
-        <button class="adm2-np-btn" onclick="admNpPress('4')">4</button>
-        <button class="adm2-np-btn" onclick="admNpPress('5')">5</button>
-        <button class="adm2-np-btn" onclick="admNpPress('6')">6</button>
-        <button class="adm2-np-btn" onclick="admNpPress('7')">7</button>
-        <button class="adm2-np-btn" onclick="admNpPress('8')">8</button>
-        <button class="adm2-np-btn" onclick="admNpPress('9')">9</button>
-        <button class="adm2-np-btn adm2-np-del" onclick="admNpDel()">⌫</button>
-        <button class="adm2-np-btn" onclick="admNpPress('0')">0</button>
-        <button class="adm2-np-btn adm2-np-ok" onclick="doAdminLogin()">✓</button>
+      <h3 class="modal-title">Masukkan password</h3>
+      <p class="modal-sub">Khusus Ayah &amp; Bunda</p>
+      <div class="pin-display" id="adminPinDisplay">—</div>
+      <div class="pin-hint" id="adminPwHint"></div>
+      <div class="pin-pad">
+        <button class="pin-key" onclick="admNpPress('1')">1</button>
+        <button class="pin-key" onclick="admNpPress('2')">2</button>
+        <button class="pin-key" onclick="admNpPress('3')">3</button>
+        <button class="pin-key" onclick="admNpPress('4')">4</button>
+        <button class="pin-key" onclick="admNpPress('5')">5</button>
+        <button class="pin-key" onclick="admNpPress('6')">6</button>
+        <button class="pin-key" onclick="admNpPress('7')">7</button>
+        <button class="pin-key" onclick="admNpPress('8')">8</button>
+        <button class="pin-key" onclick="admNpPress('9')">9</button>
+        <button class="pin-key pin-key-muted" onclick="admNpDel()" aria-label="Hapus">⌫</button>
+        <button class="pin-key" onclick="admNpPress('0')">0</button>
+        <button class="pin-key pin-key-ok" onclick="doAdminLogin()">OK</button>
       </div>
-      <button class="adm2-cancel-btn" onclick="closeAdmin()">✕ Batal</button>
+      <button class="btn btn-ghost btn-block" onclick="closeAdmin()">Batal</button>
     </div>
 
-    <!-- PANEL CONTENT -->
+    <!-- Isi panel -->
     <div id="adminPanel" class="adm2-body" style="display:none;">
 
-      <!-- SECTION TABS -->
       <div class="adm2-tabs">
         <button class="adm2-tab active" data-tab="profil" onclick="adm2Tab('profil')">👤 Profil</button>
         <button class="adm2-tab" data-tab="pesan" onclick="adm2Tab('pesan')">💬 Pesan</button>
@@ -513,257 +575,235 @@
         <button class="adm2-tab" data-tab="investasi" onclick="adm2Tab('investasi')">💹 Investasi</button>
       </div>
 
-      <!-- ── PROFIL ── -->
+      <!-- Profil -->
       <div class="adm2-section active" id="adm2-profil">
         <div class="adm2-card">
-          <div class="adm2-card-title">👤 Edit Profil Aslan</div>
+          <div class="adm2-card-title">👤 Profil Aslan</div>
           <div class="adm2-photo-wrap">
             <div class="adm2-photo-preview" id="adminPhotoPreview">⚔️</div>
             <div>
-              <input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
-              <button class="adm2-upload-btn" onclick="document.getElementById('photoFileInput').click()">📁 Pilih Foto</button>
-              <div style="font-size:10px;color:#90A4AE;font-weight:700;margin-top:4px;">Auto-kompres 150×150px</div>
+              <input type="file" id="photoFileInput" accept="image/*" hidden onchange="handlePhotoUpload(this)">
+              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('photoFileInput').click()">📁 Pilih foto</button>
+              <div class="adm2-hint">Otomatis dikecilkan ke 150×150 px</div>
             </div>
           </div>
-          <label class="adm2-label">📛 Nama</label>
-          <input type="text" id="editName" class="adm2-input" placeholder="Aslan Adika Prada" maxlength="40">
-          <label class="adm2-label">🎂 Tanggal Lahir</label>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
-            <input type="date" id="editBirthdate" class="adm2-input" style="margin-bottom:0;flex:1;">
-            <button type="button" onclick="clearBirthdate()" title="Hapus tanggal lahir"
-              style="flex-shrink:0;padding:10px 12px;border-radius:10px;border:2px solid #EF9A9A;background:#FFEBEE;color:#C62828;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;">✕ Hapus</button>
+          <label class="label" for="editName">Nama</label>
+          <input type="text" id="editName" class="input adm2-input" placeholder="Aslan Adika Prada" maxlength="40">
+          <label class="label" for="editBirthdate">Tanggal lahir</label>
+          <div class="adm2-inline">
+            <input type="date" id="editBirthdate" class="input adm2-input">
+            <button type="button" class="btn btn-danger btn-sm" onclick="clearBirthdate()" title="Hapus tanggal lahir">Hapus</button>
           </div>
-          <label class="adm2-label">🏫 Kelas / Info</label>
-          <input type="text" id="editClass" class="adm2-input" placeholder="Kelas 3 SD" maxlength="30">
-          <label class="adm2-label">⚖️ Berat Badan (kg)</label>
-          <input type="number" id="editWeight" class="adm2-input" placeholder="30">
-          <label class="adm2-label">📏 Tinggi Badan (cm)</label>
-          <input type="number" id="editHeight" class="adm2-input" placeholder="120">
-          <button class="adm2-btn adm2-btn-primary" onclick="saveProfile()">💾 Simpan Profil</button>
+          <label class="label" for="editClass">Kelas / info</label>
+          <input type="text" id="editClass" class="input adm2-input" placeholder="Kelas 3 SD" maxlength="30">
+          <div class="adm2-two">
+            <div>
+              <label class="label" for="editWeight">Berat (kg)</label>
+              <input type="number" id="editWeight" class="input adm2-input" placeholder="30">
+            </div>
+            <div>
+              <label class="label" for="editHeight">Tinggi (cm)</label>
+              <input type="number" id="editHeight" class="input adm2-input" placeholder="120">
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="saveProfile()">Simpan profil</button>
         </div>
       </div>
 
-      <!-- ── PESAN ── -->
+      <!-- Pesan -->
       <div class="adm2-section" id="adm2-pesan">
         <div class="adm2-card">
           <div class="adm2-card-title">👨‍💻 Pesan dari Ayah</div>
-          <textarea id="ayahEditor" class="adm2-textarea" placeholder="Tulis pesan semangat dari Ayah..."></textarea>
-          <button class="adm2-btn adm2-btn-primary" onclick="saveAyahMsg()">💾 Simpan Pesan Ayah</button>
+          <textarea id="ayahEditor" class="textarea adm2-input" placeholder="Tulis pesan semangat dari Ayah..."></textarea>
+          <button class="btn btn-primary btn-block" onclick="saveAyahMsg()">Simpan pesan Ayah</button>
         </div>
         <div class="adm2-card">
           <div class="adm2-card-title">👩 Pesan dari Bunda</div>
-          <textarea id="bundaEditor" class="adm2-textarea" placeholder="Tulis pesan semangat dari Bunda..."></textarea>
-          <button class="adm2-btn adm2-btn-primary" onclick="saveBundaMsg()">💾 Simpan Pesan Bunda</button>
+          <textarea id="bundaEditor" class="textarea adm2-input" placeholder="Tulis pesan semangat dari Bunda..."></textarea>
+          <button class="btn btn-primary btn-block" onclick="saveBundaMsg()">Simpan pesan Bunda</button>
         </div>
       </div>
 
-      <!-- ── MISI HARIAN ── -->
+      <!-- Misi harian -->
       <div class="adm2-section" id="adm2-misi-harian">
         <div class="adm2-card">
-          <div class="adm2-card-title">⚔️ Jadwal Latihan Harian</div>
+          <div class="adm2-card-title">⚔️ Jadwal latihan harian</div>
           <div id="questManagerList2"></div>
           <hr class="adm2-divider">
-          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">➕ Tambah Latihan Baru</div>
+          <div class="adm2-subtitle">Tambah latihan baru</div>
           <div class="adm2-inline">
-            <input type="text" id="aqEmoji" class="adm2-input adm2-emoji-input" placeholder="🎯" maxlength="4">
-            <input type="text" id="aqName" class="adm2-input" placeholder="Nama latihan" maxlength="30" style="margin-bottom:0;flex:1;">
+            <input type="text" id="aqEmoji" class="input adm2-input adm2-emoji-input" placeholder="🎯" maxlength="4">
+            <input type="text" id="aqName" class="input adm2-input" placeholder="Nama latihan" maxlength="30">
           </div>
           <div class="adm2-inline">
-            <input type="number" id="aqDur" class="adm2-input adm2-num-input" placeholder="30" min="1" max="180" value="30">
-            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">menit</span>
+            <input type="number" id="aqDur" class="input adm2-input adm2-num-input" placeholder="30" min="1" max="180" value="30">
+            <span class="adm2-unit">menit</span>
           </div>
-          <button class="adm2-btn adm2-btn-add" onclick="addQuest()">➕ Tambah Latihan</button>
+          <button class="btn btn-primary btn-block" onclick="addQuest()">➕ Tambah latihan</button>
         </div>
         <div class="adm2-card">
-          <div class="adm2-card-title">📅 Kelola Misi per Tanggal</div>
-          <label class="adm2-label">Pilih Tanggal:</label>
-          <input type="date" id="adminDatePicker" class="adm2-datepicker" onchange="syncAdminQuestList2()">
+          <div class="adm2-card-title">📅 Kelola misi per tanggal</div>
+          <label class="label" for="adminDatePicker">Pilih tanggal</label>
+          <input type="date" id="adminDatePicker" class="input adm2-input" onchange="syncAdminQuestList2()">
           <div id="adminQuestList2"></div>
-          <button class="adm2-btn adm2-btn-red" style="width:100%;justify-content:center;margin-top:8px;" onclick="cancelWholeDay()">🗑️ Batalkan Seluruh Hari Ini</button>
+          <button class="btn btn-danger btn-block adm2-gap" onclick="cancelWholeDay()">🗑️ Batalkan seluruh hari ini</button>
         </div>
       </div>
 
-      <!-- ── MISI MINGGUAN ── -->
+      <!-- Misi mingguan -->
       <div class="adm2-section" id="adm2-misi-mingguan">
         <div class="adm2-card">
-          <div class="adm2-card-title">📅 Misi Mingguan Aktif</div>
+          <div class="adm2-card-title">📅 Misi mingguan aktif</div>
           <div id="wmListAdmin2"></div>
           <hr class="adm2-divider">
-          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">➕ Tambah Misi Mingguan</div>
+          <div class="adm2-subtitle">Tambah misi mingguan</div>
           <div class="adm2-inline">
-            <input type="text" id="wmEmojiInput" class="adm2-input adm2-emoji-input" placeholder="📚" maxlength="4">
-            <input type="text" id="wmNameInput" class="adm2-input" placeholder="Nama misi mingguan" maxlength="40" style="margin-bottom:0;flex:1;">
+            <input type="text" id="wmEmojiInput" class="input adm2-input adm2-emoji-input" placeholder="📚" maxlength="4">
+            <input type="text" id="wmNameInput" class="input adm2-input" placeholder="Nama misi mingguan" maxlength="40">
           </div>
           <div class="adm2-inline">
-            <input type="number" id="wmXpInput" class="adm2-input adm2-num-input" placeholder="50" min="1" value="50">
-            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">XP</span>
+            <input type="number" id="wmXpInput" class="input adm2-input adm2-num-input" placeholder="50" min="1" value="50">
+            <span class="adm2-unit">XP</span>
           </div>
-          <button class="adm2-btn" style="background:linear-gradient(135deg,#3F51B5,#5C6BC0);color:#fff;width:100%;justify-content:center;" onclick="addWeeklyMission()">➕ Tambah Misi Mingguan</button>
+          <button class="btn btn-primary btn-block" onclick="addWeeklyMission()">➕ Tambah misi mingguan</button>
         </div>
       </div>
 
-      <!-- ── MISI BULANAN ── -->
+      <!-- Misi bulanan -->
       <div class="adm2-section" id="adm2-misi-bulanan">
         <div class="adm2-card">
-          <div class="adm2-card-title">🗓️ Misi Bulanan Aktif</div>
+          <div class="adm2-card-title">🗓️ Misi bulanan aktif</div>
           <div id="mmListAdmin2"></div>
           <hr class="adm2-divider">
-          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">➕ Tambah Misi Bulanan</div>
+          <div class="adm2-subtitle">Tambah misi bulanan</div>
           <div class="adm2-inline">
-            <input type="text" id="mmEmojiInput" class="adm2-input adm2-emoji-input" placeholder="🎯" maxlength="4">
-            <input type="text" id="mmNameInput" class="adm2-input" placeholder="Nama misi bulanan" maxlength="40" style="margin-bottom:0;flex:1;">
+            <input type="text" id="mmEmojiInput" class="input adm2-input adm2-emoji-input" placeholder="🎯" maxlength="4">
+            <input type="text" id="mmNameInput" class="input adm2-input" placeholder="Nama misi bulanan" maxlength="40">
           </div>
           <div class="adm2-inline">
-            <input type="number" id="mmXpInput" class="adm2-input adm2-num-input" placeholder="100" min="1" value="100">
-            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">XP</span>
+            <input type="number" id="mmXpInput" class="input adm2-input adm2-num-input" placeholder="100" min="1" value="100">
+            <span class="adm2-unit">XP</span>
           </div>
-          <button class="adm2-btn adm2-btn-orange" onclick="addMonthlyMission()">➕ Tambah Misi Bulanan</button>
+          <button class="btn btn-primary btn-block" onclick="addMonthlyMission()">➕ Tambah misi bulanan</button>
         </div>
       </div>
 
-      <!-- ── PIALA ── -->
+      <!-- Piala -->
       <div class="adm2-section" id="adm2-piala">
         <div class="adm2-card">
-          <div class="adm2-card-title">🏆 Piala Spesial</div>
+          <div class="adm2-card-title">🏆 Piala spesial</div>
           <div id="customBadgeList2"></div>
           <hr class="adm2-divider">
-          <div style="font-size:11px;font-weight:900;color:#1B5E20;margin-bottom:10px;">✨ Buat Piala Baru</div>
+          <div class="adm2-subtitle">Buat piala baru</div>
           <div class="adm2-inline">
-            <input type="text" id="abEmoji" class="adm2-input adm2-emoji-input" placeholder="🌟" maxlength="4">
-            <input type="text" id="abName" class="adm2-input" placeholder="Nama piala" maxlength="30" style="margin-bottom:0;flex:1;">
+            <input type="text" id="abEmoji" class="input adm2-input adm2-emoji-input" placeholder="🌟" maxlength="4">
+            <input type="text" id="abName" class="input adm2-input" placeholder="Nama piala" maxlength="30">
           </div>
           <div class="adm2-inline">
-            <input type="number" id="abXP" class="adm2-input adm2-num-input" placeholder="500" min="1" value="500">
-            <span style="font-size:12px;font-weight:700;color:#546E7A;flex:1;">XP untuk unlock</span>
+            <input type="number" id="abXP" class="input adm2-input adm2-num-input" placeholder="500" min="1" value="500">
+            <span class="adm2-unit">XP untuk membuka</span>
           </div>
-          <button class="adm2-btn" style="background:linear-gradient(135deg,#F57F17,#FFC107);color:#fff;width:100%;justify-content:center;" onclick="addCustomBadge()">✨ Tambah Piala</button>
+          <button class="btn btn-primary btn-block" onclick="addCustomBadge()">✨ Tambah piala</button>
         </div>
       </div>
 
-      <!-- ── KARAKTER ── -->
+      <!-- Karakter -->
       <div class="adm2-section" id="adm2-karakter">
         <div class="adm2-card">
-          <div class="adm2-card-title">💜 Motivasi Karakter</div>
-          <textarea id="karakterMotivationEditor" class="adm2-textarea" placeholder="Tulis motivasi untuk Aslan..."></textarea>
-          <button class="adm2-btn adm2-btn-primary" onclick="saveKarakterMotivation()">💾 Simpan Motivasi</button>
+          <div class="adm2-card-title">💜 Motivasi karakter</div>
+          <textarea id="karakterMotivationEditor" class="textarea adm2-input" placeholder="Tulis motivasi untuk Aslan..."></textarea>
+          <button class="btn btn-primary btn-block" onclick="saveKarakterMotivation()">Simpan motivasi</button>
         </div>
         <div class="adm2-card">
-          <div class="adm2-card-title">🌟 Berikan Lencana Karakter</div>
-          <div style="font-size:11px;font-weight:800;color:#6A1B9A;margin-bottom:6px;">Pilih lencana:</div>
+          <div class="adm2-card-title">🌟 Berikan lencana karakter</div>
+          <div class="adm2-subtitle">Pilih lencana</div>
           <div class="adm2-kar-grid" id="karakterSelectGrid2"></div>
-          <label class="adm2-label">📝 Catatan untuk Aslan:</label>
-          <textarea id="karakterNoteInput" class="adm2-textarea" placeholder="Contoh: Kamu jujur mengakui kesalahan. Ayah bangga!"></textarea>
-          <button class="adm2-btn" style="background:linear-gradient(135deg,#6A1B9A,#AB47BC);color:#fff;width:100%;justify-content:center;" onclick="awardKarakter()">🌟 Berikan Lencana!</button>
+          <label class="label" for="karakterNoteInput">Catatan untuk Aslan</label>
+          <textarea id="karakterNoteInput" class="textarea adm2-input" placeholder="Contoh: Kamu jujur mengakui kesalahan. Ayah bangga!"></textarea>
+          <button class="btn btn-primary btn-block" onclick="awardKarakter()">🌟 Berikan lencana</button>
           <hr class="adm2-divider">
-          <div style="font-size:11px;font-weight:900;color:#6A1B9A;margin-bottom:8px;">📜 Lencana Diberikan</div>
+          <div class="adm2-subtitle">Lencana yang sudah diberikan</div>
           <div id="karakterAwardedList2"></div>
         </div>
       </div>
 
-      <!-- ── XP ── -->
+      <!-- XP -->
       <div class="adm2-section" id="adm2-xp">
         <div class="adm2-card">
           <div class="adm2-card-title">⚡ Kelola XP Aslan</div>
           <div class="adm2-xp-row">
-            <div>
-              <div class="adm2-xp-label">Total XP Aslan</div>
-              <div class="adm2-xp-val" id="adminXpDisplay2">0 XP</div>
-            </div>
+            <div class="adm2-xp-label">Total XP Aslan</div>
+            <div class="adm2-xp-val" id="adminXpDisplay2">0 XP</div>
           </div>
-          <label class="adm2-label">Streak Manual</label>
+          <label class="label" for="manualStreakInput">Streak manual (hari)</label>
           <div class="adm2-inline">
-            <input type="number" id="manualStreakInput" class="adm2-input adm2-num-input" placeholder="46" min="0" value="0">
-            <button class="adm2-btn adm2-btn-primary" style="flex:1;justify-content:center;" onclick="setManualStreak(document.getElementById('manualStreakInput').value)">💾 Simpan Streak</button>
+            <input type="number" id="manualStreakInput" class="input adm2-input adm2-num-input" placeholder="46" min="0" value="0">
+            <button class="btn btn-secondary" onclick="setManualStreak(document.getElementById('manualStreakInput').value)">Simpan streak</button>
           </div>
-          <label class="adm2-label">Jumlah XP</label>
-          <input type="number" id="xpAdjustInput" class="adm2-input" placeholder="100" min="1" value="100">
-          <div class="adm2-xp-btns">
-            <button class="adm2-btn adm2-btn-primary" style="flex:1;justify-content:center;" onclick="adjustXP(1)">+ Tambah XP</button>
-            <button class="adm2-btn adm2-btn-red" style="flex:1;justify-content:center;" onclick="adjustXP(-1)">− Kurangi XP</button>
+          <label class="label" for="xpAdjustInput">Jumlah XP</label>
+          <input type="number" id="xpAdjustInput" class="input adm2-input" placeholder="100" min="1" value="100">
+          <div class="adm2-two">
+            <button class="btn btn-primary" onclick="adjustXP(1)">+ Tambah XP</button>
+            <button class="btn btn-danger" onclick="adjustXP(-1)">− Kurangi XP</button>
           </div>
         </div>
       </div>
 
-      <!-- ── INVESTASI ── -->
+      <!-- Investasi -->
       <div class="adm2-section" id="adm2-investasi">
         <div class="adm2-card">
-          <div class="adm2-card-title">🥇 Harga Emas Antam</div>
-          <label class="adm2-label">Harga per gram (Rp)</label>
-          <input type="number" id="adminGoldPrice" class="adm2-input" placeholder="1890000">
+          <div class="adm2-card-title">🥇 Harga emas Antam</div>
+          <label class="label" for="adminGoldPrice">Harga per gram (Rp)</label>
+          <input type="number" id="adminGoldPrice" class="input adm2-input" placeholder="1890000">
         </div>
         <div class="adm2-card">
-          <div class="adm2-card-title">📈 Harga Saham (Rp/lot)</div>
+          <div class="adm2-card-title">📈 Harga saham (Rp/lot)</div>
           <div class="adm2-invest-grid">
-            <div class="adm2-invest-row">
-              <div class="adm2-invest-label">🥛 Ultra Milk (ULTJ)</div>
-              <input type="number" id="sp-ultra" class="adm2-input" placeholder="1850" style="margin-bottom:0;">
-            </div>
-            <div class="adm2-invest-row">
-              <div class="adm2-invest-label">🍜 Indofood (INDF)</div>
-              <input type="number" id="sp-indomie" class="adm2-input" placeholder="6750" style="margin-bottom:0;">
-            </div>
-            <div class="adm2-invest-row">
-              <div class="adm2-invest-label">🛵 GoTo (GOTO)</div>
-              <input type="number" id="sp-goto" class="adm2-input" placeholder="84" style="margin-bottom:0;">
-            </div>
-            <div class="adm2-invest-row">
-              <div class="adm2-invest-label">🍪 Mayora (MYOR)</div>
-              <input type="number" id="sp-mayora" class="adm2-input" placeholder="2890" style="margin-bottom:0;">
-            </div>
-            <div class="adm2-invest-row">
-              <div class="adm2-invest-label">🎮 Nintendo (NTDOY)</div>
-              <input type="number" id="sp-nintendo" class="adm2-input" placeholder="142000" style="margin-bottom:0;">
-            </div>
-            <div class="adm2-invest-row">
-              <div class="adm2-invest-label">🏦 Bank BCA (BBCA)</div>
-              <input type="number" id="sp-bca" class="adm2-input" placeholder="9400" style="margin-bottom:0;">
-            </div>
+            <div><label class="label" for="sp-ultra">🥛 Ultra Milk (ULTJ)</label><input type="number" id="sp-ultra" class="input adm2-input" placeholder="1850"></div>
+            <div><label class="label" for="sp-indomie">🍜 Indofood (INDF)</label><input type="number" id="sp-indomie" class="input adm2-input" placeholder="6750"></div>
+            <div><label class="label" for="sp-goto">🛵 GoTo (GOTO)</label><input type="number" id="sp-goto" class="input adm2-input" placeholder="84"></div>
+            <div><label class="label" for="sp-mayora">🍪 Mayora (MYOR)</label><input type="number" id="sp-mayora" class="input adm2-input" placeholder="2890"></div>
+            <div><label class="label" for="sp-nintendo">🎮 Nintendo (NTDOY)</label><input type="number" id="sp-nintendo" class="input adm2-input" placeholder="142000"></div>
+            <div><label class="label" for="sp-bca">🏦 Bank BCA (BBCA)</label><input type="number" id="sp-bca" class="input adm2-input" placeholder="9400"></div>
           </div>
-          <div style="font-size:10px;font-weight:700;color:#90A4AE;margin-bottom:10px;">
-            💡 Cek harga: Google "harga saham ULTJ" atau "gold price IDR"
-          </div>
-          <button class="adm2-btn adm2-btn-primary" onclick="saveInvestPrices()">💾 Simpan Semua Harga</button>
+          <div class="adm2-hint">💡 Kolom yang dikosongkan tidak mengubah harga yang sudah tersimpan.</div>
+          <button class="btn btn-primary btn-block" onclick="saveInvestPrices()">Simpan harga</button>
           <div class="adm2-last-update" id="adminPriceLastUpdate2">Belum pernah diupdate</div>
         </div>
       </div>
 
-      <!-- CLOSE BUTTON -->
-      <div style="padding:14px 16px 20px;">
-        <button class="adm2-btn adm2-btn-ghost" style="width:100%;justify-content:center;" onclick="closeAdmin()">✕ Tutup Panel</button>
+      <div class="adm2-footer">
+        <button class="btn btn-ghost btn-block" onclick="closeAdmin()">Tutup panel</button>
       </div>
-
-    </div><!-- end adminPanel -->
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     EDIT MODAL untuk Misi (Harian/Mingguan/Bulanan)
-     ═══════════════════════════════════════════════════════════ -->
-<div class="adm2-edit-overlay" id="misiEditOverlay">
-  <div class="adm2-edit-modal">
-    <div class="adm2-edit-title" id="misiEditTitle">✏️ Edit Misi</div>
+<!-- ═════════ EDIT MISI ═════════ -->
+<div class="overlay overlay-top" id="misiEditOverlay">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title" id="misiEditTitle">Edit misi</h2>
     <input type="hidden" id="misiEditKey">
     <input type="hidden" id="misiEditType">
-    <label class="adm2-label">Emoji</label>
-    <div class="adm2-inline" style="margin-bottom:0;">
-      <input type="text" id="misiEditEmoji" class="adm2-input adm2-emoji-input" maxlength="4">
-      <input type="text" id="misiEditName" class="adm2-input" placeholder="Nama misi" style="margin-bottom:0;flex:1;">
+    <div class="modal-body">
+      <label class="label" for="misiEditName">Emoji &amp; nama</label>
+      <div class="adm2-inline">
+        <input type="text" id="misiEditEmoji" class="input adm2-input adm2-emoji-input" maxlength="4">
+        <input type="text" id="misiEditName" class="input adm2-input" placeholder="Nama misi">
+      </div>
+      <label class="label" for="misiEditMeta" id="misiEditMetaLabel">Durasi (menit)</label>
+      <input type="number" id="misiEditMeta" class="input adm2-input" placeholder="30" min="1">
     </div>
-    <label class="adm2-label" style="margin-top:10px;" id="misiEditMetaLabel">Durasi (menit)</label>
-    <input type="number" id="misiEditMeta" class="adm2-input" placeholder="30" min="1">
-    <div class="adm2-edit-row">
-      <button class="adm2-btn adm2-btn-ghost" onclick="closeMisiEdit()">Batal</button>
-      <button class="adm2-btn adm2-btn-primary" onclick="saveMisiEdit()">💾 Simpan</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeMisiEdit()">Batal</button>
+      <button class="btn btn-primary" onclick="saveMisiEdit()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- FABs -->
-<button class="fab-savings" onclick="openSavingsLock()" title="Kelola Tabungan">💰</button>
-<button class="fab-admin" onclick="openAdmin()" title="Panel Orang Tua">🔒</button>
-
 <div class="toast" id="toast"></div>
-<div id="notif-update">🚀 Ada fitur baru! Klik di sini untuk Update</div>
+<div id="notif-update">🚀 Ada versi baru — ketuk untuk update</div>
 
 <script src="app.js"></script>
 </body>

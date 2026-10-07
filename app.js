@@ -132,19 +132,17 @@ function renderMissionLockBanner(){
   if(missionUnlocked){
     banner.className='mission-lock-banner unlocked';
     icon.textContent='✅';
-    title.textContent='MISI TERBUKA!';
+    title.textContent='Misi terbuka!';
     desc.textContent='Semangat kerjakan semua misi hari ini, Aslan! 🌟';
-    btn.textContent='✅ Siap!';
+    btn.textContent='✅ Siap';
     btn.onclick=null;
-    btn.style.cursor='default';
   } else {
     banner.className='mission-lock-banner locked';
     icon.textContent='🔒';
-    title.textContent='MISI TERKUNCI';
+    title.textContent='Misi terkunci';
     desc.textContent='Masukkan PIN untuk mulai mengerjakan misi hari ini!';
-    btn.textContent='🔓 BUKA';
+    btn.textContent='🔓 Buka';
     btn.onclick=openMissionPin;
-    btn.style.cursor='pointer';
   }
 }
 
@@ -319,15 +317,16 @@ function renderParentLedger(){
   document.getElementById('spmBalanceDisplay').textContent=formatRp(balance);
   const ledger=document.getElementById('spmLedger');
   if(!txns.length){ledger.innerHTML='<div class="spm-ledger-empty">Belum ada transaksi.<br>Mulai menabung sekarang! 🐷</div>';return;}
-  const sorted=[...txns].reverse();ledger.innerHTML='';
-  sorted.forEach(t=>{
-    const isCredit=t.type==='credit';
-    const row=document.createElement('div');row.className='savings-txn';
-    const d=new Date(t.timestamp);
-    const dateStr=d.getDate()+' '+MONTHS_ID[d.getMonth()]+' '+d.getFullYear()+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-    row.innerHTML=`<div class="txn-icon ${isCredit?'credit-icon':'debit-icon'}">${isCredit?'⬆️':'⬇️'}</div><div class="txn-info"><div class="txn-desc">${t.desc||'—'}</div><div class="txn-date">${dateStr}</div></div><div class="txn-amount ${isCredit?'credit-amt':'debit-amt'}">${isCredit?'+':'-'}${formatRp(t.amount)}</div><div class="txn-actions"><button class="txn-edit-btn" onclick="openEditTxn('${t.id}')">✏️</button><button class="txn-del-btn" onclick="deleteTxn('${t.id}')">🗑️</button></div>`;
-    ledger.appendChild(row);
-  });
+  ledger.innerHTML=[...txns].reverse().map(t=>txnRowHtml(t,true)).join('');
+}
+function txnRowHtml(t,withActions){
+  const isCredit=t.type==='credit';
+  const d=new Date(t.timestamp);
+  const dateStr=d.getDate()+' '+MONTHS_ID[d.getMonth()]+' '+d.getFullYear()+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  const actions=withActions
+    ?`<div class="txn-actions"><button class="icon-btn" onclick="openEditTxn('${t.id}')" aria-label="Edit">✏️</button><button class="icon-btn icon-btn-danger" onclick="deleteTxn('${t.id}')" aria-label="Hapus">🗑️</button></div>`
+    :'';
+  return `<div class="savings-txn"><div class="txn-icon ${isCredit?'credit-icon':'debit-icon'}">${isCredit?'↑':'↓'}</div><div class="txn-info"><div class="txn-desc">${t.desc||'—'}</div><div class="txn-date">${dateStr}</div></div><div class="txn-amount ${isCredit?'credit-amt':'debit-amt'}">${isCredit?'+':'−'}${formatRp(t.amount)}</div>${actions}</div>`;
 }
 function openGoalModal(){
   const g=(state.savings&&state.savings.goal)||{};
@@ -369,11 +368,8 @@ function setManualStreak(val){
   showToast(n>0?'🔥 Streak diset ke '+n+' hari!':'✅ Streak kembali otomatis');
 }
 
-function getGridCols(n){if(n<=2)return 'repeat(2,1fr)';if(n<=3)return 'repeat(3,1fr)';if(n===4)return 'repeat(2,1fr)';return 'repeat(3,1fr)';}
-
 function renderQuestGrid(){
   const grid=document.getElementById('questGrid');
-  grid.style.gridTemplateColumns=getGridCols(state.quests.length);
   grid.innerHTML='';
   const d=todayData();
   state.quests.forEach(q=>{
@@ -382,9 +378,7 @@ function renderQuestGrid(){
     const card=document.createElement('div');
     card.className='quest-card'+(done?' done':'')+(locked?' locked-card':'');
     card.id='card-'+q.id;
-    const safeEmoji=q.emoji.replace(/'/g,"\\'");
-    const safeName=q.name.replace(/'/g,"\\'");
-    card.innerHTML=`<div class="quest-icon-wrap" style="background:${q.bg};border-color:${q.bc};">${locked&&!done?'🔒':q.emoji}<div class="check-badge">✓</div></div><div class="quest-name">${q.name}</div><div class="quest-time">⏱ ${q.dur} menit</div><button class="timer-btn" onclick="openTimer('${q.id}','${safeName}','${safeEmoji}',${q.dur});event.stopPropagation();">▶ Mulai Timer</button>`;
+    card.innerHTML=`<div class="quest-icon-wrap" style="background:${q.bg};border-color:${q.bc};">${locked&&!done?'🔒':q.emoji}<div class="check-badge">✓</div></div><div class="quest-name">${q.name}</div><div class="quest-time">⏱ ${q.dur} menit</div><button class="timer-btn" onclick="openTimer('${q.id}');event.stopPropagation();">▶ Mulai timer</button>`;
     card.addEventListener('click',()=>{
       if(locked){openMissionPin();return;}
       toggleQuest(q.id);
@@ -433,7 +427,7 @@ function renderWeeklyMissionBox(){
     itemsHtml+=`<div class="wm-item${done?' done':''}${locked&&!done?' mission-locked-item':''}" onclick="toggleWeeklyMission('${m.id}')"><div class="wm-item-check">${done?'✓':(locked?'🔒':'')}</div><div class="wm-item-text">${m.emoji||'📌'} ${m.name}</div><div class="wm-item-xp">+${m.xp||50} XP</div></div>`;
   });
   const now=new Date();const day=now.getDay()||7;const daysLeft=7-day+1;
-  box.innerHTML=`<div class="weekly-mission-card"><div class="weekly-mission-header"><div class="weekly-mission-icon">📅</div><div><div class="weekly-mission-title">MISI MINGGUAN</div><div class="weekly-mission-deadline">⏳ ${daysLeft} hari lagi sampai reset</div></div></div>${itemsHtml}</div>`;
+  box.innerHTML=`<div class="weekly-mission-card"><div class="weekly-mission-header"><div class="weekly-mission-icon">📅</div><div><div class="weekly-mission-title">Misi Mingguan</div><div class="weekly-mission-deadline">⏳ ${daysLeft} hari lagi sampai reset</div></div></div>${itemsHtml}</div>`;
 }
 
 function renderMonthlyMissionBox(){
@@ -448,7 +442,7 @@ function renderMonthlyMissionBox(){
     itemsHtml+=`<div class="mm-item${done?' done':''}${locked&&!done?' mission-locked-item':''}" onclick="toggleMonthlyMission('${m.id}')"><div class="mm-item-check">${done?'✓':(locked?'🔒':'')}</div><div class="mm-item-text">${m.emoji||'🎯'} ${m.name}</div><div class="mm-item-xp">+${m.xp||100} XP</div></div>`;
   });
   const now=new Date();const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();const daysLeft=daysInMonth-now.getDate()+1;
-  box.innerHTML=`<div class="monthly-mission-card"><div class="monthly-mission-header"><div class="monthly-mission-icon">🗓️</div><div><div class="monthly-mission-title">MISI BULANAN</div><div style="font-size:10px;color:#FF6F00;font-weight:700;margin-top:2px;">⏳ ${daysLeft} hari lagi sampai reset</div></div></div>${itemsHtml}</div>`;
+  box.innerHTML=`<div class="monthly-mission-card"><div class="monthly-mission-header"><div class="monthly-mission-icon">🗓️</div><div><div class="monthly-mission-title">Misi Bulanan</div><div class="monthly-mission-deadline">⏳ ${daysLeft} hari lagi sampai reset</div></div></div>${itemsHtml}</div>`;
 }
 
 function toggleWeeklyMission(id){
@@ -456,7 +450,7 @@ function toggleWeeklyMission(id){
   const wk=currentWeekKey();if(!state.weeklyProgress[wk])state.weeklyProgress[wk]={};
   const prog=state.weeklyProgress[wk];const mission=(state.weeklyMissions||[]).find(m=>m.id===id);if(!mission)return;
   if(prog[id]){delete prog[id];state.totalXP=Math.max(0,state.totalXP-(mission.xp||50));showToast('↩ Misi mingguan dibatalkan');}
-  else{prog[id]=true;state.totalXP+=(mission.xp||50);showToast('✅ Misi Mingguan Selesai! +'+mission.xp+' XP! 🎉');showConfetti();}
+  else{prog[id]=true;state.totalXP+=(mission.xp||50);showToast('✅ Misi mingguan selesai! +'+(mission.xp||50)+' XP 🎉');showConfetti();}
   checkBadges();save();renderAll();
 }
 
@@ -465,7 +459,7 @@ function toggleMonthlyMission(id){
   const mk=currentMonthKey();if(!state.monthlyProgress[mk])state.monthlyProgress[mk]={};
   const prog=state.monthlyProgress[mk];const mission=(state.monthlyMissions||[]).find(m=>m.id===id);if(!mission)return;
   if(prog[id]){delete prog[id];state.totalXP=Math.max(0,state.totalXP-(mission.xp||100));showToast('↩ Misi bulanan dibatalkan');}
-  else{prog[id]=true;state.totalXP+=(mission.xp||100);showToast('✅ Misi Bulanan Selesai! +'+mission.xp+' XP! 🎉');showConfetti();}
+  else{prog[id]=true;state.totalXP+=(mission.xp||100);showToast('✅ Misi bulanan selesai! +'+(mission.xp||100)+' XP 🎉');showConfetti();}
   checkBadges();save();renderAll();
 }
 
@@ -504,12 +498,12 @@ function renderTankGame(){
   const banner=document.getElementById('tankLockBanner');
   const card=document.getElementById('tankGameCard');
   if(unlocked){
-    banner.innerHTML=`<div class="tank-lock-banner unlocked"><span style="font-size:24px;">🎯</span><div class="tank-lock-banner-text">TANK BATTLE sudah terbuka! Selamat bermain! 🎉</div></div>`;
-    card.innerHTML=`<a class="game-card tank" href="tank.html"><span class="game-icon">🎯</span><div class="game-name">TANK BATTLE</div><div class="game-desc">Tembak musuh dengan tankmu!</div><span class="game-badge" style="background:#e67e22;color:#fff;">🔥 Mainkan</span></a>`;
+    banner.innerHTML=`<div class="tank-lock-banner unlocked"><span class="tank-lock-icon">🎉</span><div class="tank-lock-banner-text">Tank Battle sudah terbuka. Selamat bermain!</div></div>`;
+    card.innerHTML=`<a class="game-card tank" href="tank.html"><span class="game-icon">🎯</span><div class="game-name">Tank Battle</div><div class="game-desc">Tembak musuh dengan tankmu!</div><span class="game-badge badge-play">▶ Mainkan</span></a>`;
   }else{
     const needed=TANK_UNLOCK_XP-state.totalXP;
-    banner.innerHTML=`<div class="tank-lock-banner"><span style="font-size:24px;">🔒</span><div class="tank-lock-banner-text">Tank Battle terkunci! Kumpulkan <b>${needed} XP lagi</b> untuk buka!</div><div class="tank-lock-progress">${state.totalXP}/${TANK_UNLOCK_XP} XP</div></div>`;
-    card.innerHTML=`<div class="game-card tank locked"><span class="game-icon" style="filter:grayscale(1);opacity:0.5;">🎯</span><div class="game-name" style="color:#90A4AE;">TANK BATTLE</div><div class="game-desc">Butuh ${needed} XP lagi...</div><span class="game-badge" style="background:#9e9e9e;color:#fff;">🔒 Terkunci</span></div>`;
+    banner.innerHTML=`<div class="tank-lock-banner"><span class="tank-lock-icon">🔒</span><div class="tank-lock-banner-text">Tank Battle terkunci. Kumpulkan <b>${needed} XP lagi</b> untuk membuka!</div><div class="tank-lock-progress">${state.totalXP}/${TANK_UNLOCK_XP} XP</div></div>`;
+    card.innerHTML=`<div class="game-card tank locked"><span class="game-icon">🎯</span><div class="game-name">Tank Battle</div><div class="game-desc">Butuh ${needed} XP lagi</div><span class="game-badge badge-locked">🔒 Terkunci</span></div>`;
   }
 }
 
@@ -529,7 +523,7 @@ function showConfetti(){
 
 function renderProfile(){
   const prof=state.profile||{};const name=prof.name||'Aslan Adika Prada';
-  document.getElementById('profileNameDisplay').textContent=name.toUpperCase();
+  document.getElementById('profileNameDisplay').textContent=name;
   document.getElementById('profileClassBadge').textContent=prof.class||'Kelas 3 SD';
   document.getElementById('profileBirthdate').textContent=formatDate(prof.birthdate);
   const age=calcAge(prof.birthdate);
@@ -537,8 +531,8 @@ function renderProfile(){
   document.getElementById('profileWeight').textContent=prof.weight?prof.weight+' kg':'— kg';
   document.getElementById('profileHeight').textContent=prof.height?prof.height+' cm':'— cm';
   const bdCard=document.getElementById('birthdayCountdown');
-  if(prof.birthdate){document.getElementById('birthdayCountdownVal').textContent=calcBirthdayCountdown(prof.birthdate);bdCard.style.display='block';}
-  else{bdCard.style.display='none';}
+  if(prof.birthdate)document.getElementById('birthdayCountdownVal').textContent=calcBirthdayCountdown(prof.birthdate);
+  bdCard.style.display=prof.birthdate?'':'none';
   const pd=document.getElementById('profilePhotoDisplay');
   if(prof.photo){pd.innerHTML='<img src="'+prof.photo+'" alt="foto">';}else{pd.innerHTML='⚔️';}
   document.getElementById('pStatXP').textContent=state.totalXP;
@@ -566,22 +560,24 @@ function renderMessages(){
   const ayah=state.ayahMsg||DEFAULT_MSG;
   const bunda=state.bundaMsg||'';
   if(ayah&&bunda){
-    container.innerHTML=`<div class="msg-grid"><div class="ayah-msg"><div class="msg-header"><div class="msg-avatar">👨‍💻</div><div class="msg-label">💬 Pesan Ayah</div></div><div class="msg-text">${ayah}</div></div><div class="bunda-msg"><div class="msg-header"><div class="msg-avatar">👩</div><div class="msg-label">💬 Pesan Bunda</div></div><div class="msg-text">${bunda}</div></div></div>`;
+    container.innerHTML=`<div class="msg-grid"><div class="ayah-msg" onclick="this.classList.toggle('expanded')"><div class="msg-header"><div class="msg-avatar">👨‍💻</div><div class="msg-label">Pesan Ayah</div></div><div class="msg-text">${ayah}</div></div><div class="bunda-msg" onclick="this.classList.toggle('expanded')"><div class="msg-header"><div class="msg-avatar">👩</div><div class="msg-label">Pesan Bunda</div></div><div class="msg-text">${bunda}</div></div></div>`;
   }else if(bunda){
-    container.innerHTML=`<div class="msg-single bunda-single"><div class="msg-single-header"><div class="msg-single-avatar">👩</div><div class="msg-single-label">💬 Pesan dari Bunda</div></div><div class="msg-single-text">${bunda}</div></div>`;
+    container.innerHTML=`<div class="msg-single bunda-single" onclick="this.classList.toggle('expanded')"><div class="msg-single-header"><div class="msg-single-avatar">👩</div><div class="msg-single-label">Pesan dari Bunda</div></div><div class="msg-single-text">${bunda}</div></div>`;
   }else{
-    container.innerHTML=`<div class="msg-single"><div class="msg-single-header"><div class="msg-single-avatar">👨‍💻</div><div class="msg-single-label">💬 Pesan dari Ayah &amp; Bunda</div></div><div class="msg-single-text">${ayah}</div></div>`;
+    container.innerHTML=`<div class="msg-single" onclick="this.classList.toggle('expanded')"><div class="msg-single-header"><div class="msg-single-avatar">👨‍💻</div><div class="msg-single-label">Pesan dari Ayah &amp; Bunda</div></div><div class="msg-single-text">${ayah}</div></div>`;
   }
 }
 
-function renderDailyMotivation(){document.getElementById('dailyMotivationText').textContent=getDailyMotivation();}
+function renderDailyMotivation(){
+  document.getElementById('dailyMotivationText').textContent=getDailyMotivation().replace(/^"|"$/g,'');
+}
 
 function renderStatus(){
   const d=todayData();const total=state.quests.length;const count=state.quests.filter(q=>d[q.id]).length;
   document.getElementById('statusText').textContent=count+' dari '+total+' misi selesai';
   const btn=document.getElementById('submitBtn');
   btn.disabled=count<total||!!d.submitted;
-  btn.textContent=d.submitted?'🏆 SUDAH SELESAI!':'✅ SEMUA SELESAI!';
+  btn.textContent=d.submitted?'🏆 Hari ini sudah selesai':'✅ Semua Selesai!';
 }
 function renderXPBar(){
   const d=todayData();const total=state.quests.length;const count=state.quests.filter(q=>d[q.id]).length;
@@ -600,14 +596,10 @@ function renderWeeklyStats(){
     const dayXP=dayDone*XP_PER+(h.submitted?XP_BONUS:0);
     xpByDay.push({day:DAYS_ID[d.getDay()],xp:dayXP,isToday:i===0});
   }
-  const chart=document.getElementById('xpChart');if(!chart)return;
-  const maxXP=Math.max(...xpByDay.map(d=>d.xp),1);chart.innerHTML='';
-  xpByDay.forEach(({day,xp,isToday})=>{
-    const pct=Math.round((xp/maxXP)*100);
-    const bar=document.createElement('div');bar.className='xp-bar-day';
-    bar.innerHTML=`<div class="xp-bar-fill${isToday?' today-bar':''}" style="height:${pct}%;max-height:60px;min-height:${xp>0?8:4}px;"></div><div class="xp-bar-label">${day}</div>`;
-    chart.appendChild(bar);
-  });
+  const maxXP=Math.max(...xpByDay.map(d=>d.xp),1);
+  document.getElementById('xpChart').innerHTML=xpByDay.map(({day,xp,isToday})=>
+    `<div class="xp-bar-day${isToday?' is-today':''}"><div class="xp-bar-value">${xp||''}</div><div class="xp-bar-track"><div class="xp-bar-fill${isToday?' today-bar':''}" style="height:${Math.round((xp/maxXP)*100)}%"></div></div><div class="xp-bar-label">${day}</div></div>`
+  ).join('');
 }
 
 function renderStreak(){
@@ -666,7 +658,7 @@ function checkBadges(){
   if(count===total&&total>0&&d.submitted)unlock('perfect');
   if(st>=3)unlock('streak3');if(st>=7)unlock('streak7');
   if(st>=14)unlock('streak14');if(st>=15)unlock('streak15');if(st>=30)unlock('streak30');
-  if(st>=40)unlock('streak40');if(st>=50)unlock('streak50');
+  if(st>=40)unlock('streak40');if(st>=50)unlock('streak50');if(st>=60)unlock('streak60');
   if(xp>=100)unlock('xp100');if(xp>=300)unlock('xp300');
   if(xp>=1000)unlock('xp1000');if(xp>=1500)unlock('xp1500');if(xp>=2500)unlock('xp2500');
   if(xp>=4000)unlock('xp4000');if(xp>=5000)unlock('xp5000');if(xp>=6000)unlock('xp6000');
@@ -677,12 +669,17 @@ function checkBadges(){
 
 function renderBadges(){
   checkBadges();
+  let shown=0,unlockedCount=0;
   AUTO_BADGE_IDS.forEach(id=>{
     const ic=document.getElementById('bicon-'+id);
-    if(ic){if(state.badges[id])ic.classList.add('unlocked');else ic.classList.remove('unlocked');}
+    if(!ic)return;
+    shown++;
+    if(state.badges[id])unlockedCount++;
+    ic.classList.toggle('unlocked',!!state.badges[id]);
   });
+  document.getElementById('badgeSummary').textContent=unlockedCount+' dari '+shown+' piala sudah terbuka';
   const prof=state.profile||{};
-  document.getElementById('headerName').textContent=(prof.name||'ASLAN ADIKA PRADA').toUpperCase();
+  document.getElementById('headerName').textContent=prof.name||'Aslan Adika Prada';
   document.getElementById('headerSubtitle').textContent='Pejuang Ilmu · '+(prof.class||'Kelas 3 SD');
   const ha=document.getElementById('headerAvatar');
   if(prof.photo){ha.innerHTML='<img src="'+prof.photo+'" alt="foto">';}else{ha.innerHTML='⚔️';}
@@ -692,13 +689,11 @@ function renderCustomBadges(){
   const section=document.getElementById('customBadgesSection');
   const grid=document.getElementById('customBadgesGrid');
   if(!cbs.length){section.style.display='none';return;}
-  section.style.display='block';grid.innerHTML='';
-  cbs.forEach(cb=>{
+  section.style.display='';
+  grid.innerHTML=cbs.map(cb=>{
     const unlocked=!!state.badges[cb.id];
-    const item=document.createElement('div');item.className='badge-item'+(unlocked?' unlocked':'');
-    item.innerHTML=`<div class="badge-icon ${unlocked?'unlocked':''}" title="${cb.xpRequired} XP">${cb.emoji}</div><div class="badge-name">${cb.name}<br><span style="font-size:7px;color:${unlocked?'#6A1B9A':'#BDBDBD'};">${unlocked?'✓ Terbuka!':cb.xpRequired+' XP'}</span></div>`;
-    grid.appendChild(item);
-  });
+    return `<div class="badge-item${unlocked?' unlocked':''}"><div class="badge-icon${unlocked?' unlocked':''}" title="${cb.xpRequired} XP">${cb.emoji}</div><div class="badge-name">${cb.name}<span class="badge-req">${unlocked?'✓ Terbuka':cb.xpRequired+' XP'}</span></div></div>`;
+  }).join('');
 }
 
 function renderKarakter(){
@@ -709,19 +704,14 @@ function renderKarakter(){
   if(motivEl){const motiv=state.karakterMotivation||DEFAULT_KARAKTER_MOTIVATION;motivEl.innerHTML=motiv.replace(/\n/g,'<br>');}
   const display=document.getElementById('karakterBadgesDisplay');
   if(!awarded.length){
-    display.innerHTML=`<div class="karakter-empty"><div style="font-size:48px;margin-bottom:12px;">🌱</div><div style="font-size:13px;font-weight:700;color:#90A4AE;line-height:1.6;">Belum ada lencana karakter.<br>Tunjukkan karakter terbaikmu,<br>Ayah &amp; Bunda akan memberimu lencana! 💪</div></div>`;
+    display.innerHTML=`<div class="karakter-empty"><span class="empty-emoji">🌱</span>Belum ada lencana karakter.<br>Tunjukkan karakter terbaikmu, Ayah &amp; Bunda akan memberimu lencana! 💪</div>`;
     return;
   }
-  const grid=document.createElement('div');grid.className='karakter-badges-grid';
-  awarded.slice().reverse().forEach(a=>{
-    const card=document.createElement('div');card.className='karakter-badge-card awarded';
+  display.innerHTML='<div class="karakter-badges-grid">'+awarded.slice().reverse().map(a=>{
     const dd=new Date(a.timestamp);
     const dateStr=dd.getDate()+' '+MONTHS_ID[dd.getMonth()]+' '+dd.getFullYear();
-    card.innerHTML=`<div class="karakter-badge-award-star">⭐</div><div class="karakter-badge-emoji">${a.emoji}</div><div class="karakter-badge-name">${a.name}</div><div class="karakter-badge-date">📅 ${dateStr}</div>${a.note?`<div class="karakter-badge-note">"${a.note}"</div>`:''}`;
-    grid.appendChild(card);
-  });
-  display.innerHTML='';display.appendChild(grid);
-  display.innerHTML+='<div style="margin-bottom:16px;"></div>';
+    return `<div class="karakter-badge-card awarded"><div class="karakter-badge-award-star">⭐</div><div class="karakter-badge-emoji">${a.emoji}</div><div class="karakter-badge-name">${a.name}</div><div class="karakter-badge-date">${dateStr}</div>${a.note?`<div class="karakter-badge-note">"${a.note}"</div>`:''}</div>`;
+  }).join('')+'</div>';
 }
 
 // Ideas feature removed
@@ -740,9 +730,9 @@ function calcBirthdayCountdown(birthdate){
   let next=new Date(now.getFullYear(),bd.getMonth(),bd.getDate());
   if(next<=now)next=new Date(now.getFullYear()+1,bd.getMonth(),bd.getDate());
   const diff=Math.ceil((next-now)/(1000*60*60*24));
-  if(diff===0)return '🎂 HARI INI! Selamat Ulang Tahun! 🎉';
-  if(diff===1)return '🎂 Besok Ulang Tahun! Siap-siap! 🎈';
-  return '🎂 '+diff+' hari lagi';
+  if(diff===0)return 'Hari ini! Selamat ulang tahun 🎉';
+  if(diff===1)return 'Besok! Siap-siap 🎈';
+  return diff+' hari lagi';
 }
 function formatDate(birthdate){
   if(!birthdate)return '—';
@@ -763,7 +753,7 @@ function renderSavings(){
   const goal=(state.savings&&state.savings.goal)||null;
   const goalCard=document.getElementById('savingsGoalCard');
   if(goal&&goal.amount>0){
-    goalCard.style.display='block';
+    goalCard.style.display='';
     document.getElementById('savingsGoalName').textContent=goal.name||'—';
     const pct=Math.min(100,Math.round((balance/goal.amount)*100));
     document.getElementById('savingsGoalFill').style.width=pct+'%';
@@ -772,20 +762,12 @@ function renderSavings(){
   }else{goalCard.style.display='none';}
   const ledger=document.getElementById('savingsLedger');
   if(!txns.length){ledger.innerHTML='<div class="savings-ledger-empty">Belum ada transaksi.<br>Tanya Ayah &amp; Bunda untuk mulai menabung! 🐷</div>';return;}
-  const sorted=[...txns].reverse();ledger.innerHTML='';
-  sorted.forEach(t=>{
-    const isCredit=t.type==='credit';
-    const row=document.createElement('div');row.className='savings-txn';
-    const d=new Date(t.timestamp);
-    const dateStr=d.getDate()+' '+MONTHS_ID[d.getMonth()]+' '+d.getFullYear()+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-    row.innerHTML=`<div class="txn-icon ${isCredit?'credit-icon':'debit-icon'}">${isCredit?'⬆️':'⬇️'}</div><div class="txn-info"><div class="txn-desc">${t.desc||'—'}</div><div class="txn-date">${dateStr}</div></div><div class="txn-amount ${isCredit?'credit-amt':'debit-amt'}">${isCredit?'+':'-'}${formatRp(t.amount)}</div>`;
-    ledger.appendChild(row);
-  });
+  ledger.innerHTML=[...txns].reverse().map(t=>txnRowHtml(t,false)).join('');
 }
 function openSavingsModal(type){
   currentSavingsType=type;
   document.getElementById('savingsAmountInput').value='';document.getElementById('savingsDescInput').value='';
-  setSavingsType(type);document.getElementById('savingsModalTitle').textContent=type==='credit'?'➕ TABUNG (KREDIT)':'➖ AMBIL (DEBIT)';
+  setSavingsType(type);document.getElementById('savingsModalTitle').textContent='Transaksi baru';
   document.getElementById('savingsTypeRow').style.display='flex';
   document.getElementById('savingsOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('savingsAmountInput').focus(),100);
@@ -845,29 +827,22 @@ function render30DayTables(){
       if(filled)doneCount++;
       gridHtml+=`<div class="day-box${filled?' filled':''}${isToday?' today-box':''}" style="${filled?'background:'+q.bg+';border-color:'+q.bc+';':''}" title="${d.getDate()+' '+MONTHS_ID[d.getMonth()]}"><div>${d.getDate()}</div><div>${filled?'✓':(isToday?'▸':'')}</div></div>`;
     }
-    const card=document.createElement('div');card.className='table-card';card.style.borderColor=q.bc;
+    const card=document.createElement('div');card.className='table-card';
     card.innerHTML=`<div class="table-header"><div class="table-header-icon" style="background:${q.bg};border-color:${q.bc};">${q.emoji}</div><div><div class="table-header-title">${q.name}</div><div class="table-header-count">${doneCount} dari 30 hari selesai</div></div></div><div class="days-grid-30">${gridHtml}</div>`;
     wrap.appendChild(card);
   });
 }
 
-const TAB_ORDER=['today','streak','badges','progress','profile','savings','karakter','games'];
+// Tabs reachable from the "Lainnya" sheet keep that nav item highlighted.
+const MORE_TABS=['progress','savings','karakter','games'];
 function switchTab(tab){
-  const allTabs=document.querySelectorAll('.tab');
-  const allContents=document.querySelectorAll('.tab-content');
-  allTabs.forEach(el=>{
-    const isActive=el.onclick&&el.onclick.toString().includes("'"+tab+"'");
-    if(tab==='today')el.classList.toggle('active',el.classList.contains('tab-misi'));
-    else if(tab==='streak')el.classList.toggle('active',el.classList.contains('tab-streak'));
-    else if(tab==='badges')el.classList.toggle('active',el.classList.contains('tab-piala'));
-    else if(tab==='progress')el.classList.toggle('active',el.classList.contains('tab-log'));
-    else if(tab==='profile')el.classList.toggle('active',el.classList.contains('tab-profil'));
-    else if(tab==='savings')el.classList.toggle('active',el.classList.contains('tab-nabung'));
-    else if(tab==='karakter')el.classList.toggle('active',el.classList.contains('tab-karakter'));
-    else if(tab==='games')el.classList.toggle('active',el.classList.contains('tab-game'));
-    else el.classList.remove('active');
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    const t=el.dataset.tab;
+    el.classList.toggle('active',t===tab||(t==='more'&&MORE_TABS.includes(tab)));
   });
-  allContents.forEach(el=>el.classList.toggle('active',el.id==='tab-'+tab));
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('active',el.id==='tab-'+tab));
+  closeMoreSheet();
+  window.scrollTo(0,0);
   if(tab==='progress')render30DayTables();
   if(tab==='profile')renderProfile();
   if(tab==='savings')renderSavings();
@@ -876,11 +851,16 @@ function switchTab(tab){
   if(tab==='games')renderTankGame();
 }
 
-let timerInterval=null,timerSecs=30*60,timerRunning=false,activeTimerQuest=null;
-function openTimer(qId,label,emoji,dur){
-  activeTimerQuest=qId;timerSecs=(dur||30)*60;timerRunning=false;clearInterval(timerInterval);
-  document.getElementById('timerEmoji').textContent=emoji;
-  document.getElementById('timerTitle').textContent=label.toUpperCase();
+function closeOverlay(id){document.getElementById(id).classList.remove('open');}
+function openMoreSheet(){document.getElementById('moreSheet').classList.add('open');}
+function closeMoreSheet(){closeOverlay('moreSheet');}
+
+let timerInterval=null,timerSecs=30*60,timerTotal=30*60,timerRunning=false,activeTimerQuest=null;
+function openTimer(qId){
+  const q=state.quests.find(x=>x.id===qId);if(!q)return;
+  activeTimerQuest=qId;timerSecs=timerTotal=(q.dur||30)*60;timerRunning=false;clearInterval(timerInterval);
+  document.getElementById('timerEmoji').textContent=q.emoji;
+  document.getElementById('timerTitle').textContent=q.name;
   document.getElementById('timerToggle').textContent='▶ Mulai';
   renderTimerDisplay();document.getElementById('timerOverlay').classList.add('open');
 }
@@ -888,23 +868,28 @@ function closeTimer(){clearInterval(timerInterval);timerRunning=false;timerInter
 function toggleTimer(){
   if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('timerToggle').textContent='▶ Lanjut';}
   else{
-    timerRunning=true;document.getElementById('timerToggle').textContent='⏸ Pause';
+    timerRunning=true;document.getElementById('timerToggle').textContent='⏸ Jeda';
     timerInterval=setInterval(()=>{
       timerSecs--;renderTimerDisplay();
-      if(timerSecs<=0){
-        clearInterval(timerInterval);timerRunning=false;document.getElementById('timerOverlay').classList.remove('open');
-        const d=todayData();
-        if(!d.submitted&&!d[activeTimerQuest]){d[activeTimerQuest]=true;state.totalXP+=XP_PER;save();renderAll();}
-        showToast('🎉 Selesai! +20 XP! Keren Aslan!');
-      }
+      if(timerSecs<=0)finishTimer();
     },1000);
   }
+}
+// XP is granted on submitDay() like a tapped quest, so the timer only marks the quest done.
+function finishTimer(){
+  clearInterval(timerInterval);timerRunning=false;closeOverlay('timerOverlay');
+  const d=todayData();
+  if(d.submitted||d[activeTimerQuest]){showToast('⏰ Waktu habis! Keren, Aslan!');return;}
+  if(!missionUnlocked){showToast('⏰ Waktu habis! Buka PIN misi dulu untuk menceklis.');return;}
+  d[activeTimerQuest]=true;save();renderAll();
+  showToast('🎉 Waktu habis! Misi diceklis, keren Aslan!');
 }
 function renderTimerDisplay(){
   const m=Math.floor(timerSecs/60),s=timerSecs%60;
   const el=document.getElementById('timerDisplay');
   el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
   el.classList.toggle('urgent',timerSecs<=60);
+  document.getElementById('timerRing').style.setProperty('--p',timerTotal>0?timerSecs/timerTotal:0);
 }
 
 function compressImage(file,cb){
@@ -1162,7 +1147,7 @@ function showToast(msg,red=false){
 }
 
 // ===== ADMIN PANEL (tabs & lists) =====
-const EMPTY_ADMIN_LIST=msg=>'<div style="text-align:center;color:#90A4AE;font-size:12px;padding:16px;">'+msg+'</div>';
+const EMPTY_ADMIN_LIST=msg=>'<div class="adm2-empty">'+msg+'</div>';
 
 function clearBirthdate(){
   document.getElementById('editBirthdate').value='';
@@ -1184,8 +1169,8 @@ function adm2Tab(name){
   if(name==='investasi')loadInvestPricesForAdmin();
 }
 
-function adminListItem(icon,name,meta,actions,extraStyle){
-  return `<div class="adm2-list-item"${extraStyle?` style="${extraStyle}"`:''}>
+function adminListItem(icon,name,meta,actions,extraClass){
+  return `<div class="adm2-list-item${extraClass?' '+extraClass:''}">
     <div class="adm2-list-item-icon">${icon}</div>
     <div class="adm2-list-item-info">
       <div class="adm2-list-item-name">${name}</div>
@@ -1194,8 +1179,8 @@ function adminListItem(icon,name,meta,actions,extraStyle){
     <div class="adm2-list-item-actions">${actions}</div>
   </div>`;
 }
-const editBtn=(type,id)=>`<button class="adm2-btn adm2-btn-sm" style="background:#E3F2FD;color:#1565C0;" onclick="openMisiEdit('${type}','${id}')">✏️</button>`;
-const delBtn=onclick=>`<button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="${onclick}">🗑️</button>`;
+const editBtn=(type,id)=>`<button class="icon-btn" onclick="openMisiEdit('${type}','${id}')" aria-label="Edit">✏️</button>`;
+const delBtn=onclick=>`<button class="icon-btn icon-btn-danger" onclick="${onclick}" aria-label="Hapus">🗑️</button>`;
 
 function renderQuestManagerV2(){
   const dest=document.getElementById('questManagerList2');
@@ -1218,9 +1203,9 @@ function syncAdminQuestList2(){
   dest.innerHTML=state.quests.map(q=>{
     const isDone=!!d[q.id];
     const action=isDone
-      ?`<button class="adm2-btn adm2-btn-sm adm2-btn-red" onclick="adminCancelQuest('${k}','${q.id}')">↩ Batal</button>`
+      ?`<button class="btn btn-danger btn-sm" onclick="adminCancelQuest('${k}','${q.id}')">↩ Batal</button>`
       :'';
-    return adminListItem(q.emoji,q.name,isDone?'✓ Selesai':'– Belum',action);
+    return adminListItem(q.emoji,q.name,isDone?'✓ Selesai':'Belum',action,isDone?'is-done':'');
   }).join('');
   document.getElementById('adminXpDisplay2').textContent=state.totalXP+' XP';
 }
@@ -1267,15 +1252,15 @@ function syncKarakterAwarded2(){
     const dd=new Date(a.timestamp);
     const dateStr=dd.getDate()+' '+MONTHS_ID[dd.getMonth()]+' '+dd.getFullYear();
     return adminListItem(a.emoji,a.name,'"'+(a.note||'—')+'" · '+dateStr,
-      delBtn(`deleteKarakter('${a.id}')`),'background:#F3E5F5;border-color:#CE93D8;');
+      delBtn(`deleteKarakter('${a.id}')`));
   }).join('');
 }
 
 // ===== EDIT MISI MODAL =====
 const MISI_EDIT_CFG={
-  harian:  {list:()=>state.quests,         metaKey:'dur',title:'⚔️ Edit Misi Harian',   metaLabel:'Durasi (menit)'},
-  mingguan:{list:()=>state.weeklyMissions, metaKey:'xp', title:'📅 Edit Misi Mingguan', metaLabel:'XP Reward'},
-  bulanan: {list:()=>state.monthlyMissions,metaKey:'xp', title:'🗓️ Edit Misi Bulanan', metaLabel:'XP Reward'},
+  harian:  {list:()=>state.quests,         metaKey:'dur',title:'Edit misi harian',   metaLabel:'Durasi (menit)'},
+  mingguan:{list:()=>state.weeklyMissions, metaKey:'xp', title:'Edit misi mingguan', metaLabel:'Hadiah XP'},
+  bulanan: {list:()=>state.monthlyMissions,metaKey:'xp', title:'Edit misi bulanan',  metaLabel:'Hadiah XP'},
 };
 function openMisiEdit(type,id){
   const cfg=MISI_EDIT_CFG[type];
@@ -1325,6 +1310,41 @@ function setupUpdateNotice(){
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
+
+// ===== OVERLAY: ketuk latar / Esc untuk menutup, keyboard untuk PIN =====
+// Timer and parent panels are left out of tap-to-dismiss so a stray tap can't stop a timer or log a parent out.
+const DISMISSIBLE={
+  moreSheet:closeMoreSheet,
+  missionPinOverlay:closeMissionPin,
+  savingsLockOverlay:closeSavingsLock,
+  confirmOverlay:()=>closeOverlay('confirmOverlay'),
+  savingsOverlay:closeSavingsModal,
+  savingsEditOverlay:()=>closeOverlay('savingsEditOverlay'),
+  goalOverlay:()=>closeOverlay('goalOverlay'),
+  misiEditOverlay:closeMisiEdit,
+};
+const isOpen=id=>document.getElementById(id).classList.contains('open');
+document.addEventListener('click',e=>{
+  const close=DISMISSIBLE[e.target.id];
+  if(close&&e.target.classList.contains('open'))close();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    const top=Object.keys(DISMISSIBLE).filter(isOpen).pop();
+    if(top)DISMISSIBLE[top]();
+    else if(isOpen('savingsParentOverlay'))closeSavingsParent();
+    else if(isOpen('adminOverlay'))closeAdmin();
+    return;
+  }
+  let pad=null;
+  if(isOpen('missionPinOverlay'))pad=[mpPress,mpDel,doMissionLogin];
+  else if(isOpen('savingsLockOverlay'))pad=[savNpPress,savNpDel,doSavingsLogin];
+  else if(isOpen('adminOverlay')&&!adminUnlocked)pad=[admNpPress,admNpDel,doAdminLogin];
+  if(!pad)return;
+  if(/^[0-9]$/.test(e.key))pad[0](e.key);
+  else if(e.key==='Backspace')pad[1]();
+  else if(e.key==='Enter'){e.preventDefault();pad[2]();}
+});
 
 // INIT
 setSyncStatus('syncing');

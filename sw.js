@@ -1,5 +1,5 @@
-const CACHE = 'aslan-cache-v2';
-const PRECACHE = ['index.html', 'app.js', 'styles.css', 'manifest.json', 'icon.png'];
+const CACHE = 'aslan-cache-v3';
+const PRECACHE = ['index.html', 'app.js', 'theme.css', 'chrome.css', 'styles.css', 'manifest.json', 'icon.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)));

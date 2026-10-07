@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klub Penemu Kecil dan Bola Kristal Pintar - Buku 1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Nunito', sans-serif; overflow: hidden; background: #0a0a2e; }
+h1, h2, h3, .title-font { font-family: 'Fredoka', sans-serif; }
+
+/* Slide Container */
+.slide-container {
+  width: 100vw; height: 100vh;
+  position: relative; overflow: hidden;
+}
+.slide {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; transform: translateX(100%);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  padding: 1.5rem;
+}
+.slide.active {
+  opacity: 1; transform: translateX(0);
+}
+.slide.exit-left {
+  opacity: 0; transform: translateX(-100%);
+}
+.slide.exit-right {
+  opacity: 0; transform: translateX(100%);
+}
+
+/* Floating decorations */
+@keyframes float { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-20px) rotate(5deg)} }
+@keyframes floatSlow { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(-3deg)} }
+@keyframes floatReverse { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(15px) rotate(3deg)} }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:0.7} 50%{transform:scale(1.15);opacity:1} }
+@keyframes sparkle { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes wiggle { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+@keyframes glow { 0%,100%{box-shadow:0 0 20px rgba(255,255,255,0.3)} 50%{box-shadow:0 0 40px rgba(255,255,255,0.7)} }
+@keyframes twinkle { 0%,100%{opacity:0} 50%{opacity:1} }
+@keyframes riseUp { 0%{opacity:0;transform:translateY(40px)} 100%{opacity:1;transform:translateY(0)} }
+@keyframes crystalFloat { 0%,100%{transform:translateY(0) scale(1)} 25%{transform:translateY(-10px) scale(1.02)} 50%{transform:translateY(-18px) scale(1.05)} 75%{transform:translateY(-10px) scale(1.02)} }
+
+.float-1 { animation: float 4s ease-in-out infinite; }
+.float-2 { animation: floatSlow 5s ease-in-out infinite; }
+.float-3 { animation: floatReverse 6s ease-in-out infinite; }
+.pulse-anim { animation: pulse 2s ease-in-out infinite; }
+.sparkle-anim { animation: sparkle 1.5s ease-in-out infinite; }
+.spin-anim { animation: spin 8s linear infinite; }
+.bounce-anim { animation: bounce 2s ease-in-out infinite; }
+.wiggle-anim { animation: wiggle 2s ease-in-out infinite; }
+.glow-anim { animation: glow 2s ease-in-out infinite; }
+.crystal-float { animation: crystalFloat 3s ease-in-out infinite; }
+
+/* Star decorations */
+.star {
+  position: absolute; width: 6px; height: 6px;
+  background: #FFD700; border-radius: 50%;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* Speech bubble */
+.speech-bubble {
+  position: relative;
+  background: white; border-radius: 20px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  max-width: 80%;
+}
+.speech-bubble::after {
+  content: ''; position: absolute;
+  bottom: -15px; left: 30px;
+  border-width: 15px 10px 0;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+
+/* Crystal ball SVG glow */
+.crystal-glow {
+  filter: drop-shadow(0 0 20px rgba(100,200,255,0.6)) drop-shadow(0 0 40px rgba(100,200,255,0.3));
+}
+
+/* Navigation */
+.nav-btn {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; font-weight: 800;
+  cursor: pointer; transition: all 0.3s ease;
+  border: 3px solid rgba(255,255,255,0.5);
+  backdrop-filter: blur(10px);
+  user-select: none;
+}
+.nav-btn:hover { transform: scale(1.15); }
+.nav-btn:active { transform: scale(0.95); }
+.nav-btn.disabled { opacity: 0.3; pointer-events: none; }
+
+/* Page indicator */
+.page-indicator {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem; color: rgba(255,255,255,0.8);
+  background: rgba(0,0,0,0.2);
+  padding: 0.3rem 1rem; border-radius: 20px;
+  backdrop-filter: blur(5px);
+}
+
+/* Back button */
+.back-btn {
+  position: fixed; top: 1rem; left: 1rem; z-index: 100;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  color: white; font-family: 'Nunito', sans-serif;
+  font-weight: 700; font-size: 0.85rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.back-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
+
+/* Content card */
+.content-card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 24px;
+  padding: 2rem;
+  max-width: 800px; width: 90%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  position: relative; overflow: hidden;
+}
+
+/* Character circles */
+.char-circle {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  border: 3px solid white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Day badge */
+.day-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white; padding: 0.3rem 1rem;
+  border-radius: 20px; font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 3px 10px rgba(255,107,107,0.4);
+}
+
+/* Decorative corner shapes */
+.corner-deco {
+  position: absolute; width: 80px; height: 80px;
+  opacity: 0.15; border-radius: 50%;
+}
+
+/* Progress dots */
+.progress-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s ease;
+}
+.progress-dot.active-dot {
+  background: white; transform: scale(1.4);
+  box-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+
+/* Background patterns */
+.bg-dots {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.bg-waves {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.05)' d='M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,149.3C672,139,768,149,864,170.7C960,192,1056,224,1152,218.7C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom;
+  background-size: 100% 200px;
+}
+
+/* Book content text */
+.story-text {
+  font-size: 1.15rem; line-height: 1.9;
+  color: #333; text-align: left;
+}
+.story-text p { margin-bottom: 0.8rem; }
+
+/* Highlight keyword */
+.keyword {
+  background: linear-gradient(120deg, rgba(255,200,50,0.3), rgba(255,150,50,0.3));
+  padding: 0.1rem 0.4rem; border-radius: 4px;
+  font-weight: 700;
+}
+
+/* Fun fact box */
+.fun-fact {
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  border-left: 5px solid #4CAF50;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-top: 1rem;
+}
+.fun-fact-title {
+  font-family: 'Fredoka', sans-serif;
+  color: #2E7D32; font-weight: 600;
+  font-size: 0.95rem; margin-bottom: 0.3rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .content-card { padding: 1.2rem; }
+  .story-text { font-size: 1rem; line-height: 1.7; }
+  .nav-btn { width: 46px; height: 46px; font-size: 1.2rem; }
+  .char-circle { width: 45px; height: 45px; font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Back Button -->
+<a href="../perpustakaan.html" class="back-btn">← Kembali ke Perpustakaan</a>
+
+<!-- Slides Container -->
+<div class="slide-container" id="slideContainer">
+
+  <!-- ==================== SLIDE 1: COVER ==================== -->
+  <div class="slide active" id="slide-1" style="background: linear-gradient(135deg, #1a1a5e 0%, #2d1b69 30%, #4a1a8a 60%, #6b21a8 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <!-- Stars -->
+    <div class="star" style="top:8%;left:10%;animation-delay:0s;width:4px;height:4px;"></div>
+    <div class="star" style="top:15%;left:80%;animation-delay:0.5s;"></div>
+    <div class="star" style="top:25%;left:25%;animation-delay:1s;width:5px;height:5px;"></div>
+    <div class="star" style="top:10%;left:60%;animation-delay:1.5s;"></div>
+    <div class="star" style="top:35%;left:90%;animation-delay:0.3s;width:3px;height:3px;"></div>
+    <div class="star" style="top:5%;left:45%;animation-delay:2s;"></div>
+    <div class="star" style="top:20%;left:70%;animation-delay:0.8s;width:5px;height:5px;"></div>
+    <div class="star" style="top:30%;left:15%;animation-delay:1.2s;"></div>
+    <div class="star" style="top:12%;left:35%;animation-delay:1.8s;width:4px;height:4px;"></div>
+    <div class="star" style="top:40%;left:75%;animation-delay:0.6s;"></div>
+    
+    <!-- Decorative planets -->
+    <div class="float-2" style="position:absolute;top:12%;left:5%;width:50px;height:50px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #FFB74D, #F57C00);opacity:0.5;"></div>
+    <div class="float-3" style="position:absolute;top:8%;right:8%;width:35px;height:35px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #EF5350, #C62828);opacity:0.4;"></div>
+    
+    <!-- Crystal Ball SVG -->
+    <div class="crystal-float" style="margin-bottom:1.5rem;">
+      <svg width="160" height="180" viewBox="0 0 160 180" class="crystal-glow">
+        <!-- Ball base -->
+        <ellipse cx="80" cy="165" rx="40" ry="8" fill="rgba(100,150,200,0.3)"/>
+        <!-- Ball body -->
+        <circle cx="80" cy="90" r="65" fill="url(#crystalGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <!-- Shine -->
+        <ellipse cx="60" cy="65" rx="20" ry="12" fill="rgba(255,255,255,0.35)" transform="rotate(-20 60 65)"/>
+        <circle cx="52" cy="58" r="4" fill="rgba(255,255,255,0.6)"/>
+        <!-- Inner glow -->
+        <circle cx="80" cy="90" r="40" fill="url(#innerGlow)" opacity="0.5"/>
+        <!-- Stars inside -->
+        <text x="65" y="85" font-size="12" fill="rgba(255,255,255,0.7)">✦</text>
+        <text x="85" y="100" font-size="10" fill="rgba(255,255,255,0.6)">✧</text>
+        <text x="70" y="105" font-size="8" fill="rgba(255,255,255,0.5)">✦</text>
+        <!-- Base -->
+        <path d="M55 148 Q80 165 105 148 L100 155 Q80 170 60 155 Z" fill="#5D4037" stroke="#4E342E" stroke-width="1"/>
+        <path d="M58 148 Q80 162 102 148 Q80 158 58 148" fill="#795548"/>
+        <defs>
+          <radialGradient id="crystalGrad" cx="40%" cy="35%">
+            <stop offset="0%" stop-color="#B3E5FC"/>
+            <stop offset="40%" stop-color="#4FC3F7"/>
+            <stop offset="70%" stop-color="#29B6F6"/>
+            <stop offset="100%" stop-color="#0277BD"/>
+          </radialGradient>
+          <radialGradient id="innerGlow">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
+            <stop offset="100%" stop-color="rgba(100,200,255,0)"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+    
+    <!-- Day Badge -->
+    <div class="day-badge" style="margin-bottom:0.8rem;">📘 Hari ke-1 dari 30</div>
+    
+    <!-- Title -->
+    <h1 class="title-font text-center" style="color:white; font-size:2.4rem; line-height:1.3; text-shadow: 0 4px 20px rgba(0,0,0,0.3); max-width:600px;">
+      Klub Penemu Kecil<br>dan Bola Kristal Pintar
+    </h1>
+    
+    <!-- Subtitle -->
+    <p class="title-font" style="color:#FFD54F; font-size:1.3rem; margin-top:0.8rem; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+      ✨ Bola Kristal yang Berbicara ✨
+    </p>
+    
+    <!-- Characters -->
+    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+      <div class="char-circle bounce-anim" style="background:linear-gradient(135deg,#42A5F5,#1E88E5);animation-delay:0s;">🧒</div>
+      <div class="char-circle bounce-anim" style="background:linear-gradient(135deg,#EF5350,#E53935);animation-delay:0.2s;">👧</div>
+      <div class="char-circle bounce-anim" style="background:linear-gradient(135deg,#66BB6A,#43A047);animation-delay:0.4s;">👦</div>
+      <div class="char-circle bounce-anim" style="background:linear-gradient(135deg,#AB47BC,#8E24AA);animation-delay:0.6s;">👩</div>
+    </div>
+    
+    <!-- Start hint -->
+    <p style="color:rgba(255,255,255,0.5); font-size:0.85rem; margin-top:1.5rem;" class="wiggle-anim">
+      Tekan panah ➡ untuk mulai membaca
+    </p>
+  </div>
+
+  <!-- ==================== SLIDE 2: Pengenalan ==================== -->
+  <div class="slide" id="slide-2" style="background: linear-gradient(150deg, #4FC3F7 0%, #29B6F6 40%, #039BE5 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <!-- Floating decorations -->
+    <div class="float-1" style="position:absolute;top:8%;right:8%;font-size:2.5rem;opacity:0.3;">🔬</div>
+    <div class="float-2" style="position:absolute;bottom:15%;left:5%;font-size:2rem;opacity:0.3;">📐</div>
+    <div class="float-3" style="position:absolute;top:20%;left:8%;font-size:1.8rem;opacity:0.3;">🧪</div>
+    
+    <div class="content-card">
+      <div class="day-badge" style="position:absolute;top:1rem;right:1rem;">Hari ke-1</div>
+      
+      <h2 class="title-font" style="color:#1565C0; font-size:1.6rem; margin-bottom:1rem;">
+        🏫 Sekolah yang Biasa... atau Tidak?
+      </h2>
+      
+      <div class="story-text">
+        <p>Di sebuah kota kecil bernama <span class="keyword">Kota Pelangi</span>, ada sekolah dasar yang tampak biasa saja dari luar. Temboknya berwarna putih kusam, halamannya ditumbuhi rumput hijau, dan loncengnya berbunyi setiap pagi seperti sekolah lainnya.</p>
+        
+        <p>Tapi bagi empat anak kelas 5 — <strong>Rian</strong> si penasaran, <strong>Sari</strong> si pintar matematika, <strong>Budi</strong> si tukang utak-atik, dan <strong>Dewi</strong> si pecinta alam — sekolah ini menyimpan rahasia yang belum pernah mereka bayangkan.</p>
+        
+        <p>Hari itu dimulai seperti biasa. Rian lupa membawa pensil. Sari mengeluh soal PR matematika. Budi membawa robot mainan buatannya yang selalu jatuh. Dan Dewi sibuk mengamati kupu-kupu di jendela. Mereka tidak tahu, petualangan terbesar dalam hidup mereka akan dimulai hari ini!</p>
+      </div>
+      
+      <!-- Characters intro -->
+      <div style="display:flex; gap:0.8rem; margin-top:1rem; flex-wrap:wrap; justify-content:center;">
+        <div style="text-align:center;">
+          <div class="char-circle" style="background:linear-gradient(135deg,#42A5F5,#1E88E5);margin:0 auto;">🧒</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#1565C0;margin-top:0.3rem;">Rian</div>
+          <div style="font-size:0.65rem;color:#666;">Si Penasaran</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="char-circle" style="background:linear-gradient(135deg,#EF5350,#E53935);margin:0 auto;">👧</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#C62828;margin-top:0.3rem;">Sari</div>
+          <div style="font-size:0.65rem;color:#666;">Si Pintar Matematika</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="char-circle" style="background:linear-gradient(135deg,#66BB6A,#43A047);margin:0 auto;">👦</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#2E7D32;margin-top:0.3rem;">Budi</div>
+          <div style="font-size:0.65rem;color:#666;">Si Tukang Utak-atik</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="char-circle" style="background:linear-gradient(135deg,#AB47BC,#8E24AA);margin:0 auto;">👩</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#6A1B9A;margin-top:0.3rem;">Dewi</div>
+          <div style="font-size:0.65rem;color:#666;">Si Pecinta Alam</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3: Gudang ==================== -->
+  <div class="slide" id="slide-3" style="background: linear-gradient(150deg, #5C6BC0 0%, #3949AB 40%, #283593 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-1" style="position:absolute;top:10%;right:10%;font-size:2rem;opacity:0.25;">🚪</div>
+    <div class="float-2" style="position:absolute;bottom:20%;left:5%;font-size:1.8rem;opacity:0.25;">🕸️</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#283593; font-size:1.6rem; margin-bottom:1rem;">
+        🚪 Pintu ke Gudang Misterius
+      </h2>
+      
+      <div class="story-text">
+        <p>Saat istirahat, Rian melihat sesuatu yang aneh. Di belakang gedung sekolah, ada pintu kayu tua yang tidak pernah ia perhatikan sebelumnya. Pintunya terbuka sedikit, dan dari dalam menerbus cahaya biru berkedip-kedip.</p>
+        
+        <p><em>"Hei, lihat ini!"</em> bisik Rian memanggil teman-temannya.</p>
+        
+        <p>Keempat anak itu mengendap-endap mendekati pintu. Budi mendorong pintu itu perlahan. <em>Kreek...</em> Pintunya terbuka, memperlihatkan sebuah gudang kecil yang penuh debu dan barang-barang tua — rak buku berdebu, meja kayu berkarat, dan... di atas meja itu, sesuatu yang bersinar!</p>
+        
+        <p><em>"Apa itu?"</em> Dewi menunjuk ke arah cahaya. Di tengah meja, dikelilingi kertas-kertas tua, ada sebuah <span class="keyword">bola kristal</span> sebesar jeruk yang mengeluarkan cahaya biru keperakan.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 4: Bola Kristal ==================== -->
+  <div class="slide" id="slide-4" style="background: linear-gradient(150deg, #7E57C2 0%, #5E35B1 40%, #4527A0 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <!-- Stars -->
+    <div class="star" style="top:10%;left:15%;animation-delay:0s;width:5px;height:5px;background:#E1BEE7;"></div>
+    <div class="star" style="top:20%;left:85%;animation-delay:0.7s;background:#E1BEE7;"></div>
+    <div class="star" style="top:35%;left:10%;animation-delay:1.3s;width:4px;height:4px;background:#E1BEE7;"></div>
+    
+    <div class="content-card" style="text-align:center;">
+      <h2 class="title-font" style="color:#4527A0; font-size:1.5rem; margin-bottom:1rem;">
+        🔮 Bola Kristal yang Bersinar
+      </h2>
+      
+      <!-- Crystal Ball illustration -->
+      <div class="crystal-float" style="margin:0.5rem auto 1rem;">
+        <svg width="120" height="140" viewBox="0 0 160 180" class="crystal-glow">
+          <ellipse cx="80" cy="165" rx="40" ry="8" fill="rgba(100,150,200,0.3)"/>
+          <circle cx="80" cy="90" r="65" fill="url(#crystalGrad2)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+          <ellipse cx="60" cy="65" rx="20" ry="12" fill="rgba(255,255,255,0.35)" transform="rotate(-20 60 65)"/>
+          <circle cx="52" cy="58" r="4" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="80" cy="90" r="40" fill="url(#innerGlow2)" opacity="0.5"/>
+          <text x="60" y="88" font-size="18" fill="rgba(255,255,255,0.8)">⚡</text>
+          <text x="80" y="78" font-size="14" fill="rgba(255,255,255,0.6)">✦</text>
+          <text x="88" y="100" font-size="10" fill="rgba(255,255,255,0.5)">✧</text>
+          <path d="M55 148 Q80 165 105 148 L100 155 Q80 170 60 155 Z" fill="#5D4037" stroke="#4E342E" stroke-width="1"/>
+          <path d="M58 148 Q80 162 102 148 Q80 158 58 148" fill="#795548"/>
+          <defs>
+            <radialGradient id="crystalGrad2" cx="40%" cy="35%">
+              <stop offset="0%" stop-color="#E1BEE7"/>
+              <stop offset="40%" stop-color="#BA68C8"/>
+              <stop offset="70%" stop-color="#9C27B0"/>
+              <stop offset="100%" stop-color="#6A1B9A"/>
+            </radialGradient>
+            <radialGradient id="innerGlow2">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
+              <stop offset="100%" stop-color="rgba(186,104,200,0)"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+      
+      <div class="story-text" style="text-align:left;">
+        <p>Bola kristal itu cantik sekali! Warnanya berubah-ubah dari biru ke ungu, lalu ke perak, seperti aurora di dalam bola kaca. Sari mencoba mengambilnya, tapi tangannya bergetar saat mendekati bola itu.</p>
+        
+        <p><em>"Awas! Jangan disentuh!"</em> seru Budi. Tapi terlambat. Jari Sari sudah menyentuh permukaan bola kristal.</p>
+        
+        <p>Tiba-tiba, cahaya dari bola kristal meledak keluar! Seluruh gudang disinari cahaya kebiruan. Buku-buku tua di rak mulai bergetar. Kertas-kertas beterbangan. Dan kemudian... bola kristal itu <span class="keyword">berbicara</span>!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 5: Kristal Berbicara ==================== -->
+  <div class="slide" id="slide-5" style="background: linear-gradient(150deg, #26C6DA 0%, #00ACC1 40%, #00838F 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-1" style="position:absolute;top:5%;right:5%;font-size:2.5rem;opacity:0.2;">💬</div>
+    <div class="float-3" style="position:absolute;bottom:18%;left:3%;font-size:2rem;opacity:0.2;">✨</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#006064; font-size:1.5rem; margin-bottom:1rem;">
+        💬 "Halo, Penemu Kecil!"
+      </h2>
+      
+      <!-- Speech bubble from crystal -->
+      <div class="speech-bubble" style="background:linear-gradient(135deg,#E0F7FA,#B2EBF2);margin-bottom:1.5rem;">
+        <p style="font-family:'Fredoka',sans-serif;color:#006064;font-size:1.05rem;line-height:1.6;">
+          <strong>🔮 Bola Kristal:</strong> "Halo, para penemu kecil! Aku sudah lama menunggu kalian. Nama saya <em>Krista</em>, dan saya adalah bola kristal pintar dari laboratorium Pak Wirawan — ilmuwan hebat yang dulunya mengajar di sekolah ini. Kalian terpilih untuk melanjutkan misinya: menjelajahi dunia sains, matematika, dan teknologi melalui petualangan yang seru!"
+        </p>
+      </div>
+      
+      <div class="story-text">
+        <p>Keempat anak itu terdiam. Mata mereka melotot. Mulut mereka terbuka lebar. Sebuah bola kristal yang <em>berbicara</em>?!</p>
+        
+        <p><em>"K-kamu... bicara?"</em> gagap Rian.</p>
+        
+        <p><em>"Tentu saja!"</em> jawab Krista dengan suara ceria. <em>"Dan saya bisa membawa kalian ke petualangan luar biasa. Tapi ada satu syarat — kalian harus siap belajar dan berani mencoba hal baru!"</em></p>
+        
+        <p>Sari mengangkat tangannya seperti di kelas. <em>"Apa petualangannya?"</em></p>
+        
+        <p>Krista berkilau lebih terang. <em>"Petualangan pertama kalian dimulai sekarang. Bersiaplah!"</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 6: Petualangan Dimulai ==================== -->
+  <div class="slide" id="slide-6" style="background: linear-gradient(150deg, #FF7043 0%, #F4511E 40%, #D84315 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-1" style="position:absolute;top:8%;left:8%;font-size:2.5rem;opacity:0.2;">🌊</div>
+    <div class="float-2" style="position:absolute;bottom:22%;right:5%;font-size:2rem;opacity:0.2;">🐚</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#BF360C; font-size:1.5rem; margin-bottom:1rem;">
+        🌊 Petualangan Pertama: Dunia Air
+      </h2>
+      
+      <div class="story-text">
+        <p>Dalam sekejap, cahaya biru dari Krista menyelimuti mereka. Keempat anak merasa dunia berputar — dan saat mereka membuka mata, mereka sudah berada di <span class="keyword">bawah laut</span>!</p>
+        
+        <p>Bukan laut biasa. Ini adalah laut yang <em>hidup</em>! Setiap tetes air berwarna-warni seperti pelangi. Ikan-ikan kecil berenang sambil menyanyikan lagu. Karang-karang berbentuk seperti bangunan kota.</p>
+        
+        <p><em>"Kami bisa bernapas di bawah air?!"</em> seru Dewi dengan mata berbinar. Ia langsung berenang mengikuti seekor ikan badut yang berwarna oranye cerah.</p>
+        
+        <p><em>"Ini berkat saya,"</em> kata Krista yang sekarang melayang di samping mereka seperti lentera. <em>"Tapi lihat ke sana — ada masalah yang harus kalian selesaikan!"</em></p>
+        
+        <p>Di kejauhan, mereka melihat sebuah gua gelap. Dari dalam gua, terdengar suara tangisan yang teredam. <em>"Ada yang butuh pertolongan!"</em> kata Budi dengan tegas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 7: Tantangan Sains ==================== -->
+  <div class="slide" id="slide-7" style="background: linear-gradient(150deg, #26A69A 0%, #00897B 40%, #00695C 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-1" style="position:absolute;top:12%;right:6%;font-size:2rem;opacity:0.25;">🧬</div>
+    <div class="float-3" style="position:absolute;bottom:20%;left:8%;font-size:1.8rem;opacity:0.25;">💡</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#004D40; font-size:1.5rem; margin-bottom:1rem;">
+        🧬 Teka-teki Gua Air
+      </h2>
+      
+      <div class="story-text">
+        <p>Di depan gua, ada pintu batu besar dengan ukiran aneh. Di atas pintu tertulis simbol-simbol yang tidak mereka mengerti. Di samping pintu, ada empat lubang berbentuk lingkaran.</p>
+        
+        <p><em>"Ini adalah teka-teki sains!"</em> kata Krista bersemangat. <em>"Untuk membuka pintu, kalian harus memasukkan benda yang benar ke dalam setiap lubang. Petunjuknya ada di dinding gua."</em></p>
+        
+        <p>Di dinding, ada gambar-gambar: <strong>es</strong>, <strong>air</strong>, <strong>uap</strong>, dan <strong>awan</strong>. Sari langsung tersenyum. <em>"Aku tahu! Ini tentang <span class="keyword">siklus air</span>! Air bisa berubah wujud menjadi es, uap, dan awan!"</em></p>
+        
+        <p>Mereka bekerja sama. Dewi mengumpulkan es dari karang beku. Rian menangkap uap dari ventilasi dasar laut. Sari mengarahkan aliran air. Dan Budi membentuk awan dari gelembung-gelembung ajaib. Satu per satu, mereka memasukkan benda ke dalam lubang — dan pintu batu itu terbuka!</p>
+      </div>
+      
+      <div class="fun-fact">
+        <div class="fun-fact-title">🔬 Tahukah Kamu?</div>
+        <p style="font-size:0.9rem;color:#333;">Air adalah satu-satunya zat di Bumi yang secara alami ada dalam tiga wujud: padat (es), cair (air), dan gas (uap). Inilah yang disebut <strong>siklus air</strong>!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 8: Matematika ==================== -->
+  <div class="slide" id="slide-8" style="background: linear-gradient(150deg, #FFA726 0%, #FB8C00 40%, #EF6C00 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-2" style="position:absolute;top:10%;left:5%;font-size:2.2rem;opacity:0.2;">🔢</div>
+    <div class="float-1" style="position:absolute;bottom:18%;right:6%;font-size:2rem;opacity:0.2;">➕</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#E65100; font-size:1.5rem; margin-bottom:1rem;">
+        🔢 Jembatan Angka yang Hilang
+      </h2>
+      
+      <div class="story-text">
+        <p>Di dalam gua, mereka menemukan seekor <span class="keyword">kuda laut kecil</span> yang terjebak di balik jembatan batu yang rusak. Jembatannya punya celah-celah besar, dan di setiap celah ada angka yang terukir: <strong>2, 4, 8, 16, __, __</strong>.</p>
+        
+        <p><em>"Angka-angkanya hilang!"</em> kata Rian. <em>"Kalau kita bisa mengisi yang benar, jembatan ini akan pulih!"</em></p>
+        
+        <p>Sari mempelajari pola itu. Matanya berbinar. <em>"Aku tahu! Setiap angka dikalikan 2! Dua kali dua empat, empat kali dua delapan, delapan kali dua enam belas... jadi berikutnya adalah <strong>32</strong> dan <strong>64</strong>!"</em></p>
+        
+        <p>Sari menyentuh celah pertama dan berkata <em>"32!"</em> Batu itu bersinar dan angka 32 muncul. Lalu <em>"64!"</em> dan celah terakhir terisi. Jembatan itu pulih secara ajaib, dan kuda laut kecil akhirnya bebas!</p>
+      </div>
+      
+      <div class="fun-fact">
+        <div class="fun-fact-title">🧮 Tahukah Kamu?</div>
+        <p style="font-size:0.9rem;color:#333;">Pola angka yang selalu dikalikan dengan bilangan yang sama disebut <strong>barisan geometri</strong>. Di komputer, angka 2, 4, 8, 16, 32, 64 sangat penting — itulah dasar sistem <strong>biner</strong> yang digunakan semua komputer!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 9: Teknologi ==================== -->
+  <div class="slide" id="slide-9" style="background: linear-gradient(150deg, #42A5F5 0%, #1E88E5 40%, #1565C0 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-1" style="position:absolute;top:6%;right:8%;font-size:2.2rem;opacity:0.2;">🤖</div>
+    <div class="float-3" style="position:absolute;bottom:22%;left:4%;font-size:1.8rem;opacity:0.2;">⚙️</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#0D47A1; font-size:1.5rem; margin-bottom:1rem;">
+        🤖 Robot Penjaga Gua
+      </h2>
+      
+      <div class="story-text">
+        <p>Di ujung gua, mereka bertemu penjaga terakhir — seekor <span class="keyword">robot penjaga</span> berbentuk gurita besar! Tentakelnya terbuat dari logam berkarat, dan matanya berkedip merah.</p>
+        
+        <p><em>"AKSES DITOLAK!"</em> suaranya bergema. <em>"Untuk lewat, kalian harus memberi instruksi yang tepat!"</em></p>
+        
+        <p><em>"Instruksi?"</em> tanya Budi penasaran.</p>
+        
+        <p>Krista menjelaskan, <em>"Robot ini hanya mengikuti <span class="keyword">algoritma</span> — urutan langkah yang jelas dan tepat. Kalau instruksinya salah, ia tidak akan bergerak!"</em></p>
+        
+        <p>Budi yang suka utak-atik langsung bersemangat. <em>"Maju 3 langkah. Belok kiri. Ambil kunci. Mundur 2 langkah. Buka pintu!"</em> Ia memberi instruksi selangkah demi selangkah, dan robot gurita itu bergerak persis seperti yang diperintahkan. Pintu gua terbuka lebar!</p>
+      </div>
+      
+      <div class="fun-fact">
+        <div class="fun-fact-title">💻 Tahukah Kamu?</div>
+        <p style="font-size:0.9rem;color:#333;"><strong>Algoritma</strong> adalah urutan langkah-langkah yang jelas untuk menyelesaikan masalah. Semua program komputer, aplikasi, dan game dibuat menggunakan algoritma. Kalau langkahnya salah, programnya tidak jalan!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 10: Penyelamatan ==================== -->
+  <div class="slide" id="slide-10" style="background: linear-gradient(150deg, #66BB6A 0%, #43A047 40%, #2E7D32 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-2" style="position:absolute;top:8%;left:6%;font-size:2.2rem;opacity:0.2;">🐠</div>
+    <div class="float-1" style="position:absolute;bottom:20%;right:5%;font-size:1.8rem;opacity:0.2;">💎</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#1B5E20; font-size:1.5rem; margin-bottom:1rem;">
+        🐠 Menyelamatkan Kerajaan Laut
+      </h2>
+      
+      <div class="story-text">
+        <p>Di balik pintu gua, mereka menemukan pemandangan menakjubkan — sebuah <span class="keyword">kerajaan laut</span> yang terbuat dari kristal berwarna-warni! Tapi kerajaan itu dalam keadaan sedih. Kristal-kristalnya mulai memudar dan ikan-ikan penghuninya terlihat lesu.</p>
+        
+        <p><em>"Apa yang terjadi?"</em> tanya Dewi dengan prihatin.</p>
+        
+        <p>Seekor ikan raja bermahkota emas mendekat. <em>"Sumber energi kami — <strong>kristal matahari</strong> — kehilangan cahayanya. Energi terbarukan kami terhenti. Polusi dari permukaan laut menghalangi cahaya matahari sampai ke sini!"</em></p>
+        
+        <p>Keempat anak bekerja sama. Sari menghitung sudut terbaik untuk memantulkan cahaya. Budi merancang cermin dari pecahan kerang. Rian dan Dewi membersihkan polusi dengan bantuan Krista. Perlahan, cahaya matahari kembali mencapai kristal, dan kerajaan laut bersinar kembali!</p>
+      </div>
+      
+      <div class="fun-fact">
+        <div class="fun-fact-title">🌍 Tahukah Kamu?</div>
+        <p style="font-size:0.9rem;color:#333;"><strong>Energi terbarukan</strong> seperti sinar matahari, angin, dan air tidak akan habis selama Bumi masih ada. Berbeda dengan bahan bakar fosil (minyak dan batu bara) yang bisa habis dan mencemari lingkungan!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 11: Kembali ==================== -->
+  <div class="slide" id="slide-11" style="background: linear-gradient(150deg, #EC407A 0%, #D81B60 40%, #AD1457 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-1" style="position:absolute;top:10%;right:8%;font-size:2rem;opacity:0.2;">🎉</div>
+    <div class="float-3" style="position:absolute;bottom:18%;left:5%;font-size:1.8rem;opacity:0.2;">🌟</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#880E4F; font-size:1.5rem; margin-bottom:1rem;">
+        🎉 Kembali ke Sekolah
+      </h2>
+      
+      <div class="story-text">
+        <p>Dengan cahaya kristal yang bersinar kembali, seluruh kerajaan laut berpesta! Ikan-ikan menari, karang-karang berwarna-warni berdenyut seperti jantung, dan gelembung-gelembung berbentuk bintang naik ke atas.</p>
+        
+        <p><em>"Terima kasih, Penemu Kecil!"</em> kata Ikan Raja. <em>"Kalian telah membuktikan bahwa sains, matematika, dan teknologi bisa menyelamatkan dunia!"</em></p>
+        
+        <p>Krista bersinar terang dan membawa mereka kembali ke gudang sekolah. Saat mereka membuka mata, mereka sudah berdiri di gudang yang sama — tapi sekarang gudang itu terlihat berbeda. Lebih bersih. Lebih terang. Dan di meja, selain Krista, ada empat <span class="keyword">lencana penemu</span> berkilau!</p>
+        
+        <p><em>"Ini lencana resmi Klub Penemu Kecil,"</em> kata Krista bangga. <em>"Dengan ini, kalian berhak menjalani petualangan berikutnya kapan saja!"</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 12: Pelajaran ==================== -->
+  <div class="slide" id="slide-12" style="background: linear-gradient(150deg, #5C6BC0 0%, #3F51B5 40%, #303F9F 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <div class="float-2" style="position:absolute;top:6%;left:8%;font-size:2rem;opacity:0.2;">📝</div>
+    <div class="float-1" style="position:absolute;bottom:20%;right:6%;font-size:1.8rem;opacity:0.2;">🎯</div>
+    
+    <div class="content-card">
+      <h2 class="title-font" style="color:#1A237E; font-size:1.5rem; margin-bottom:1rem;">
+        📝 Apa yang Kita Pelajari?
+      </h2>
+      
+      <div class="story-text">
+        <p>Di perjalanan pulang, mereka membahas semua yang mereka alami. Rian berteriak, <em>"Aku tidak pernah menyangka sains bisa seru begini!"</em></p>
+        
+        <p><em>"Dan matematika ternyata berguna untuk memecahkan teka-teki!"</em> tambah Sari dengan senyum lebar.</p>
+        
+        <p>Budi mengangkat lencananya. <em>"Aku sudah tidak sabar untuk petualangan berikutnya. Aku mau bikin robot yang lebih canggih!"</em></p>
+        
+        <p>Dewi memeluk lencananya. <em>"Aku belajar bahwa menjaga alam itu penting. Energi terbarukan itu keren!"</em></p>
+        
+        <p>Krista bersinar lembut. <em>"Ingat, pengetahuan adalah kekuatan terbesar. Setiap kali kalian bertanya 'mengapa?' dan berani mencari jawabannya, kalian sudah menjadi penemu!"</em></p>
+      </div>
+      
+      <div style="display:flex;gap:0.6rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;">
+        <div style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:12px;padding:0.6rem 1rem;font-size:0.85rem;font-weight:700;color:#1565C0;">🔬 Siklus Air</div>
+        <div style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2);border-radius:12px;padding:0.6rem 1rem;font-size:0.85rem;font-weight:700;color:#E65100;">🔢 Barisan Geometri</div>
+        <div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-radius:12px;padding:0.6rem 1rem;font-size:0.85rem;font-weight:700;color:#2E7D32;">🤖 Algoritma</div>
+        <div style="background:linear-gradient(135deg,#FCE4EC,#F8BBD0);border-radius:12px;padding:0.6rem 1rem;font-size:0.85rem;font-weight:700;color:#AD1457;">🌍 Energi Terbarukan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 13: PENUTUP ==================== -->
+  <div class="slide" id="slide-13" style="background: linear-gradient(135deg, #1a1a5e 0%, #2d1b69 25%, #4a1a8a 50%, #6b21a8 75%, #4a1a8a 100%);">
+    <div class="bg-dots" style="position:absolute;inset:0;"></div>
+    
+    <!-- Lots of stars -->
+    <div class="star" style="top:5%;left:10%;animation-delay:0s;width:5px;height:5px;"></div>
+    <div class="star" style="top:12%;left:80%;animation-delay:0.4s;"></div>
+    <div class="star" style="top:20%;left:20%;animation-delay:0.8s;width:4px;height:4px;"></div>
+    <div class="star" style="top:8%;left:55%;animation-delay:1.2s;"></div>
+    <div class="star" style="top:30%;left:90%;animation-delay:0.3s;width:3px;height:3px;"></div>
+    <div class="star" style="top:15%;left:40%;animation-delay:1.6s;"></div>
+    <div class="star" style="top:25%;left:70%;animation-delay:0.7s;width:5px;height:5px;"></div>
+    <div class="star" style="top:35%;left:15%;animation-delay:1s;"></div>
+    <div class="star" style="top:18%;left:65%;animation-delay:1.4s;width:4px;height:4px;"></div>
+    <div class="star" style="top:40%;left:85%;animation-delay:0.5s;"></div>
+    <div class="star" style="top:10%;left:30%;animation-delay:1.8s;width:5px;height:5px;"></div>
+    <div class="star" style="top:45%;left:50%;animation-delay:0.9s;"></div>
+    
+    <!-- Floating emojis -->
+    <div class="float-1" style="position:absolute;top:8%;left:5%;font-size:2rem;opacity:0.25;">🚀</div>
+    <div class="float-2" style="position:absolute;top:12%;right:8%;font-size:2rem;opacity:0.25;">🔬</div>
+    <div class="float-3" style="position:absolute;bottom:25%;left:8%;font-size:1.8rem;opacity:0.25;">💡</div>
+    <div class="float-1" style="position:absolute;bottom:20%;right:5%;font-size:1.8rem;opacity:0.25;">⭐</div>
+    
+    <!-- Crystal Ball small -->
+    <div class="crystal-float" style="margin-bottom:1.2rem;">
+      <svg width="80" height="100" viewBox="0 0 160 180" class="crystal-glow">
+        <ellipse cx="80" cy="165" rx="40" ry="8" fill="rgba(100,150,200,0.3)"/>
+        <circle cx="80" cy="90" r="65" fill="url(#crystalGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <ellipse cx="60" cy="65" rx="20" ry="12" fill="rgba(255,255,255,0.35)" transform="rotate(-20 60 65)"/>
+        <circle cx="80" cy="90" r="40" fill="url(#innerGlow)" opacity="0.5"/>
+        <text x="68" y="92" font-size="22" fill="rgba(255,255,255,0.9)">🌟</text>
+        <path d="M55 148 Q80 165 105 148 L100 155 Q80 170 60 155 Z" fill="#5D4037" stroke="#4E342E" stroke-width="1"/>
+        <path d="M58 148 Q80 162 102 148 Q80 158 58 148" fill="#795548"/>
+      </svg>
+    </div>
+    
+    <!-- Main message -->
+    <h1 class="title-font" style="color:#FFD54F; font-size:2rem; text-align:center; text-shadow: 0 4px 20px rgba(0,0,0,0.4); max-width:550px; line-height:1.4;">
+      Kamu Juga Bisa Jadi<br>Penemu Hebat! 🌟
+    </h1>
+    
+    <p style="color:rgba(255,255,255,0.85); font-size:1.1rem; text-align:center; max-width:500px; margin-top:1rem; line-height:1.7;">
+      Setiap penemu hebat dimulai dari rasa <strong>penasaran</strong> dan keberanian untuk <strong>mencoba</strong>. Teruslah bertanya, teruslah bereksperimen, dan jangan pernah takut gagal — karena dari kegagalan lahirlah penemuan terbesar!
+    </p>
+    
+    <!-- Characters with badges -->
+    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+      <div class="char-circle pulse-anim" style="background:linear-gradient(135deg,#42A5F5,#1E88E5);animation-delay:0s;">🧒</div>
+      <div class="char-circle pulse-anim" style="background:linear-gradient(135deg,#EF5350,#E53935);animation-delay:0.3s;">👧</div>
+      <div class="char-circle pulse-anim" style="background:linear-gradient(135deg,#66BB6A,#43A047);animation-delay:0.6s;">👦</div>
+      <div class="char-circle pulse-anim" style="background:linear-gradient(135deg,#AB47BC,#8E24AA);animation-delay:0.9s;">👩</div>
+    </div>
+    
+    <div style="margin-top:1.5rem; background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:2px solid rgba(255,255,255,0.2); border-radius:16px; padding:0.8rem 1.5rem; text-align:center;">
+      <p style="color:rgba(255,255,255,0.7); font-size:0.85rem; font-weight:600;">📘 Buku 1 dari 30 — Klub Penemu Kecil</p>
+      <p style="color:#FFD54F; font-size:0.9rem; font-weight:700; margin-top:0.3rem;">Besok: Rahasia di Gudang Sekolah Lama 🔮</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== NAVIGATION ==================== -->
+<div style="position:fixed; bottom:0; left:0; right:0; z-index:50; display:flex; align-items:center; justify-content:center; gap:1.5rem; padding:1rem 1.5rem; background:linear-gradient(transparent, rgba(0,0,0,0.4));">
+  <!-- Prev Button -->
+  <div class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" style="background:rgba(255,255,255,0.15); color:white;">
+    ◀
+  </div>
+  
+  <!-- Progress dots -->
+  <div style="display:flex; gap:5px; align-items:center; flex-wrap:nowrap; max-width:300px; overflow-x:auto;" id="progressDots">
+  </div>
+  
+  <!-- Page indicator -->
+  <div class="page-indicator" id="pageIndicator">1 / 13</div>
+  
+  <!-- Next Button -->
+  <div class="nav-btn" id="nextBtn" onclick="changeSlide(1)" style="background:rgba(255,255,255,0.15); color:white;">
+    ▶
+  </div>
+</div>
+
+<script>
+const totalSlides = 13;
+let currentSlide = 1;
+let isAnimating = false;
+
+// Create progress dots
+const dotsContainer = document.getElementById('progressDots');
+for (let i = 1; i <= totalSlides; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'progress-dot' + (i === 1 ? ' active-dot' : '');
+  dot.dataset.slide = i;
+  dot.style.cursor = 'pointer';
+  dot.addEventListener('click', () => goToSlide(i));
+  dotsContainer.appendChild(dot);
+}
+
+function updateUI() {
+  document.getElementById('pageIndicator').textContent = currentSlide + ' / ' + totalSlides;
+  
+  // Update dots
+  document.querySelectorAll('.progress-dot').forEach((dot, idx) => {
+    dot.classList.toggle('active-dot', idx + 1 === currentSlide);
+  });
+  
+  // Update button states
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  prevBtn.classList.toggle('disabled', currentSlide === 1);
+  nextBtn.classList.toggle('disabled', currentSlide === totalSlides);
+}
+
+function goToSlide(targetSlide) {
+  if (isAnimating || targetSlide === currentSlide || targetSlide < 1 || targetSlide > totalSlides) return;
+  isAnimating = true;
+  
+  const currentEl = document.getElementById('slide-' + currentSlide);
+  const nextEl = document.getElementById('slide-' + targetSlide);
+  const direction = targetSlide > currentSlide ? 1 : -1;
+  
+  // Set next slide position
+  nextEl.style.transition = 'none';
+  nextEl.style.transform = `translateX(${direction * 100}%)`;
+  nextEl.style.opacity = '0';
+  
+  // Force reflow
+  nextEl.offsetHeight;
+  
+  // Animate
+  currentEl.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+  currentEl.style.transform = `translateX(${-direction * 100}%)`;
+  currentEl.style.opacity = '0';
+  
+  nextEl.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+  nextEl.style.transform = 'translateX(0)';
+  nextEl.style.opacity = '1';
+  
+  setTimeout(() => {
+    currentEl.classList.remove('active');
+    nextEl.classList.add('active');
+    currentSlide = targetSlide;
+    updateUI();
+    isAnimating = false;
+  }, 700);
+}
+
+function changeSlide(direction) {
+  const target = currentSlide + direction;
+  goToSlide(target);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+
+// Touch/swipe support
+let touchStartX = 0;
+let touchEndX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, false);
+document.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  const diff = touchStartX - touchEndX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) changeSlide(1);
+    else changeSlide(-1);
+  }
+}, false);
+
+// Initialize
+updateUI();
+</script>
+
+</body>
+</html>

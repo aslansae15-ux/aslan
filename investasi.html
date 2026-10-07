@@ -2,11 +2,10 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#2E7D32">
-<title>Investasi Aslan 💰</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0C8A4B">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Investasi Aslan — Keluarga Sejati</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
@@ -24,462 +23,404 @@ const db = firebase.database();
 const FB_MAIN = db.ref('aslan_data');
 const FB_INV  = db.ref('aslan_investasi');
 </script>
+<link rel="stylesheet" href="theme.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --green:#27ae60;--green2:#2ecc71;--gold:#f39c12;--gold2:#f1c40f;
-  --blue:#2980b9;--red:#e74c3c;--orange:#e67e22;
-  --card:#fff;--bg:#f0f9f0;--text:#1a2e1a;--muted:#6b8f6b;
-  --radius:18px;--radius-sm:12px;
+.up { color: var(--brand-600); }
+.down { color: var(--coral-ink); }
+.chg { display: inline-flex; padding: 3px 9px; border-radius: var(--r-full); font-size: 12px; font-weight: 800; white-space: nowrap; }
+.chg.chg-up { background: var(--brand-50); color: var(--brand-700); }
+.chg.chg-down { background: var(--coral-soft); color: var(--coral-ink); }
+
+/* Ringkasan kekayaan (di dalam header hijau) */
+.wealth-label { font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, .85); }
+.wealth-value { margin-top: 2px; font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1.15; }
+.wealth-sub { margin-top: 2px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, .78); }
+.wealth-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 14px; }
+.wealth-stat { padding: 10px 8px; text-align: center; border-radius: var(--r-sm); background: rgba(255, 255, 255, .10); border: 1px solid rgba(255, 255, 255, .12); }
+.wealth-stat-val { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wealth-stat-lbl { margin-top: 2px; font-size: 11px; font-weight: 700; color: rgba(255, 255, 255, .8); }
+@media (min-width: 561px) { .wealth-stats { grid-template-columns: repeat(4, 1fr); } }
+
+/* Tabungan (baca saja) */
+.saving-card {
+  padding: 18px 20px; border-radius: var(--r-xl); color: #fff;
+  background: radial-gradient(120% 140% at 100% 0%, #2CC6B8, transparent 55%), linear-gradient(150deg, #0E9F9B, #0A6662);
+  box-shadow: 0 22px 40px -26px rgba(10, 102, 98, .9);
 }
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-.header{background:linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c);position:relative;overflow:hidden}
-.header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 2px,transparent 2px,transparent 20px)}
-.hdr-top{display:flex;align-items:center;gap:10px;padding:16px 16px 0}
-.back-btn{background:rgba(255,255,255,.2);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;transition:.2s}
-.back-btn:hover{background:rgba(255,255,255,.35)}
-.page-badge{background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px;color:#fff;font-size:12px;font-weight:800;letter-spacing:.5px}
-.hdr-hero{display:flex;align-items:center;gap:14px;padding:14px 16px 0}
-.hdr-avatar{width:54px;height:54px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;border:3px solid rgba(255,255,255,.4)}
-.hdr-name{color:#fff;font-size:18px;font-weight:900;line-height:1.1}
-.hdr-sub{color:rgba(255,255,255,.75);font-size:12px;font-weight:700}
-.wealth-banner{margin:14px 16px 0;background:rgba(0,0,0,.25);border-radius:14px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
-.wb-label{color:rgba(255,255,255,.8);font-size:11px;font-weight:800;margin-bottom:4px}
-.wb-value{color:#f1c40f;font-size:26px;font-weight:900}
-.wb-sub{color:rgba(255,255,255,.65);font-size:11px;font-weight:700}
-.wb-icon{font-size:42px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3))}
-.hdr-stats{padding:12px 16px 16px;display:flex;gap:8px}
-.hdr-stat{background:rgba(255,255,255,.15);border-radius:10px;padding:8px 12px;flex:1;text-align:center}
-.hdr-stat-val{color:#f1c40f;font-size:15px;font-weight:900}
-.hdr-stat-lbl{color:rgba(255,255,255,.75);font-size:10px;font-weight:800;margin-top:1px}
-.main{padding:0 12px 100px}
-.section-title{font-size:16px;font-weight:900;color:var(--text);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
-.tabung-ro{background:linear-gradient(135deg,#1565c0,#1976d2,#0288d1);border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:0 4px 18px rgba(21,101,192,.25);position:relative;overflow:hidden}
-.tabung-ro::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 2px,transparent 2px,transparent 18px)}
-.tabung-ro-label{color:rgba(255,255,255,.8);font-size:11px;font-weight:800;margin-bottom:6px}
-.tabung-ro-amount{color:#fff;font-size:34px;font-weight:900;line-height:1}
-.tabung-ro-note{display:flex;align-items:center;gap:6px;margin-top:10px;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 12px}
-.tabung-ro-note-text{color:rgba(255,255,255,.9);font-size:11px;font-weight:700}
-.gold-card{background:linear-gradient(135deg,#fff8e1,#fffde7);border:2.5px solid #f39c12;border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:0 4px 18px rgba(243,156,18,.15)}
-.gold-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.gold-title{font-size:15px;font-weight:900;color:#7d5a00}
-.price-pill{display:flex;align-items:center;gap:5px;background:#fff3e0;border:1.5px solid #ffcc02;color:#e65100;font-size:9px;font-weight:900;border-radius:8px;padding:4px 10px}
-.price-dot{width:7px;height:7px;background:#f39c12;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
-.gold-price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
-.gold-price{font-size:28px;font-weight:900;color:#c0810c;transition:color .4s}
-.gold-unit{font-size:13px;font-weight:800;color:#9a6a00}
-.gold-chg{font-size:12px;font-weight:800;padding:3px 10px;border-radius:8px}
-.chg-up{background:#e8f5e9;color:#2e7d32}
-.chg-down{background:#fce4ec;color:#c62828}
-.gold-meta{font-size:10px;font-weight:700;color:#9a6a00;margin-bottom:14px;background:rgba(255,255,255,.5);border-radius:6px;padding:3px 8px;display:inline-block}
-.gold-chart-wrap{background:rgba(255,255,255,.6);border-radius:12px;padding:12px;border:1.5px solid #f0c040;margin-bottom:14px}
-.chart-lbl{font-size:10px;font-weight:800;color:#9a6a00;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.chart-upd{font-size:9px;font-weight:700;color:#c0810c;background:rgba(255,255,255,.7);border-radius:5px;padding:2px 6px}
-.gold-holdings-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.gold-holdings-title{font-size:13px;font-weight:900;color:#7d5a00}
-.gold-total-badge{background:#f39c12;color:#fff;font-size:11px;font-weight:900;border-radius:8px;padding:3px 10px}
-.gold-item{background:rgba(255,255,255,.85);border:1.5px solid #f0c040;border-radius:12px;padding:12px 14px;margin-bottom:8px;animation:slideIn .3s ease}
-@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.gold-item-top{display:flex;align-items:center;gap:10px}
-.gold-item-icon{font-size:26px;flex-shrink:0}
-.gold-item-info{flex:1}
-.gold-item-gram{font-size:16px;font-weight:900;color:#7d5a00}
-.gold-item-buy{font-size:11px;font-weight:700;color:#9a6a00}
-.gold-item-date{font-size:10px;font-weight:700;color:#b8960c}
-.gold-item-right{text-align:right;flex-shrink:0}
-.gold-item-now{font-size:14px;font-weight:900;color:#7d5a00}
-.gold-item-profit{font-size:11px;font-weight:800;margin-top:1px}
-.gold-item-actions{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
-.gold-action-btn{border:none;border-radius:8px;padding:5px 12px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:900;cursor:pointer;transition:.15s}
-.gold-action-btn.edit-btn{background:#fff3e0;color:#e65100;border:1.5px solid #ffcc80}
-.gold-action-btn.del-btn{background:#fce4ec;color:#c62828;border:1.5px solid #ef9a9a}
-.gold-action-btn:active{transform:scale(.93)}
-.gold-empty{text-align:center;padding:18px;font-size:12px;font-weight:700;color:#d4a017;background:rgba(255,255,255,.5);border-radius:12px}
-.gold-total-box{background:rgba(255,255,255,.9);border:2px solid #f0c040;border-radius:12px;padding:12px 16px;margin-top:4px;display:flex;justify-content:space-between;align-items:center}
-.gtb-label{font-size:12px;font-weight:800;color:#7d5a00}
-.gtb-value{font-size:20px;font-weight:900;color:#c0810c}
-.gtb-profit{font-size:11px;font-weight:800;margin-top:2px}
-.buy-gold-btn{width:100%;background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;border:none;border-radius:12px;padding:13px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;transition:.2s;box-shadow:0 4px 12px rgba(243,156,18,.35)}
-.buy-gold-btn:hover{background:linear-gradient(135deg,#e67e22,#d35400);transform:translateY(-1px)}
-.buy-gold-btn:active{transform:scale(.97)}
-.tip-box{background:#e3f2fd;border:2px solid #90caf9;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:11px;font-weight:800;color:#1565c0;line-height:1.6}
-.saham-note{font-size:11px;font-weight:800;color:#888;margin-bottom:10px;padding:8px 12px;background:#f5f5f5;border-radius:10px}
-.saham-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.saham-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:2.5px solid #c8e6c9;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
-.saham-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
-.saham-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
-.s-ultra::before{background:linear-gradient(90deg,#e74c3c,#c0392b)}
-.s-indomie::before{background:linear-gradient(90deg,#f39c12,#e67e22)}
-.s-goto::before{background:linear-gradient(90deg,#00b14f,#00a040)}
-.s-mayora::before{background:linear-gradient(90deg,#8e24aa,#ce93d8)}
-.s-nintendo::before{background:linear-gradient(90deg,#e74c3c,#c0392b)}
-.s-bca::before{background:linear-gradient(90deg,#1565c0,#42a5f5)}
-.saham-icon{font-size:26px;margin-bottom:6px;display:block}
-.saham-name{font-size:12px;font-weight:900;color:var(--text);margin-bottom:1px}
-.saham-ticker{font-size:10px;font-weight:700;color:var(--muted)}
-.saham-price-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;margin-bottom:4px}
-.saham-price{font-size:13px;font-weight:900;color:var(--text)}
-.saham-chg{font-size:9px;font-weight:800;padding:2px 6px;border-radius:5px}
-.saham-owned-summary{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1.5px solid #a5d6a7;border-radius:8px;padding:7px 10px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;gap:4px}
-.saham-owned-total{font-size:10px;font-weight:900;color:#1b5e20}
-.saham-owned-avg{font-size:9px;font-weight:800;color:#4a4a4a;flex:1;text-align:center}
-.saham-owned-pnl{font-size:10px;font-weight:900}
-.saham-hist-toggle{width:100%;border:1.5px dashed #c8e6c9;background:transparent;border-radius:7px;padding:4px 8px;font-family:'Nunito',sans-serif;font-size:9px;font-weight:900;color:#4caf50;cursor:pointer;margin-bottom:5px;display:flex;align-items:center;justify-content:center;gap:4px;transition:background .15s}
-.saham-hist-toggle:hover{background:#f1f8e9}
-.saham-hist-wrap{background:#fafafa;border:1.5px solid #e0e0e0;border-radius:8px;overflow:hidden;margin-bottom:6px;animation:slideIn .2s ease}
-.saham-hist-header{display:grid;grid-template-columns:18px 1fr 1fr 1fr auto;gap:4px;padding:5px 8px;background:#f5f5f5;border-bottom:1px solid #e0e0e0;font-size:8px;font-weight:900;color:#9e9e9e;text-transform:uppercase}
-.saham-hist-row{display:grid;grid-template-columns:18px 1fr 1fr 1fr auto;gap:4px;padding:6px 8px;border-bottom:1px solid #f5f5f5;font-size:9px;font-weight:800;align-items:center}
-.saham-hist-row:last-child{border-bottom:none}
-.saham-hist-row:nth-child(even){background:#fafafa}
-.saham-hist-num{color:#bdbdbd;font-size:8px}
-.saham-hist-lots{color:#1b5e20;font-weight:900}
-.saham-hist-price{color:#546e7a}
-.saham-hist-date{color:#90a4ae;font-size:8px}
-.saham-hist-profit{font-weight:900;text-align:right}
-.saham-hist-del{background:none;border:none;cursor:pointer;font-size:10px;color:#ef9a9a;padding:0 2px;line-height:1;transition:transform .15s}
-.saham-hist-del:hover{transform:scale(1.3)}
-.saham-actions{display:flex;gap:5px}
-.saham-btn{flex:1;border:none;border-radius:8px;padding:6px 4px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:900;cursor:pointer;transition:.15s}
-.saham-btn.beli{background:var(--green);color:#fff}
-.saham-btn:active{transform:scale(.93)}
-.saham-total-box{background:#e8f5e9;border:2px solid #81c784;border-radius:12px;padding:12px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
-.stb-label{font-size:12px;font-weight:800;color:#1b5e20}
-.stb-value{font-size:18px;font-weight:900;color:#27ae60}
-.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:2.5px solid #c8e6c9}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid #c8e6c9;display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 12px rgba(0,0,0,.08)}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:800;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:8px;transition:.2s;text-decoration:none}
-.bnav-item.active,.bnav-item:hover{color:var(--green)}
-.bnav-icon{font-size:20px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
-.modal-overlay.open{opacity:1;pointer-events:all}
-.modal-box{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:22px 20px 28px;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.2,.64,1);max-height:90vh;overflow-y:auto}
-.modal-overlay.open .modal-box{transform:translateY(0)}
-.modal-title{font-size:16px;font-weight:900;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.modal-subtitle{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:16px}
-.modal-label{font-size:11px;font-weight:800;color:#546e7a;margin-bottom:5px;margin-top:12px;display:block}
-.modal-input{width:100%;border:2px solid #e0e0e0;border-radius:10px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);outline:none;transition:.2s}
-.modal-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(39,174,96,.12)}
-/* READ-ONLY style untuk harga per lembar */
-.modal-input[readonly]{background:#f5f5f5;color:#888;border-color:#e0e0e0;cursor:not-allowed}
-.modal-hint{font-size:10px;font-weight:700;color:#90a4ae;margin-top:4px}
-.modal-total{background:#f1f8e9;border:2px solid #c8e6c9;border-radius:10px;padding:10px 14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
-.modal-total-label{font-size:12px;font-weight:800;color:#2e7d32}
-.modal-total-value{font-size:16px;font-weight:900;color:#1b5e20}
-.modal-btns{display:flex;gap:8px;margin-top:16px}
-.modal-btn{flex:1;border:none;border-radius:10px;padding:13px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:.2s}
-.modal-btn.primary{background:var(--green);color:#fff}
-.modal-btn.primary:hover{background:#1e8449}
-.modal-btn.gold-primary{background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff}
-.modal-btn.secondary{background:#f0f0f0;color:#555}
-.modal-btn.danger{background:var(--red);color:#fff}
-.modal-btn:active{transform:scale(.97)}
-.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
-.confirm-overlay.open{opacity:1;pointer-events:all}
-.confirm-box{background:#fff;border-radius:20px;padding:24px;max-width:300px;width:100%;text-align:center;transform:scale(.9);transition:transform .25s cubic-bezier(.34,1.4,.64,1)}
-.confirm-overlay.open .confirm-box{transform:scale(1)}
-.confirm-icon{font-size:38px;margin-bottom:8px}
-.confirm-title{font-size:15px;font-weight:900;color:#1a2e1a;margin-bottom:6px}
-.confirm-sub{font-size:12px;font-weight:700;color:#6b8f6b;margin-bottom:18px;line-height:1.5}
-.confirm-btns{display:flex;gap:8px}
-.confirm-yes{flex:1;background:var(--red);color:#fff;border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
-.confirm-no{flex:1;background:#f0f0f0;color:#555;border:none;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1b5e20;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:10px 22px;border-radius:20px;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
-.toast.show{opacity:1}
-.sync-dot{position:fixed;top:14px;right:14px;width:8px;height:8px;border-radius:50%;z-index:600;opacity:0;transition:opacity .3s}
-.sync-dot.show-green{opacity:1;background:#4caf50;box-shadow:0 0 6px #4caf50}
-.sync-dot.show-orange{opacity:1;background:#ff9800;box-shadow:0 0 6px #ff9800}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-thumb{background:#c8e6c9;border-radius:4px}
-.pie-wrap{display:flex;gap:14px;align-items:center}
-.pie-labels{flex:1}
-.pie-label-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.pie-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
-.pie-label-text{font-size:12px;font-weight:800;color:var(--text)}
-.chart-empty{text-align:center;padding:20px 10px;font-size:11px;font-weight:700;color:#d4a017}
-.unit-toggle{display:flex;gap:6px;margin-bottom:6px}
-.unit-toggle-btn{flex:1;border:2px solid #c8e6c9;border-radius:9px;padding:8px 4px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;cursor:pointer;background:#f9fbe7;color:#558b2f;transition:.15s;text-align:center}
-.unit-toggle-btn.active{background:#27ae60;color:#fff;border-color:#27ae60}
-.unit-info-box{background:#e8f5e9;border:1.5px solid #a5d6a7;border-radius:9px;padding:7px 12px;margin-top:4px;font-size:10px;font-weight:800;color:#1b5e20;line-height:1.6}
-/* Lembar price display box */
-.lembar-price-box{background:#fff8e1;border:2px solid #ffe082;border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
-.lembar-price-label{font-size:11px;font-weight:800;color:#e65100}
-.lembar-price-value{font-size:16px;font-weight:900;color:#bf360c}
+.saving-label { font-size: 13px; font-weight: 700; opacity: .9; }
+.saving-amount { margin-top: 4px; font-family: var(--font-display); font-size: 30px; font-weight: 600; line-height: 1.15; }
+.saving-note { display: flex; gap: 8px; align-items: center; margin-top: 12px; padding: 9px 12px; border-radius: var(--r-sm); background: rgba(255, 255, 255, .14); font-size: 12px; font-weight: 600; line-height: 1.45; }
+
+/* Emas */
+.gold-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.gold-title { font-size: 15px; font-weight: 800; }
+.est-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--r-full); background: var(--gold-soft); color: var(--gold-ink); font-size: 11px; font-weight: 800; }
+.est-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
+.gold-price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.gold-price { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--ink); }
+.gold-unit { font-size: 14px; font-weight: 700; color: var(--ink-3); }
+.gold-meta { margin-top: 2px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.chart-box { margin-top: 16px; padding: 14px; border-radius: var(--r-md); background: var(--surface-2); }
+.chart-lbl { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; font-size: 13px; font-weight: 800; color: var(--ink-2); }
+.chart-upd { padding: 2px 8px; border-radius: var(--r-full); background: var(--surface); font-size: 11px; font-weight: 700; color: var(--ink-3); }
+.chart-empty { padding: 16px 8px; text-align: center; font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+.holdings-head { display: flex; align-items: center; justify-content: space-between; margin: 18px 0 10px; }
+.holdings-title { font-size: 14px; font-weight: 800; }
+.gold-item { padding: 12px; border-radius: var(--r-md); background: var(--surface-2); border: 1px solid var(--line); }
+.gold-item + .gold-item { margin-top: 8px; }
+.gold-item-top { display: flex; align-items: center; gap: 12px; }
+.gold-item-icon { width: 42px; height: 42px; flex-shrink: 0; display: grid; place-items: center; font-size: 22px; border-radius: 14px; background: var(--gold-soft); }
+.gold-item-info { flex: 1; min-width: 0; }
+.gold-item-gram { font-size: 15px; font-weight: 800; }
+.gold-item-buy, .gold-item-date { font-size: 12px; font-weight: 600; color: var(--ink-3); overflow-wrap: anywhere; }
+.gold-item-right { text-align: right; flex-shrink: 0; }
+.gold-item-now { font-size: 14px; font-weight: 800; }
+.gold-item-profit { font-size: 12px; font-weight: 800; }
+.gold-item-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 10px; }
+.total-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding: 14px 16px; border-radius: var(--r-md); background: var(--gold-soft); }
+.total-row.green { background: var(--brand-50); }
+.total-label { font-size: 13px; font-weight: 800; color: var(--ink-2); }
+.total-sub { font-size: 12px; font-weight: 700; margin-top: 2px; }
+.total-value { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.tip { margin-top: 14px; padding: 12px 14px; border-radius: var(--r-md); background: var(--sky-soft); color: var(--sky-ink); font-size: 13px; font-weight: 600; line-height: 1.55; }
+
+/* Saham */
+.saham-note { padding: 10px 12px; border-radius: var(--r-sm); background: var(--surface-2); font-size: 13px; font-weight: 600; color: var(--ink-2); line-height: 1.5; margin-bottom: 14px; }
+.saham-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.saham-card { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 8px; padding: 16px 14px 14px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-xs); }
+.saham-card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--stock, var(--brand-500)); }
+.s-ultra { --stock: #E5484D; } .s-indomie { --stock: #F59E0B; } .s-goto { --stock: #00AA5B; }
+.s-mayora { --stock: #8E4EC6; } .s-nintendo { --stock: #E5484D; } .s-bca { --stock: #2E7BF2; }
+.saham-head { display: flex; align-items: center; gap: 10px; }
+.saham-icon { width: 40px; height: 40px; flex-shrink: 0; display: grid; place-items: center; font-size: 22px; border-radius: 14px; background: var(--surface-2); }
+.saham-name { font-size: 14px; font-weight: 800; line-height: 1.25; }
+.saham-ticker { font-size: 11px; font-weight: 700; color: var(--ink-3); letter-spacing: .4px; }
+.saham-price-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 6px; }
+.saham-price { font-size: 15px; font-weight: 800; white-space: nowrap; }
+.owned { padding: 10px; border-radius: var(--r-sm); background: var(--brand-50); }
+.owned-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; font-weight: 800; }
+.owned-avg { font-size: 11px; font-weight: 700; color: var(--ink-3); margin-top: 2px; }
+.owned-value { margin-top: 6px; font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--brand-800); }
+.hist-toggle { width: 100%; min-height: 32px; border-radius: var(--r-sm); border: 1px dashed var(--line-strong); font-size: 12px; font-weight: 700; color: var(--ink-2); transition: background-color .15s; }
+.hist-toggle:hover { background: var(--surface-2); }
+.hist { border-radius: var(--r-sm); background: var(--surface-2); overflow: hidden; }
+.hist-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; font-size: 12px; font-weight: 700; }
+.hist-row + .hist-row { border-top: 1px solid var(--line); }
+.hist-main { flex: 1; min-width: 0; }
+.hist-lots { font-weight: 800; color: var(--ink); }
+.hist-meta { font-size: 11px; font-weight: 600; color: var(--ink-3); }
+.hist-profit { font-weight: 800; white-space: nowrap; }
+.hist-edit { width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 9px; background: var(--surface); border: 1px solid var(--line); font-size: 12px; }
+
+/* Komposisi */
+.pie-wrap { display: flex; align-items: center; gap: 18px; }
+.pie-labels { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.pie-label-row { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; }
+.pie-dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+
+.lesson { padding: 14px 16px; border-radius: var(--r-md); }
+.lesson + .lesson { margin-top: 10px; }
+.lesson-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+.lesson-body { font-size: 13px; font-weight: 600; line-height: 1.6; }
+
+/* Modal */
+.modal-body .input { margin-bottom: 14px; }
+.unit-seg { margin-bottom: 8px; }
+.unit-seg .seg-tab { min-height: 52px; line-height: 1.2; }
+.unit-seg .seg-tab small { display: block; font-size: 11px; font-weight: 600; opacity: .75; }
+.unit-info { margin-bottom: 14px; padding: 10px 12px; border-radius: var(--r-sm); background: var(--brand-50); color: var(--brand-800); font-size: 12px; font-weight: 600; line-height: 1.55; }
+.hint { margin: -8px 0 14px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.input[readonly] { background: var(--surface-3); color: var(--ink-3); cursor: not-allowed; }
+.modal-total { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: var(--r-md); background: var(--brand-50); }
+.modal-total-label { font-size: 13px; font-weight: 800; color: var(--brand-700); }
+.modal-total-value { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--brand-800); }
+.modal-actions-3 { display: grid; grid-template-columns: auto 1fr 1fr; gap: 10px; margin-top: 20px; }
+.confirm-icon { font-size: 44px; text-align: center; margin-bottom: 10px; }
+
+/* ── Susunan: HP satu kolom, tablet mendatar dua kolom ── */
+.inv-grid, .inv-col { display: contents; }
+@media (min-width: 768px) {
+  .wealth-value { font-size: 44px; }
+  .wealth-sub { font-size: 15px; }
+  .wealth-stats { gap: 12px; margin-top: 20px; }
+  .wealth-stat { padding: 14px 10px; }
+  .wealth-stat-val { font-size: 16px; }
+  .wealth-stat-lbl { font-size: 12px; }
+  .saving-amount { font-size: 36px; }
+  .gold-price { font-size: 36px; }
+  .gold-item-gram { font-size: 17px; }
+  .saham-name { font-size: 15px; }
+  .saham-price { font-size: 17px; }
+  .lesson-title { font-size: 15px; }
+  .lesson-body { font-size: 14px; }
+  .pie-label-row { font-size: 15px; }
+}
+@media (min-width: 1024px) {
+  /* Kotak kekayaan butuh kolom kanan yang lebih lebar */
+  .hero-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); }
+  .wealth-value { font-size: 40px; }
+  .wealth-stat { padding: 12px 6px; }
+  .wealth-stat-val { font-size: 14px; }
+  .inv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+  .inv-col { display: flex; flex-direction: column; gap: 16px; }
+}
 </style>
 </head>
-<body>
-
-<div class="sync-dot" id="syncDot"></div>
-
-<div class="header">
-  <div class="hdr-top">
-    <span class="page-badge">💹 INVESTOR MUDA</span>
-  </div>
-  <div class="hdr-hero">
-    <div class="hdr-avatar" id="hdrAvatar">⚔️</div>
-    <div>
-      <div class="hdr-name" id="hdrName">ASLAN ADIKA PRADA</div>
-      <div class="hdr-sub">Investor Muda · Kelas 3 SD 🌟</div>
-    </div>
-  </div>
-  <div class="wealth-banner">
-    <div>
-      <div class="wb-label">💰 TOTAL KEKAYAAN ASLAN</div>
-      <div class="wb-value" id="totalWealth">Rp 0</div>
-      <div class="wb-sub">Asetmu sedang bekerja untukmu! 🚀</div>
-    </div>
-    <div class="wb-icon">🏦</div>
-  </div>
-  <div class="hdr-stats">
-    <div class="hdr-stat"><div class="hdr-stat-val" id="statTabung">Rp 0</div><div class="hdr-stat-lbl">🐷 Tabungan</div></div>
-    <div class="hdr-stat"><div class="hdr-stat-val" id="statEmas">0 g</div><div class="hdr-stat-lbl">🥇 Emas</div></div>
-    <div class="hdr-stat"><div class="hdr-stat-val" id="statSaham">Rp 0</div><div class="hdr-stat-lbl">📈 Saham</div></div>
-    <div class="hdr-stat"><div class="hdr-stat-val" id="statReturn">+0%</div><div class="hdr-stat-lbl">📊 Return</div></div>
-  </div>
-</div>
-
-<div class="main">
-
-  <div class="section-title">🐷 Tabungan Aslan</div>
-  <div class="tabung-ro">
-    <div class="tabung-ro-label">💰 SALDO TABUNGAN (dari sistem utama)</div>
-    <div class="tabung-ro-amount" id="tabunganBalance">Memuat...</div>
-    <div class="tabung-ro-note">
-      <span>🔒</span>
-      <span class="tabung-ro-note-text">Dikelola Ayah &amp; Bunda · Tambah tabungan dari menu Nabung di halaman utama</span>
-    </div>
-  </div>
-
-  <div class="section-title">🥇 Emas Antam Aslan</div>
-  <div class="gold-card">
-    <div class="gold-header">
-      <div class="gold-title">Harga Emas Hari Ini</div>
-      <div class="price-pill"><div class="price-dot"></div>ESTIMASI</div>
-    </div>
-    <div class="gold-price-row">
-      <div class="gold-price" id="goldPrice">Rp 1.890.000</div>
-      <div class="gold-unit">/gram</div>
-      <div class="gold-chg chg-up" id="goldChg">▲ +0.0%</div>
-    </div>
-    <div class="gold-meta" id="goldMeta">Menunggu data...</div>
-    <div class="gold-chart-wrap">
-      <div class="chart-lbl">
-        <span>📊 Riwayat Harga Emas</span>
-        <span class="chart-upd" id="chartUpdating">⟳ Memuat...</span>
-      </div>
-      <div id="goldChartContainer">
-        <div class="chart-empty">📊 Grafik akan muncul setelah Ayah update harga emas beberapa kali</div>
+<body class="with-nav">
+<div class="shell">
+  <header class="hero">
+    <div class="hero-top">
+      <span class="hero-chip">🏠 Keluarga Sejati</span>
+      <div class="hero-actions">
+        <span class="hero-chip"><span id="headerDate">—</span><span class="sync-dot" id="syncDot" title="Status sinkronisasi"></span></span>
+        <a class="hero-icon-btn" href="index.html" title="Kembali ke beranda" aria-label="Kembali ke beranda">🏠</a>
       </div>
     </div>
-    <div class="gold-holdings-hdr">
-      <div class="gold-holdings-title">🪙 Emas Yang Aku Punya</div>
-      <div class="gold-total-badge" id="goldTotalGram">0 gram</div>
-    </div>
-    <div id="goldHoldingsList">
-      <div class="gold-empty">Belum ada emas tersimpan.<br>Klik "Beli Emas" untuk mulai! 🌟</div>
-    </div>
-    <div id="goldTotalBox" style="display:none">
-      <div class="gold-total-box">
-        <div>
-          <div class="gtb-label">💎 Total Nilai Emas Sekarang</div>
-          <div class="gtb-profit" id="goldTotalProfit">Untung/Rugi: —</div>
+    <div class="hero-body">
+      <div class="hero-main">
+        <div class="hero-avatar">💰</div>
+        <div class="hero-info">
+          <h1 class="hero-name">Investasi Aslan</h1>
+          <div class="hero-sub">Investor muda · simulasi belajar</div>
         </div>
-        <div class="gtb-value" id="goldTotalValue">Rp 0</div>
+      </div>
+      <div class="hero-xp">
+        <div class="wealth-label">💰 Total kekayaan Aslan</div>
+        <div class="wealth-value" id="totalWealth">Rp 0</div>
+        <div class="wealth-sub">Asetmu sedang bekerja untukmu! 🚀</div>
+        <div class="wealth-stats">
+          <div class="wealth-stat"><div class="wealth-stat-val" id="statTabung">Rp 0</div><div class="wealth-stat-lbl">🐷 Tabungan</div></div>
+          <div class="wealth-stat"><div class="wealth-stat-val" id="statEmas">0 g</div><div class="wealth-stat-lbl">🥇 Emas</div></div>
+          <div class="wealth-stat"><div class="wealth-stat-val" id="statSaham">Rp 0</div><div class="wealth-stat-lbl">📈 Saham</div></div>
+          <div class="wealth-stat"><div class="wealth-stat-val" id="statReturn">+0%</div><div class="wealth-stat-lbl">📊 Return</div></div>
+        </div>
       </div>
     </div>
-    <button class="buy-gold-btn" onclick="openGoldBuyModal()">✨ Beli Emas Baru</button>
-    <div class="tip-box">💡 <b>Tahukah Aslan?</b> Emas itu seperti magic shield — nilainya naik terus dari tahun ke tahun. Semakin banyak nabung emas, semakin kaya Aslan nanti! 🛡️✨</div>
-  </div>
+  </header>
 
-  <div class="section-title">📈 Saham Perusahaan Favorit</div>
-  <div class="card" style="padding:12px">
-    <div class="saham-note">🎮 Ini simulasi ya Aslan — belajar investasi dulu sebelum yang beneran! Tap "Beli" untuk catat kepemilikan sahammu.</div>
-    <div class="saham-grid" id="sahamGrid"></div>
-    <div id="sahamTotalBox" style="display:none">
-      <div class="saham-total-box">
-        <div class="stb-label">💼 Total Nilai Saham</div>
-        <div class="stb-value" id="sahamTotalValue">Rp 0</div>
+  <main class="page">
+    <div class="inv-grid">
+    <div class="inv-col">
+    <div class="section-head"><h2 class="section-title">🐷 Tabungan</h2></div>
+    <div class="saving-card">
+      <div class="saving-label">Saldo tabungan (dari halaman utama)</div>
+      <div class="saving-amount" id="tabunganBalance">Memuat...</div>
+      <div class="saving-note"><span>🔒</span><span>Dikelola Ayah &amp; Bunda. Tambah tabungan lewat menu Tabungan di halaman utama.</span></div>
+    </div>
+
+    <div class="section-head"><h2 class="section-title">🥇 Emas Antam</h2></div>
+    <div class="card">
+      <div class="gold-top">
+        <div class="gold-title">Harga emas hari ini</div>
+        <span class="est-pill"><span class="est-dot"></span>Estimasi</span>
+      </div>
+      <div class="gold-price-row">
+        <div class="gold-price" id="goldPrice">Rp 1.890.000</div>
+        <div class="gold-unit">/gram</div>
+        <div class="chg chg-up" id="goldChg">▲ +0.0%</div>
+      </div>
+      <div class="gold-meta" id="goldMeta">Menunggu data...</div>
+      <div class="chart-box">
+        <div class="chart-lbl"><span>📊 Riwayat harga emas</span><span class="chart-upd" id="chartUpdating">⟳ Memuat...</span></div>
+        <div id="goldChartContainer"><div class="chart-empty">Grafik akan muncul setelah Ayah update harga emas beberapa kali</div></div>
+      </div>
+      <div class="holdings-head">
+        <div class="holdings-title">🪙 Emas yang aku punya</div>
+        <span class="chip chip-gold" id="goldTotalGram">0 gram</span>
+      </div>
+      <div id="goldHoldingsList"><div class="empty">Belum ada emas tersimpan.<br>Klik "Beli emas" untuk mulai! 🌟</div></div>
+      <div id="goldTotalBox" style="display:none">
+        <div class="total-row">
+          <div>
+            <div class="total-label">💎 Total nilai emas sekarang</div>
+            <div class="total-sub" id="goldTotalProfit">Untung/Rugi: —</div>
+          </div>
+          <div class="total-value" id="goldTotalValue">Rp 0</div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="openGoldBuyModal()">✨ Beli emas baru</button>
+      <div class="tip">💡 <b>Tahukah Aslan?</b> Emas itu seperti perisai ajaib — nilainya cenderung naik dari tahun ke tahun. Semakin rajin menabung emas, semakin kuat tabunganmu nanti! 🛡️</div>
+    </div>
+
+    </div>
+    <div class="inv-col">
+    <div class="section-head"><h2 class="section-title">📈 Saham perusahaan favorit</h2></div>
+    <div class="card">
+      <div class="saham-note">🎮 Ini simulasi ya, Aslan — belajar investasi dulu sebelum yang beneran! Tap "Beli" untuk mencatat sahammu.</div>
+      <div class="saham-grid" id="sahamGrid"></div>
+      <div id="sahamTotalBox" style="display:none">
+        <div class="total-row green">
+          <div class="total-label">💼 Total nilai saham</div>
+          <div class="total-value" id="sahamTotalValue">Rp 0</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="section-title">📊 Komposisi Portofolio</div>
-  <div class="card">
-    <div class="pie-wrap">
-      <svg viewBox="0 0 100 100" width="90" height="90" style="flex-shrink:0" id="pieSvg">
-        <circle id="pieEmas"  cx="50" cy="50" r="40" fill="none" stroke="#f39c12" stroke-width="18" stroke-dasharray="0 252" stroke-dashoffset="63" transform="rotate(-90 50 50)"/>
-        <circle id="pieSaham" cx="50" cy="50" r="40" fill="none" stroke="#2980b9" stroke-width="18" stroke-dasharray="0 252" stroke-dashoffset="63" transform="rotate(-90 50 50)"/>
-        <circle id="pieTabung" cx="50" cy="50" r="40" fill="none" stroke="#27ae60" stroke-width="18" stroke-dasharray="0 252" stroke-dashoffset="63" transform="rotate(-90 50 50)"/>
-        <circle cx="50" cy="50" r="32" fill="white"/>
-        <text x="50" y="54" text-anchor="middle" font-size="8" font-weight="900" font-family="Nunito,sans-serif" fill="#1a2e1a" id="pieCenterText">Portfolio</text>
-      </svg>
-      <div class="pie-labels">
-        <div class="pie-label-row"><div class="pie-dot" style="background:#f39c12"></div><div class="pie-label-text" id="pctEmas">Emas — 0%</div></div>
-        <div class="pie-label-row"><div class="pie-dot" style="background:#2980b9"></div><div class="pie-label-text" id="pctSaham">Saham — 0%</div></div>
-        <div class="pie-label-row"><div class="pie-dot" style="background:#27ae60"></div><div class="pie-label-text" id="pctTabung">Tabungan — 0%</div></div>
+    <div class="section-head"><h2 class="section-title">📊 Komposisi portofolio</h2></div>
+    <div class="card">
+      <div class="pie-wrap">
+        <svg viewBox="0 0 100 100" width="104" height="104" style="flex-shrink:0" id="pieSvg">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#EDF1EB" stroke-width="16"/>
+          <circle id="pieEmas" cx="50" cy="50" r="40" fill="none" stroke="#F4AE16" stroke-width="16" stroke-dasharray="0 252" stroke-dashoffset="63" transform="rotate(-90 50 50)"/>
+          <circle id="pieSaham" cx="50" cy="50" r="40" fill="none" stroke="#2E7BF2" stroke-width="16" stroke-dasharray="0 252" stroke-dashoffset="63" transform="rotate(-90 50 50)"/>
+          <circle id="pieTabung" cx="50" cy="50" r="40" fill="none" stroke="#16A35B" stroke-width="16" stroke-dasharray="0 252" stroke-dashoffset="63" transform="rotate(-90 50 50)"/>
+          <text x="50" y="54" text-anchor="middle" font-size="9" font-weight="800" font-family="Plus Jakarta Sans,sans-serif" fill="#13261C" id="pieCenterText">Aset</text>
+        </svg>
+        <div class="pie-labels">
+          <div class="pie-label-row"><div class="pie-dot" style="background:#F4AE16"></div><div id="pctEmas">Emas — 0%</div></div>
+          <div class="pie-label-row"><div class="pie-dot" style="background:#2E7BF2"></div><div id="pctSaham">Saham — 0%</div></div>
+          <div class="pie-label-row"><div class="pie-dot" style="background:#16A35B"></div><div id="pctTabung">Tabungan — 0%</div></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="section-title">🧠 Pelajaran Investasi</div>
-  <div class="card" style="padding:14px">
-    <div id="tipCards"></div>
-  </div>
-
+    <div class="section-head"><h2 class="section-title">🧠 Pelajaran investasi</h2></div>
+    <div class="card"><div id="tipCards"></div></div>
+    </div>
+    </div>
+  </main>
 </div>
 
-<nav class="bottom-nav">
-  <a class="bnav-item" href="index.html"><div class="bnav-icon">⚔️</div>Misi</a>
-  <a class="bnav-item" href="index.html#streak"><div class="bnav-icon">🔥</div>Streak</a>
-  <a class="bnav-item" href="index.html#savings"><div class="bnav-icon">🐷</div>Nabung</a>
-  <a class="bnav-item" href="index.html#savings"><div class="bnav-icon">💹</div>Nabung</a>  
-  <a class="bnav-item" href="jurnal.html"><div class="bnav-icon">📔</div>Jurnal</a>
+<nav class="bottom-nav" aria-label="Navigasi">
+  <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span><span class="nav-label">Beranda</span></a>
+  <a class="nav-item active" href="investasi.html" aria-current="page"><span class="nav-icon">💰</span><span class="nav-label">Investasi</span></a>
 </nav>
 
-<!-- MODAL: BELI EMAS -->
-<div class="modal-overlay" id="goldBuyModal">
-  <div class="modal-box">
-    <div class="modal-title">🥇 Beli Emas Baru</div>
-    <div class="modal-subtitle">Catat pembelian emas Aslan</div>
-    <label class="modal-label">🪙 Jumlah Gram</label>
-    <input class="modal-input" type="number" id="gbGram" placeholder="Contoh: 0.5" step="0.01" min="0.01">
-    <label class="modal-label">💵 Harga Beli per Gram (Rp)</label>
-    <input class="modal-input" type="number" id="gbBuyPrice" placeholder="Contoh: 1890000" min="0">
-    <label class="modal-label">📅 Tanggal Beli</label>
-    <input class="modal-input" type="date" id="gbDate">
-    <label class="modal-label">📝 Catatan (opsional)</label>
-    <input class="modal-input" type="text" id="gbNote" placeholder="Contoh: Hadiah Lebaran" maxlength="40">
-    <div class="modal-total">
-      <span class="modal-total-label">💰 Total Bayar</span>
-      <span class="modal-total-value" id="gbTotal">Rp 0</span>
+<!-- BELI EMAS -->
+<div class="overlay" id="goldBuyModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">🥇 Beli emas baru</h2>
+    <p class="modal-sub">Catat pembelian emas Aslan</p>
+    <div class="modal-body">
+      <label class="label" for="gbGram">Jumlah gram</label>
+      <input class="input" type="number" id="gbGram" placeholder="Contoh: 0.5" step="0.01" min="0.01" inputmode="decimal">
+      <label class="label" for="gbBuyPrice">Harga beli per gram (Rp)</label>
+      <input class="input" type="number" id="gbBuyPrice" placeholder="Contoh: 1890000" min="0" inputmode="numeric">
+      <label class="label" for="gbDate">Tanggal beli</label>
+      <input class="input" type="date" id="gbDate">
+      <label class="label" for="gbNote">Catatan (opsional)</label>
+      <input class="input" type="text" id="gbNote" placeholder="Contoh: Hadiah Lebaran" maxlength="40">
+      <div class="modal-total"><span class="modal-total-label">💰 Total bayar</span><span class="modal-total-value" id="gbTotal">Rp 0</span></div>
     </div>
-    <div class="modal-btns">
-      <button class="modal-btn secondary" onclick="closeModal('goldBuyModal')">Batal</button>
-      <button class="modal-btn gold-primary" onclick="saveGoldBuy()">💛 Simpan!</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('goldBuyModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveGoldBuy()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: EDIT EMAS -->
-<div class="modal-overlay" id="goldEditModal">
-  <div class="modal-box">
-    <div class="modal-title">✏️ Edit Data Emas</div>
-    <div class="modal-subtitle" id="goldEditSubtitle">Edit pembelian emas</div>
+<!-- EDIT EMAS -->
+<div class="overlay" id="goldEditModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title">✏️ Edit data emas</h2>
+    <p class="modal-sub" id="goldEditSubtitle">Edit pembelian emas</p>
     <input type="hidden" id="geId">
-    <label class="modal-label">🪙 Jumlah Gram</label>
-    <input class="modal-input" type="number" id="geGram" placeholder="0.5" step="0.01" min="0.01">
-    <label class="modal-label">💵 Harga Beli per Gram (Rp)</label>
-    <input class="modal-input" type="number" id="geBuyPrice" placeholder="1890000" min="0">
-    <label class="modal-label">📅 Tanggal Beli</label>
-    <input class="modal-input" type="date" id="geDate">
-    <label class="modal-label">📝 Catatan (opsional)</label>
-    <input class="modal-input" type="text" id="geNote" maxlength="40">
-    <div class="modal-total">
-      <span class="modal-total-label">💰 Total Bayar</span>
-      <span class="modal-total-value" id="geTotal">Rp 0</span>
+    <div class="modal-body">
+      <label class="label" for="geGram">Jumlah gram</label>
+      <input class="input" type="number" id="geGram" placeholder="0.5" step="0.01" min="0.01" inputmode="decimal">
+      <label class="label" for="geBuyPrice">Harga beli per gram (Rp)</label>
+      <input class="input" type="number" id="geBuyPrice" placeholder="1890000" min="0" inputmode="numeric">
+      <label class="label" for="geDate">Tanggal beli</label>
+      <input class="input" type="date" id="geDate">
+      <label class="label" for="geNote">Catatan (opsional)</label>
+      <input class="input" type="text" id="geNote" maxlength="40">
+      <div class="modal-total"><span class="modal-total-label">💰 Total bayar</span><span class="modal-total-value" id="geTotal">Rp 0</span></div>
     </div>
-    <div class="modal-btns">
-      <button class="modal-btn danger" id="goldEditDeleteBtn">🗑 Hapus</button>
-      <button class="modal-btn secondary" onclick="closeModal('goldEditModal')">Batal</button>
-      <button class="modal-btn gold-primary" onclick="saveGoldEdit()">💾 Simpan</button>
+    <div class="modal-actions-3">
+      <button class="btn btn-danger" id="goldEditDeleteBtn" aria-label="Hapus">🗑</button>
+      <button class="btn btn-ghost" onclick="closeModal('goldEditModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveGoldEdit()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: BELI SAHAM -->
-<div class="modal-overlay" id="stockBuyModal">
-  <div class="modal-box">
-    <div class="modal-title" id="sbTitle">📈 Beli Saham</div>
-    <div class="modal-subtitle" id="sbSubtitle">Catat pembelian sahammu</div>
+<!-- BELI SAHAM -->
+<div class="overlay" id="stockBuyModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title" id="sbTitle">📈 Beli saham</h2>
+    <p class="modal-sub" id="sbSubtitle">Catat pembelian sahammu</p>
     <input type="hidden" id="sbId">
-    <label class="modal-label">📅 Tanggal Beli</label>
-    <input class="modal-input" type="date" id="sbDate">
-
-    <label class="modal-label">📦 Satuan Pembelian</label>
-    <div class="unit-toggle">
-      <button class="unit-toggle-btn active" id="sbUnitLot" onclick="setSbUnit('lot')">📦 Per Lot<br><span style="font-size:9px;font-weight:700;opacity:.8">(1 lot = 100 lbr)</span></button>
-      <button class="unit-toggle-btn" id="sbUnitLembar" onclick="setSbUnit('lembar')">📄 Per Lembar<br><span style="font-size:9px;font-weight:700;opacity:.8">(satuan terkecil)</span></button>
+    <div class="modal-body">
+      <label class="label" for="sbDate">Tanggal beli</label>
+      <input class="input" type="date" id="sbDate">
+      <div class="label">Satuan pembelian</div>
+      <div class="seg-tabs unit-seg">
+        <button class="seg-tab active" id="sbUnitLot" onclick="setSbUnit('lot')">📦 Per lot<small>1 lot = 100 lembar</small></button>
+        <button class="seg-tab" id="sbUnitLembar" onclick="setSbUnit('lembar')">📄 Per lembar<small>satuan terkecil</small></button>
+      </div>
+      <div class="unit-info" id="sbUnitInfo">📦 <b>Mode lot:</b> masukkan jumlah lot. Harga otomatis dari harga pasar.</div>
+      <label class="label" id="sbQtyLabel" for="sbQty">📦 Jumlah lot</label>
+      <input class="input" type="number" id="sbQty" placeholder="Contoh: 1" min="1" step="1" inputmode="decimal">
+      <div id="sbPricePerLotWrap">
+        <label class="label" for="sbBuyPriceLot">Harga beli per lot (Rp)</label>
+        <input class="input" type="number" id="sbBuyPriceLot" placeholder="Harga beli per lot" min="0" inputmode="numeric">
+        <div class="hint" id="sbHintLot"></div>
+      </div>
+      <div id="sbPricePerLembarWrap" style="display:none">
+        <label class="label" for="sbBuyPriceLembar">Harga pasar per lot (Rp)</label>
+        <input class="input" type="number" id="sbBuyPriceLembar" readonly placeholder="Otomatis dari harga pasar">
+        <div class="hint" id="sbHintLembar"></div>
+      </div>
+      <div class="modal-total"><span class="modal-total-label">💰 Total investasi</span><span class="modal-total-value" id="sbTotal">Rp 0</span></div>
     </div>
-    <div class="unit-info-box" id="sbUnitInfo">📦 <b>Mode Lot:</b> masukkan jumlah lot. Harga otomatis dari harga pasar.</div>
-
-    <label class="modal-label" id="sbQtyLabel">📦 Jumlah Lot</label>
-    <input class="modal-input" type="number" id="sbQty" placeholder="Contoh: 1" min="1" step="1">
-
-    <!-- Harga per LOT (mode lot) -->
-    <div id="sbPricePerLotWrap">
-      <label class="modal-label">💵 Harga Beli per Lot (Rp)</label>
-      <input class="modal-input" type="number" id="sbBuyPriceLot" placeholder="Harga beli per lot" min="0">
-      <div class="modal-hint" id="sbHintLot"></div>
-    </div>
-
-    <!-- Harga per LEMBAR (mode lembar) — otomatis, readonly -->
-    <div id="sbPricePerLembarWrap" style="display:none">
-      <label class="modal-label">💵 Harga Beli per Lembar (Rp)</label>
-      <input class="modal-input" type="number" id="sbBuyPriceLembar" readonly placeholder="Otomatis dari harga pasar">
-      <div class="modal-hint" id="sbHintLembar"></div>
-    </div>
-
-    <div class="modal-total">
-      <span class="modal-total-label">💰 Total Investasi</span>
-      <span class="modal-total-value" id="sbTotal">Rp 0</span>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-btn secondary" onclick="closeModal('stockBuyModal')">Batal</button>
-      <button class="modal-btn primary" onclick="saveStockBuy()">✅ Simpan!</button>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('stockBuyModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveStockBuy()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: EDIT SAHAM -->
-<div class="modal-overlay" id="stockEditModal">
-  <div class="modal-box">
-    <div class="modal-title" id="seTitle">✏️ Edit Transaksi Saham</div>
-    <div class="modal-subtitle" id="seSubtitle">Update data pembelian ini</div>
+<!-- EDIT SAHAM -->
+<div class="overlay" id="stockEditModal">
+  <div class="modal">
+    <div class="sheet-handle"></div>
+    <h2 class="modal-title" id="seTitle">✏️ Edit transaksi saham</h2>
+    <p class="modal-sub" id="seSubtitle">Ubah data pembelian ini</p>
     <input type="hidden" id="seStockId">
     <input type="hidden" id="seHistIdx">
-    <label class="modal-label">📅 Tanggal Beli</label>
-    <input class="modal-input" type="date" id="seDate">
-    <label class="modal-label">📦 Satuan Pembelian</label>
-    <div class="unit-toggle">
-      <button class="unit-toggle-btn active" id="seUnitLot" onclick="setSeUnit('lot')">📦 Per Lot<br><span style="font-size:9px;font-weight:700;opacity:.8">(1 lot = 100 lbr)</span></button>
-      <button class="unit-toggle-btn" id="seUnitLembar" onclick="setSeUnit('lembar')">📄 Per Lembar<br><span style="font-size:9px;font-weight:700;opacity:.8">(satuan terkecil)</span></button>
+    <div class="modal-body">
+      <label class="label" for="seDate">Tanggal beli</label>
+      <input class="input" type="date" id="seDate">
+      <div class="label">Satuan pembelian</div>
+      <div class="seg-tabs unit-seg">
+        <button class="seg-tab active" id="seUnitLot" onclick="setSeUnit('lot')">📦 Per lot<small>1 lot = 100 lembar</small></button>
+        <button class="seg-tab" id="seUnitLembar" onclick="setSeUnit('lembar')">📄 Per lembar<small>satuan terkecil</small></button>
+      </div>
+      <div class="unit-info" id="seUnitInfo">📦 <b>Mode lot:</b> masukkan jumlah lot &amp; harga per lot.</div>
+      <label class="label" id="seQtyLabel" for="seQty">📦 Jumlah lot</label>
+      <input class="input" type="number" id="seQty" placeholder="10" min="1" inputmode="decimal">
+      <div id="sePricePerLotWrap">
+        <label class="label" for="seBuyPriceLot">Harga beli per lot (Rp)</label>
+        <input class="input" type="number" id="seBuyPriceLot" placeholder="Harga beli per lot" min="0" inputmode="numeric">
+      </div>
+      <div id="sePricePerLembarWrap" style="display:none">
+        <label class="label" for="seBuyPriceLembar">Harga beli per lembar (Rp)</label>
+        <input class="input" type="number" id="seBuyPriceLembar" readonly placeholder="Otomatis dari harga pasar">
+        <div class="hint" id="seHintLembar"></div>
+      </div>
+      <div class="modal-total"><span class="modal-total-label">💰 Total transaksi ini</span><span class="modal-total-value" id="seTotal">Rp 0</span></div>
     </div>
-    <div class="unit-info-box" id="seUnitInfo">📦 <b>Mode Lot:</b> masukkan jumlah lot &amp; harga per lot. Sistem simpan dalam lot.</div>
-
-    <label class="modal-label" id="seQtyLabel">📦 Jumlah Lot</label>
-    <input class="modal-input" type="number" id="seQty" placeholder="10" min="1">
-
-    <div id="sePricePerLotWrap">
-      <label class="modal-label">💵 Harga Beli per Lot (Rp)</label>
-      <input class="modal-input" type="number" id="seBuyPriceLot" placeholder="Harga beli per lot" min="0">
-    </div>
-    <div id="sePricePerLembarWrap" style="display:none">
-      <label class="modal-label">💵 Harga Beli per Lembar (Rp)</label>
-      <input class="modal-input" type="number" id="seBuyPriceLembar" readonly placeholder="Otomatis dari harga pasar">
-      <div class="modal-hint" id="seHintLembar"></div>
-    </div>
-
-    <div class="modal-total">
-      <span class="modal-total-label">💰 Total Investasi Transaksi Ini</span>
-      <span class="modal-total-value" id="seTotal">Rp 0</span>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-btn danger" id="stockEditDeleteBtn">🗑 Hapus</button>
-      <button class="modal-btn secondary" onclick="closeModal('stockEditModal')">Batal</button>
-      <button class="modal-btn primary" onclick="saveStockEdit()">💾 Simpan</button>
+    <div class="modal-actions-3">
+      <button class="btn btn-danger" id="stockEditDeleteBtn" aria-label="Hapus">🗑</button>
+      <button class="btn btn-ghost" onclick="closeModal('stockEditModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveStockEdit()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- CONFIRM DELETE -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-box">
+<!-- KONFIRMASI HAPUS -->
+<div class="overlay overlay-top" id="confirmOverlay" style="z-index:1100;">
+  <div class="modal">
+    <div class="sheet-handle"></div>
     <div class="confirm-icon" id="confirmIcon">⚠️</div>
-    <div class="confirm-title" id="confirmTitle">Yakin hapus?</div>
-    <div class="confirm-sub" id="confirmSub">Tindakan ini tidak bisa dibatalkan.</div>
-    <div class="confirm-btns">
-      <button class="confirm-yes" id="confirmYes">Ya, Hapus</button>
-      <button class="confirm-no" onclick="closeConfirm()">Batal</button>
+    <h2 class="modal-title" id="confirmTitle">Yakin hapus?</h2>
+    <p class="modal-sub" id="confirmSub">Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-danger" id="confirmYes">Ya, hapus</button>
     </div>
   </div>
 </div>
@@ -518,15 +459,16 @@ STOCKS.forEach(s => {
 // FIREBASE
 // ============================================================
 function showSync(ok) {
-  const dot = document.getElementById('syncDot');
-  dot.className = 'sync-dot ' + (ok ? 'show-green' : 'show-orange');
-  setTimeout(() => dot.className = 'sync-dot', 1500);
+  document.getElementById('syncDot').className = 'sync-dot' + (ok ? '' : ' syncing');
 }
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
+// update() instead of set(): set() on aslan_investasi used to wipe the parents' manualPrices and goldPriceHistory.
 function saveInvestData() {
-  FB_INV.set({ 
-    goldHoldings: goldHoldings || {}, 
-    stockHoldings: stockHoldings || {} 
+  showSync(false);
+  FB_INV.update({
+    goldHoldings: goldHoldings || {},
+    stockHoldings: stockHoldings || {}
   }, (err) => {
     if (err) {
       console.error("Firebase Save Error:", err);
@@ -603,7 +545,7 @@ function loadManualPrices() {
       const isUp = diff >= 0;
       document.getElementById('goldPrice').textContent = fmtRp(currentGoldPrice);
       document.getElementById('goldChg').textContent   = (isUp ? '▲ +' : '▼ ') + Math.abs(pct) + '%';
-      document.getElementById('goldChg').className     = 'gold-chg ' + (isUp ? 'chg-up' : 'chg-down');
+      document.getElementById('goldChg').className     = 'chg ' + (isUp ? 'chg-up' : 'chg-down');
       const updAt = d.updatedAt ? new Date(d.updatedAt) : new Date();
       document.getElementById('goldMeta').textContent =
         updAt.toLocaleDateString('id-ID', { weekday:'short', day:'numeric', month:'short', year:'numeric' }) +
@@ -666,7 +608,7 @@ function renderGoldChart() {
   const polyline=pts.map(p=>p.x+','+p.y).join(' ');
   const areaPath=`M${pts[0].x},${H-padB} `+pts.map(p=>p.x+','+p.y).join(' ')+` ${pts[pts.length-1].x},${H-padB} Z`;
   const isUp=prices[prices.length-1]>=prices[0];
-  const lineColor=isUp?'#27ae60':'#e74c3c';
+  const lineColor=isUp?'#16A35B':'#D93B2E';
   const fillId='goldGrad_'+Date.now();
   let svgHtml=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;display:block">
   <defs><linearGradient id="${fillId}" x1="0" y1="0" x2="0" y2="1">
@@ -680,9 +622,9 @@ function renderGoldChart() {
     svgHtml+=`<circle cx="${p.x}" cy="${p.y}" r="${isLast?5:2.5}" fill="${isLast?lineColor:lineColor+'88'}" stroke="#fff" stroke-width="1.5"/>`;
   });
   const first=pts[0],last=pts[pts.length-1];
-  svgHtml+=`<text x="${first.x}" y="${first.y-7}" text-anchor="start" font-size="8" font-weight="800" font-family="Nunito,sans-serif" fill="#7d5a00">${(first.v/1000000).toFixed(2)}M</text>`;
-  svgHtml+=`<text x="${last.x}" y="${last.y-7}" text-anchor="end" font-size="9" font-weight="900" font-family="Nunito,sans-serif" fill="${lineColor}">${(last.v/1000000).toFixed(2)}M</text>`;
-  pts.forEach(p=>{ if(p.showLabel) svgHtml+=`<text x="${p.x}" y="${H}" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Nunito,sans-serif" fill="#9a6a00">${p.label}</text>`; });
+  svgHtml+=`<text x="${first.x}" y="${first.y-7}" text-anchor="start" font-size="8" font-weight="800" font-family="Plus Jakarta Sans,sans-serif" fill="#46574D">${(first.v/1000000).toFixed(2)}M</text>`;
+  svgHtml+=`<text x="${last.x}" y="${last.y-7}" text-anchor="end" font-size="9" font-weight="900" font-family="Plus Jakarta Sans,sans-serif" fill="${lineColor}">${(last.v/1000000).toFixed(2)}M</text>`;
+  pts.forEach(p=>{ if(p.showLabel) svgHtml+=`<text x="${p.x}" y="${H}" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Plus Jakarta Sans,sans-serif" fill="#7B8A81">${p.label}</text>`; });
   svgHtml+=`<text x="${last.x+7}" y="${last.y+4}" font-size="12" fill="${lineColor}">${isUp?'↗':'↘'}</text></svg>`;
   container.innerHTML=svgHtml;
 }
@@ -708,7 +650,7 @@ function renderGoldHoldings() {
   const totalBox=document.getElementById('goldTotalBox');
   const gramBadge=document.getElementById('goldTotalGram');
   if (ids.length===0) {
-    list.innerHTML='<div class="gold-empty">Belum ada emas tersimpan.<br>Klik "Beli Emas" untuk mulai! 🌟</div>';
+    list.innerHTML='<div class="empty">Belum ada emas tersimpan.<br>Klik "Beli emas" untuk mulai! 🌟</div>';
     totalBox.style.display='none'; gramBadge.textContent='0 gram'; return;
   }
   let totalGram=0,totalCost=0,totalValue=0;
@@ -716,23 +658,23 @@ function renderGoldHoldings() {
     const h=goldHoldings[id];
     const val=h.gram*currentGoldPrice, cost=h.gram*h.buyPrice, profit=val-cost;
     totalGram+=h.gram; totalCost+=cost; totalValue+=val;
-    const pc=profit>=0?'#2e7d32':'#c62828', ps=profit>=0?'+':'';
+    const pc=profit>=0?'up':'down', ps=profit>=0?'+':'−';
     return `<div class="gold-item">
       <div class="gold-item-top">
         <div class="gold-item-icon">🪙</div>
         <div class="gold-item-info">
           <div class="gold-item-gram">${h.gram} gram</div>
           <div class="gold-item-buy">Beli @ ${fmtRp(h.buyPrice)}/gram</div>
-          <div class="gold-item-date">${h.date||'—'}${h.note?' · '+h.note:''}</div>
+          <div class="gold-item-date">${esc(h.date||'—')}${h.note?' · '+esc(h.note):''}</div>
         </div>
         <div class="gold-item-right">
           <div class="gold-item-now">${fmtRp(Math.round(val))}</div>
-          <div class="gold-item-profit" style="color:${pc}">${ps}${fmtRp(Math.abs(Math.round(profit)))}</div>
+          <div class="gold-item-profit ${pc}">${ps}${fmtRp(Math.abs(Math.round(profit)))}</div>
         </div>
       </div>
       <div class="gold-item-actions">
-        <button class="gold-action-btn edit-btn" onclick="openGoldEditModal('${id}')">✏️ Edit</button>
-        <button class="gold-action-btn del-btn"  onclick="confirmDeleteGoldById('${id}')">🗑 Hapus</button>
+        <button class="icon-btn" onclick="openGoldEditModal('${id}')" aria-label="Edit">✏️</button>
+        <button class="icon-btn icon-btn-danger" onclick="confirmDeleteGoldById('${id}')" aria-label="Hapus">🗑️</button>
       </div>
     </div>`;
   }).join('');
@@ -741,8 +683,8 @@ function renderGoldHoldings() {
   const tp=totalValue-totalCost;
   document.getElementById('goldTotalValue').textContent=fmtRp(Math.round(totalValue));
   const profEl=document.getElementById('goldTotalProfit');
-  profEl.textContent='Untung/Rugi: '+(tp>=0?'+':'')+fmtRp(Math.abs(Math.round(tp)));
-  profEl.style.color=tp>=0?'#2e7d32':'#c62828';
+  profEl.textContent='Untung/rugi: '+(tp>=0?'+':'−')+fmtRp(Math.abs(Math.round(tp)));
+  profEl.className='total-sub '+(tp>=0?'up':'down');
 }
 
 // ============================================================
@@ -765,77 +707,51 @@ function renderSaham() {
     const hasOwn = h && h.lots > 0 && h.history && h.history.length > 0;
 
     let ownedHtml = '';
-    let actHtml = `<div class="saham-actions"><button class="saham-btn beli" onclick="openStockBuyModal('${s.id}')">➕ Beli</button></div>`;
+    let actHtml = `<button class="btn btn-soft btn-sm btn-block" onclick="openStockBuyModal('${s.id}')">➕ Beli</button>`;
 
     if (hasOwn) {
-      // Hitung nilai saham saat ini
       const totalVal = price * h.lots;
-      totalSahamValue += totalVal;                    // ← Perbaikan utama
+      totalSahamValue += totalVal;
 
-      const totalCost = h.history.reduce((sum, t) => {
-        return sum + (t.lots || 0) * (t.buyPrice || 0);
-      }, 0);
-
+      const totalCost = h.history.reduce((sum, t) => sum + (t.lots || 0) * (t.buyPrice || 0), 0);
       const totalProfit = totalVal - totalCost;
-
-      const pc = totalProfit >= 0 ? '#27ae60' : '#e74c3c';
-      const ps = totalProfit >= 0 ? '+' : '';
-
+      const pc = totalProfit >= 0 ? 'up' : 'down';
+      const ps = totalProfit >= 0 ? '+' : '−';
       const isExpanded = expandedCards[s.id];
 
       const histRows = h.history.map((t, idx) => {
-        const tVal = price * t.lots;
-        const tCost = t.buyPrice * t.lots;
-        const tProfit = tVal - tCost;
-        const tpc = tProfit >= 0 ? '#27ae60' : '#e74c3c';
-        const tps = tProfit >= 0 ? '+' : '';
-        const lotDisplay = Number.isInteger(t.lots) ? 
-          t.lots + ' lot' : 
-          t.lots.toFixed(2) + ' lot';
-
-        return `<div class="saham-hist-row">
-          <span class="saham-hist-num">#${idx+1}</span>
-          <span class="saham-hist-lots">${lotDisplay}</span>
-          <span class="saham-hist-price">Rp ${Math.round(t.buyPrice).toLocaleString('id-ID')}/lot</span>
-          <span class="saham-hist-date">${t.date||'—'}</span>
-          <span class="saham-hist-profit" style="color:${tpc}">${tps}${fmtRp(Math.abs(Math.round(tProfit)))}</span>
-          <button class="saham-hist-del" onclick="openStockEditModal('${s.id}',${idx})" title="Edit/Hapus">✏️</button>
+        const tProfit = price * t.lots - t.buyPrice * t.lots;
+        const lotDisplay = Number.isInteger(t.lots) ? t.lots + ' lot' : t.lots.toFixed(2) + ' lot';
+        return `<div class="hist-row">
+          <div class="hist-main">
+            <div class="hist-lots">#${idx+1} · ${lotDisplay}</div>
+            <div class="hist-meta">Rp ${Math.round(t.buyPrice).toLocaleString('id-ID')}/lot · ${esc(t.date||'—')}</div>
+          </div>
+          <span class="hist-profit ${tProfit >= 0 ? 'up' : 'down'}">${tProfit >= 0 ? '+' : '−'}${fmtRp(Math.abs(Math.round(tProfit)))}</span>
+          <button class="hist-edit" onclick="openStockEditModal('${s.id}',${idx})" aria-label="Edit atau hapus">✏️</button>
         </div>`;
       }).join('');
 
-            ownedHtml = `
-        <div class="saham-owned-summary">
-          <span class="saham-owned-total">✅ ${h.lots} lot</span>
-          <span class="saham-owned-avg">Avg Rp ${h.buyPrice.toLocaleString('id-ID')}</span>
-          <span class="saham-owned-pnl" style="color:${pc}">${ps}${fmtRp(Math.abs(Math.round(totalProfit)))}</span>
+      ownedHtml = `
+        <div class="owned">
+          <div class="owned-row"><span>✅ ${Number.isInteger(h.lots) ? h.lots : h.lots.toFixed(2)} lot</span><span class="${pc}">${ps}${fmtRp(Math.abs(Math.round(totalProfit)))}</span></div>
+          <div class="owned-avg">Rata-rata Rp ${h.buyPrice.toLocaleString('id-ID')}/lot</div>
+          <div class="owned-value">${fmtRp(Math.round(totalVal))}</div>
         </div>
-        
-        <!-- TAMBAHAN BARU: TOTAL NILAI SAAT INI -->
-        <div style="background:#e8f5e9; border:1.5px solid #81c784; border-radius:8px; padding:8px 10px; margin:6px 0; text-align:center;">
-          <div style="font-size:11px; font-weight:800; color:#1b5e20;">💰 Total Nilai Sekarang</div>
-          <div style="font-size:18px; font-weight:900; color:#27ae60;">
-            ${fmtRp(Math.round(totalVal))}
-          </div>
-        </div>
+        <button class="hist-toggle" onclick="toggleHistory('${s.id}')">${isExpanded ? '▲ Sembunyikan' : '▼ Lihat'} ${h.history.length} transaksi</button>
+        ${isExpanded ? `<div class="hist">${histRows}</div>` : ''}`;
 
-        <button class="saham-hist-toggle" onclick="toggleHistory('${s.id}')">
-          ${isExpanded ? '▲ Sembunyikan' : '▼ Lihat'} ${h.history.length} transaksi
-        </button>
-        ${isExpanded ? `<div class="saham-hist-wrap">
-          <div class="saham-hist-header"><span>#</span><span>Lot</span><span>Harga Beli</span><span>Tgl</span><span>P/L</span><span></span></div>
-          ${histRows}
-        </div>` : ''}`;
-
-      actHtml = `<div class="saham-actions"><button class="saham-btn beli" onclick="openStockBuyModal('${s.id}')">➕ Beli Lagi</button></div>`;
+      actHtml = `<button class="btn btn-soft btn-sm btn-block" onclick="openStockBuyModal('${s.id}')">➕ Beli lagi</button>`;
     }
 
     return `<div class="saham-card ${s.cls}" id="scard-${s.id}">
-      <span class="saham-icon">${s.icon}</span>
-      <div class="saham-name">${s.name}</div>
-      <div class="saham-ticker">${s.ticker}</div>
+      <div class="saham-head">
+        <span class="saham-icon">${s.icon}</span>
+        <div><div class="saham-name">${s.name}</div><div class="saham-ticker">${s.ticker}</div></div>
+      </div>
       <div class="saham-price-row">
         <div class="saham-price">${price >= 1000000 ? fmtRp(price) : 'Rp ' + price.toLocaleString('id-ID')}</div>
-        <div class="saham-chg ${isUp ? 'chg-up' : 'chg-down'}">${isUp ? '▲' : '▼'} ${Math.abs(chg)}%</div>
+        <span class="chg ${isUp ? 'chg-up' : 'chg-down'}">${isUp ? '▲' : '▼'} ${Math.abs(chg)}%</span>
       </div>
       ${ownedHtml}
       ${actHtml}
@@ -909,7 +825,7 @@ function renderHeader() {
   }
   const returnEl = document.getElementById('statReturn');
   returnEl.textContent = (parseFloat(returnPct) >= 0 ? '+' : '') + returnPct + '%';
-  returnEl.style.color = parseFloat(returnPct) >= 0 ? '#f1c40f' : '#e74c3c';
+  returnEl.style.color = parseFloat(returnPct) >= 0 ? '#FFE38F' : '#FFB4A8';
 
   // Update Pie Chart
   if (totalKekayaan > 0) {
@@ -925,15 +841,15 @@ function renderHeader() {
       const el = document.getElementById(id);
       if (el) {
         el.setAttribute('stroke-dasharray', len + ' ' + (CIRCUM - len));
-        el.setAttribute('stroke-dashoffset', (-offset + 63).toString());
+        el.setAttribute('stroke-dashoffset', (-offset).toString());
         el.setAttribute('stroke', color);
         offset += len;
       }
     };
 
-    setSlice('pieEmas', pE, '#f39c12');
-    setSlice('pieSaham', pS, '#2980b9');
-    setSlice('pieTabung', pT, '#27ae60');
+    setSlice('pieEmas', pE, '#F4AE16');
+    setSlice('pieSaham', pS, '#2E7BF2');
+    setSlice('pieTabung', pT, '#16A35B');
 
     document.getElementById('pctEmas').textContent  = `Emas — ${pE}%`;
     document.getElementById('pctSaham').textContent = `Saham — ${pS}%`;
@@ -945,16 +861,16 @@ function renderHeader() {
 // TIPS
 // ============================================================
 const TIPS=[
-  {icon:'💡',title:'Apa itu Investasi?',body:'Investasi adalah menaruh uang di tempat yang bisa membuatnya berkembang — kayak menanam pohon, nanti berbuah banyak! 🌱',bg:'#e8f5e9',border:'#81c784',clr:'#1b5e20'},
-  {icon:'📈',title:'Kenapa Harga Bisa Naik-Turun?',body:'Harga saham bergerak karena banyak orang jual-beli. Kalau banyak yang mau beli → harga naik! Kalau banyak yang mau jual → harga turun. Seperti barang langka yang makin mahal! 🎯',bg:'#e3f2fd',border:'#90caf9',clr:'#1565c0'},
-  {icon:'⏳',title:'Sabar = Kunci Kaya!',body:'Warren Buffett mulai investasi umur 11 tahun. Aslan bisa start lebih awal dari dia! Sedikit demi sedikit, lama-lama jadi banyak. 🚀',bg:'#fff8e1',border:'#ffd54f',clr:'#e65100'},
+  {icon:'💡',title:'Apa itu investasi?',body:'Investasi adalah menaruh uang di tempat yang bisa membuatnya berkembang — kayak menanam pohon, nanti berbuah banyak! 🌱',tone:'brand'},
+  {icon:'📈',title:'Kenapa harga bisa naik-turun?',body:'Harga saham bergerak karena banyak orang jual-beli. Kalau banyak yang mau beli → harga naik! Kalau banyak yang mau jual → harga turun. Seperti barang langka yang makin mahal! 🎯',tone:'sky'},
+  {icon:'⏳',title:'Sabar = kunci kaya!',body:'Warren Buffett mulai investasi umur 11 tahun. Aslan bisa mulai lebih awal dari dia! Sedikit demi sedikit, lama-lama jadi banyak. 🚀',tone:'gold'},
 ];
+const TIP_TONES={brand:['var(--brand-50)','var(--brand-800)'],sky:['var(--sky-soft)','var(--sky-ink)'],gold:['var(--gold-soft)','var(--gold-ink)']};
 function renderTips() {
-  document.getElementById('tipCards').innerHTML=TIPS.map((t,i)=>`
-    <div style="background:${t.bg};border:2px solid ${t.border};border-radius:12px;padding:12px 14px;${i<TIPS.length-1?'margin-bottom:10px':''}">
-      <div style="font-size:13px;font-weight:900;color:${t.clr};margin-bottom:5px">${t.icon} ${t.title}</div>
-      <div style="font-size:11px;font-weight:700;color:${t.clr};line-height:1.6">${t.body}</div>
-    </div>`).join('');
+  document.getElementById('tipCards').innerHTML=TIPS.map(t=>{
+    const [bg,ink]=TIP_TONES[t.tone];
+    return `<div class="lesson" style="background:${bg};color:${ink}"><div class="lesson-title">${t.icon} ${t.title}</div><div class="lesson-body">${t.body}</div></div>`;
+  }).join('');
 }
 
 // ============================================================
@@ -1289,9 +1205,6 @@ function deleteStockHistoryItem(stockId, histIdx) {
     `${s.name} — ${trans.lots} lot @ Rp ${Math.round(trans.buyPrice).toLocaleString('id-ID')}`,
     'Ya, Hapus', 
     () => {
-      console.log("Menghapus transaksi:", {stockId, histIdx, before: JSON.parse(JSON.stringify(h.history))});
-
-      // Hapus
       h.history.splice(histIdx, 1);
 
       // Cleanup jika kosong
@@ -1309,7 +1222,6 @@ function deleteStockHistoryItem(stockId, histIdx) {
       setTimeout(() => {
         renderSaham();
         renderHeader();
-        console.log("Setelah delete:", stockHoldings[stockId]);
       }, 100);
 
       showToast('🗑️ Transaksi berhasil dihapus');
@@ -1322,7 +1234,7 @@ function deleteStockHistoryItem(stockId, histIdx) {
 // ============================================================
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(el=>{
+document.querySelectorAll('.overlay').forEach(el=>{
   el.addEventListener('click', e=>{ if (e.target===el) el.classList.remove('open'); });
 });
 
@@ -1338,7 +1250,8 @@ function showConfirm(icon, title, sub, yesLabel, cb) {
   _confirmCb = cb;
   document.getElementById('confirmOverlay').classList.add('open');
 }
-document.getElementById('confirmYes').onclick = () => { closeConfirm(); if (_confirmCb) _confirmCb(); };
+// Keep the callback before closeConfirm() clears it — clearing first meant "Ya, hapus" never deleted anything.
+document.getElementById('confirmYes').onclick = () => { const cb = _confirmCb; closeConfirm(); if (cb) cb(); };
 function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); _confirmCb=null; }
 document.getElementById('confirmOverlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeConfirm(); });
 
@@ -1405,6 +1318,8 @@ function attachInputListeners() {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
   attachInputListeners();
   renderTips();
   listenTabungan();

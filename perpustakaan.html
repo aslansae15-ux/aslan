@@ -2,483 +2,187 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#5D4037">
-<link rel="apple-touch-icon" href="icon-192x192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0C8A4B">
+<link rel="apple-touch-icon" href="icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 Perpustakaan Aslan — Keluarga Sejati</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<title>Perpustakaan Aslan — Keluarga Sejati</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 
+<link rel="stylesheet" href="theme.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --green:#4CAF50;--green-dark:#2E7D32;
-  --amber:#F57F17;
-  --brown:#5D4037;--brown-light:#8D6E63;--brown-dark:#3E2723;
-  --cream:#FFF8E1;
-  --orange:#E65100;--teal:#00695C;
-  --indigo:#1A237E;--indigo-mid:#283593;
+/* Header hijau & navigasi bawah: chrome.css (lewat theme.css) */
+.lib-tab-count { margin-left: 4px; font-size: 11px; font-weight: 800; opacity: .6; }
+
+/* Koleksi */
+.lib-view { display: flex; flex-direction: column; gap: 16px; animation: rise .35s var(--ease-out); }
+.lib-head { display: flex; align-items: center; gap: 14px; }
+.lib-head-icon { width: 56px; height: 56px; flex-shrink: 0; display: grid; place-items: center; font-size: 28px; border-radius: 18px; background: linear-gradient(150deg, var(--c1), var(--c2)); box-shadow: 0 10px 20px -10px var(--c2); }
+.lib-head-text { flex: 1; min-width: 0; }
+.lib-head-title { font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.2; }
+.lib-head-sub { font-size: 13px; font-weight: 600; color: var(--ink-3); margin: 2px 0 8px; }
+.lib-head .progress-fill { background: linear-gradient(90deg, var(--c1), var(--c2)); }
+
+.lib-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.lib-stat { padding: 14px 10px; text-align: center; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-xs); }
+.lib-stat-num { font-family: var(--font-display); font-size: 24px; font-weight: 600; line-height: 1.1; color: var(--ink); }
+.lib-stat-label { margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--ink-3); }
+
+.lib-today {
+  position: relative; overflow: hidden;
+  padding: 20px; border-radius: var(--r-xl); color: #fff;
+  background: radial-gradient(120% 140% at 100% 0%, rgba(255, 255, 255, .22), transparent 55%), linear-gradient(150deg, var(--c1), var(--c2));
+  box-shadow: 0 22px 40px -26px var(--c2);
 }
-html,body{margin:0;padding:0;width:100%;min-height:100vh;}
-body{font-family:'Nunito',sans-serif;background:#6b9e6b;display:flex;justify-content:center;align-items:flex-start;}
-
-#app-wrapper{
-  width:100%;max-width:600px;min-height:100vh;
-  background-color:var(--cream);
-  background-image:radial-gradient(circle,rgba(141,110,99,0.12) 2px,transparent 2px),linear-gradient(rgba(141,110,99,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(141,110,99,0.05) 1px,transparent 1px);
-  background-size:32px 32px,32px 32px,32px 32px;
-  background-position:16px 16px,0 0,0 0;
-  box-shadow:0 0 80px rgba(0,0,0,0.3);
-  padding-bottom:60px;position:relative;overflow-x:hidden;
+.lib-today::after { content: '📖'; position: absolute; right: 16px; bottom: -10px; font-size: 80px; opacity: .14; transform: rotate(-10deg); }
+.lib-today-badge { display: inline-flex; padding: 5px 12px; border-radius: var(--r-full); background: rgba(255, 255, 255, .2); font-size: 12px; font-weight: 800; }
+.lib-today-emoji { margin-top: 14px; font-size: 40px; line-height: 1; }
+.lib-today-title { position: relative; margin-top: 10px; font-family: var(--font-display); font-size: 20px; font-weight: 600; line-height: 1.3; }
+.lib-today-btn {
+  position: relative; margin-top: 16px; min-height: 46px; padding: 0 22px;
+  border-radius: var(--r-full); background: #fff; color: var(--c2);
+  font-size: 15px; font-weight: 800; box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .45);
+  transition: transform .15s var(--ease-out);
 }
+.lib-today-btn:active { transform: scale(.97); }
+.lib-today-done { position: relative; display: inline-flex; margin-top: 16px; padding: 8px 14px; border-radius: var(--r-full); background: rgba(255, 255, 255, .2); font-size: 13px; font-weight: 800; }
+.lib-note { padding: 18px; text-align: center; border-radius: var(--r-lg); background: var(--surface); border: 1px dashed var(--line-strong); }
+.lib-note-emoji { font-size: 40px; line-height: 1; }
+.lib-note-title { margin-top: 8px; font-size: 16px; font-weight: 800; }
+.lib-note-sub { margin-top: 4px; font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+.lib-note .chip { margin-top: 12px; }
 
-@media(min-width:600px) and (max-width:900px){
-  body{background:#FFF8E1;}
-  #app-wrapper{max-width:100%;box-shadow:none;}
-  .books-grid{grid-template-columns:repeat(3,1fr)!important;}
-  .header-title{font-size:16px!important;}
+.lib-quote { position: relative; padding: 14px 16px 14px 46px; border-radius: var(--r-md); background: var(--surface-2); font-size: 14px; font-weight: 600; font-style: italic; line-height: 1.55; color: var(--ink-2); }
+.lib-quote::before { content: '“'; position: absolute; left: 14px; top: 4px; font-family: var(--font-display); font-size: 44px; line-height: 1; color: var(--c1); }
+
+/* Minggu & kartu buku */
+.week-head { display: flex; align-items: center; gap: 12px; padding: 4px 2px 0; }
+.week-emoji { width: 40px; height: 40px; flex-shrink: 0; display: grid; place-items: center; font-size: 20px; border-radius: 14px; background: var(--tone-soft); }
+.week-label { font-size: 12px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--tone-ink); }
+.week-sub { font-size: 15px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+.books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+
+.tone-sky { --tone: var(--sky); --tone-soft: var(--sky-soft); --tone-ink: var(--sky-ink); }
+.tone-brand { --tone: var(--brand-500); --tone-soft: var(--brand-50); --tone-ink: var(--brand-700); }
+.tone-orange { --tone: var(--orange); --tone-soft: var(--orange-soft); --tone-ink: var(--orange-ink); }
+.tone-violet { --tone: var(--violet); --tone-soft: var(--violet-soft); --tone-ink: var(--violet-ink); }
+.tone-teal { --tone: var(--teal); --tone-soft: var(--teal-soft); --tone-ink: var(--teal-ink); }
+
+.book-card {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 16px 14px 14px; text-align: left; width: 100%;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-sm);
+  transition: transform .18s var(--ease-out), box-shadow .2s;
 }
-@media(min-width:900px){
-  body{background:#5a8a5a;align-items:flex-start;padding:24px 0;}
-  #app-wrapper{max-width:860px;border-radius:20px;margin:0 auto;min-height:auto;}
-  .books-grid{grid-template-columns:repeat(3,1fr)!important;}
-  .header-title{font-size:16px!important;}
-  .main{padding:20px 28px!important;}
+.book-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.book-card:active { transform: scale(.98); }
+.book-band { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--tone); }
+.book-top { display: flex; align-items: center; justify-content: space-between; }
+.book-emoji { width: 42px; height: 42px; display: grid; place-items: center; font-size: 22px; border-radius: 14px; background: var(--tone-soft); }
+.book-num { font-size: 12px; font-weight: 800; color: var(--tone-ink); }
+.book-title {
+  flex: 1; font-size: 14px; font-weight: 800; line-height: 1.35; color: var(--ink);
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden;
 }
-@media(max-width:360px){
-  .books-grid{grid-template-columns:repeat(2,1fr)!important;}
-  .header-title{font-size:11px!important;}
+.book-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.book-status { padding: 3px 9px; border-radius: var(--r-full); font-size: 11px; font-weight: 800; white-space: nowrap; }
+.status-open { background: var(--tone-soft); color: var(--tone-ink); }
+.status-today { background: var(--gold-soft); color: var(--gold-ink); }
+.status-read { background: var(--brand-50); color: var(--brand-700); }
+.status-locked { background: var(--surface-3); color: var(--ink-3); }
+.book-day { font-size: 11px; font-weight: 700; color: var(--ink-4); white-space: nowrap; }
+.book-check {
+  position: absolute; top: 12px; right: 12px;
+  width: 24px; height: 24px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--brand-500); color: #fff; font-size: 13px; font-weight: 900;
+  box-shadow: 0 0 0 3px #fff;
 }
+.book-card.read .book-num { visibility: hidden; }
+.book-card.today { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(244, 174, 22, .2), var(--shadow-sm); }
+.book-card.locked { background: var(--surface-2); box-shadow: none; }
+.book-card.locked:hover { transform: none; }
+.book-card.locked .book-emoji { filter: grayscale(1); opacity: .5; }
+.book-card.locked .book-title { color: var(--ink-4); }
 
-/* ═══ HEADER ═══ */
-.header{padding:18px 20px 36px;position:relative;overflow:hidden;}
-.header.coding-header{background:linear-gradient(135deg,#3E2723 0%,#5D4037 50%,#6D4C41 100%);}
-.header.english-header{background:linear-gradient(135deg,#0D2B6B 0%,#1A3F9E 50%,#2756C5 100%);}
-.header.adventure-header{background:linear-gradient(135deg,#4A148C 0%,#7B1FA2 50%,#9C27B0 100%);}
-.header.hardware-header{background:linear-gradient(135deg,#1A237E 0%,#283593 50%,#3949AB 100%);}
-.header.ai-header{background:linear-gradient(135deg,#006064 0%,#00838F 50%,#00ACC1 100%);}
+.fab-top {
+  position: fixed; right: 16px; bottom: calc(84px + var(--safe-b)); z-index: 60;
+  width: 46px; height: 46px; display: grid; place-items: center;
+  border-radius: 50%; font-size: 20px; font-weight: 800; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-md);
+  opacity: 0; pointer-events: none; transform: translateY(10px);
+  transition: opacity .25s, transform .25s var(--ease-out);
+}
+.fab-top.show { opacity: 1; pointer-events: auto; transform: none; }
+@media (min-width: 561px) { .fab-top { right: max(16px, calc(50% - 264px)); bottom: calc(108px + var(--safe-b)); } }
 
-.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:20px;border-top:3px solid rgba(0,0,0,0.3);}
-.coding-header::after{background:repeating-linear-gradient(90deg,#5D4037 0,#5D4037 29px,#4E342E 29px,#4E342E 30px);}
-.english-header::after{background:repeating-linear-gradient(90deg,#1A3F9E 0,#1A3F9E 29px,#0D2B6B 29px,#0D2B6B 30px);}
-.adventure-header::after{background:repeating-linear-gradient(90deg,#7B1FA2 0,#7B1FA2 29px,#4A148C 29px,#4A148C 30px);}
-.hardware-header::after{background:repeating-linear-gradient(90deg,#283593 0,#283593 29px,#1A237E 29px,#1A237E 30px);}
-.ai-header::after{background:repeating-linear-gradient(90deg,#00838F 0,#00838F 29px,#006064 29px,#006064 30px);}
-
-.header::before{content:'';position:absolute;bottom:20px;left:0;right:0;height:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,0.15) 0,rgba(255,255,255,0.15) 14px,transparent 14px,transparent 30px);}
-
-.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.back-btn{background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);border-radius:20px;padding:5px 14px;color:#FFCC80;font-size:11px;font-weight:800;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;transition:all 0.2s;}
-.back-btn:hover{background:rgba(255,255,255,0.25);}
-.date-badge{background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);border-radius:20px;padding:5px 14px;color:#FFCC80;font-size:11px;font-weight:700;}
-.header-hero{display:flex;align-items:center;gap:16px;}
-.library-icon-wrap{width:72px;height:72px;border:4px solid #FFCC80;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:inset 0 -4px 0 rgba(0,0,0,0.2),0 4px 12px rgba(0,0,0,0.3);flex-shrink:0;position:relative;overflow:hidden;}
-.coding-icon{background:linear-gradient(135deg,#FF8F00,#FFB300);}
-.english-icon{background:linear-gradient(135deg,#1565C0,#42A5F5);}
-.sains-icon{background:linear-gradient(135deg,#2E7D32,#66BB6A);}
-.adventure-icon{background:linear-gradient(135deg,#7B1FA2,#CE93D8);}
-.hardware-icon{background:linear-gradient(135deg,#283593,#7986CB);}
-.ai-icon{background:linear-gradient(135deg,#006064,#4DD0E1);}
-.library-icon-wrap::before{content:'';position:absolute;top:4px;left:6px;right:6px;height:6px;background:rgba(255,255,255,0.3);border-radius:3px;}
-.header-title{font-family:'Press Start 2P',monospace;font-size:14px;color:#FFCC80;text-shadow:3px 3px 0 rgba(0,0,0,0.4);line-height:1.5;}
-.header-sub{color:#FFCC80;opacity:0.8;font-size:10px;font-weight:700;margin-top:5px;line-height:1.8;}
-.progress-wrap{margin-top:8px;}
-
-/* Layout progress bars into 2 rows x 3 cols (3+3) */
-#progressBars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:center;}
-#progressBars .progress-wrap{margin:8px 0;}
-.progress-label{display:flex;justify-content:space-between;color:#FFCC80;font-size:11px;font-weight:700;margin-bottom:5px;opacity:0.9;}
-.progress-track{height:14px;background:rgba(0,0,0,0.3);border-radius:3px;border:2px solid rgba(255,255,255,0.2);overflow:hidden;}
-.progress-fill{height:100%;border-radius:3px;transition:width 0.8s ease;position:relative;}
-.coding-progress{background:linear-gradient(90deg,#FFB300,#FFD54F);}
-.english-progress{background:linear-gradient(90deg,#29B6F6,#80DEEA);}
-.sains-progress{background:linear-gradient(90deg,#66BB6A,#A5D6A7);}
-.adventure-progress{background:linear-gradient(90deg,#CE93D8,#F3E5F5);}
-.hardware-progress{background:linear-gradient(90deg,#7986CB,#C5CAE9);}
-.ai-progress{background:linear-gradient(90deg,#4DD0E1,#B2EBF2);}
-.progress-fill::after{content:'';position:absolute;top:2px;left:4px;right:4px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;}
-
-.float-deco{position:absolute;pointer-events:none;font-size:20px;opacity:0.2;}
-@keyframes floatDeco{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(8deg)}}
-
-/* ═══ COLLECTION TABS ═══ */
-.collection-tabs{display:flex;gap:0;border-bottom:3px solid #D7CCC8;background:#EFEBE9;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.collection-tabs::-webkit-scrollbar{height:3px;}
-.collection-tabs::-webkit-scrollbar-thumb{background:#BCAAA4;border-radius:3px;}
-.tab-btn{flex:1;min-width:80px;padding:10px 6px;border:none;background:transparent;font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;color:#90A4AE;transition:all 0.2s;border-bottom:3px solid transparent;margin-bottom:-3px;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;}
-.tab-btn.active.coding-tab{color:#5D4037;border-bottom-color:#5D4037;background:#FFF8E1;}
-.tab-btn.active.english-tab{color:#1A237E;border-bottom-color:#1A237E;background:#E8EAF6;}
-.tab-btn.active.sains-tab{color:#1B5E20;border-bottom-color:#1B5E20;background:#F1F8E9;}
-.tab-btn.active.adventure-tab{color:#4A148C;border-bottom-color:#7B1FA2;background:#F3E5F5;}
-.tab-btn.active.digital-tab{color:#1565C0;border-bottom-color:#1976D2;background:#E3F2FD;}
-.tab-btn.active.hardware-tab{color:#1A237E;border-bottom-color:#283593;background:#E8EAF6;}
-.tab-btn.active.ai-tab{color:#006064;border-bottom-color:#00838F;background:#E0F7FA;}
-.tab-btn:hover:not(.active){background:rgba(0,0,0,0.04);}
-.tab-btn.locked-tab{opacity:0.55;}
-
-/* ═══ MAIN ═══ */
-.main{padding:16px 14px;}
-
-/* ═══ STATS ROW ═══ */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
-.stat-card{background:white;border-radius:14px;padding:14px 10px;border:3px solid #D7CCC8;border-bottom:5px solid #BCAAA4;text-align:center;position:relative;overflow:hidden;}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0;}
-.stat-card.read-card::before{background:var(--green);}
-.stat-card.locked-card::before{background:#EF9A9A;}
-.stat-card.today-card.coding::before{background:var(--amber);}
-.stat-card.today-card.english::before{background:#1565C0;}
-.stat-card.today-card.sains::before{background:#2E7D32;}
-.stat-card.today-card.adventure::before{background:#7B1FA2;}
-.stat-card.today-card.hardware::before{background:#283593;}
-.stat-card.today-card.ai::before{background:#006064;}
-.stat-num{font-family:'Press Start 2P',monospace;font-size:20px;color:#5D4037;}
-.stat-label{font-size:9px;font-weight:800;color:#90A4AE;margin-top:5px;text-transform:uppercase;letter-spacing:0.5px;}
-
-/* ═══ TODAY HIGHLIGHT ═══ */
-.today-book-wrap{width:100%;margin-bottom:20px;box-sizing:border-box;}
-.today-book-card{display:block;width:100%!important;box-sizing:border-box!important;border-radius:18px;padding:20px;border:3px solid #E65100;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.25);}
-.today-book-card::before{content:'📖';position:absolute;right:12px;bottom:10px;font-size:56px;opacity:0.12;}
-.today-book-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;padding:3px 12px;font-size:10px;font-weight:800;color:white;margin-bottom:10px;}
-.today-book-title{font-family:'Press Start 2P',monospace;font-size:9px;color:white;text-shadow:1px 1px 0 rgba(0,0,0,0.2);line-height:1.6;margin-bottom:8px;word-break:break-word;}
-.today-book-btn{display:inline-block;background:white;border:none;border-radius:12px;padding:12px 24px;font-family:'Press Start 2P',monospace;font-size:8px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,0.15);transition:all 0.1s;text-decoration:none;border-bottom:4px solid rgba(0,0,0,0.1);}
-.today-book-btn.coding-btn{color:#E65100;}
-.today-book-btn.english-btn{color:#1565C0;}
-.today-book-btn.sains-btn{color:#1B5E20;}
-.today-book-btn.adventure-btn{color:#6A1B9A;}
-.today-book-btn.hardware-btn{color:#1A237E;}
-.today-book-btn.ai-btn{color:#006064;}
-.today-book-btn:hover{transform:translateY(-2px);}
-.today-book-btn:active{transform:translateY(2px);}
-
-/* ═══ COMING SOON CARD ═══ */
-.coming-soon-card{border-radius:18px;padding:24px 20px;text-align:center;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.2);border:3px solid;margin-bottom:20px;}
-.coming-soon-card.sains-cs{background:linear-gradient(135deg,#1B5E20,#2E7D32);border-color:#1B5E20;}
-.coming-soon-card.adventure-cs{background:linear-gradient(135deg,#4A148C,#7B1FA2);border-color:#4A148C;}
-.coming-soon-card.hardware-cs{background:linear-gradient(135deg,#1A237E,#283593);border-color:#1A237E;}
-.coming-soon-card.ai-cs{background:linear-gradient(135deg,#006064,#00838F);border-color:#006064;}
-.coming-soon-emoji{font-size:48px;margin-bottom:12px;}
-.coming-soon-title{font-family:'Press Start 2P',monospace;font-size:10px;color:#FFCC80;text-shadow:2px 2px 0 rgba(0,0,0,0.3);line-height:1.6;margin-bottom:10px;}
-.coming-soon-date{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);border-radius:20px;padding:8px 20px;font-size:12px;font-weight:800;color:white;}
-
-/* ═══ WEEK TITLE ═══ */
-.week-title{font-family:'Press Start 2P',monospace;font-size:8px;color:#5D4037;letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#EFEBE9,#D7CCC8);border-radius:12px;padding:10px 14px;border:2px solid #BCAAA4;border-left:5px solid #8D6E63;}
-.week-title.english{color:#1A237E;background:linear-gradient(135deg,#E8EAF6,#C5CAE9);border-color:#9FA8DA;border-left-color:#3949AB;}
-.week-title.sains{color:#1B5E20;background:linear-gradient(135deg,#F1F8E9,#DCEDC8);border-color:#AED581;border-left-color:#558B2F;}
-.week-title.adventure{color:#4A148C;background:linear-gradient(135deg,#F3E5F5,#E1BEE7);border-color:#CE93D8;border-left-color:#7B1FA2;}
-.week-title.hardware{color:#1A237E;background:linear-gradient(135deg,#E8EAF6,#C5CAE9);border-color:#9FA8DA;border-left-color:#283593;}
-.week-title.ai{color:#006064;background:linear-gradient(135deg,#E0F7FA,#B2EBF2);border-color:#80DEEA;border-left-color:#00838F;}
-.week-title-emoji{font-size:18px;flex-shrink:0;}
-
-/* ═══ BOOK GRID ═══ */
-.books-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
-
-/* ═══ BOOK CARD ═══ */
-.book-card{background:white;border-radius:16px;border:3px solid #D7CCC8;border-bottom:5px solid #BCAAA4;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;position:relative;overflow:hidden;text-decoration:none;display:block;}
-.book-card:hover:not(.locked){transform:translateY(-4px);box-shadow:0 10px 0 rgba(0,0,0,0.1);}
-.book-card:active:not(.locked){transform:translateY(2px);border-bottom-width:2px;}
-.book-card.locked{cursor:not-allowed;opacity:0.75;filter:grayscale(0.3);}
-.book-card.read{border-color:var(--green)!important;border-bottom-color:#2E7D32!important;}
-.book-card.today-book-card-item{animation:todayPulse 2s ease-in-out infinite;}
-@keyframes todayPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,152,0,0.3)}50%{box-shadow:0 0 0 6px rgba(255,152,0,0)}}
-
-.book-spine{width:8px;position:absolute;left:0;top:0;bottom:0;border-radius:16px 0 0 16px;}
-.book-cover{padding:14px 12px 12px 18px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;position:relative;}
-.book-cover-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
-.book-emoji{font-size:28px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15));}
-.book-num-badge{font-family:'Press Start 2P',monospace;font-size:9px;padding:3px 8px;border-radius:8px;color:white;flex-shrink:0;}
-.book-title{font-size:12px;font-weight:900;color:#3E2723;line-height:1.35;margin-bottom:6px;}
-.book-card.locked .book-title{color:#90A4AE;}
-.book-footer{display:flex;align-items:center;justify-content:space-between;}
-.book-status{font-size:9px;font-weight:800;padding:3px 9px;border-radius:10px;}
-.book-day{font-size:9px;font-weight:700;color:#BDBDBD;}
-
-.status-today{background:#FFF3E0;color:#E65100;border:1.5px solid #FFB74D;}
-.status-today-en{background:#E8EAF6;color:#283593;border:1.5px solid #7986CB;}
-.status-today-sains{background:#F1F8E9;color:#2E7D32;border:1.5px solid #81C784;}
-.status-today-adv{background:#F3E5F5;color:#6A1B9A;border:1.5px solid #CE93D8;}
-.status-today-hw{background:#E8EAF6;color:#1A237E;border:1.5px solid #7986CB;}
-.status-today-ai{background:#E0F7FA;color:#006064;border:1.5px solid #80DEEA;}
-.status-read{background:#E8F5E9;color:#2E7D32;border:1.5px solid #81C784;}
-.status-locked{background:#F5F5F5;color:#BDBDBD;border:1.5px solid #E0E0E0;}
-
-.book-lock-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.4);border-radius:14px;}
-.lock-icon{font-size:28px;margin-bottom:4px;}
-.lock-text{font-size:9px;font-weight:800;color:#90A4AE;}
-.read-check{position:absolute;top:-2px;right:-2px;width:28px;height:28px;background:var(--green);border-radius:50%;border:3px solid white;display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:900;box-shadow:0 2px 8px rgba(76,175,80,0.4);z-index:2;}
-
-/* ═══ SHELF DECORATION ═══ */
-.shelf-deco{height:16px;margin:0 -14px 20px;border-top:3px solid rgba(0,0,0,0.25);border-bottom:3px solid rgba(0,0,0,0.15);position:relative;}
-.shelf-deco.coding{background:linear-gradient(135deg,#5D4037,#6D4C41);}
-.shelf-deco.english{background:linear-gradient(135deg,#283593,#3949AB);}
-.shelf-deco.sains{background:linear-gradient(135deg,#2E7D32,#388E3C);}
-.shelf-deco.adventure{background:linear-gradient(135deg,#6A1B9A,#7B1FA2);}
-.shelf-deco.hardware{background:linear-gradient(135deg,#1A237E,#283593);}
-.shelf-deco.ai{background:linear-gradient(135deg,#006064,#00838F);}
-.shelf-deco::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,rgba(255,255,255,0.1) 0,rgba(255,255,255,0.1) 19px,transparent 19px,transparent 20px);}
-
-/* ═══ MOTIVATION ═══ */
-.motivation-card{border-radius:16px;padding:16px 18px;margin-bottom:16px;border:3px solid;position:relative;overflow:hidden;}
-.motivation-card.coding{background:linear-gradient(135deg,#1B5E20,#2E7D32);border-color:#1B5E20;}
-.motivation-card.english{background:linear-gradient(135deg,#0D1F6B,#1A3F9E);border-color:#0D1F6B;}
-.motivation-card.sains{background:linear-gradient(135deg,#004D40,#00695C);border-color:#004D40;}
-.motivation-card.adventure{background:linear-gradient(135deg,#311B92,#4527A0);border-color:#311B92;}
-.motivation-card.hardware{background:linear-gradient(135deg,#1A237E,#283593);border-color:#1A237E;}
-.motivation-card.ai{background:linear-gradient(135deg,#006064,#00838F);border-color:#006064;}
-.motivation-card::before{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:36px;opacity:0.12;}
-.motivation-card.coding::before{content:'💡';}
-.motivation-card.english::before{content:'🌟';}
-.motivation-card.sains::before{content:'🔬';}
-.motivation-card.adventure::before{content:'✨';}
-.motivation-card.hardware::before{content:'💻';}
-.motivation-card.ai::before{content:'🤖';}
-.motivation-text{font-size:12px;font-weight:700;color:#C8E6C9;line-height:1.7;font-style:italic;}
-.motivation-card.english .motivation-text{color:#C5CAE9;}
-.motivation-card.sains .motivation-text{color:#B2DFDB;}
-.motivation-card.adventure .motivation-text{color:#E1BEE7;}
-.motivation-card.hardware .motivation-text{color:#C5CAE9;}
-.motivation-card.ai .motivation-text{color:#B2EBF2;}
-
-/* ═══ CODING WEEK COLORS ═══ */
-.book-card.cw1{border-color:#90CAF9;border-bottom-color:#1565C0;}
-.book-card.cw2{border-color:#A5D6A7;border-bottom-color:#2E7D32;}
-.book-card.cw3{border-color:#FFAB91;border-bottom-color:#E65100;}
-.book-card.cw4{border-color:#CE93D8;border-bottom-color:#6A1B9A;}
-.book-card.cw5{border-color:#80CBC4;border-bottom-color:#00695C;}
-.spine-cw1{background:linear-gradient(180deg,#1565C0,#0D47A1);}
-.spine-cw2{background:linear-gradient(180deg,#2E7D32,#1B5E20);}
-.spine-cw3{background:linear-gradient(180deg,#E65100,#BF360C);}
-.spine-cw4{background:linear-gradient(180deg,#6A1B9A,#4A148C);}
-.spine-cw5{background:linear-gradient(180deg,#00695C,#004D40);}
-.num-cw1{background:#1565C0;}.num-cw2{background:#2E7D32;}.num-cw3{background:#E65100;}.num-cw4{background:#6A1B9A;}.num-cw5{background:#00695C;}
-
-/* ═══ ENGLISH WEEK COLORS ═══ */
-.book-card.ew1{border-color:#90CAF9;border-bottom-color:#0D47A1;}
-.book-card.ew2{border-color:#80DEEA;border-bottom-color:#00695C;}
-.book-card.ew3{border-color:#B39DDB;border-bottom-color:#4527A0;}
-.book-card.ew4{border-color:#F48FB1;border-bottom-color:#880E4F;}
-.book-card.ew5{border-color:#FFCC80;border-bottom-color:#E65100;}
-.spine-ew1{background:linear-gradient(180deg,#0D47A1,#01579B);}
-.spine-ew2{background:linear-gradient(180deg,#00695C,#004D40);}
-.spine-ew3{background:linear-gradient(180deg,#4527A0,#311B92);}
-.spine-ew4{background:linear-gradient(180deg,#880E4F,#4A148C);}
-.spine-ew5{background:linear-gradient(180deg,#E65100,#BF360C);}
-.num-ew1{background:#0D47A1;}.num-ew2{background:#00695C;}.num-ew3{background:#4527A0;}.num-ew4{background:#880E4F;}.num-ew5{background:#E65100;}
-
-/* ═══ SAINS WEEK COLORS ═══ */
-.book-card.sw1{border-color:#80CBC4;border-bottom-color:#00695C;}
-.book-card.sw2{border-color:#FFCC80;border-bottom-color:#E65100;}
-.book-card.sw3{border-color:#EF9A9A;border-bottom-color:#C62828;}
-.book-card.sw4{border-color:#B39DDB;border-bottom-color:#283593;}
-.book-card.sw5{border-color:#A5D6A7;border-bottom-color:#1B5E20;}
-.spine-sw1{background:linear-gradient(180deg,#00695C,#004D40);}
-.spine-sw2{background:linear-gradient(180deg,#E65100,#BF360C);}
-.spine-sw3{background:linear-gradient(180deg,#C62828,#B71C1C);}
-.spine-sw4{background:linear-gradient(180deg,#283593,#1A237E);}
-.spine-sw5{background:linear-gradient(180deg,#1B5E20,#33691E);}
-.num-sw1{background:#00695C;}.num-sw2{background:#E65100;}.num-sw3{background:#C62828;}.num-sw4{background:#283593;}.num-sw5{background:#1B5E20;}
-
-/* ═══ ADVENTURE WEEK COLORS ═══ */
-.book-card.aw1{border-color:#CE93D8;border-bottom-color:#6A1B9A;}
-.book-card.aw2{border-color:#80DEEA;border-bottom-color:#00695C;}
-.book-card.aw3{border-color:#FFCC80;border-bottom-color:#E65100;}
-.book-card.aw4{border-color:#F48FB1;border-bottom-color:#880E4F;}
-.book-card.aw5{border-color:#A5D6A7;border-bottom-color:#1B5E20;}
-.spine-aw1{background:linear-gradient(180deg,#6A1B9A,#4A148C);}
-.spine-aw2{background:linear-gradient(180deg,#00695C,#004D40);}
-.spine-aw3{background:linear-gradient(180deg,#E65100,#BF360C);}
-.spine-aw4{background:linear-gradient(180deg,#880E4F,#4A148C);}
-.spine-aw5{background:linear-gradient(180deg,#1B5E20,#33691E);}
-.num-aw1{background:#6A1B9A;}.num-aw2{background:#00695C;}.num-aw3{background:#E65100;}.num-aw4{background:#880E4F;}.num-aw5{background:#1B5E20;}
-
-/* ═══ HARDWARE WEEK COLORS ═══ */
-.book-card.hw1{border-color:#90CAF9;border-bottom-color:#1565C0;}
-.book-card.hw2{border-color:#A5D6A7;border-bottom-color:#2E7D32;}
-.book-card.hw3{border-color:#FFAB91;border-bottom-color:#E65100;}
-.book-card.hw4{border-color:#CE93D8;border-bottom-color:#6A1B9A;}
-.book-card.hw5{border-color:#80CBC4;border-bottom-color:#00695C;}
-.spine-hw1{background:linear-gradient(180deg,#1565C0,#0D47A1);}
-.spine-hw2{background:linear-gradient(180deg,#2E7D32,#1B5E20);}
-.spine-hw3{background:linear-gradient(180deg,#E65100,#BF360C);}
-.spine-hw4{background:linear-gradient(180deg,#6A1B9A,#4A148C);}
-.spine-hw5{background:linear-gradient(180deg,#00695C,#004D40);}
-.num-hw1{background:#1565C0;}.num-hw2{background:#2E7D32;}.num-hw3{background:#E65100;}.num-hw4{background:#6A1B9A;}.num-hw5{background:#00695C;}
-
-/* ═══ AI WEEK COLORS ═══ */
-.book-card.aiw1{border-color:#80DEEA;border-bottom-color:#006064;}
-.book-card.aiw2{border-color:#A5D6A7;border-bottom-color:#2E7D32;}
-.book-card.aiw3{border-color:#FFCC80;border-bottom-color:#E65100;}
-.book-card.aiw4{border-color:#CE93D8;border-bottom-color:#6A1B9A;}
-.spine-aiw1{background:linear-gradient(180deg,#006064,#004D40);}
-.spine-aiw2{background:linear-gradient(180deg,#2E7D32,#1B5E20);}
-.spine-aiw3{background:linear-gradient(180deg,#E65100,#BF360C);}
-.spine-aiw4{background:linear-gradient(180deg,#6A1B9A,#4A148C);}
-.num-aiw1{background:#006064;}.num-aiw2{background:#2E7D32;}.num-aiw3{background:#E65100;}.num-aiw4{background:#6A1B9A;}
-
-/* ═══ TOAST ═══ */
-.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-120px);background:#3E2723;color:white;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:800;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:600;box-shadow:0 6px 24px rgba(0,0,0,0.25);white-space:nowrap;border:2px solid #8D6E63;}
-.toast.show{transform:translateX(-50%) translateY(0);}
-
-/* ═══ BACK TO TOP ═══ */
-.back-top{position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;background:#5D4037;border:3px solid #8D6E63;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.35);border-bottom:4px solid #3E2723;transition:all 0.2s;text-decoration:none;}
-.back-top:hover{background:#3E2723;}
-
-/* ═══ COLLECTION SECTION ═══ */
-.collection-section{display:none;}
-.collection-section.active{display:block;}
+/* ── Tablet ── */
+.lib-top { display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 768px) {
+  .lib-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+  .lib-head { height: 100%; }
+  .lib-stats { gap: 12px; }
+  .lib-stat { display: flex; flex-direction: column; justify-content: center; }
+  .lib-stat-num { font-size: 28px; }
+  .lib-stat-label { font-size: 12px; }
+  .lib-head-icon { width: 64px; height: 64px; font-size: 32px; border-radius: 20px; }
+  .lib-head-title { font-size: 24px; }
+  .lib-today { padding: 26px 28px; }
+  .lib-today-title { font-size: 26px; max-width: 80%; }
+  .lib-today-emoji { font-size: 48px; }
+  .lib-today-btn { min-height: 52px; font-size: 16px; }
+  .lib-quote { font-size: 15px; }
+  .books-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .book-card { padding: 18px 16px 16px; }
+  .book-title { font-size: 15px; }
+  .book-emoji { width: 48px; height: 48px; font-size: 26px; }
+  .week-sub { font-size: 17px; }
+  /* Sejajar dengan navigasi bawah yang melayang */
+  .fab-top { right: max(20px, calc(50% - 500px)); bottom: calc(34px + var(--safe-b)); width: 52px; height: 52px; }
+}
 </style>
 </head>
-<body>
-<div id="app-wrapper">
-
-  <!-- HEADER -->
-  <div class="header coding-header" id="mainHeader">
-    <span class="float-deco" style="top:10px;left:28%;animation:floatDeco 3s ease-in-out infinite;">📚</span>
-    <span class="float-deco" style="top:14px;left:60%;animation:floatDeco 4.5s ease-in-out infinite 1s;">⭐</span>
-    <span class="float-deco" style="top:8px;right:6%;animation:floatDeco 3.5s ease-in-out infinite 2s;">🔖</span>
-    <div class="header-top">
-      <a href="index.html" class="back-btn">← Kembali</a>
-      <span class="date-badge" id="dateDisplay">—</span>
-    </div>
-    <div class="header-hero">
-      <div class="library-icon-wrap coding-icon" id="headerIcon">📚</div>
-      <div>
-        <div class="header-title" id="headerTitle">PERPUSTAKAAN<br>ASLAN</div>
-              </div>
-    </div>
-    <div id="progressBars"></div>
-  </div>
-
-  <!-- TABS -->
-  <div class="collection-tabs" id="tabsContainer">
-    <button class="tab-btn coding-tab active" onclick="switchTab('coding')">💻 CODING</button>
-    <button class="tab-btn english-tab" onclick="switchTab('english')">🇬🇧 ENGLISH</button>
-    <button class="tab-btn sains-tab" onclick="switchTab('sains')">🔬 SAINS</button>
-    <button class="tab-btn adventure-tab" id="adventureTabBtn" onclick="switchTab('adventure')">✨ ADVENTURE</button>
-    <button class="tab-btn digital-tab" id="digitalTabBtn" onclick="switchTab('digital')">🌊 LAUTAN</button>
-    <button class="tab-btn hardware-tab" id="hardwareTabBtn" onclick="switchTab('hardware')">🖥️ HW</button>
-    <button class="tab-btn ai-tab" id="aiTabBtn" onclick="switchTab('ai')">🤖 AI</button>
-    <button class="tab-btn evolusi-tab" id="evolusiTabBtn" onclick="switchTab('evolusi')">🦴 EVO</button>
-  </div>
-
-  <!-- ═══ CODING SECTION ═══ -->
-  <div class="collection-section active" id="codingSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="cStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card coding"><div class="stat-num" id="cStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="cStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
+<body class="with-nav">
+<div class="shell">
+  <header class="hero">
+    <div class="hero-top">
+      <span class="hero-chip">🏠 Keluarga Sejati</span>
+      <div class="hero-actions">
+        <span class="hero-chip" id="dateDisplay">—</span>
+        <a class="hero-icon-btn" href="index.html" title="Kembali ke beranda" aria-label="Kembali ke beranda">🏠</a>
       </div>
-      <div class="today-book-wrap" id="codingTodayHighlight"></div>
-      <div class="motivation-card coding"><div class="motivation-text" id="codingMotivation"></div></div>
-      <div id="codingBooksContainer"></div>
     </div>
-  </div>
-
-  <!-- ═══ ENGLISH SECTION ═══ -->
-  <div class="collection-section" id="englishSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="eStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card english"><div class="stat-num" id="eStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="eStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
+    <div class="hero-body">
+      <div class="hero-main">
+        <div class="hero-avatar">📚</div>
+        <div class="hero-info">
+          <h1 class="hero-name">Perpustakaan Aslan</h1>
+          <div class="hero-sub">Baca satu buku setiap hari</div>
+        </div>
       </div>
-      <div class="today-book-wrap" id="englishTodayHighlight"></div>
-      <div class="motivation-card english"><div class="motivation-text" id="englishMotivation"></div></div>
-      <div id="englishBooksContainer"></div>
-    </div>
-  </div>
-
-  <!-- ═══ SAINS SECTION ═══ -->
-  <div class="collection-section" id="sainsSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="sStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card sains"><div class="stat-num" id="sStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="sStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
+      <div class="hero-xp">
+        <div class="hero-xp-row"><span>📖 Total buku dibaca</span><span class="hero-xp-value"><span id="totalRead">0</span> / <span id="totalBooks">240</span></span></div>
+        <div class="progress"><div class="progress-fill" id="totalFill"></div></div>
       </div>
-      <div class="today-book-wrap" id="sainsTodayHighlight"></div>
-      <div class="motivation-card sains"><div class="motivation-text" id="sainsMotivation"></div></div>
-      <div id="sainsBooksContainer"></div>
     </div>
-  </div>
+  </header>
 
-  <!-- ═══ ADVENTURE SECTION ═══ -->
-  <div class="collection-section" id="adventureSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="aStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card adventure"><div class="stat-num" id="aStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="aStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
-      </div>
-      <div class="today-book-wrap" id="adventureTodayHighlight"></div>
-      <div class="motivation-card adventure"><div class="motivation-text" id="adventureMotivation"></div></div>
-      <div id="adventureBooksContainer"></div>
-    </div>
-  </div>
-
-  <!-- ═══ LAUTAN DIGITAL SECTION ═══ -->
-  <div class="collection-section" id="digitalSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="dStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card digital"><div class="stat-num" id="dStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="dStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
-      </div>
-      <div class="today-book-wrap" id="digitalTodayHighlight"></div>
-      <div class="motivation-card digital"><div class="motivation-text" id="digitalMotivation"></div></div>
-      <div id="digitalBooksContainer"></div>
-    </div>
-  </div>
-
-  <!-- ═══ HARDWARE SECTION ═══ -->
-  <div class="collection-section" id="hardwareSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="hwStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card hardware"><div class="stat-num" id="hwStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="hwStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
-      </div>
-      <div class="today-book-wrap" id="hardwareTodayHighlight"></div>
-      <div class="motivation-card hardware"><div class="motivation-text" id="hardwareMotivation"></div></div>
-      <div id="hardwareBooksContainer"></div>
-    </div>
-  </div>
-
-  <!-- ═══ AI SECTION ═══ -->
-  <div class="collection-section" id="aiSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="aiStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card ai"><div class="stat-num" id="aiStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="aiStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
-      </div>
-      <div class="today-book-wrap" id="aiTodayHighlight"></div>
-      <div class="motivation-card ai"><div class="motivation-text" id="aiMotivation"></div></div>
-      <div id="aiBooksContainer"></div>
-    </div>
-  </div>
-
-  <!-- ═══ EVOLUSI SECTION ═══ -->
-  <div class="collection-section" id="evolusiSection">
-    <div class="main">
-      <div class="stats-row">
-        <div class="stat-card read-card"><div class="stat-num" id="evStatRead">0</div><div class="stat-label">✅ Dibaca</div></div>
-        <div class="stat-card today-card evolusi"><div class="stat-num" id="evStatToday">📖</div><div class="stat-label">🌟 Hari Ini</div></div>
-        <div class="stat-card locked-card"><div class="stat-num" id="evStatLocked">30</div><div class="stat-label">🔒 Terkunci</div></div>
-      </div>
-      <div class="today-book-wrap" id="evolusiTodayHighlight"></div>
-      <div class="motivation-card evolusi"><div class="motivation-text" id="evolusiMotivation"></div></div>
-      <div id="evolusiBooksContainer"></div>
-    </div>
-  </div>
-
+  <main class="page">
+    <div class="choice-row" id="tabsContainer"></div>
+    <div id="collectionView"><div class="card empty"><span class="empty-emoji">⏳</span>Memuat perpustakaan...</div></div>
+  </main>
 </div>
 
-<a href="#" class="back-top" title="Ke Atas">☝️</a>
+<nav class="bottom-nav" aria-label="Navigasi">
+  <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span><span class="nav-label">Beranda</span></a>
+  <a class="nav-item active" href="perpustakaan.html" aria-current="page"><span class="nav-icon">📚</span><span class="nav-label">Perpustakaan</span></a>
+</nav>
+
+<button class="fab-top" id="fabTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Kembali ke atas">↑</button>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -907,123 +611,68 @@ const HARDWARE_START_DATE  = new Date('2026-06-01T00:00:00');
 const AI_START_DATE        = new Date('2026-06-01T00:00:00');
 const EVOLUSI_START_DATE   = new Date('2026-07-01T00:00:00');
 
+
+// ═══ KOLEKSI ═══
+// flip(): nomor file di folder flip/ untuk tiap buku (pemetaan lama dipertahankan persis).
+const COLLECTIONS = [
+  {type:'coding',    name:'Coding',         emoji:'💻', books:CODING_BOOKS,    weeks:CODING_WEEK_LABELS,    motivations:CODING_MOTIVATIONS,    ref:CODING_REF,    lsKey:'aslan_library_v2',   start:()=>codingStartDate,     c1:'#F08A24', c2:'#B4580A', flip:b=>b.day,     cta:'📖 Baca sekarang'},
+  {type:'english',   name:'English',        emoji:'🔤', books:ENGLISH_BOOKS,   weeks:ENGLISH_WEEK_LABELS,   motivations:ENGLISH_MOTIVATIONS,   ref:ENGLISH_REF,   lsKey:'aslan_english_v1',   start:()=>ENGLISH_START_DATE,  c1:'#3A7BF0', c2:'#1D4FC4', flip:b=>100+b.day, cta:'📖 Read now'},
+  {type:'sains',     name:'Sains',          emoji:'🔬', books:SAINS_BOOKS,     weeks:SAINS_WEEK_LABELS,     motivations:SAINS_MOTIVATIONS,     ref:SAINS_REF,     lsKey:'aslan_sains_v1',     start:()=>SAINS_START_DATE,    c1:'#1FAF66', c2:'#08713D', flip:b=>b.no,      cta:'🔬 Baca sekarang', hideComingSoon:true},
+  {type:'adventure', name:'Adventure',      emoji:'✨', books:ADVENTURE_BOOKS, weeks:ADVENTURE_WEEK_LABELS, motivations:ADVENTURE_MOTIVATIONS, ref:ADVENTURE_REF, lsKey:'aslan_adventure_v1', start:()=>ADVENTURE_START_DATE,c1:'#8B6CFA', c2:'#4B2BC2', flip:b=>130+b.day, cta:'✨ Read now'},
+  {type:'digital',   name:'Lautan Digital', emoji:'🌊', books:DIGITAL_BOOKS,   weeks:DIGITAL_WEEK_LABELS,   motivations:DIGITAL_MOTIVATIONS,   ref:DIGITAL_REF,   lsKey:'aslan_digital_v1',   start:()=>DIGITAL_START_DATE,  c1:'#16B3AE', c2:'#0A6662', flip:b=>300+b.day, cta:'🌊 Baca sekarang'},
+  {type:'hardware',  name:'Hardware',       emoji:'🖥️', books:HARDWARE_BOOKS,  weeks:HARDWARE_WEEK_LABELS,  motivations:HARDWARE_MOTIVATIONS,  ref:HARDWARE_REF,  lsKey:'aslan_hardware_v1',  start:()=>HARDWARE_START_DATE, c1:'#5B67E0', c2:'#2E3796', flip:b=>30+b.day,  cta:'🖥️ Baca sekarang'},
+  {type:'ai',        name:'AI',             emoji:'🤖', books:AI_BOOKS,        weeks:AI_WEEK_LABELS,        motivations:AI_MOTIVATIONS,        ref:AI_REF,        lsKey:'aslan_ai_v1',        start:()=>AI_START_DATE,       c1:'#12A3C7', c2:'#0E5F75', flip:b=>60+b.day,  cta:'🤖 Baca sekarang'},
+  {type:'evolusi',   name:'Evolusi',        emoji:'🦴', books:EVOLUSI_BOOKS,   weeks:EVOLUSI_WEEK_LABELS,   motivations:EVOLUSI_MOTIVATIONS,   ref:EVOLUSI_REF,   lsKey:'aslan_evolusi_v1',   start:()=>EVOLUSI_START_DATE,  c1:'#B8743A', c2:'#6B3A12', flip:b=>230+b.day, cta:'🦴 Baca sekarang'},
+];
+const WEEK_TONES = ['sky','brand','orange','violet','teal'];
+const byType = t => COLLECTIONS.find(c => c.type === t);
+
 // ═══ STATE ═══
-let codingReadBooks   = {};
-let englishReadBooks  = {};
-let sainsReadBooks    = {};
-let adventureReadBooks= {};
-let digitalReadBooks  = {};
-let hardwareReadBooks = {};
-let aiReadBooks       = {};
-let evolusiReadBooks  = {};
-let codingStartDate   = null;
+const READ = {};
+COLLECTIONS.forEach(c => { READ[c.type] = {}; });
+let codingStartDate = null;
+let activeType = 'coding';
 
-// Keep these collections locked and reset for release
-const TEST_UNLOCK_TYPES = {};
-
-// ═══ DATE HELPERS ═══
+// ═══ TANGGAL ═══
 const DAYS_ID   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
 const DAYS_LONG = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const MONTHS_LONG = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
-function getTodayBookDay(startDate) {
+function dayIndex(startDate) {
   if(!startDate) return 1;
   const today = new Date(); today.setHours(0,0,0,0);
-  const diff = Math.floor((today - startDate) / (1000*60*60*24));
-  return Math.min(Math.max(diff + 1, 1), 30);
+  return Math.floor((today - startDate) / 86400000) + 1;
 }
-function isUnlocked(bookDay, startDate) { return bookDay <= getTodayBookDay(startDate); }
-function isToday(bookDay, startDate)    { return bookDay === getTodayBookDay(startDate); }
+function getTodayBookDay(startDate) { return Math.min(Math.max(dayIndex(startDate), 1), 30); }
+function hasStarted(startDate) { const t = new Date(); t.setHours(0,0,0,0); return t >= startDate; }
+function isFinished(startDate) { return dayIndex(startDate) > 30; }
+function getUnlockDate(bookDay, startDate) { const d = new Date(startDate); d.setDate(startDate.getDate() + (bookDay - 1)); return d; }
 function formatDateShort(d) { return DAYS_ID[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()]; }
-function getUnlockDate(bookDay, startDate) {
-  const d = new Date(startDate);
-  d.setDate(startDate.getDate() + (bookDay - 1));
-  return d;
-}
-function hasStarted(startDate) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  return today >= startDate;
-}
+function formatDateLong(d) { return d.getDate()+' '+MONTHS_LONG[d.getMonth()]+' '+d.getFullYear(); }
+// Minggu terakhir menampung sisa hari (misalnya AI: minggu ke-4 = hari 22–30).
+function weekOf(day, c) { return Math.min(Math.ceil(day / 7), c.weeks.length); }
+function toneOf(day, c) { return WEEK_TONES[(weekOf(day, c) - 1) % WEEK_TONES.length]; }
 
-function getWeekClass(day, type) {
-  const w = day <= 7 ? 1 : day <= 14 ? 2 : day <= 21 ? 3 : day <= 28 ? 4 : 5;
-  const prefixes = {coding:'cw', english:'ew', sains:'sw', adventure:'aw', hardware:'hw', ai:'aiw', evolusi:'ev'};
-  // AI only has 4 weeks (30 books, week 4 covers days 22-30)
-  if(type === 'ai') {
-    const aw = day <= 7 ? 1 : day <= 14 ? 2 : day <= 21 ? 3 : 4;
-    return 'aiw'+aw;
-  }
-  return prefixes[type]+w;
-}
-
-// ═══ FIREBASE INIT ═══
+// ═══ FIREBASE ═══
 function initAll(callback) {
-  Promise.all([
-    CODING_REF.once('value'),
-    ENGLISH_REF.once('value'),
-    SAINS_REF.once('value'),
-    ADVENTURE_REF.once('value'),
-    DIGITAL_REF.once('value'),
-    HARDWARE_REF.once('value'),
-    AI_REF.once('value'),
-    EVOLUSI_REF.once('value'),
-  ]).then(([cSnap, eSnap, sSnap, aSnap, dSnap, hwSnap, aiSnap, evSnap]) => {
-    const cData  = cSnap.val()  || {};
-    const eData  = eSnap.val()  || {};
-    const sData  = sSnap.val()  || {};
-    const aData  = aSnap.val()  || {};
-    const dData  = dSnap.val()  || {};
-    const hwData = hwSnap.val() || {};
-    const aiData = aiSnap.val() || {};
-    const evData = evSnap.val() || {};
-    if (cData.startDate) { codingStartDate = new Date(cData.startDate); }
-    else { codingStartDate = new Date(); codingStartDate.setHours(0,0,0,0); CODING_REF.child('startDate').set(codingStartDate.toISOString()); }
-    codingReadBooks    = cData.readBooks  || {};
-    englishReadBooks   = eData.readBooks  || {};
-    sainsReadBooks     = sData.readBooks  || {};
-    // load adventure/hardware/ai from firebase if available, fall back to empty object
-    adventureReadBooks = aData.readBooks  || {};
-    digitalReadBooks   = dData.readBooks  || {};
-    hardwareReadBooks  = hwData.readBooks || {};
-    aiReadBooks        = aiData.readBooks || {};
-    evolusiReadBooks   = evData.readBooks || {};
+  Promise.all(COLLECTIONS.map(c => c.ref.once('value'))).then(snaps => {
+    snaps.forEach((snap, i) => {
+      const c = COLLECTIONS[i];
+      const d = snap.val() || {};
+      READ[c.type] = d.readBooks || {};
+      if(c.type === 'coding') {
+        if(d.startDate) codingStartDate = new Date(d.startDate);
+        else { codingStartDate = new Date(); codingStartDate.setHours(0,0,0,0); CODING_REF.child('startDate').set(codingStartDate.toISOString()); }
+      }
+    });
     callback();
   }).catch(() => {
-    codingStartDate    = getLocalDate('aslan_library_start');
-    codingReadBooks    = getLocalBooks('aslan_library_v2');
-    englishReadBooks   = getLocalBooks('aslan_english_v1');
-    sainsReadBooks     = getLocalBooks('aslan_sains_v1');
-    // restore adventure/hardware/ai/evolusi from localStorage as fallback
-    adventureReadBooks = getLocalBooks('aslan_adventure_v1');
-    digitalReadBooks   = getLocalBooks('aslan_digital_v1');
-    hardwareReadBooks  = getLocalBooks('aslan_hardware_v1');
-    aiReadBooks        = getLocalBooks('aslan_ai_v1');
-    evolusiReadBooks   = getLocalBooks('aslan_evolusi_v1');
+    codingStartDate = getLocalDate('aslan_library_start');
+    COLLECTIONS.forEach(c => { READ[c.type] = getLocalBooks(c.lsKey); });
     callback();
   });
 }
-
-function markRead(day, type) {
-  const refMap = {coding:CODING_REF, english:ENGLISH_REF, sains:SAINS_REF, adventure:ADVENTURE_REF, digital:DIGITAL_REF, hardware:HARDWARE_REF, ai:AI_REF, evolusi:EVOLUSI_REF};
-  const stateMap = {coding:codingReadBooks, english:englishReadBooks, sains:sainsReadBooks, adventure:adventureReadBooks, digital:digitalReadBooks, hardware:hardwareReadBooks, ai:aiReadBooks, evolusi:evolusiReadBooks};
-  const toastMap = {
-    coding:   d => '💻 Buku Coding ke-'+d+' selesai! +XP! 🌟',
-    english:  d => '🇬🇧 English Book #'+d+' done! Great job! ⭐',
-    sains:    d => '🔬 Buku Sains #'+(d+200)+' selesai! Keren! 🧪',
-    adventure:d => '✨ Adventure Book #'+(d+130)+' selesai! Magical! 🌟',
-    digital:  d => '🌊 Lautan Digital #'+(d+300)+' selesai! Hebat! 🚀',
-    hardware: d => '🖥️ Buku Hardware #'+(d+400)+' selesai! Mantap! 💡',
-    ai:       d => '🤖 Buku AI #'+(d+500)+' selesai! Luar biasa! 🚀',
-    evolusi:  d => '🦴 Buku Evolusi #'+(d+230)+' selesai! Mantap! 🌟',
-  };
-  stateMap[type][day] = { readAt: Date.now() };
-  refMap[type].child('readBooks/'+day).set({ readAt: Date.now() }).catch(() => {
-    localStorage.setItem('aslan_'+type+'_v1', JSON.stringify(stateMap[type]));
-  });
-  setTimeout(() => { renderAll(); showToast(toastMap[type](day)); }, 300);
-}
-
-// ═══ LOCALSTORAGE FALLBACK ═══
 function getLocalBooks(key) { try { return JSON.parse(localStorage.getItem(key)) || {}; } catch(e) { return {}; } }
 function getLocalDate(key) {
   try { const d = localStorage.getItem(key); if(d) return new Date(d); } catch(e){}
@@ -1032,338 +681,142 @@ function getLocalDate(key) {
   return t;
 }
 
-// ═══ TAB SWITCH ═══
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.collection-section').forEach(s => s.classList.remove('active'));
-  const sectionMap = {coding:'codingSection',english:'englishSection',sains:'sainsSection',adventure:'adventureSection',digital:'digitalSection',hardware:'hardwareSection',ai:'aiSection',evolusi:'evolusiSection'};
-  const tabMap = {coding:'.coding-tab',english:'.english-tab',sains:'.sains-tab',adventure:'.adventure-tab',digital:'.digital-tab',hardware:'.hardware-tab',ai:'.ai-tab',evolusi:'.evolusi-tab'};
-  document.querySelector(tabMap[tab]).classList.add('active');
-  document.getElementById(sectionMap[tab]).classList.add('active');
+// ═══ BUKA BUKU ═══
+function openBook(type, day) {
+  const c = byType(type);
+  const url = 'flip/' + c.flip(c.books[day-1]) + '.html';
+  if(READ[type][day]) { location.href = url; return; }
+  READ[type][day] = { readAt: Date.now() };
+  try { localStorage.setItem(c.lsKey, JSON.stringify(READ[type])); } catch(e){}
+  showToast(c.emoji+' Selamat membaca buku #'+c.flip(c.books[day-1])+'! 🌟');
+  // Tunggu simpan ke Firebase (maks. 1,2 detik) supaya tanda "sudah dibaca" tidak hilang saat pindah halaman.
+  const write = c.ref.child('readBooks/'+day).set({ readAt: Date.now() }).catch(() => {});
+  Promise.race([write, new Promise(r => setTimeout(r, 1200))]).then(() => { location.href = url; });
+}
+function onBookClick(type, day) {
+  const c = byType(type); const start = c.start();
+  if(!hasStarted(start)) { showToast('📅 Koleksi ini mulai '+formatDateLong(start)+'. Sabar ya! 😊'); return; }
+  if(day > getTodayBookDay(start)) { showToast('🔒 Terbuka '+formatDateShort(getUnlockDate(day, start))+'. Sabar ya! 😊'); return; }
+  openBook(type, day);
 }
 
-// ═══ RENDER DATE ═══
+// ═══ TAMPILAN ═══
+function readCount(type) { return Object.keys(READ[type]).length; }
+
 function renderDate() {
   const d = new Date();
-  document.getElementById('dateDisplay').textContent = DAYS_LONG[d.getDay()]+', '+d.getDate()+' '+MONTHS_ID[d.getMonth()];
+  document.getElementById('dateDisplay').textContent = DAYS_LONG[d.getDay()]+', '+d.getDate()+' '+MONTHS_LONG[d.getMonth()];
+}
+function renderOverview() {
+  const total = COLLECTIONS.reduce((s, c) => s + readCount(c.type), 0);
+  const max = COLLECTIONS.length * 30;
+  document.getElementById('totalRead').textContent = total;
+  document.getElementById('totalBooks').textContent = max;
+  document.getElementById('totalFill').style.width = (total / max * 100) + '%';
+}
+function renderTabs() {
+  document.getElementById('tabsContainer').innerHTML = COLLECTIONS.map(c =>
+    `<button class="choice${c.type===activeType?' active':''}" onclick="switchTab('${c.type}')">${c.emoji} ${c.name}<span class="lib-tab-count">${readCount(c.type)}/30</span></button>`
+  ).join('');
+}
+function switchTab(type) {
+  activeType = type;
+  renderTabs();
+  renderCollection();
+  const el = document.querySelector('#tabsContainer .choice.active');
+  if(el) el.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
 }
 
-// ═══ RENDER PROGRESS BARS ═══
-function renderProgressBars() {
-  const reads = {
-    coding:   Object.keys(codingReadBooks).length,
-    english:  Object.keys(englishReadBooks).length,
-    sains:    Object.keys(sainsReadBooks).length,
-    adventure:Object.keys(adventureReadBooks).length,
-    digital:  Object.keys(digitalReadBooks).length,
-    hardware: Object.keys(hardwareReadBooks).length,
-    ai:       Object.keys(aiReadBooks).length,
-    evolusi:  Object.keys(evolusiReadBooks).length,
-  };
-  const bars = [
-    {label:'💻 Coding',    id:'coding',    cls:'coding-progress'},
-    {label:'🇬🇧 English',  id:'english',   cls:'english-progress'},
-    {label:'🔬 Sains',     id:'sains',     cls:'sains-progress'},
-    {label:'✨ Adventure', id:'adventure', cls:'adventure-progress'},
-    {label:'🌊 Lautan Digital', id:'digital', cls:'digital-progress'},
-    {label:'🖥️ Hardware',  id:'hardware',  cls:'hardware-progress'},
-    {label:'🤖 AI',        id:'ai',        cls:'ai-progress'},
-    {label:'🦴 Evolusi',   id:'evolusi',   cls:'evolusi-progress'},
-  ];
-  const container = document.getElementById('progressBars');
-  container.innerHTML = bars.map(b => `
-    <div class="progress-wrap" style="margin-top:8px;">
-      <div class="progress-label">
-        <span>${b.label} Terbaca</span>
-        <span id="${b.id}ProgressText">${reads[b.id]} / 30</span>
+function todayCard(c, started, finished, todayDay) {
+  const start = c.start();
+  if(!started) {
+    if(c.hideComingSoon) return '';
+    return `<div class="lib-note"><div class="lib-note-emoji">${c.emoji}</div><div class="lib-note-title">Koleksi ${c.name} segera hadir</div><div class="lib-note-sub">30 buku seru menunggumu!</div><span class="chip chip-gold">📅 Mulai ${formatDateLong(start)}</span></div>`;
+  }
+  if(finished) {
+    const left = 30 - readCount(c.type);
+    return `<div class="lib-note"><div class="lib-note-emoji">🏆</div><div class="lib-note-title">Semua 30 buku sudah terbuka!</div><div class="lib-note-sub">${left>0?'Masih ada '+left+' buku yang belum kamu baca. Ayo selesaikan!':'Kamu sudah membaca semuanya. Hebat, Aslan!'}</div></div>`;
+  }
+  const book = c.books[todayDay-1];
+  const done = !!READ[c.type][todayDay];
+  return `<div class="lib-today">
+    <div class="lib-today-badge">📖 Buku hari ini · Hari ke-${todayDay}</div>
+    <div class="lib-today-emoji">${book.emoji}</div>
+    <div class="lib-today-title">${book.title}</div>
+    ${done ? `<div class="lib-today-done">✅ Sudah dibaca. Keren, Aslan! 🎉</div>` : `<button class="lib-today-btn" onclick="openBook('${c.type}',${todayDay})">${c.cta}</button>`}
+  </div>`;
+}
+
+function bookCard(c, book, started, finished, todayDay) {
+  const unlocked = started && book.day <= todayDay;
+  const isTodayBook = started && !finished && book.day === todayDay;
+  const done = !!READ[c.type][book.day];
+  const start = c.start();
+  let status;
+  if(!unlocked) status = `<span class="book-status status-locked">🔒 ${started ? formatDateShort(getUnlockDate(book.day, start)) : 'Belum mulai'}</span>`;
+  else if(isTodayBook && !done) status = `<span class="book-status status-today">⭐ Hari ini</span>`;
+  else if(done) status = `<span class="book-status status-read">✓ Selesai</span>`;
+  else status = `<span class="book-status status-open">Baca</span>`;
+  const cls = ['book-card', 'tone-'+toneOf(book.day, c)];
+  if(done) cls.push('read');
+  if(!unlocked) cls.push('locked');
+  if(isTodayBook) cls.push('today');
+  return `<button type="button" class="${cls.join(' ')}" onclick="onBookClick('${c.type}',${book.day})">
+    <span class="book-band"></span>
+    ${done ? '<span class="book-check">✓</span>' : ''}
+    <span class="book-top"><span class="book-emoji">${unlocked ? book.emoji : '📕'}</span><span class="book-num">#${c.flip(book)}</span></span>
+    <span class="book-title">${unlocked ? book.title : 'Buku rahasia...'}</span>
+    <span class="book-foot">${status}<span class="book-day">Hari ${book.day}</span></span>
+  </button>`;
+}
+
+function renderCollection() {
+  const c = byType(activeType);
+  const start = c.start();
+  const started = hasStarted(start);
+  const finished = started && isFinished(start);
+  const todayDay = started ? getTodayBookDay(start) : 0;
+  const rc = readCount(c.type);
+  const unlockedCount = !started ? 0 : todayDay;
+  const motivation = c.motivations[new Date().getDay() % c.motivations.length].replace(/^"|"$/g, '');
+
+  let html = `<section class="lib-view" style="--c1:${c.c1};--c2:${c.c2};">
+    <div class="lib-top">
+    <div class="card lib-head">
+      <div class="lib-head-icon">${c.emoji}</div>
+      <div class="lib-head-text">
+        <div class="lib-head-title">${c.name}</div>
+        <div class="lib-head-sub">${rc} dari 30 buku dibaca</div>
+        <div class="progress"><div class="progress-fill" style="width:${rc/30*100}%"></div></div>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill ${b.cls}" id="${b.id}ProgressFill" style="width:${reads[b.id]/30*100}%"></div>
-      </div>
-    </div>`).join('');
-}
+    </div>
+    <div class="lib-stats">
+      <div class="lib-stat"><div class="lib-stat-num">${rc}</div><div class="lib-stat-label">✅ Dibaca</div></div>
+      <div class="lib-stat"><div class="lib-stat-num">${!started ? '📅' : finished ? '🏆' : todayDay}</div><div class="lib-stat-label">🌟 Buku hari ini</div></div>
+      <div class="lib-stat"><div class="lib-stat-num">${30 - unlockedCount}</div><div class="lib-stat-label">🔒 Terkunci</div></div>
+    </div>
+    </div>
+    ${todayCard(c, started, finished, todayDay)}
+    <div class="lib-quote">${motivation}</div>`;
 
-// ═══ RENDER STATS ═══
-function renderStats() {
-  const startDates = {coding:codingStartDate, english:ENGLISH_START_DATE, sains:SAINS_START_DATE, adventure:ADVENTURE_START_DATE, digital:DIGITAL_START_DATE, hardware:HARDWARE_START_DATE, ai:AI_START_DATE, evolusi:EVOLUSI_START_DATE};
-  const reads = {coding:codingReadBooks, english:englishReadBooks, sains:sainsReadBooks, adventure:adventureReadBooks, digital:digitalReadBooks, hardware:hardwareReadBooks, ai:aiReadBooks, evolusi:evolusiReadBooks};
-  const ids = {coding:'c', english:'e', sains:'s', adventure:'a', digital:'d', hardware:'hw', ai:'ai', evolusi:'ev'};
-
-  for(const [type, prefix] of Object.entries(ids)) {
-    const started = hasStarted(startDates[type]);
-    const rCount  = Object.keys(reads[type]).length;
-    const tDay    = started ? getTodayBookDay(startDates[type]) : 0;
-    document.getElementById(prefix+'StatRead').textContent   = rCount;
-    document.getElementById(prefix+'StatToday').textContent  = !started ? '📅' : (tDay > 30 ? '🏆' : tDay);
-    document.getElementById(prefix+'StatLocked').textContent = !started ? 30 : Math.max(0, 30 - tDay);
-  }
-}
-
-// ═══ RENDER MOTIVATIONS ═══
-function renderMotivations() {
-  const idx = new Date().getDay();
-  document.getElementById('codingMotivation').textContent   = CODING_MOTIVATIONS[idx % CODING_MOTIVATIONS.length];
-  document.getElementById('englishMotivation').textContent  = ENGLISH_MOTIVATIONS[idx % ENGLISH_MOTIVATIONS.length];
-  document.getElementById('sainsMotivation').textContent    = SAINS_MOTIVATIONS[idx % SAINS_MOTIVATIONS.length];
-  document.getElementById('adventureMotivation').textContent= ADVENTURE_MOTIVATIONS[idx % ADVENTURE_MOTIVATIONS.length];
-  document.getElementById('digitalMotivation').textContent  = DIGITAL_MOTIVATIONS[idx % DIGITAL_MOTIVATIONS.length];
-  document.getElementById('hardwareMotivation').textContent = HARDWARE_MOTIVATIONS[idx % HARDWARE_MOTIVATIONS.length];
-  document.getElementById('aiMotivation').textContent       = AI_MOTIVATIONS[idx % AI_MOTIVATIONS.length];
-  document.getElementById('evolusiMotivation').textContent  = EVOLUSI_MOTIVATIONS[idx % EVOLUSI_MOTIVATIONS.length];
-}
-
-// ═══ COLOR MAP ═══
-const colorMap = {
-  cw1:['#1565C0','#0D47A1'],cw2:['#2E7D32','#1B5E20'],cw3:['#E65100','#BF360C'],cw4:['#6A1B9A','#4A148C'],cw5:['#00695C','#004D40'],
-  ew1:['#0D47A1','#01579B'],ew2:['#00695C','#004D40'],ew3:['#4527A0','#311B92'],ew4:['#880E4F','#4A148C'],ew5:['#E65100','#BF360C'],
-  sw1:['#00695C','#004D40'],sw2:['#E65100','#BF360C'],sw3:['#C62828','#B71C1C'],sw4:['#283593','#1A237E'],sw5:['#1B5E20','#33691E'],
-  aw1:['#6A1B9A','#4A148C'],aw2:['#00695C','#004D40'],aw3:['#E65100','#BF360C'],aw4:['#880E4F','#4A148C'],aw5:['#1B5E20','#33691E'],
-  hw1:['#1565C0','#0D47A1'],hw2:['#2E7D32','#1B5E20'],hw3:['#E65100','#BF360C'],hw4:['#6A1B9A','#4A148C'],hw5:['#00695C','#004D40'],
-  aiw1:['#006064','#004D40'],aiw2:['#2E7D32','#1B5E20'],aiw3:['#E65100','#BF360C'],aiw4:['#6A1B9A','#4A148C'],
-  ev1:['#4E342E','#3E2723'],ev2:['#6D4C41','#5D4037'],ev3:['#3E2723','#1B1B1B'],ev4:['#263238','#1A242F'],ev5:['#4A148C','#311B92'],
-};
-
-// ═══ RENDER TODAY HIGHLIGHT ═══
-function renderTodayHighlight(books, readBooks, startDate, containerId, type) {
-  const container = document.getElementById(containerId);
-
-    if(!hasStarted(startDate) && !TEST_UNLOCK_TYPES[type]) {
-    // For Sains we skip the large coming-soon hero card (user requested deletion)
-    if(type === 'sains') { container.innerHTML = ''; return; }
-    const csClassMap = {sains:'sains-cs',adventure:'adventure-cs',digital:'adventure-cs',hardware:'hardware-cs',ai:'ai-cs'};
-    const csEmojiMap = {sains:'🔬',adventure:'✨',digital:'🌊',hardware:'🖥️',ai:'🤖'};
-    const csTitleMap = {
-      sains:    'KOLEKSI SAINS &<br>PETUALANGAN',
-      adventure:'ASLAN\'S ENGLISH<br>ADVENTURE',
-      digital:  'LAUTAN<br>DIGITAL',
-      hardware: 'PETUALANGAN DI<br>KOMPUTER AJAIB',
-      ai:       'PETUALANGAN DI<br>NEGERI AI',
-    };
-    const csSubMap = {sains:'30 buku sains seru menunggumu!',adventure:'30 cerita petualangan seru menunggumu!',digital:'30 cerita Lautan Digital dari halaman 301 sampai 330!',hardware:'30 buku hardware keren!',ai:'30 buku AI menunggumu!',evolusi:'30 buku evolusi haus ilmu menunggumu!'};
-    const csDateMap = {
-      sains:'📅 Mulai: 2 Juni 2026',
-      adventure:'📅 Mulai: 16 Juni 2026',
-      digital:'📅 Mulai: 1 Juli 2026',
-      hardware:'📅 Mulai: 1 Juni 2026',
-      ai:'📅 Mulai: 1 Juni 2026',
-      evolusi:'📅 Mulai: 1 Juli 2026',
-    };
-    const cs = csClassMap[type] || '';
-    container.innerHTML = `
-      <div class="coming-soon-card ${cs}">
-        <div class="coming-soon-emoji">${csEmojiMap[type]||'📚'}</div>
-        <div class="coming-soon-title">${csTitleMap[type]||''}</div>
-        <div style="color:rgba(255,255,255,0.8);font-size:12px;font-weight:700;margin-bottom:14px;">${csSubMap[type]||''}</div>
-        <div class="coming-soon-date">${csDateMap[type]||''}</div>
-      </div>`;
-    return;
-  }
-
-  const todayDay = getTodayBookDay(startDate);
-  if(todayDay < 1 || todayDay > 30) { container.innerHTML=''; return; }
-  const book   = books[todayDay - 1];
-  const isRead = !!readBooks[todayDay];
-  const wclass = getWeekClass(todayDay, type);
-  const [c1, c2] = colorMap[wclass] || ['#555','#333'];
-
-  const labelMap  = {coding:'BUKU CODING HARI INI',english:'ENGLISH BOOK TODAY',sains:'BUKU SAINS HARI INI',adventure:'BUKU ADVENTURE HARI INI',digital:'BUKU LAUTAN DIGITAL HARI INI',hardware:'BUKU HARDWARE HARI INI',ai:'BUKU AI HARI INI',evolusi:'BUKU EVOLUSI HARI INI'};
-  const btnClsMap = {coding:'coding-btn',english:'english-btn',sains:'sains-btn',adventure:'adventure-btn',digital:'digital-btn',hardware:'hardware-btn',ai:'ai-btn',evolusi:'evolusi-btn'};
-  const btnTxtMap = {coding:'📖 BACA SEKARANG!',english:'📖 READ NOW!',sains:'🔬 BACA SEKARANG!',adventure:'✨ READ NOW!',digital:'🌊 READ NOW!',hardware:'🖥️ BACA SEKARANG!',ai:'🤖 BACA SEKARANG!',evolusi:'🦴 BACA SEKARANG!'};
-  const flipNum = type === 'coding'
-    ? todayDay
-    : type === 'english'
-      ? (100 + todayDay)
-      : type === 'hardware'
-        ? (30 + todayDay)
-        : type === 'ai'
-          ? (60 + todayDay)
-          : type === 'digital'
-            ? (300 + todayDay)
-            : type === 'adventure'
-              ? (130 + todayDay)
-              : (type === 'evolusi' ? (230 + todayDay) : book.no);
-
-  container.innerHTML = `
-    <div class="today-book-card" style="background:linear-gradient(135deg,${c1},${c2});border-color:${c2};">
-      <div class="today-book-badge">📖 ${labelMap[type]} — HARI KE-${todayDay}</div>
-      <div style="font-size:36px;margin-bottom:8px;">${book.emoji}</div>
-      <div class="today-book-title">${book.title}</div>
-      ${isRead
-        ? `<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.4);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:800;color:white;">✅ Sudah dibaca! Keren Aslan! 🎉</div>`
-        : `<a href="flip/${flipNum}.html" class="today-book-btn ${btnClsMap[type]}" onclick="markRead(${todayDay},'${type}')">${btnTxtMap[type]}</a>`
-      }
-    </div>`;
-}
-
-// ═══ RENDER BOOKS GRID ═══
-function renderBooks(books, weekLabels, readBooks, startDate, containerId, type) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-
-const statusClsMap = {coding:'status-today',english:'status-today-en',sains:'status-today-sains',adventure:'status-today-adv',digital:'status-today-adv',hardware:'status-today-hw',ai:'status-today-ai',evolusi:'status-today-ev'};
-      const todayLblMap  = {coding:'📖 Hari Ini!',english:'📖 Today!',sains:'🔬 Hari Ini!',adventure:'✨ Hari Ini!',digital:'🌊 Hari Ini!',hardware:'🖥️ Hari Ini!',ai:'🤖 Hari Ini!',evolusi:'🦴 Hari Ini!'};
-      const bacaLblMap   = {coding:'📚 Baca!',english:'📖 Read!',sains:'🔬 Baca!',adventure:'✨ Baca!',digital:'🌊 Baca!',hardware:'🖥️ Baca!',ai:'🤖 Baca!',evolusi:'🦴 Baca!'};
-  const wclassMap    = type;
-
-  if(!hasStarted(startDate) && !TEST_UNLOCK_TYPES[type]) {
-    // Show coming-soon grid (all locked)
-    const days = Math.max(0, Math.ceil((startDate - new Date().setHours(0,0,0,0)) / (1000*60*60*24)));
-    const csDateStrs = {sains:'2 Jun 2026',adventure:'16 Jun 2026',digital:'1 Jul 2026',hardware:'1 Jun 2026',ai:'1 Jun 2026',evolusi:'1 Jul 2026'};
-    const csDate = csDateStrs[type] || '';
-    const lockMsg = `📅 Terbuka ${csDate}! Sabar ya! 😊`;
-
-    weekLabels.forEach(wk => {
-      const startDay = (wk.week-1)*7 + 1;
-      const endDay   = Math.min(wk.week*7, 30);
-      const booksInWeek = books.filter(b => b.day >= startDay && b.day <= endDay);
-      const wkDiv = document.createElement('div');
-      wkDiv.className = 'week-title '+type;
-      wkDiv.innerHTML = `<span class="week-title-emoji">${wk.emoji}</span><span>${wk.label}: ${wk.sub}</span>`;
-      container.appendChild(wkDiv);
-      const grid = document.createElement('div');
-      grid.className = 'books-grid';
-      booksInWeek.forEach(book => {
-          const wclass = getWeekClass(book.day, type);
-          const card = document.createElement('div');
-          card.className = `book-card ${wclass} locked`;
-          card.addEventListener('click', () => showToast(lockMsg));
-          const flipNum = type === 'coding'
-            ? book.day
-            : type === 'english'
-              ? (100 + book.day)
-              : type === 'hardware'
-                ? (30 + book.day)
-                : type === 'ai'
-                  ? (60 + book.day)
-                  : type === 'digital'
-                    ? (300 + book.day)
-                    : type === 'adventure'
-                      ? (130 + book.day)
-                      : type === 'evolusi'
-                        ? (230 + book.day)
-                        : book.no;
-          card.innerHTML = `
-            <div class="book-spine spine-${wclass}"></div>
-            <div class="book-cover">
-              <div class="book-cover-top"><div class="book-emoji">📕</div><div class="book-num-badge num-${wclass}">#${flipNum}</div></div>
-              <div class="book-title" style="color:#90A4AE;">${book.title}</div>
-              <div class="book-footer"><span class="book-status status-locked">🔒 ${csDate}</span><span class="book-day">Hari ${book.day}</span></div>
-            </div>
-            <div class="book-lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">${csDate}</div></div>`;
-          grid.appendChild(card);
-      });
-      container.appendChild(grid);
-      if(wk.week < weekLabels.length) {
-        const shelf = document.createElement('div');
-        shelf.className = 'shelf-deco '+type;
-        container.appendChild(shelf);
-      }
-    });
-    return;
-  }
-  // Normal render
-  weekLabels.forEach(wk => {
-    const startDay = (wk.week-1)*7 + 1;
-    const endDay   = Math.min(wk.week*7, 30);
-    const booksInWeek = books.filter(b => b.day >= startDay && b.day <= endDay);
-    const wkDiv = document.createElement('div');
-    wkDiv.className = 'week-title'+(type==='coding'?'':(' '+type));
-    wkDiv.innerHTML = `<span class="week-title-emoji">${wk.emoji}</span><span>${wk.label}: ${wk.sub}</span>`;
-    container.appendChild(wkDiv);
-    const grid = document.createElement('div');
-    grid.className = 'books-grid';
-
-    booksInWeek.forEach(book => {
-      const unlocked    = isUnlocked(book.day, startDate) || !!TEST_UNLOCK_TYPES[type];
-      const bookIsToday = isToday(book.day, startDate);
-      const isRead      = !!readBooks[book.day];
-      const wclass      = getWeekClass(book.day, type);
-      const unlockDate  = getUnlockDate(book.day, startDate);
-      const flipNum     = type === 'coding'
-        ? book.day
-        : type === 'english'
-          ? (100 + book.day)
-          : type === 'hardware'
-            ? (30 + book.day)
-            : type === 'ai'
-              ? (60 + book.day)
-              : type === 'digital'
-                ? (300 + book.day)
-                : type === 'adventure'
-                  ? (130 + book.day)
-                  : type === 'evolusi'
-                    ? (230 + book.day)
-                    : book.no;
-      const displayNum  = flipNum;
-
-      const card = document.createElement('div');
-      let cardClass = `book-card ${wclass}`;
-      if(bookIsToday) cardClass += ' today-book-card-item';
-      if(isRead)      cardClass += ' read';
-      if(!unlocked)   cardClass += ' locked';
-      card.className = cardClass;
-
-      if(unlocked && !isRead) {
-        card.addEventListener('click', () => {
-          markRead(book.day, type);
-          window.location.href = 'flip/'+flipNum+'.html';
-        });
-      } else if(isRead) {
-        card.addEventListener('click', () => { window.location.href = 'flip/'+flipNum+'.html'; });
-      } else {
-        card.addEventListener('click', () => { showToast('🔒 Terbuka '+formatDateShort(unlockDate)+'! Sabar ya! 😊'); });
-      }
-
-      let statusHtml = '';
-      if(bookIsToday)   statusHtml = `<span class="book-status ${statusClsMap[type]}">${todayLblMap[type]}</span>`;
-      else if(isRead)   statusHtml = `<span class="book-status status-read">✅ Selesai!</span>`;
-      else if(unlocked) statusHtml = `<span class="book-status ${statusClsMap[type]}">${bacaLblMap[type]}</span>`;
-      else              statusHtml = `<span class="book-status status-locked">🔒 ${formatDateShort(unlockDate)}</span>`;
-
-      card.innerHTML = `
-        <div class="book-spine spine-${wclass}"></div>
-        ${isRead ? '<div class="read-check">✓</div>' : ''}
-        <div class="book-cover">
-          <div class="book-cover-top">
-            <div class="book-emoji">${unlocked ? book.emoji : '📕'}</div>
-            <div class="book-num-badge num-${wclass}">#${displayNum}</div>
-          </div>
-          <div class="book-title">${unlocked ? book.title : 'Buku Tersembunyi...'}</div>
-          <div class="book-footer">${statusHtml}<span class="book-day">Hari ${book.day}</span></div>
-        </div>
-        ${!unlocked ? `<div class="book-lock-overlay"><div class="lock-icon">🔒</div><div class="lock-text">${formatDateShort(unlockDate)}</div></div>` : ''}`;
-      grid.appendChild(card);
-    });
-
-    container.appendChild(grid);
-    if(wk.week < weekLabels.length) {
-      const shelf = document.createElement('div');
-      shelf.className = 'shelf-deco '+type;
-      container.appendChild(shelf);
-    }
+  c.weeks.forEach(wk => {
+    const books = c.books.filter(b => weekOf(b.day, c) === wk.week);
+    const tone = WEEK_TONES[(wk.week - 1) % WEEK_TONES.length];
+    html += `<div class="week-head tone-${tone}">
+      <div class="week-emoji">${wk.emoji}</div>
+      <div><div class="week-label">${wk.label}</div><div class="week-sub">${wk.sub}</div></div>
+    </div>
+    <div class="books-grid">${books.map(b => bookCard(c, b, started, finished, todayDay)).join('')}</div>`;
   });
+  html += '</section>';
+  document.getElementById('collectionView').innerHTML = html;
 }
-// ═══ RENDER ALL ═══
+
 function renderAll() {
   renderDate();
-  renderProgressBars();
-  renderStats();
-  renderMotivations();
-
-  const configs = [
-    {books:CODING_BOOKS,   wl:CODING_WEEK_LABELS,   rb:codingReadBooks,    sd:codingStartDate,      th:'codingTodayHighlight',   bc:'codingBooksContainer',   type:'coding'},
-    {books:ENGLISH_BOOKS,  wl:ENGLISH_WEEK_LABELS,  rb:englishReadBooks,   sd:ENGLISH_START_DATE,   th:'englishTodayHighlight',  bc:'englishBooksContainer',  type:'english'},
-    {books:SAINS_BOOKS,    wl:SAINS_WEEK_LABELS,    rb:sainsReadBooks,     sd:SAINS_START_DATE,     th:'sainsTodayHighlight',    bc:'sainsBooksContainer',    type:'sains'},
-    {books:ADVENTURE_BOOKS,wl:ADVENTURE_WEEK_LABELS,rb:adventureReadBooks, sd:ADVENTURE_START_DATE, th:'adventureTodayHighlight',bc:'adventureBooksContainer',type:'adventure'},
-    {books:DIGITAL_BOOKS,  wl:DIGITAL_WEEK_LABELS,  rb:digitalReadBooks,   sd:DIGITAL_START_DATE,  th:'digitalTodayHighlight',  bc:'digitalBooksContainer',  type:'digital'},
-    {books:HARDWARE_BOOKS, wl:HARDWARE_WEEK_LABELS, rb:hardwareReadBooks,  sd:HARDWARE_START_DATE,  th:'hardwareTodayHighlight', bc:'hardwareBooksContainer', type:'hardware'},
-    {books:AI_BOOKS,       wl:AI_WEEK_LABELS,       rb:aiReadBooks,        sd:AI_START_DATE,        th:'aiTodayHighlight',       bc:'aiBooksContainer',       type:'ai'},
-    {books:EVOLUSI_BOOKS,  wl:EVOLUSI_WEEK_LABELS,  rb:evolusiReadBooks,   sd:EVOLUSI_START_DATE,   th:'evolusiTodayHighlight',bc:'evolusiBooksContainer',type:'evolusi'},
-  ];
-  configs.forEach(c => {
-    renderTodayHighlight(c.books, c.rb, c.sd, c.th, c.type);
-    renderBooks(c.books, c.wl, c.rb, c.sd, c.bc, c.type);
-  });
+  renderOverview();
+  renderTabs();
+  renderCollection();
 }
 
 // ═══ TOAST ═══
@@ -1375,11 +828,13 @@ function showToast(msg) {
   toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ═══ INIT ═══
-['codingBooksContainer','englishBooksContainer','sainsBooksContainer','adventureBooksContainer','digitalBooksContainer','hardwareBooksContainer','aiBooksContainer','evolusiBooksContainer'].forEach(id => {
-  document.getElementById(id).innerHTML = '<div style="text-align:center;padding:40px;color:#8D6E63;font-weight:700;">⏳ Memuat perpustakaan...</div>';
-});
-initAll(() => { renderAll(); });
+window.addEventListener('scroll', () => {
+  document.getElementById('fabTop').classList.toggle('show', window.scrollY > 600);
+}, { passive: true });
+
+// ═══ MULAI ═══
+renderDate();
+initAll(renderAll);
 </script>
 </body>
 </html>
